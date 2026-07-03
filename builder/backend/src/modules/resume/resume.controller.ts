@@ -1,0 +1,635 @@
+ 
+// import { logActivity } from "../../services/activity.service";
+ 
+ 
+// import { ActivityTypes } from "../../models/activity.model";
+// import { Request, Response, NextFunction } from "express";
+ 
+
+// import { Resume } from "../../models/resume.model";
+
+// import { asyncHandler } from "../../utils/asyncHandler";
+// import { ApiError } from "../../utils/ApiError";
+
+// import { AuthRequest } from "../../middleware/auth.middleware";
+ 
+// import { getVisitorInfo } from "../../utils/visitor.util";
+
+// import {
+//   createResumeSchema,
+//   updateResumeSchema,
+// } from "./resume.validation";
+// import { analyticsService }
+// from "../analytics/analytics.service";
+
+
+// import crypto from "crypto";
+ 
+ 
+
+// export const createResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const data = createResumeSchema.parse(req.body);
+
+//     const resume = await Resume.create({
+//       userId: req.userId,
+
+//       title: data.title,
+
+//       targetRole: data.targetRole ?? "",
+
+//       templateId: data.templateId ?? "technical-developer",
+
+//       version: 1,
+
+//       status: "draft",
+
+//       personalInfo: {
+//         fullName: "",
+//         title: "",
+//         email: "",
+//         phone: "",
+//         address: "",
+//         linkedIn: "",
+//         github: "",
+//         portfolio: "",
+//         photo: "",
+//         ...(data.personalInfo ?? {}),
+//       },
+
+//       summary: data.summary ?? "",
+
+//       skills: data.skills ?? [],
+
+//       experience: data.experience ?? [],
+
+//       education: data.education ?? [],
+
+//       projects: data.projects ?? [],
+
+//       certifications: data.certifications ?? [],
+
+//       languages: data.languages ?? [],
+
+//       awards: data.awards ?? [],
+
+//       interests: data.interests ?? [],
+//     });
+
+//     // Create Analytics Document Automatically
+//     if (req.userId) {
+//       await analyticsService.createAnalytics(
+//         resume._id.toString(),
+//         req.userId
+//       );
+//     }
+    
+
+//     res.status(201).json({
+//       success: true,
+//       resume,
+//     });
+//   }
+// );
+// export const getResumes = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const resumes = await Resume.find({
+//       userId: req.userId,
+//     }).sort({ updatedAt: -1 });
+
+//     res.status(200).json({
+//       success: true,
+//       resumes,
+//     });
+//   }
+// );
+
+// export const getResumeById = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const resume = await Resume.findOne({
+//       _id: req.params.id,
+//       userId: req.userId,
+//     });
+
+//     if (!resume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       resume,
+//     });
+//   }
+// );
+
+// export const updateResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const data = updateResumeSchema.parse(req.body);
+
+//     const existingResume = await Resume.findOne({
+//       _id: req.params.id,
+//       userId: req.userId,
+//     });
+
+//     if (!existingResume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     const resume = await Resume.findOneAndUpdate(
+//       {
+//         _id: req.params.id,
+//         userId: req.userId,
+//       },
+//       {
+//         ...data,
+//         version: existingResume.version + 1,
+//       },
+//       {
+//         new: true,
+//         runValidators: true,
+//       }
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       resume,
+//     });
+//   }
+// );
+
+// export const deleteResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const resume = await Resume.findOneAndDelete({
+//       _id: req.params.id,
+//       userId: req.userId,
+//     });
+
+//     if (!resume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Resume deleted successfully",
+//     });
+//   }
+// );
+
+// export const duplicateResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const existingResume = await Resume.findOne({
+//       _id: req.params.id,
+//       userId: req.userId,
+//     });
+
+//     if (!existingResume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     const {
+//       _id,
+//       createdAt,
+//       updatedAt,
+//       __v,
+//       ...resumeData
+//     } = existingResume.toObject();
+
+//     const duplicatedResume = await Resume.create({
+//       ...resumeData,
+//       title: `${existingResume.title} Copy`,
+//       version: 1,
+//       userId: req.userId,
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       resume: duplicatedResume,
+//     });
+//   }
+// );
+
+
+
+
+ 
+
+ 
+
+// export const shareResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const shareId = crypto.randomBytes(16).toString("hex");
+
+//     const resume = await Resume.findOneAndUpdate(
+//       {
+//         _id: req.params.id,
+//         userId: req.userId,
+//       },
+//       {
+//         $set: {
+//           shareId,
+//           isPublic: true,
+//         },
+//       },
+//       {
+//         new: true,
+//         runValidators: false,
+//       }
+//     );
+
+//     if (!resume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     // 👇 Analytics update
+// await analyticsService.incrementShares(
+//   resume._id.toString()
+// );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Resume shared successfully",
+//       shareId: resume.shareId,
+//     });
+//   }
+// );
+
+ 
+
+// export const disableShareResume = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const resume = await Resume.findOne({
+//       _id: req.params.id,
+//       userId: req.userId,
+//     });
+
+//     if (!resume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     resume.isPublic = false;
+
+//     await resume.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Resume sharing disabled",
+//     });
+//   }
+// );
+
+ 
+
+// export const getPublicResume = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const resume = await Resume.findOne({
+//       shareId: req.params.shareId,
+//       isPublic: true,
+//     });
+
+//     if (!resume) {
+//       throw new ApiError(404, "Resume not found");
+//     }
+
+//     // Visitor Info
+//     const ip =
+//   (req.headers["x-forwarded-for"] as string)
+//     ?.split(",")[0] ||
+//   req.ip ||
+//   "unknown";
+
+//     const visitor = getVisitorInfo(
+//       req.headers["user-agent"] ?? ""
+//     );
+
+//     // Analytics
+//     await analyticsService.incrementViews(
+//       resume._id.toString(),
+//       ip,
+//       visitor.browser,
+//       visitor.device
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       resume,
+//     });
+//   }
+// );
+
+import { logActivity } from "../../services/activity.service";
+import { ActivityTypes } from "../../models/activity.model";
+
+import { Request, Response, NextFunction } from "express";
+import { Resume } from "../../models/resume.model";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { ApiError } from "../../utils/ApiError";
+import { AuthRequest } from "../../middleware/auth.middleware";
+import { getVisitorInfo } from "../../utils/visitor.util";
+import {
+  createResumeSchema,
+  updateResumeSchema,
+} from "./resume.validation";
+import { analyticsService } from "../analytics/analytics.service";
+import crypto from "crypto";
+
+export const createResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const data = createResumeSchema.parse(req.body);
+
+    const resume = await Resume.create({
+      userId: req.userId,
+      title: data.title,
+      targetRole: data.targetRole ?? "",
+      templateId: data.templateId ?? "technical-developer",
+      version: 1,
+      status: "draft",
+      personalInfo: {
+        fullName: "",
+        title: "",
+        email: "",
+        phone: "",
+        address: "",
+        linkedIn: "",
+        github: "",
+        portfolio: "",
+        photo: "",
+        ...(data.personalInfo ?? {}),
+      },
+      summary: data.summary ?? "",
+      skills: data.skills ?? [],
+      experience: data.experience ?? [],
+      education: data.education ?? [],
+      projects: data.projects ?? [],
+      certifications: data.certifications ?? [],
+      languages: data.languages ?? [],
+      awards: data.awards ?? [],
+      interests: data.interests ?? [],
+    });
+
+    // Create Analytics Document Automatically
+    if (req.userId) {
+      await analyticsService.createAnalytics(
+        resume._id.toString(),
+        req.userId
+      );
+    }
+
+    // Log activity
+    await logActivity(
+      req.userId as string,
+      ActivityTypes.RESUME_CREATED,
+      `Created resume "${resume.title}"`
+    );
+
+    res.status(201).json({
+      success: true,
+      resume,
+    });
+  }
+);
+
+export const getResumes = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const resumes = await Resume.find({
+      userId: req.userId,
+    }).sort({ updatedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      resumes,
+    });
+  }
+);
+
+export const getResumeById = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const resume = await Resume.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    res.status(200).json({
+      success: true,
+      resume,
+    });
+  }
+);
+
+export const updateResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const data = updateResumeSchema.parse(req.body);
+
+    const existingResume = await Resume.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!existingResume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    const resume = await Resume.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        userId: req.userId,
+      },
+      {
+        ...data,
+        version: existingResume.version + 1,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (req.userId && resume) {
+      await logActivity(
+        req.userId,
+        ActivityTypes.RESUME_UPDATED,
+        `Updated resume "${resume.title}"`
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      resume,
+    });
+  }
+);
+
+export const deleteResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const resume = await Resume.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    if (req.userId) {
+      await logActivity(
+        req.userId,
+        ActivityTypes.RESUME_DELETED,
+        `Deleted resume "${resume.title}"`
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Resume deleted successfully",
+    });
+  }
+);
+
+export const duplicateResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const existingResume = await Resume.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!existingResume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    const {
+      _id,
+      createdAt,
+      updatedAt,
+      __v,
+      ...resumeData
+    } = existingResume.toObject();
+
+    const duplicatedResume = await Resume.create({
+      ...resumeData,
+      title: `${existingResume.title} Copy`,
+      version: 1,
+      userId: req.userId,
+    });
+
+    if (req.userId) {
+      await logActivity(
+        req.userId,
+        ActivityTypes.RESUME_CREATED,
+        `Duplicated resume "${duplicatedResume.title}"`
+      );
+    }
+
+    res.status(201).json({
+      success: true,
+      resume: duplicatedResume,
+    });
+  }
+);
+
+export const shareResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const shareId = crypto.randomBytes(16).toString("hex");
+
+    const resume = await Resume.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        userId: req.userId,
+      },
+      {
+        $set: {
+          shareId,
+          isPublic: true,
+        },
+      },
+      {
+        new: true,
+        runValidators: false,
+      }
+    );
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    // 👇 Analytics update
+    await analyticsService.incrementShares(
+      resume._id.toString()
+    );
+
+    if (req.userId) {
+      await logActivity(
+        req.userId,
+        ActivityTypes.RESUME_SHARED,
+        `Shared resume "${resume.title}"`
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Resume shared successfully",
+      shareId: resume.shareId,
+    });
+  }
+);
+
+export const disableShareResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const resume = await Resume.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    resume.isPublic = false;
+
+    await resume.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Resume sharing disabled",
+    });
+  }
+);
+
+export const getPublicResume = asyncHandler(
+  async (req: Request, res: Response) => {
+    const resume = await Resume.findOne({
+      shareId: req.params.shareId,
+      isPublic: true,
+    });
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+
+    // Visitor Info
+    const ip =
+      (req.headers["x-forwarded-for"] as string)
+        ?.split(",")[0] ||
+      req.ip ||
+      "unknown";
+
+    const visitor = getVisitorInfo(
+      req.headers["user-agent"] ?? ""
+    );
+
+    // Analytics
+    await analyticsService.incrementViews(
+      resume._id.toString(),
+      ip,
+      visitor.browser,
+      visitor.device
+    );
+
+    res.status(200).json({
+      success: true,
+      resume,
+    });
+  }
+);

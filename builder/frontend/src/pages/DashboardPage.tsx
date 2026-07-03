@@ -1,0 +1,203 @@
+import { useState } from "react";
+
+// import DashboardLayout from "../layouts/DashboardLayout";
+
+import DashboardHeader from "../features/dashboard/components/DashboardHeader";
+import DashboardStats from "../features/dashboard/components/DashboardStats";
+
+import { useDashboard } from "../features/dashboard/hooks/useDashboard";
+import WelcomeBanner from "../features/dashboard/components/WelcomeBanner";
+import QuickActions from "../features/dashboard/components/QuickActions";
+
+import ResumeGrid from "../features/resume/components/ResumeGrid";
+import CreateResumeModal from "../features/resume/components/CreateResumeModal";
+import RecentActivity from "../features/dashboard/components/RecentActivity";
+import ResumeCompletionCard from "../features/resume/components/ResumeCompletionCard";
+import AISuggestionsCard from "../features/dashboard/components/AISuggestionsCard";
+import EmptyResumeState from "../features/resume/components/EmptyResumeState";
+import type { Resume } from "../features/resume/types/resume.types";
+
+
+
+import { useNavigate } from "react-router-dom";
+
+export default function DashboardPage() {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const navigate = useNavigate();
+
+  // Filter & Sort States
+  const [filter, setFilter] = useState<"all" | "draft" | "completed">("all");
+  const [sort, setSort] = useState<"updated" | "newest" | "oldest" | "az">(
+    "updated",
+  );
+
+  const { data, isLoading, refetch } = useDashboard();
+
+  if (isLoading || !data) {
+    return <div>Loading...</div>;
+  }
+
+  const resumes = data.recentResumes;
+
+  const total = data.stats.totalResumes;
+
+  const draft = data.stats.draftResumes;
+
+  const completed = data.stats.completedResumes;
+ 
+
+  // ==================== FILTERING ====================
+ const filteredResumes = resumes.filter((resume: Resume) => {
+    const keyword = search.toLowerCase().trim();
+
+    const title = resume.title?.toString().toLowerCase() ?? "";
+    const targetRole = resume.targetRole?.toString().toLowerCase() ?? "";
+
+    const matchesSearch =
+      title.includes(keyword) || targetRole.includes(keyword);
+    const matchesFilter = filter === "all" ? true : resume.status === filter;
+
+    return matchesSearch && matchesFilter;
+  });
+
+  // ==================== SORTING ====================
+  const sortedResumes = [...filteredResumes];
+
+  switch (sort) {
+    case "updated":
+      sortedResumes.sort((a, b) => {
+        const dateA = new Date(a.updatedAt || 0).getTime();
+        const dateB = new Date(b.updatedAt || 0).getTime();
+        return dateB - dateA;
+      });
+      break;
+
+    case "newest":
+      sortedResumes.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+      break;
+
+    case "oldest":
+      sortedResumes.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateA - dateB;
+      });
+      break;
+
+    case "az":
+      sortedResumes.sort((a, b) => {
+        const titleA = a.title?.toString().toLowerCase() ?? "";
+        const titleB = b.title?.toString().toLowerCase() ?? "";
+        return titleA.localeCompare(titleB);
+      });
+      break;
+  }
+
+  return (
+    // <DashboardLayout>
+    //   <div className="space-y-8">
+    //     <DashboardHeader
+    //       total={total}
+    //       search={search}
+    //       filter={filter}
+    //       sort={sort}
+    //       onSearch={setSearch}
+    //       onFilter={setFilter}
+    //       onSort={setSort}
+    //       onCreate={() => setOpen(true)}
+    //     />
+
+    //     <DashboardStats
+    //       total={total}
+    //       draft={draft}
+    //       completed={completed}
+    //       lastUpdated={
+    //         recent.length
+    //           ? new Date(recent[0].updatedAt).toLocaleDateString()
+    //           : "--"
+    //       }
+    //     />
+
+    //     {/* Analytics Section - Show only if user has at least one resume */}
+    //     {resumes.length > 0 && (
+    //       <DashboardAnalytics resumeId={resumes[0]._id} />
+    //     )}
+
+    //     <ResumeGrid
+    //       resumes={sortedResumes}
+    //       loading={loading}
+    //       onCreate={() => setOpen(true)}
+    //       onRefresh={refetch}
+    //     />
+
+    //     <CreateResumeModal open={open} onClose={() => setOpen(false)} />
+    //   </div>
+    // </DashboardLayout>
+
+    <>
+      <div className="space-y-8">
+        <WelcomeBanner
+          name="Hemendra"
+          onCreate={() => setOpen(true)}
+          onContinue={() => {
+            if (sortedResumes.length > 0) {
+              navigate(`/resume/${sortedResumes[0]._id}/edit`);
+            }
+          }}
+        />
+        <QuickActions onCreate={() => setOpen(true)} />
+        <DashboardHeader
+          total={total}
+          search={search}
+          filter={filter}
+          sort={sort}
+          onSearch={setSearch}
+          onFilter={setFilter}
+          onSort={setSort}
+          onCreate={() => setOpen(true)}
+        />
+
+        <DashboardStats
+          total={data.stats.totalResumes}
+          draft={data.stats.draftResumes}
+          completed={data.stats.completedResumes}
+          downloads={data.analytics.downloads}
+        />
+
+        {/* {resumes.length > 0 && <DashboardAnalytics resumeId={resumes[0]._id} />} */}
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <ResumeCompletionCard
+            percentage={data.resumeCompletion.percentage}
+            missing={data.resumeCompletion.missing}
+          />
+
+          <AISuggestionsCard suggestions={data.aiSuggestions} />
+        </div>
+
+        {sortedResumes.length === 0 ? (
+  <EmptyResumeState
+    onCreate={() => setOpen(true)}
+  />
+) : (
+  <ResumeGrid
+    resumes={sortedResumes}
+    loading={isLoading}
+    onCreate={() => setOpen(true)}
+    onRefresh={refetch}
+  />
+)}
+
+        <RecentActivity />
+
+        <CreateResumeModal open={open} onClose={() => setOpen(false)} />
+      </div>
+    </>
+  );
+}

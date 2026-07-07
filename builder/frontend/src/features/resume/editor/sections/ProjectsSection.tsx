@@ -61,7 +61,14 @@ export default function ProjectsSection() {
               <div className="space-y-2">
                 <h3 className="text-lg font-bold">{project.title}</h3>
 
-                <p className="text-gray-600">{project.description}</p>
+               <ul className="mt-2 list-disc pl-5 space-y-1 text-gray-700">
+  {project.description
+    .split("\n")
+    .filter((line) => line.trim() !== "")
+    .map((line, index) => (
+      <li key={index}>{line}</li>
+    ))}
+</ul>
 
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
@@ -74,15 +81,39 @@ export default function ProjectsSection() {
                   ))}
                 </div>
 
-                {project.github && (
-                  <p className="text-sm text-blue-600">
-                    GitHub: {project.github}
-                  </p>
-                )}
+                <div className="mt-3 flex flex-wrap gap-6 text-sm">
+  <div className="flex items-start justify-between">
+  <div>
+    <h3 className="text-[15px] font-bold">
+      {project.title}
+    </h3>
+  </div>
 
-                {project.link && (
-                  <p className="text-sm text-green-600">Live: {project.link}</p>
-                )}
+  <div className="flex gap-3 text-[12px]">
+    {project.link && (
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noreferrer"
+        className="font-medium text-blue-600 hover:underline"
+      >
+        Live Demo
+      </a>
+    )}
+
+    {project.github && (
+      <a
+        href={project.github}
+        target="_blank"
+        rel="noreferrer"
+        className="font-medium text-blue-600 hover:underline"
+      >
+        GitHub
+      </a>
+    )}
+  </div>
+</div>
+</div>
               </div>
 
               <div className="flex gap-2">

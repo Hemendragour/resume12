@@ -96,6 +96,8 @@ import { create } from "zustand";
 
 import type {
   Resume,
+  ResumeSection,
+  CustomSection,
 } from "../features/resume/types/resume.types";
 
 interface ResumeState {
@@ -210,6 +212,44 @@ updateResumeSettings: (
 
 updateTemplate: (
   templateId: Resume["templateId"]
+) => void;
+
+updateSections: (
+  sections: ResumeSection[]
+) => void;
+
+toggleSection: (
+  id: string
+) => void;
+
+addCustomSection: (
+  title: string
+) => void;
+
+addCustomSectionItem: (
+  sectionId: string
+) => void;
+
+updateCustomSectionItem: (
+  sectionId: string,
+  itemId: string,
+  field: "title" | "subtitle" | "startDate" | "endDate" | "description",
+  value: string
+) => void;
+
+deleteCustomSectionItem: (
+  sectionId: string,
+  itemId: string
+) => void;
+
+
+renameCustomSection: (
+  sectionId: string,
+  title: string
+) => void;
+
+deleteCustomSection: (
+  sectionId: string
 ) => void;
 
 }
@@ -642,8 +682,249 @@ removeInterest: (interest) =>
       };
     }),
 
+
+    updateSections: (sections) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        sections,
+      },
+    };
+  }),
+
+toggleSection: (id) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        sections: state.resume.sections.map((section) =>
+          section.id === id
+            ? {
+                ...section,
+                enabled: !section.enabled,
+              }
+            : section
+        ),
+      },
+    };
+  }),
+
+  addCustomSection: (title) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    const id = title
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+
+    // Duplicate section mat add karo
+    const exists =
+      state.resume.customSections.some(
+        (section) => section.id === id
+      );
+
+    if (exists) return state;
+
+    const nextOrder =
+      state.resume.sections.length + 1;
+
+    const newCustomSection: CustomSection = {
+      id,
+      type: "custom",
+      title,
+      enabled: true,
+      order: nextOrder,
+      items: [],
+    };
+
+    return {
+      resume: {
+        ...state.resume,
+
+        customSections: [
+          ...state.resume.customSections,
+          newCustomSection,
+        ],
+
+        sections: [
+          ...state.resume.sections,
+          {
+            id,
+            type: "custom",
+            title,
+            enabled: true,
+            order: nextOrder,
+          },
+        ],
+      },
+    };
+  }),
  
 
+  addCustomSectionItem: (sectionId) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+
+        customSections:
+          state.resume.customSections.map((section) => {
+            if (section.id !== sectionId)
+              return section;
+
+            return {
+              ...section,
+
+              items: [
+                ...section.items,
+                {
+                  id: crypto.randomUUID(),
+
+                  title: "",
+
+                  subtitle: "",
+
+                  startDate: "",
+
+                  endDate: "",
+
+                  description: "",
+                },
+              ],
+            };
+          }),
+      },
+    };
+  }),
+
+
+updateCustomSectionItem: (
+  sectionId,
+  itemId,
+  field,
+  value
+) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map(
+          (section) => {
+            if (section.id !== sectionId)
+              return section;
+
+            return {
+              ...section,
+              items: section.items.map((item) =>
+                item.id === itemId
+                  ? {
+                      ...item,
+                      [field]: value,
+                    }
+                  : item
+              ),
+            };
+          }
+        ),
+      },
+    };
+  }),
+  
+deleteCustomSectionItem: (
+  sectionId,
+  itemId
+) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        customSections:
+          state.resume.customSections.map(
+            (section) => {
+              if (section.id !== sectionId)
+                return section;
+
+              return {
+                ...section,
+                items: section.items.filter(
+                  (item) => item.id !== itemId
+                ),
+              };
+            }
+          ),
+      },
+    };
+  }),
+
+  renameCustomSection: (
+  sectionId,
+  title
+) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+
+        customSections:
+          state.resume.customSections.map((section) =>
+            section.id === sectionId
+              ? {
+                  ...section,
+                  title,
+                }
+              : section
+          ),
+
+        sections:
+          state.resume.sections.map((section) =>
+            section.id === sectionId
+              ? {
+                  ...section,
+                  title,
+                }
+              : section
+          ),
+      },
+    };
+  }),
+
+deleteCustomSection: (
+  sectionId
+) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+
+        customSections:
+          state.resume.customSections.filter(
+            (section) =>
+              section.id !== sectionId
+          ),
+
+        sections:
+          state.resume.sections.filter(
+            (section) =>
+              section.id !== sectionId
+          ),
+      },
+    };
+  }),
 
   // UNSER SAB 
   }));

@@ -1,99 +1,38 @@
+ 
+
+import SortableSectionList from "../dragdrop/SortableSectionList";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import {
-  User,
-  FileText,
-  Briefcase,
-  GraduationCap,
-  FolderGit2,
-  Wrench,
-  Languages,
-  Award,
-  Medal,
-  Settings,
   LayoutTemplate,
-  Heart,
+  Settings,
 } from "lucide-react";
+
+import AddSectionModal from "../modals/AddSectionModal";
+import { useResumeStore } from "../../../../store/resume.store";
 
 interface Props {
   activeSection: string;
   onSectionChange: (section: string) => void;
 }
 
-const sections = [
-  {
-    id: "personal",
-    title: "Personal Info",
-    icon: User,
-  },
-  {
-    id: "summary",
-    title: "Summary",
-    icon: FileText,
-  },
-  {
-    id: "experience",
-    title: "Experience",
-    icon: Briefcase,
-  },
-  {
-    id: "education",
-    title: "Education",
-    icon: GraduationCap,
-  },
-  {
-    id: "projects",
-    title: "Projects",
-    icon: FolderGit2,
-  },
-  {
-    id: "skills",
-    title: "Skills",
-    icon: Wrench,
-  },
-  {
-    id: "languages",
-    title: "Languages",
-    icon: Languages,
-  },
-  {
-    id: "certifications",
-    title: "Certificates",
-    icon: Award,
-  },
-  {
-    id: "awards",
-    title: "Awards",
-    icon: Medal,
-  },
-  {
-    id: "interests",
-    title: "Interests",
-    icon: Heart,
-  },
-
-  // Divider
-
-  {
-    id: "templates",
-    title: "Templates",
-    icon: LayoutTemplate,
-  },
-
-  {
-    id: "settings",
-    title: "Settings",
-    icon: Settings,
-  },
-];
-
-console.log(sections.length);
-console.log(sections);
-
 export default function EditorSidebar({
   activeSection,
   onSectionChange,
 }: Props) {
+
+  const [openAddSectionModal, setOpenAddSectionModal] =
+  useState(false);
+
+  const addCustomSection = useResumeStore(
+  (state) => state.addCustomSection
+);
+
+const handleAddSection = (title: string) => {
+  addCustomSection(title);
+};
   return (
-   <aside className="w-72 bg-white border-r flex-shrink-0 overflow-y-auto">
+    <aside className="w-72 bg-white border-r flex-shrink-0 overflow-y-auto">
       <div className="p-6 border-b">
         <h2 className="text-xl font-bold">Resume Editor</h2>
 
@@ -102,27 +41,55 @@ export default function EditorSidebar({
         </p>
       </div>
 
-      <div className="p-4 space-y-2">
-        {sections.map((section) => {
-          const Icon = section.icon;
+      <div className="p-4">
+        <SortableSectionList
+          activeSection={activeSection}
+          onSectionChange={onSectionChange}
+        />
+<div className="mt-6 border-t pt-4 space-y-2">
 
-          return (
-            <button
-              key={section.id}
-              onClick={() => onSectionChange(section.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition
-              ${
-                activeSection === section.id
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-100"
-              }`}
-            >
-              <Icon size={20} />
+  <button
+    onClick={() => onSectionChange("templates")}
+    className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 transition ${
+      activeSection === "templates"
+        ? "bg-blue-600 text-white"
+        : "hover:bg-slate-100"
+    }`}
+  >
+    <LayoutTemplate size={20} />
+    Templates
+  </button>
 
-              {section.title}
-            </button>
-          );
-        })}
+  <button
+    onClick={() => onSectionChange("settings")}
+    className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 transition ${
+      activeSection === "settings"
+        ? "bg-blue-600 text-white"
+        : "hover:bg-slate-100"
+    }`}
+  >
+    <Settings size={20} />
+    Settings
+  </button>
+
+</div>
+        <div className="mt-4 border-t pt-4">
+
+
+  <button
+    onClick={() => setOpenAddSectionModal(true)}
+    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-blue-500 py-3 text-blue-600 transition hover:bg-blue-50"
+  >
+    <Plus size={18} />
+    Add Section
+  </button>
+</div>
+
+<AddSectionModal
+  open={openAddSectionModal}
+  onClose={() => setOpenAddSectionModal(false)}
+  onSelect={handleAddSection}
+/>
       </div>
     </aside>
   );

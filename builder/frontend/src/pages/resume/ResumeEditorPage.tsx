@@ -26,6 +26,9 @@ import ATSScoreCard from "../../features/ats/components/ATSScoreCard";
 
 import { useATSScore } from "../../features/ats/hooks/useATSScore";
 
+
+import DynamicEditorRenderer from "../../features/resume/editor/components/DynamicEditorRenderer";
+
 import ResumeCompletionCard from "../../features/resume/components/ResumeCompletionCard";
 
 import { useResumeCompletion } from "../../features/resume/hooks/useResumeCompletion";
@@ -120,24 +123,9 @@ export default function ResumeEditorPage() {
                 </p>
 
                 {/* Dynamic Forms */}
-                {activeSection === "personal" && <PersonalInfoSection />}
-                {activeSection === "summary" && <SummarySection />}
-                {activeSection === "experience" && <ExperienceSection />}
-                {activeSection === "education" && <EducationSection />}
-                {activeSection === "projects" && <ProjectsSection />}
-                {activeSection === "skills" && <SkillsSection />}
-                {activeSection === "languages" && <LanguagesSection />}
-                {activeSection === "certifications" && (
-                  <CertificationsSection />
-                )}
-                {activeSection === "interests" && <InterestsSection />}
-
-                {activeSection === "awards" && (
-                  <div className="rounded-xl border-2 border-dashed p-12 text-center text-gray-500">
-                    <AwardsSection />
-                  </div>
-                )}
-                {activeSection === "templates" && <TemplatesSection />}
+               <DynamicEditorRenderer
+  activeSection={activeSection}
+/>
               </div>
             </div>
           </main>

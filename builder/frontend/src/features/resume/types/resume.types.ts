@@ -18,6 +18,7 @@ export interface CreateResumeRequest {
   title: string;
   targetRole: string;
   templateId: ResumeTemplate;
+ 
 }
 
 export interface PersonalInfo {
@@ -53,10 +54,40 @@ export interface Education {
 
 export interface Project {
   title: string;
+
+  role?: string;
+
+  startDate: string;
+
+  endDate?: string;
+
+  currentlyWorking?: boolean;
+
   description: string;
+
   technologies: string[];
-  link?: string;
+
   github?: string;
+
+  link?: string;
+}
+
+export interface CustomSectionItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+export interface CustomSection {
+  id: string;
+  type: "custom";
+  title: string;
+  enabled: boolean;
+  order: number;
+  items: CustomSectionItem[];
 }
 
 export interface Resume {
@@ -66,6 +97,7 @@ export interface Resume {
   status: "draft" | "completed";
   targetRole: string;
 templateId: ResumeTemplate;
+sections: ResumeSection[];
   personalInfo: PersonalInfo;
   summary: string;
   skills: string[];
@@ -76,6 +108,31 @@ templateId: ResumeTemplate;
   languages: string[];
   awards: string[];             // string[] hi hai
   interests: string[];
+  customSections: CustomSection[];
   createdAt: string;
   updatedAt: string;
+}
+
+
+export interface ResumeSection {
+  id: string;
+
+  type:
+    | "personalInfo"
+    | "summary"
+    | "experience"
+    | "education"
+    | "skills"
+    | "projects"
+    | "languages"
+    | "certifications"
+    | "awards"
+    | "interests"
+    | "custom";
+
+  title: string;
+
+  enabled: boolean;
+
+  order: number;
 }

@@ -320,7 +320,7 @@ import { logActivity } from "../../services/activity.service";
 import { ActivityTypes } from "../../models/activity.model";
 
 import { Request, Response, NextFunction } from "express";
-import { Resume } from "../../models/resume.model";
+import { Resume, DefaultResumeSections, } from "../../models/resume.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiError } from "../../utils/ApiError";
 import { AuthRequest } from "../../middleware/auth.middleware";
@@ -341,6 +341,7 @@ export const createResume = asyncHandler(
       title: data.title,
       targetRole: data.targetRole ?? "",
       templateId: data.templateId ?? "technical-developer",
+      sections: DefaultResumeSections,
       version: 1,
       status: "draft",
       personalInfo: {

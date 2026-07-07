@@ -100,6 +100,46 @@ const projectSchema = z.object({
   github: z.string().url().optional(),
 });
 
+const resumeSectionSchema = z.object({
+  id: z.string(),
+
+  type: z.string(),
+
+  title: z.string(),
+
+  enabled: z.boolean(),
+
+  order: z.number(),
+});
+
+const customSectionItemSchema = z.object({
+  id: z.string(),
+
+  title: z.string().min(1),
+
+  subtitle: z.string().optional(),
+
+  startDate: z.string().optional(),
+
+  endDate: z.string().optional(),
+
+  description: z.string().optional(),
+});
+
+const customSectionSchema = z.object({
+  id: z.string(),
+
+  type: z.literal("custom"),
+
+  title: z.string().min(1),
+
+  enabled: z.boolean(),
+
+  order: z.number(),
+
+  items: z.array(customSectionItemSchema),
+});
+
 export const createResumeSchema = z.object({
   title: z.string().min(2, "Resume title is required"),
 
@@ -155,6 +195,14 @@ export const createResumeSchema = z.object({
   interests: z.array(z.string()).optional(),
 
   templateId: z.string().optional(),
+
+sections: z
+  .array(resumeSectionSchema)
+  .optional(),
+
+customSections: z
+  .array(customSectionSchema)
+  .optional(),
 });
 
 export const updateResumeSchema =

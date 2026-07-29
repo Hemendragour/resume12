@@ -29,13 +29,12 @@ export default function SortableSectionList({
   const resume = useResumeStore((state) => state.resume);
 
   const updateSections = useResumeStore((state) => state.updateSections);
-  const toggleSection = useResumeStore(
-  (state) => state.toggleSection
-);
+  const toggleSection = useResumeStore((state) => state.toggleSection);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
   if (!resume) return null;
+  console.log("Resume Sections:", resume.sections);
 
   const sections = [...resume.sections].sort((a, b) => a.order - b.order);
 
@@ -67,15 +66,23 @@ export default function SortableSectionList({
       <SortableContext items={sections} strategy={verticalListSortingStrategy}>
         <div className="space-y-2">
           {sections.map((section) => (
-           <SortableSectionItem
-  key={section.id}
-  id={section.id}
-  title={section.title}
-  enabled={section.enabled}
-  active={activeSection === section.id}
-  onClick={() => onSectionChange(section.id)}
-  onToggle={() => toggleSection(section.id)}
-/>
+            <SortableSectionItem
+              key={section.id}
+              id={section.id}
+              title={section.title}
+              enabled={section.enabled}
+              active={
+                section.type === "custom"
+                  ? activeSection === section.id
+                  : activeSection === section.type
+              }
+              onClick={() =>
+                onSectionChange(
+                  section.type === "custom" ? section.id : section.type,
+                )
+              }
+              onToggle={() => toggleSection(section.id)}
+            />
           ))}
         </div>
       </SortableContext>

@@ -1,0 +1,81 @@
+import type { ResumeSection } from "../types/resume.types";
+
+export const DefaultResumeSections: ResumeSection[] = [
+  {
+    id: "personalInfo",
+    type: "personalInfo",
+    title: "Personal Info",
+    enabled: true,
+    order: 1,
+  },
+  {
+    id: "summary",
+    type: "summary",
+    title: "Summary",
+    enabled: true,
+    order: 2,
+  },
+  {
+    id: "experience",
+    type: "experience",
+    title: "Experience",
+    enabled: true,
+    order: 3,
+  },
+  {
+    id: "education",
+    type: "education",
+    title: "Education",
+    enabled: true,
+    order: 4,
+  },
+  {
+    id: "internships",
+    type: "internships",
+    title: "Internships",
+    enabled: true,
+    order: 5,
+  },
+  {
+    id: "skills",
+    type: "skills",
+    title: "Skills",
+    enabled: true,
+    order: 6,
+  },
+  {
+    id: "projects",
+    type: "projects",
+    title: "Projects",
+    enabled: true,
+    order: 7,
+  },
+  {
+    id: "languages",
+    type: "languages",
+    title: "Languages",
+    enabled: true,
+    order: 8,
+  },
+  {
+    id: "certifications",
+    type: "certifications",
+    title: "Certificates",
+    enabled: true,
+    order: 9,
+  },
+  {
+    id: "awards",
+    type: "awards",
+    title: "Awards",
+    enabled: true,
+    order: 10,
+  },
+  {
+    id: "interests",
+    type: "interests",
+    title: "Interests",
+    enabled: true,
+    order: 11,
+  },
+];

@@ -30,11 +30,10 @@ export default function SortableSectionItem({
   };
 
   return (
-    <button
+    <div
       ref={setNodeRef}
       style={style}
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition
+      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 transition
       ${active ? "bg-blue-600 text-white" : "hover:bg-slate-100"}
       ${!enabled ? "opacity-50" : ""}`}
     >
@@ -47,8 +46,9 @@ export default function SortableSectionItem({
       </div>
 
       <div className="flex flex-1 items-center justify-between">
-        <span>{title}</span>
-
+        <div onClick={onClick} className="flex-1 cursor-pointer">
+          {title}
+        </div>
         <button
           type="button"
           onClick={(e) => {
@@ -60,6 +60,6 @@ export default function SortableSectionItem({
           {enabled ? <Eye size={18} /> : <EyeOff size={18} />}
         </button>
       </div>
-    </button>
+    </div>
   );
 }

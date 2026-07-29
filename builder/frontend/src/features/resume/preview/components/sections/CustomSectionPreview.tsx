@@ -1,4 +1,6 @@
 import { useResumeStore } from "../../../../../store/resume.store";
+import ResumeSection from "../shared/ResumeSection";
+import SectionTitle from "../shared/SectionTitle";
 
 interface Props {
   sectionId: string;
@@ -14,10 +16,8 @@ export default function CustomSectionPreview({ sectionId }: Props) {
   if (!section || section.items.length === 0) return null;
 
   return (
-    <section className="mt-8">
-      <h2 className="border-b pb-2 text-lg font-bold uppercase">
-        {section.title}
-      </h2>
+    <ResumeSection title={section.title}>
+      <SectionTitle title={section.title} />
 
       <div className="mt-4 space-y-5">
         {section.items.map((item) => (
@@ -44,6 +44,6 @@ export default function CustomSectionPreview({ sectionId }: Props) {
           </div>
         ))}
       </div>
-    </section>
+    </ResumeSection>
   );
 }

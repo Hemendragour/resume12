@@ -136,18 +136,21 @@ export default function AtsTemplate() {
       {/* Skills */}
 
       <section className="mt-8">
+  <h2 className="font-bold uppercase border-b pb-1">
+    Skills
+  </h2>
 
-        <h2 className="font-bold uppercase border-b pb-1">
-          Skills
-        </h2>
-
-        <p className="mt-3">
-
-          {resume.skills.join(" • ")}
-
-        </p>
-
-      </section>
+  <div className="mt-3 space-y-2">
+    {resume.skills.map((category, index) => (
+      <p key={index}>
+        <span className="font-bold">
+          {category.title}:
+        </span>{" "}
+        {category.skills.join(", ")}
+      </p>
+    ))}
+  </div>
+</section>
 
     </div>
   );

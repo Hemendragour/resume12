@@ -4,13 +4,17 @@ export interface IAIUsage extends Document {
   userId: mongoose.Types.ObjectId;
 
   feature:
-  | "generate-summary"
-  | "generate-experience"
-  | "rewrite-experience"
-  | "suggest-skills"
-  | "generate-project"
-  | "ats-analysis"
-  | "generate-project-description";
+    | "generate-summary"
+    | "generate-experience"
+    | "rewrite-experience"
+    | "suggest-skills"
+    | "generate-project"
+    | "ats-analysis"
+    | "generate-project-description"
+    | "generate-coursework"
+    | "generate-custom-section"
+      | "generate-internship";
+
   tokensUsed: number;
 
   createdAt: Date;

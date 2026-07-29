@@ -146,7 +146,7 @@ export async function getDashboardData(
       ),
 
     recentResumes:
-      resumes.slice(0, 5),
+      resumes.slice(0, 15),
 
 
       recentActivities,

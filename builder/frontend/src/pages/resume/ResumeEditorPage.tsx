@@ -77,31 +77,18 @@ export default function ResumeEditorPage() {
           saveStatus={saveStatus}
         />
 
-        <div className="flex justify-end border-b bg-white px-6 py-3">
-          {ats && <ATSScoreCard score={ats.score} />}
-          {resume && <ExportPdfButton resume={resume} />}
-        </div>
-        {/* {
-  ats && (
-    <ATSSuggestions
-      missingSections={
-        ats.missingSections
-      }
-      suggestions={
-        ats.suggestions
-      }
-    />
-  ) */}
-        {/* } */}
+       <div className="flex justify-end border-b bg-white px-6 py-3 gap-3">
+  {ats && <ATSScoreCard score={ats.score} />}
+  
+  {resume && <ExportPdfButton resume={resume} />}
+</div>
 
-        {
-  completion && (
-    <ResumeCompletionCard
-  percentage={completion.percentage}
-  missing={completion.missing}
-/>
-  )
-}
+{completion && (
+  <ResumeCompletionCard
+    percentage={completion.percentage}
+    missing={completion.missing}
+  />
+)}
 
         <div className="flex flex-1 overflow-hidden">
           {/* Left Sidebar */}

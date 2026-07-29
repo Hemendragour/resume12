@@ -13,6 +13,7 @@ import SettingsSection from "../sections/SettingsSection";
 
 import { useResumeStore } from "../../../../store/resume.store";
 import CustomSection from "../sections/CustomSection";
+import InternshipSection from "../../components/sections/InternshipSection";
 
 interface Props {
   activeSection: string;
@@ -20,6 +21,7 @@ interface Props {
 
 const sectionComponentMap = {
   personalInfo: PersonalInfoSection,
+  internships: InternshipSection, 
   summary: SummarySection,
   experience: ExperienceSection,
   education: EducationSection,
@@ -31,6 +33,7 @@ const sectionComponentMap = {
   interests: InterestsSection,
   templates: TemplatesSection,
   settings: SettingsSection,
+ 
 };
 
 export default function DynamicEditorRenderer({ activeSection }: Props) {

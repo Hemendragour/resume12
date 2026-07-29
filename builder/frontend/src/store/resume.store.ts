@@ -1,95 +1,4 @@
-// import { create } from "zustand";
-
-// import type {
-//   Resume,
-// } from "../features/resume/types/resume.types";
-
-// interface ResumeState {
-//   resume: Resume | null;
-
-//   setResume: (
-//     resume: Resume
-//   ) => void;
-
-//   updatePersonalInfo: (
-//     data: Partial<Resume["personalInfo"]>
-//   ) => void;
-// }
-
-// export const useResumeStore =
-//   create<ResumeState>((set) => ({
-//     resume: null,
-
-//     setResume: (resume) =>
-//       set({
-//         resume,
-//       }),
-
-//     updatePersonalInfo: (data) =>
-//       set((state) => {
-//         if (!state.resume) return state;
-
-//         return {
-//           resume: {
-//             ...state.resume,
-
-//             personalInfo: {
-//               ...state.resume.personalInfo,
-
-//               ...data,
-//             },
-//           },
-//         };
-//       }),
-//   }));
-
-// import { create } from "zustand";
-
-// import type {
-//   Resume,
-// } from "../features/resume/types/resume.types";
-
-// interface ResumeState {
-//   resume: Resume | null;
  
-
-//   setResume: (
-//     resume: Resume
-//   ) => void;
-
-//   updatePersonalInfo: (
-//     data: Partial<Resume["personalInfo"]>
-//   ) => void;
-
-
-    
-// }
-
-// export const useResumeStore =
-//   create<ResumeState>((set) => ({
-//     resume: null,
-
-//     setResume: (resume) =>
-//       set({
-//         resume,
-//       }),
-
-//     updatePersonalInfo: (data) =>
-//       set((state) => {
-//         if (!state.resume) return state;
-
-//         return {
-//           resume: {
-//             ...state.resume,
-
-//             personalInfo: {
-//               ...state.resume.personalInfo,
-//               ...data,
-//             },
-//           },
-//         };
-//       }),
-//   }));
 
 
 import { create } from "zustand";
@@ -98,6 +7,7 @@ import type {
   Resume,
   ResumeSection,
   CustomSection,
+  SkillCategory,
 } from "../features/resume/types/resume.types";
 
 interface ResumeState {
@@ -114,6 +24,8 @@ interface ResumeState {
   updateSummary: (
     summary: string
   ) => void;
+
+  
 
   updateExperience: (
   experience: Resume["experience"]
@@ -135,6 +47,9 @@ updateExperienceItem: (
   experience: Resume["experience"][0]
 ) => void;
 
+addInternship: (internship: Resume["internships"][0]) => void;
+updateInternshipItem: (index: number, internship: Resume["internships"][0]) => void;
+deleteInternship: (index: number) => void;
 
 
 addEducation: (
@@ -150,11 +65,14 @@ deleteEducation: (
   index: number
 ) => void;
 
-addSkill: (skill: string) => void;
+addSkill: (category: string, skill: string) => void;
 
-removeSkill: (skill: string) => void;
+removeSkill: (category: string, skill: string) => void;
 
-updateSkills: (skills: string[]) => void;
+updateSkills: (skills: SkillCategory[]) => void;
+addCategory: (title: string) => void;
+
+removeCategory: (title: string) => void;
 
 addProject: (
   project: Resume["projects"][number]
@@ -170,12 +88,17 @@ deleteProject: (
 ) => void;
 
 
-addLanguage: (
-  language: string
+ addLanguage: (
+  language: { name: string; level: string }
 ) => void;
 
 removeLanguage: (
-  language: string
+  name: string
+) => void;
+
+updateLanguageLevel: (
+  name: string,
+  level: string
 ) => void;
 
 addCertification: (
@@ -251,6 +174,8 @@ renameCustomSection: (
 deleteCustomSection: (
   sectionId: string
 ) => void;
+
+renameSection: (sectionId: string, title: string) => void;
 
 }
 
@@ -398,46 +323,68 @@ deleteEducation: (index) =>
     };
   }),
 
-  addSkill: (skill) =>
+  addSkill: (category, skill) =>
   set((state) => {
     if (!state.resume) return state;
 
-    if (
-      state.resume.skills.some(
-        (s) =>
-          s.toLowerCase() ===
-          skill.toLowerCase()
-      )
-    ) {
-      return state;
+    const exists = state.resume.skills.find(
+  (item) =>
+    item.title.toLowerCase() ===
+    category.toLowerCase()
+);
+
+    if (!exists) {
+      return {
+        resume: {
+          ...state.resume,
+          skills: [
+            ...state.resume.skills,
+            {
+              title: category,
+              skills: [skill],
+            },
+          ],
+        },
+      };
     }
 
     return {
       resume: {
         ...state.resume,
-        skills: [
-          ...state.resume.skills,
-          skill,
-        ],
+        skills: state.resume.skills.map((item) =>
+          item.title.toLowerCase() ===
+category.toLowerCase()
+            ? {
+                ...item,
+                skills: item.skills.includes(skill)
+                  ? item.skills
+                  : [...item.skills, skill],
+              }
+            : item
+        ),
       },
     };
   }),
-
-removeSkill: (skill) =>
+removeSkill: (category, skill) =>
   set((state) => {
     if (!state.resume) return state;
 
     return {
       resume: {
         ...state.resume,
-        skills:
-          state.resume.skills.filter(
-            (s) => s !== skill
-          ),
+        skills: state.resume.skills.map((item) =>
+          item.title === category
+            ? {
+                ...item,
+                skills: item.skills.filter(
+                  (s) => s !== skill
+                ),
+              }
+            : item
+        ),
       },
     };
   }),
-
 
   addProject: (project) =>
   set((state) => {
@@ -486,15 +433,15 @@ deleteProject: (index) =>
   }),
 
 
-  addLanguage: (language) =>
+ addLanguage: (language) =>
   set((state) => {
     if (!state.resume) return state;
 
     if (
       state.resume.languages.some(
         (l) =>
-          l.toLowerCase() ===
-          language.toLowerCase()
+          l.name.toLowerCase() ===
+          language.name.toLowerCase()
       )
     ) {
       return state;
@@ -511,7 +458,7 @@ deleteProject: (index) =>
     };
   }),
 
-removeLanguage: (language) =>
+removeLanguage: (name) =>
   set((state) => {
     if (!state.resume) return state;
 
@@ -520,8 +467,22 @@ removeLanguage: (language) =>
         ...state.resume,
         languages:
           state.resume.languages.filter(
-            (l) => l !== language
+            (l) => l.name !== name
           ),
+      },
+    };
+  }),
+
+updateLanguageLevel: (name, level) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        languages: state.resume.languages.map((l) =>
+          l.name === name ? { ...l, level } : l
+        ),
       },
     };
   }),
@@ -670,7 +631,7 @@ removeInterest: (interest) =>
 
     // ... all your existing actions
 
-  updateSkills: (newSkills: string[]) =>
+ updateSkills: (newSkills: SkillCategory[]) =>
     set((state) => {
       if (!state.resume) return state;
 
@@ -926,6 +887,165 @@ deleteCustomSection: (
     };
   }),
 
+  addCategory: (title) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    if (
+      state.resume.skills.some(
+        (c) => c.title.toLowerCase() === title.toLowerCase()
+      )
+    ) {
+      return state;
+    }
+
+    return {
+      resume: {
+        ...state.resume,
+        skills: [
+          ...state.resume.skills,
+          {
+            title,
+            skills: [],
+          },
+        ],
+      },
+    };
+  }),
+
+
+  // removeCategory: (title) =>
+  // set((state) => {
+  //   if (!state.resume) return state;
+
+  //   return {
+  //     resume: {
+  //       ...state.resume,
+  //       skills: state.resume.skills.filter(
+  //         (c) => c.title !== title
+  //       ),
+  //     },
+  //   };
+  // }),
+
+
+  // removeCategory: (title: string) =>
+  //   set((state) => {
+  //     if (!state.resume) return state;
+
+  //     // Protection for fixed categories
+  //     const fixedCategories = [
+  //       "Languages",
+  //       "Frameworks",
+  //       "Databases",
+  //       "Tools",
+  //       "Others",
+  //     ];
+
+  //     if (fixedCategories.includes(title)) {
+  //       return state; // Fixed categories cannot be deleted
+  //     }
+
+  //     return {
+  //       resume: {
+  //         ...state.resume,
+  //         skills: state.resume.skills.filter(
+  //           (c) => c.title !== title
+  //         ),
+  //       },
+  //     };
+  //   }),
+
+
+  // removeCategory: (title: string) =>
+  // set((state) => {
+  //   if (!state.resume) return state;
+
+  //   return {
+  //     resume: {
+  //       ...state.resume,
+  //       skills: state.resume.skills.filter((c) => c.title !== title),
+  //     },
+  //   };
+  // }),
+
+
+  removeCategory: (title) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    const fixedCategories = [
+      "Languages",
+      "Frameworks",
+      "Databases",
+      "Tools",
+      "Others",
+    ];
+
+    if (fixedCategories.includes(title)) {
+      return state;
+    }
+
+    return {
+      resume: {
+        ...state.resume,
+        skills: state.resume.skills.filter(
+          (c) => c.title !== title
+        ),
+      },
+    };
+  }),
+
+
+  addInternship: (internship) =>
+  set((state) => {
+    if (!state.resume) return state;
+    return {
+      resume: {
+        ...state.resume,
+        internships: [...state.resume.internships, internship],
+      },
+    };
+  }),
+
+updateInternshipItem: (index, internship) =>
+  set((state) => {
+    if (!state.resume) return state;
+    const updated = [...state.resume.internships];
+    updated[index] = internship;
+    return {
+      resume: {
+        ...state.resume,
+        internships: updated,
+      },
+    };
+  }),
+
+deleteInternship: (index) =>
+  set((state) => {
+    if (!state.resume) return state;
+    return {
+      resume: {
+        ...state.resume,
+        internships: state.resume.internships.filter((_, i) => i !== index),
+      },
+    };
+  }),
+
+
+  renameSection: (sectionId, title) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        sections: state.resume.sections.map((section) =>
+          section.id === sectionId ? { ...section, title } : section
+        ),
+      },
+    };
+  }),
   // UNSER SAB 
   }));
 

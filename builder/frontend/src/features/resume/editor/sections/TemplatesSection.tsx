@@ -5,20 +5,28 @@ import TemplateThumbnail from "../components/TemplateThumbnail";
 
 const templates = [
   {
-    id: "technical",
-    title: "Technical",
+    id: "technical-classic",
+    title: "Technical Classic",
+    badge: "99% ATS",
+    bestFor: "Software Engineers",
+    description: "FAANG inspired single-column resume.",
+    popular: true,
+  },
+  {
+    id: "technical-developer",
+    title: "Technical Developer",
     badge: "ATS Friendly",
     bestFor: "Software Engineers",
-    description: "Best for Software Engineers & Developers.",
+    description: "Modern developer resume.",
     popular: false,
   },
   {
-    id: "modern",
-    title: "Modern",
+    id: "modern-professional",
+    title: "Modern Professional",
     badge: "Most Popular",
     bestFor: "Frontend / Full Stack",
-    description: "Clean modern two-column resume.",
-    popular: true,
+    description: "Clean modern resume.",
+    popular: false,
   },
   {
     id: "executive",
@@ -44,7 +52,50 @@ const templates = [
     description: "Maximum ATS compatibility.",
     popular: false,
   },
+  {
+    id: "corporate-band",
+    title: "Corporate Band",
+    badge: "97% ATS",
+    bestFor: "Marketing & Corporate roles",
+    description: "Bold black header band, single column.",
+    popular: false,
+  },
+  {
+    id: "split-label",
+    title: "Split Label",
+    badge: "94% ATS",
+    bestFor: "Creative & Business roles",
+    description: "Elegant label-left layout, pink accents.",
+    popular: false,
+  },
+
+  {
+  id: "classic-serif",
+  title: "Classic Serif",
+  badge: "98% ATS",
+  bestFor: "Operations & Business roles",
+  description: "Centered serif header, clean underlined sections.",
+  popular: false,
+},
+
+{
+  id: "corporate-classic",
+  title: "Corporate Classic",
+  badge: "97% ATS",
+  bestFor: "Marketing & Business roles",
+  description: "Centered bordered headers, clean grid layout.",
+  popular: false,
+},
+{
+  id: "executive-blue",
+  title: "Executive Blue",
+  badge: "96% ATS",
+  bestFor: "Full Stack & Backend Engineers",
+  description: "Bold blue accents, badge certifications, GitHub project links.",
+  popular: false,
+},
 ] as const;
+ 
 
 export default function TemplatesSection() {
   const resume = useResumeStore((state) => state.resume);
@@ -102,7 +153,9 @@ export default function TemplatesSection() {
                     </p>
                   </div>
 
-                  {active && <Check className="text-green-600 mt-0.5" size={22} />}
+                  {active && (
+                    <Check className="text-green-600 mt-0.5" size={22} />
+                  )}
                 </div>
 
                 {/* Badge */}
@@ -114,7 +167,9 @@ export default function TemplatesSection() {
 
                 {/* Best For */}
                 <div className="mt-4 rounded-2xl bg-slate-50 p-3">
-                  <p className="text-xs font-semibold text-slate-500">BEST FOR</p>
+                  <p className="text-xs font-semibold text-slate-500">
+                    BEST FOR
+                  </p>
                   <p className="mt-0.5 text-sm font-medium text-slate-700">
                     {template.bestFor}
                   </p>

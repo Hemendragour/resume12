@@ -34,6 +34,7 @@ export default function DashboardPage() {
   );
 
   const { data, isLoading, refetch } = useDashboard();
+  console.log(data);
 
   if (isLoading || !data) {
     return <div>Loading...</div>;
@@ -194,7 +195,7 @@ export default function DashboardPage() {
   />
 )}
 
-        <RecentActivity />
+        {/* <RecentActivity /> */}
 
         <CreateResumeModal open={open} onClose={() => setOpen(false)} />
       </div>

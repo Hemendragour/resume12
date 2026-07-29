@@ -13,9 +13,7 @@ export default function PersonalInfoPreview() {
         {personalInfo.fullName || "Your Name"}
       </h1>
 
-      <p className="text-blue-600 font-medium mt-2">
-        {personalInfo.title || "Professional Title"}
-      </p>
+      <p className="text-blue-600 font-medium mt-2">{personalInfo.title}</p>
 
       <div className="flex flex-wrap justify-center gap-3 mt-4 text-gray-600">
         {personalInfo.email && <span>{personalInfo.email}</span>}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useResumeStore } from "../../../../store/resume.store";
+// import { DefaultResumeSections } from "../constants/defaultSections";
 
 import {
   getResumeById,
@@ -10,6 +11,7 @@ import {
 import type {
   Resume,
 } from "../../types/resume.types";
+import { DefaultResumeSections } from "../../constants/defaultSections";
 
 export const useResume = () => {
 
@@ -32,10 +34,28 @@ const setResume = useResumeStore(
 
     try {
 
-      const data =
-        await getResumeById(id);
+      const data = await getResumeById(id);
 
-      setResume(data);
+// Add all missing default sections automatically
+const missingSections = DefaultResumeSections.filter(
+  (defaultSection) =>
+    !data.sections.some(
+      (section) => section.type === defaultSection.type
+    )
+);
+
+if (missingSections.length > 0) {
+  data.sections.push(...missingSections);
+
+  data.sections = data.sections
+    .sort((a, b) => a.order - b.order)
+    .map((section, index) => ({
+      ...section,
+      order: index + 1,
+    }));
+}
+
+setResume(data);
 
     } finally {
 

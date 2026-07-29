@@ -150,19 +150,23 @@ export default function TechnicalPdfTemplate({ resume }: Props) {
 
       {/* SKILLS - Empty State Handled */}
       <View style={styles.section}>
-        <Text style={styles.heading}>SKILLS</Text>
-        {resume.skills?.length ? (
-          <View style={styles.skillContainer}>
-            {resume.skills.map((skill, i) => (
-              <Text key={i} style={styles.skill}>
-                {skill}
-              </Text>
-            ))}
-          </View>
-        ) : (
-          <Text>No skills added.</Text>
-        )}
+  <Text style={styles.heading}>SKILLS</Text>
+
+  {resume.skills?.length ? (
+    resume.skills.map((category, i) => (
+      <View key={i} style={{ marginBottom: 6 }}>
+        <Text style={styles.skill}>
+          <Text style={{ fontWeight: "bold" }}>
+            {category.title}:
+          </Text>{" "}
+          {category.skills.join(", ")}
+        </Text>
       </View>
+    ))
+  ) : (
+    <Text>No skills added.</Text>
+  )}
+</View>
 
       {/* LANGUAGES */}
       <View style={styles.section}>

@@ -21,9 +21,7 @@ export const generateJSON = async <T>(
 ): Promise<T> => {
   const response = await ai.models.generateContent({
     model: env.GEMINI_MODEL,
-
     contents: prompt,
-
     config: {
       responseMimeType: "application/json",
     },
@@ -31,5 +29,10 @@ export const generateJSON = async <T>(
 
   const text = response.text ?? "{}";
 
-  return JSON.parse(text) as T;
+  try {
+    return JSON.parse(text) as T;
+  } catch (err) {
+    console.error("Gemini returned invalid JSON:", text);
+    throw new Error("AI response could not be parsed. Please try again.");
+  }
 };

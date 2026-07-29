@@ -1,5 +1,6 @@
 export const ResumeTemplates = {
   TECHNICAL_DEVELOPER: "technical-developer",
+  TECHNICAL_CLASSIC: "technical-classic",
   MODERN_PROFESSIONAL: "modern-professional",
   MINIMAL_CLEAN: "minimal-clean",
   EXECUTIVE: "executive",
@@ -8,10 +9,17 @@ export const ResumeTemplates = {
   CREATIVE: "creative",
   CLASSIC: "classic",
   CORPORATE: "corporate",
+  CORPORATE_BAND: "corporate-band",
+  SPLIT_LABEL: "split-label", 
+   CLASSIC_SERIF: "classic-serif", 
+    CORPORATE_CLASSIC: "corporate-classic", // ADD THIS LINE
+    EXECUTIVE_BLUE: "executive-blue",
 } as const;
 
 export type ResumeTemplate =
   typeof ResumeTemplates[keyof typeof ResumeTemplates];
+
+ 
 
 
 export interface CreateResumeRequest {
@@ -41,15 +49,32 @@ export interface Experience {
   currentlyWorking: boolean;
   responsibilities: string[];
   achievements?: string[];
+   location?: string;
 }
 
+// export interface Education {
+//   institution: string;
+//   degree: string;
+//   fieldOfStudy?: string;
+//   startYear: number;
+//   endYear?: number;
+//   cgpa?: string;
+// }
+
+// \
+// resume.types.ts — education entry
 export interface Education {
   institution: string;
   degree: string;
-  fieldOfStudy?: string;
+  fieldOfStudy: string;
+  location?: string;
+  startMonth?: string;
   startYear: number;
-  endYear?: number;
+  endMonth?: string;
+  endYear: number;
+  current?: boolean;
   cgpa?: string;
+  coursework?: string; // comma-separated, e.g. "OOP, DBMS, DSA, Machine Learning"
 }
 
 export interface Project {
@@ -89,6 +114,24 @@ export interface CustomSection {
   order: number;
   items: CustomSectionItem[];
 }
+export interface SkillCategory {
+  title: string;
+  skills: string[];
+}
+export interface LanguageItem {
+  name: string;
+  level: string;
+}
+
+export interface Internship {
+  company: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  currentlyInterning?: boolean;
+  responsibilities: string[];
+  achievements: string[];
+}
 
 export interface Resume {
   _id: string;
@@ -100,17 +143,19 @@ templateId: ResumeTemplate;
 sections: ResumeSection[];
   personalInfo: PersonalInfo;
   summary: string;
-  skills: string[];
+skills: SkillCategory[];
   experience: Experience[];
   education: Education[];
   projects: Project[];
   certifications: string[];     // string[] hi hai
-  languages: string[];
+  languages: LanguageItem[];
   awards: string[];             // string[] hi hai
   interests: string[];
   customSections: CustomSection[];
   createdAt: string;
   updatedAt: string;
+   internships: Internship[]; 
+   
 }
 
 
@@ -128,7 +173,8 @@ export interface ResumeSection {
     | "certifications"
     | "awards"
     | "interests"
-    | "custom";
+    | "custom"
+    | "internships";
 
   title: string;
 

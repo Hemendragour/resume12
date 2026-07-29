@@ -2,6 +2,9 @@ import Input from "../../../../components/ui/Input";
 import Textarea from "../../../../components/ui/Textarea";
 import { useResumeStore } from "../../../../store/resume.store";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useGenerateCustomSection } from "../../../ai/hooks/useGenerateCustomSection";
+import AICustomSectionContextModal from "../../../ai/components/AICustomSectionContextModal";
 
 // interface Props {
 //   sectionId: string;
@@ -62,6 +65,42 @@ export default function CustomSectionItemForm({
     (state) => state.updateCustomSectionItem,
   );
 
+  const [showContextModal, setShowContextModal] = useState(false);
+const { mutateAsync: generateDescription, isPending: isGenerating } =
+  useGenerateCustomSection();
+
+const handleGenerateClick = () => {
+  if (!item.title?.trim()) {
+    alert("Please enter the title first.");
+    return;
+  }
+  setShowContextModal(true);
+};
+
+const handleContextSubmit = async (context: {
+  whatDone: string;
+  problemSolved: string;
+  teamRole: string;
+  result: string;
+}) => {
+  try {
+    const result = await generateDescription({
+      sectionType: sectionId,
+      itemTitle: item.title,
+      itemSubtitle: item.subtitle,
+      context,
+    });
+
+    updateCustomSectionItem(sectionId, item.id, "description", result);
+    setShowContextModal(false);
+  } catch (error) {
+    console.error("Generate failed:", error);
+    alert("Failed to generate with AI. Please try again.");
+  }
+};
+
+  
+
   const deleteCustomSectionItem = useResumeStore(
     (state) => state.deleteCustomSectionItem,
   );
@@ -120,19 +159,31 @@ export default function CustomSectionItemForm({
         />
       </div>
 
-      <Textarea
-        label={config.fields.description}
-        placeholder={config.fields.description}
-        value={item.description ?? ""}
-        onChange={(e) =>
-          updateCustomSectionItem(
-            sectionId,
-            item.id,
-            "description",
-            e.target.value,
-          )
-        }
-      />
+     <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium">{config.fields.description}</label>
+          <button
+            type="button"
+            onClick={handleGenerateClick}
+            disabled={isGenerating}
+            className="rounded-lg bg-violet-600 px-3 py-1.5 text-white text-sm flex items-center gap-2 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isGenerating ? "Generating..." : "✨ Generate with AI"}
+          </button>
+        </div>
+        <Textarea
+          placeholder={config.fields.description}
+          value={item.description ?? ""}
+          onChange={(e) =>
+            updateCustomSectionItem(
+              sectionId,
+              item.id,
+              "description",
+              e.target.value,
+            )
+          }
+        />
+      </div>
 
       <div className="flex justify-end">
         <button
@@ -144,6 +195,13 @@ export default function CustomSectionItemForm({
           Delete Item
         </button>
       </div>
+
+      <AICustomSectionContextModal
+        open={showContextModal}
+        onClose={() => setShowContextModal(false)}
+        onSubmit={handleContextSubmit}
+        loading={isGenerating}
+      />
     </div>
   );
 }

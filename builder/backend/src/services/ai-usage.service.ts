@@ -8,7 +8,10 @@ type AIFeature =
   | "generate-project"
   | "ats-analysis"
   | "generate-experience"
-  | "generate-project-description";
+  | "generate-project-description"
+   | "generate-coursework"
+    | "generate-custom-section"
+    | "generate-internship";
 
 export const trackAIUsage = async (
   userId: string,

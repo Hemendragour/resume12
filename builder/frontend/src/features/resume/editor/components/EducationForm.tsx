@@ -1,3 +1,7 @@
+ 
+import { useGenerateCoursework } from "../../../ai/hooks/useGenerateCoursework";
+import { useResumeStore as useResumeStoreAI } from "../../../../store/resume.store";
+
 import { useForm } from "react-hook-form";
 
 import Button from "../../../../components/ui/Button";
@@ -14,6 +18,11 @@ interface Props {
 
 type EducationFormData = Resume["education"][number];
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
 export default function EducationForm({
   onClose,
   editIndex,
@@ -25,16 +34,51 @@ export default function EducationForm({
     (state) => state.updateEducationItem,
   );
 
-  const { register, handleSubmit, reset } = useForm<EducationFormData>({
+  const { register, handleSubmit, reset, watch,setValue } = useForm<EducationFormData>({
     defaultValues: initialData ?? {
       institution: "",
       degree: "",
       fieldOfStudy: "",
+      location: "",
+      startMonth: "Jan",
       startYear: new Date().getFullYear(),
+      endMonth: "Jan",
       endYear: new Date().getFullYear(),
+      current: false,
       cgpa: "",
+      coursework: "",
     },
   });
+
+
+  const resume = useResumeStore((state) => state.resume);
+const degree = watch("degree");
+const fieldOfStudy = watch("fieldOfStudy");
+
+const { mutateAsync: generateCoursework, isPending: isGeneratingCoursework } =
+  useGenerateCoursework();
+
+const handleGenerateCoursework = async () => {
+  if (!degree?.trim() || !fieldOfStudy?.trim()) {
+    alert("Please enter Degree and Field of Study first.");
+    return;
+  }
+
+  try {
+    const result = await generateCoursework({
+      degree: degree.trim(),
+      fieldOfStudy: fieldOfStudy.trim(),
+      targetRole: resume?.targetRole,
+    });
+
+    setValue("coursework", result);
+  } catch (error) {
+    console.error("Coursework generation failed:", error);
+    alert("Failed to generate coursework. Please try again.");
+  }
+};
+
+  const isCurrent = watch("current");
 
   const onSubmit = (data: EducationFormData) => {
     if (editIndex !== undefined) {
@@ -60,42 +104,102 @@ export default function EducationForm({
       <div className="grid grid-cols-2 gap-6">
         <input
           {...register("institution")}
-          placeholder="College"
+          placeholder="College / University"
+          className="h-12 rounded-lg border px-4"
+        />
+
+        <input
+          {...register("location")}
+          placeholder="Location (e.g. Hyderabad, India)"
           className="h-12 rounded-lg border px-4"
         />
 
         <input
           {...register("degree")}
-          placeholder="Degree"
+          placeholder="Degree (e.g. B.E., B.Tech)"
           className="h-12 rounded-lg border px-4"
         />
 
         <input
           {...register("fieldOfStudy")}
-          placeholder="Computer Science"
+          placeholder="Field of Study (e.g. Computer Science)"
           className="h-12 rounded-lg border px-4"
         />
 
-        <input
-          type="number"
-          {...register("startYear", {
-            valueAsNumber: true,
-          })}
-          className="h-12 rounded-lg border px-4"
-        />
+        {/* Start date */}
+        <div className="flex gap-2">
+          <select
+            {...register("startMonth")}
+            className="h-12 w-1/2 rounded-lg border px-2"
+          >
+            {MONTHS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
 
-        <input
-          type="number"
-          {...register("endYear", {
-            valueAsNumber: true,
-          })}
-          className="h-12 rounded-lg border px-4"
-        />
+          <input
+            type="number"
+            {...register("startYear", { valueAsNumber: true })}
+            placeholder="Start Year"
+            className="h-12 w-1/2 rounded-lg border px-2"
+          />
+        </div>
+
+        {/* End date */}
+        <div className="flex gap-2">
+          <select
+            {...register("endMonth")}
+            disabled={isCurrent}
+            className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+          >
+            {MONTHS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="number"
+            {...register("endYear", { valueAsNumber: true })}
+            disabled={isCurrent}
+            placeholder="End Year"
+            className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+          />
+        </div>
 
         <input
           {...register("cgpa")}
-          placeholder="CGPA"
+          placeholder="CGPA / GPA (e.g. 7.96/10)"
           className="h-12 rounded-lg border px-4"
+        />
+
+        <label className="flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" {...register("current")} />
+          Currently studying here
+        </label>
+      </div>
+
+    <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium text-gray-700">
+            Relevant Coursework
+          </label>
+          <button
+            type="button"
+            onClick={handleGenerateCoursework}
+            disabled={isGeneratingCoursework}
+            className="rounded-lg bg-violet-600 px-3 py-1.5 text-white text-sm flex items-center gap-2 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isGeneratingCoursework ? "Generating..." : "✨ Generate with AI"}
+          </button>
+        </div>
+        <textarea
+          {...register("coursework")}
+          placeholder="Relevant Coursework (comma-separated, e.g. OOP, DBMS, DSA, Machine Learning)"
+          className="min-h-[80px] w-full rounded-lg border px-4 py-3"
         />
       </div>
 

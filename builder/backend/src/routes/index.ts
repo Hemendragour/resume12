@@ -4,7 +4,7 @@ import authRoutes from "../modules/auth/auth.routes";
 import resumeRoutes from "../modules/resume/resume.routes";
 import exportRoutes from "../modules/export/export.routes";
 import aiRoutes from "../modules/ai/ai.routes";
-import atsRoutes from "../modules/ats/ats.routes";
+// import atsRoutes from "../modules/ats/ats.routes";
 import { aiRateLimiter } from "../middleware/aiRateLimit.middleware";
 // import { protect } from "../middleware/auth.middleware";
 import analyticsRoutes
@@ -32,7 +32,7 @@ router.use("/export", exportRoutes);
 
 router.use("/ai", aiRoutes);
 
-router.use("/ats", atsRoutes);
+// router.use("/ats", atsRoutes);
 
 router.use(
   "/analytics",

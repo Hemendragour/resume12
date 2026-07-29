@@ -1,25 +1,138 @@
+// import { useResumeStore } from "../../../../../store/resume.store";
+
+// export default function SkillsPreview() {
+//   const resume = useResumeStore((state) => state.resume);
+
+//   if (!resume) return null;
+
+//   return (
+//     <section className="mt-6">
+//       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
+//         Skills
+//       </h2>
+
+//       {resume.skills.length === 0 ? (
+//         <p className="mt-3 text-[11px] text-slate-500">
+//           No skills added.
+//         </p>
+//       ) : (
+//         <p className="mt-3 text-[11px] leading-6 text-slate-700">
+//           {resume.skills.join(" • ")}
+//         </p>
+//       )}
+//     </section>
+//   );
+// }
+
+// import { useResumeStore } from "../../../../../store/resume.store";
+
+// export default function SkillsPreview() {
+//   const resume = useResumeStore((state) => state.resume);
+
+//   if (!resume) return null;
+
+//   return (
+//     <section className="mt-5">
+//       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
+//         Skills
+//       </h2>
+
+//       {resume.skills.length === 0 ? (
+//         <p className="mt-3 text-[11px] text-slate-500">No skills added.</p>
+//       ) : (
+//         <div className="mt-3 space-y-0.1">
+//           {resume.skills.map((category, index) => (
+//             <p key={index} className="text-[11px] leading-4 text-slate-700">
+//               <span className="font-semibold">{category.title}:</span>{" "}
+//               {category.skills.join(", ")}
+//             </p>
+//           ))}
+//         </div>
+//       )}
+//     </section>
+//   );
+// }
+
+
+
 import { useResumeStore } from "../../../../../store/resume.store";
+import { useTheme } from "../../themes/ThemeProvider";
 
 export default function SkillsPreview() {
   const resume = useResumeStore((state) => state.resume);
+  const theme = useTheme();
 
   if (!resume) return null;
 
-  return (
-    <section className="mt-8">
-      <h2 className="font-bold text-lg border-b pb-2">SKILLS</h2>
+  const isSplit = theme.section.layout === "split";
 
-      <div className="flex flex-wrap gap-2 mt-3">
-        {resume.skills.length > 0 ? (
-          resume.skills.map((skill) => (
-            <span key={skill} className="border px-3 py-1 rounded-full text-sm">
-              {skill}
-            </span>
-          ))
-        ) : (
-          <p className="text-gray-500">No skills added.</p>
-        )}
+  const title = (
+    <h2
+      className={`text-[12px] font-semibold tracking-wide ${
+        theme.section.uppercase ? "uppercase" : ""
+      }`}
+      style={{ color: theme.colors.text }}
+    >
+      Relevant Skills
+    </h2>
+  );
+
+  const content =
+    resume.skills.length === 0 ? (
+      <p className="text-[11px]" style={{ color: theme.colors.muted }}>
+        No skills added.
+      </p>
+    ) : theme.skills.layout === "tags" ? (
+      <div className="grid grid-cols-3 gap-x-6 gap-y-1">
+        {resume.skills.flatMap((c) => c.skills).map((skill, i) => (
+          <div key={i} className="text-[11px]" style={{ color: theme.colors.text }}>
+            • {skill}
+          </div>
+        ))}
       </div>
+    ) : (
+      <div className="space-y-3">
+        {resume.skills.map((category, index) => (
+          <div key={index}>
+            <p
+              className="text-[11px] font-semibold uppercase"
+              style={{ color: theme.colors.secondary }}
+            >
+              {category.title}
+            </p>
+            <p className="text-[11px] leading-4 mt-0.5" style={{ color: theme.colors.text }}>
+              {category.skills.join(", ")}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+
+  return (
+    <section
+      className={isSplit ? "grid grid-cols-4 gap-6" : ""}
+      style={{
+        marginTop: theme.section.spacing,
+        paddingBottom: theme.section.divider ? "16px" : "0",
+        borderBottom: theme.section.divider ? `1px solid #e5e7eb` : "none",
+      }}
+    >
+      {isSplit ? (
+        <>
+          <div className="col-span-1">{title}</div>
+          <div className="col-span-3">{content}</div>
+        </>
+      ) : (
+        <>
+          <div
+            className={`pb-1 ${theme.section.divider ? "border-b" : ""}`}
+            style={{ borderColor: theme.colors.muted }}
+          >
+            {title}
+          </div>
+          <div className="mt-3">{content}</div>
+        </>
+      )}
     </section>
   );
 }

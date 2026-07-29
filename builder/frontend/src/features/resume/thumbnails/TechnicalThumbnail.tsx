@@ -42,20 +42,21 @@ export default function TechnicalThumbnail({
 
         <div className="mt-3 h-[2px] rounded bg-slate-300" />
 
-        <div className="mt-2 flex flex-wrap gap-1">
-
-          {resume.skills
-            .slice(0, 4)
-            .map((skill) => (
-              <div
-                key={skill}
-                className="rounded border px-1 text-[5px]"
-              >
-                {skill}
-              </div>
-            ))}
-
-        </div>
+        <div className="mt-2 space-y-1">
+  {resume.skills
+    .slice(0, 4)
+    .map((category) => (
+      <div
+        key={category.title}
+        className="truncate text-[5px]"
+      >
+        <span className="font-semibold">
+          {category.title}:
+        </span>{" "}
+        {category.skills.join(", ")}
+      </div>
+    ))}
+</div>
 
       </div>
 

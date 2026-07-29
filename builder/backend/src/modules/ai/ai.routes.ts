@@ -1,36 +1,4 @@
-// import { Router } from "express";
-
-//  import { protect } from "../../middleware/auth.middleware";
-
-// import {
-//   generateSummary,
-//   rewriteExperience,
-//   suggestSkills,
-//   generateProject,
-// } from "./ai.controller";
-
-// const router = Router();
-
-// router.use(protect);
-
-// router.post(
-//   "/rewrite-experience",
-//   rewriteExperience
-// );
-
-// router.post(
-//   "/suggest-skills",
-//   suggestSkills
-// );
-
-// router.post(
-//   "/generate-project",
-//   generateProject
-// );
-
-// router.post("/generate-summary", generateSummary);
-
-// export default router;
+ 
 
 import { Router } from "express";
 
@@ -38,8 +6,11 @@ import {
   generateSummary,
   rewriteExperience,
   suggestSkills,
-  generateProject,
+ generateProjectDescription,
   generateExperience,
+  generateCoursework,
+  generateCustomSection,
+  generateInternship,
 } from "./ai.controller";
 
 import { protect } from "../../middleware/auth.middleware";
@@ -62,12 +33,19 @@ router.post(
 
 router.post(
   "/project",
-  generateProject
+  generateProjectDescription
 );
 
 router.post(
   "/experience",
   generateExperience
 );
+
+router.post("/coursework", generateCoursework);
+
+router.post("/custom-section", generateCustomSection  );
+
+
+router.post("/internship", generateInternship);
 
 export default router;

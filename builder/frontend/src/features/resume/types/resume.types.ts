@@ -9,11 +9,17 @@ export const ResumeTemplates = {
   CREATIVE: "creative",
   CLASSIC: "classic",
   CORPORATE: "corporate",
+  PROFESSIONAL_MODERN: "professional-modern",
   CORPORATE_BAND: "corporate-band",
   SPLIT_LABEL: "split-label", 
    CLASSIC_SERIF: "classic-serif", 
     CORPORATE_CLASSIC: "corporate-classic", // ADD THIS LINE
     EXECUTIVE_BLUE: "executive-blue",
+
+
+
+      // NEW
+  ENHANCV_MODERN: "enhancv-modern",
 } as const;
 
 export type ResumeTemplate =
@@ -155,7 +161,12 @@ skills: SkillCategory[];
   createdAt: string;
   updatedAt: string;
    internships: Internship[]; 
+   strengths: Strength[];
    
+}
+export interface Strength {
+  title: string;
+  description: string;
 }
 
 
@@ -174,11 +185,13 @@ export interface ResumeSection {
     | "awards"
     | "interests"
     | "custom"
-    | "internships";
+    | "internships"
+    | "strengths";
 
   title: string;
 
   enabled: boolean;
 
   order: number;
+  displayTitle?: string;
 }

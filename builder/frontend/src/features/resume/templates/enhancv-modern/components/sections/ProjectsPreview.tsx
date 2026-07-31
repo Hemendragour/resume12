@@ -1,0 +1,125 @@
+import { FolderKanban } from "lucide-react";
+
+import { useResumeStore } from "../../../../../../store/resume.store";
+
+import SectionHeader from "../shared/SectionHeader";
+
+import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
+
+export default function ProjectsPreview() {
+  const resume = useResumeStore((state) => state.resume);
+
+  if (!resume) return null;
+
+  const projects = resume.projects ?? [];
+
+  const projectSection = resume.sections.find(
+    (section) => section.id === "projects"
+  );
+
+  if (projects.length === 0) return null;
+
+  return (
+    <section className={T.spacing.section}>
+      <SectionHeader
+        title={
+          projectSection?.displayTitle?.trim() ||
+          projectSection?.title ||
+          "Projects"
+        }
+        // icon={<FolderKanban size={16} />}
+      />
+
+      <div className={`${T.spacing.itemHeader} space-y-4`}>
+        {projects.map((project, index) => (
+          <div
+            key={index}
+            className={`border-l-2 border-slate-300 pl-4 ${
+              index !== 0 ? T.spacing.item : ""
+            }`}
+          >
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <h3
+                  className={`
+                    ${T.fontSize.itemTitle}
+                    ${T.fontWeight.heading}
+                    ${T.colors.heading}
+                    ${T.lineHeight.title}
+                  `}
+                >
+                  {project.title}
+                </h3>
+
+                <p
+                  className={`
+                    mt-1
+                    ${T.fontSize.date}
+                    ${T.colors.muted}
+                  `}
+                >
+                  {project.startDate} -{" "}
+                  {project.currentlyWorking ? "Present" : project.endDate}
+                </p>
+              </div>
+            </div>
+
+            {project.description && (
+              <p
+                className={`
+                  ${T.spacing.itemHeader}
+                  whitespace-pre-line
+                  ${T.lineHeight.body}
+                  ${T.fontSize.body}
+                  ${T.colors.body}
+                `}
+              >
+                {project.description}
+              </p>
+            )}
+
+            {project.technologies.length > 0 && (
+              <p
+                className={`
+                  ${T.spacing.itemHeader}
+                  ${T.fontSize.body}
+                  ${T.colors.body}
+                  ${T.lineHeight.body}
+                `}
+              >
+                <strong>Tech:</strong>{" "}
+                {project.technologies.join(", ")}
+              </p>
+            )}
+
+            {project.github && (
+              <p
+                className={`
+                  mt-1
+                  ${T.fontSize.body}
+                  ${T.colors.accent}
+                  ${T.lineHeight.body}
+                `}
+              >
+                GitHub: {project.github}
+              </p>
+            )}
+
+            {project.link && (
+              <p
+                className={`
+                  mt-1
+                  ${T.fontSize.body}
+                  ${T.colors.accent}
+                  ${T.lineHeight.body}
+                `}
+              >
+                Live: {project.link}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

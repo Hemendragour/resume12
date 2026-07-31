@@ -1,11 +1,11 @@
 import { useEffect, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
- 
 
 import { useResumeStore } from "../../../../store/resume.store";
 import { useGenerateSummary } from "../../../ai/hooks/useGenerateSummary";
 
 import { Sparkles, AlertCircle, Trash2 } from "lucide-react";
+import Input from "../../../../components/ui/Input";
 
 interface SummaryFormData {
   summary: string;
@@ -14,6 +14,14 @@ interface SummaryFormData {
 export default function SummarySection() {
   const resume = useResumeStore((state) => state.resume);
   const updateSummary = useResumeStore((state) => state.updateSummary);
+
+  const renameSectionDisplayTitle = useResumeStore(
+    (state) => state.renameSectionDisplayTitle,
+  );
+
+  const summarySection = resume?.sections.find(
+    (section) => section.id === "summary",
+  );
 
   const { mutate, isPending } = useGenerateSummary();
 
@@ -58,9 +66,12 @@ export default function SummarySection() {
   const hasProjects = (resume?.projects?.length ?? 0) > 0;
   const hasCustomSections = (resume?.customSections?.length ?? 0) > 0;
 
-  const filledCount = [hasExperience, hasSkills, hasProjects, hasCustomSections].filter(
-    Boolean
-  ).length;
+  const filledCount = [
+    hasExperience,
+    hasSkills,
+    hasProjects,
+    hasCustomSections,
+  ].filter(Boolean).length;
 
   const isDataThin = filledCount <= 1;
   const alreadyHasSummary = !!resume?.summary?.trim();
@@ -92,16 +103,32 @@ export default function SummarySection() {
           <AlertCircle size={18} className="mt-0.5 shrink-0 text-amber-600" />
           <p className="text-sm text-amber-800">
             Add your <strong>Experience</strong>, <strong>Skills</strong>, and{" "}
-            <strong>Projects</strong> first — the AI summary will be much stronger
-            with real data to work from. You can still generate now and update it
-            later.
+            <strong>Projects</strong> first — the AI summary will be much
+            stronger with real data to work from. You can still generate now and
+            update it later.
           </p>
         </div>
       )}
 
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <label className="block font-medium">Professional Summary</label>
+        <div className="flex items-start justify-between gap-6 mb-3">
+          <div className="flex-1 space-y-3">
+  <Input
+    label="Resume Heading"
+    placeholder="Career Objective"
+    value={summarySection?.displayTitle ?? ""}
+    onChange={(e) =>
+      renameSectionDisplayTitle(
+        "summary",
+        e.target.value
+      )
+    }
+  />
+
+  <label className="block font-medium">
+    Professional Summary
+  </label>
+</div>
 
           <div className="flex items-center gap-2">
             {alreadyHasSummary && (
@@ -128,8 +155,8 @@ export default function SummarySection() {
               {isPending
                 ? "Generating..."
                 : alreadyHasSummary
-                ? "Regenerate with AI"
-                : "Generate with AI"}
+                  ? "Regenerate with AI"
+                  : "Generate with AI"}
             </button>
           </div>
         </div>
@@ -154,7 +181,9 @@ export default function SummarySection() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <h3 className="text-lg font-bold">Resume looks a bit empty</h3>
             <p className="mt-2 text-sm text-slate-600">
-             Add Experience, Skills, Projects, Education, Certifications, or Achievements to help AI generate a stronger, ATS-friendly summary. You can regenerate it anytime.
+              Add Experience, Skills, Projects, Education, Certifications, or
+              Achievements to help AI generate a stronger, ATS-friendly summary.
+              You can regenerate it anytime.
             </p>
 
             <div className="mt-6 flex justify-end gap-3">

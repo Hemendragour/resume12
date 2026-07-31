@@ -19,6 +19,7 @@ import crypto from "crypto";
 export const createResume = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const data = createResumeSchema.parse(req.body);
+    
 
     const resume = await Resume.create({
       userId: req.userId,
@@ -43,32 +44,17 @@ export const createResume = asyncHandler(
       summary: data.summary ?? "",
       skills:
   data.skills ??
-  [
-    // {
-    //   title: "Languages",
-    //   skills: [],
-    // },
-    // {
-    //   title: "Frameworks",
-    //   skills: [],
-    // },
-    // {
-    //   title: "Databases",
-    //   skills: [],
-    // },
-    // {
-    //   title: "Tools",
-    //   skills: [],
-    // },
-    // { title: "Others", skills: [] },
-  ],
+  [],
       experience: data.experience ?? [],
       education: data.education ?? [],
       projects: data.projects ?? [],
+
+strengths: data.strengths ?? [],
       certifications: data.certifications ?? [],
       languages: data.languages ?? [],
       awards: data.awards ?? [],
       interests: data.interests ?? [],
+      
     });
 
     // Create Analytics Document Automatically

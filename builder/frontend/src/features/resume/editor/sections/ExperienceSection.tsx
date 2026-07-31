@@ -4,9 +4,17 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useResumeStore } from "../../../../store/resume.store";
 import Button from "../../../../components/ui/Button";
 import ExperienceForm from "../components/ExperienceForm";
+import Input from "../../../../components/ui/Input";
 
 export default function ExperienceSection() {
   const resume = useResumeStore((state) => state.resume);
+  const renameSectionDisplayTitle = useResumeStore(
+    (state) => state.renameSectionDisplayTitle,
+  );
+
+  const experienceSection = resume?.sections.find(
+    (section) => section.id === "experience",
+  );
 
   const [showForm, setShowForm] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -15,6 +23,14 @@ export default function ExperienceSection() {
 
   return (
     <div className="space-y-6">
+      <Input
+        label="Resume Heading"
+        placeholder="Work Experience"
+        value={experienceSection?.displayTitle ?? ""}
+        onChange={(e) =>
+          renameSectionDisplayTitle("experience", e.target.value)
+        }
+      />
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold">Work Experience</h3>
@@ -81,23 +97,18 @@ export default function ExperienceSection() {
         ))}
       </div>
 
-      {showForm && <ExperienceForm
-  onClose={() => {
-    setShowForm(false);
-    setEditingIndex(null);
-  }}
-  editIndex={
-    editingIndex ?? undefined
-  }
-  initialData={
-    editingIndex !== null
-      ? resume?.experience[
-          editingIndex
-        ]
-      : undefined
-  }
-/>
-}
+      {showForm && (
+        <ExperienceForm
+          onClose={() => {
+            setShowForm(false);
+            setEditingIndex(null);
+          }}
+          editIndex={editingIndex ?? undefined}
+          initialData={
+            editingIndex !== null ? resume?.experience[editingIndex] : undefined
+          }
+        />
+      )}
     </div>
   );
 }

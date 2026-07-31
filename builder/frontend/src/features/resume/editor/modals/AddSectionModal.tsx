@@ -7,26 +7,38 @@ interface Props {
   onSelect: (title: string) => void;
 }
 
+// const sectionOptions = [
+//   "Hackathons",
+//   "Open Source",
+//   "Publications",
+//   "Research Papers",
+//   "Volunteer Experience",
+//   "Leadership",
+//   "Training",
+//   "Workshops",
+//   "Achievements",
+//   "Custom",
+// ];
+
 const sectionOptions = [
   "Hackathons",
   "Open Source",
-  "Publications",
   "Research Papers",
   "Volunteer Experience",
   "Leadership",
   "Training",
   "Workshops",
-  "Achievements",
+  "Publications",
+  "Patents",
+  "Conferences",
+  "Community Work",
+  "Extra Curricular",
   "Custom",
 ];
 
 export default function AddSectionModal({ open, onClose, onSelect }: Props) {
   return (
-   <Modal
-  open={open}
-  onClose={onClose}
-  title="Add Custom Section"
->
+    <Modal open={open} onClose={onClose} title="Add Custom Section">
       <div className="space-y-3">
         {sectionOptions.map((section) => (
           <Button

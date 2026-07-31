@@ -16,18 +16,26 @@ export const ResumeTemplates = {
 
 export const DefaultResumeSections = [
   { id: "personalInfo", type: "personalInfo", title: "Personal Info", enabled: true, order: 1 },
-  { id: "summary", type: "summary", title: "Summary", enabled: true, order: 2 },
-  { id: "experience", type: "experience", title: "Experience", enabled: true, order: 3 },
+  { id: "summary", type: "summary", title: "Summary",displayTitle:"", enabled: true, order: 2 },
+  { id: "experience", type: "experience", title: "Experience",displayTitle:"", enabled: true, order: 3 },
 
-  { id: "internships", type: "internships", title: "Internships", enabled: true, order: 4 },
+  { id: "internships", type: "internships", title: "Internships",displayTitle:"", enabled: true, order: 4 },
 
-  { id: "education", type: "education", title: "Education", enabled: true, order: 5 },
-  { id: "skills", type: "skills", title: "Skills", enabled: true, order: 6 },
-  { id: "projects", type: "projects", title: "Projects", enabled: true, order: 7 },
-  { id: "languages", type: "languages", title: "Languages", enabled: true, order: 8 },
-  { id: "certifications", type: "certifications", title: "Certificates", enabled: true, order: 9 },
-  { id: "awards", type: "awards", title: "Awards", enabled: true, order: 10 },
-  { id: "interests", type: "interests", title: "Interests", enabled: true, order: 11 },
+  { id: "education", type: "education", title: "Education",displayTitle:"", enabled: true, order: 5 },
+  { id: "skills", type: "skills", title: "Skills",displayTitle:"", enabled: true, order: 6 },
+  { id: "projects", type: "projects", title: "Projects",displayTitle:"", enabled: true, order: 7 },
+  { id: "languages", type: "languages", title: "Languages",displayTitle:"", enabled: true, order: 8 },
+  { id: "certifications", type: "certifications", title: "Certificates",displayTitle:"", enabled: true, order: 9 },
+  { id: "awards", type: "awards", title: "Awards",displayTitle:"", enabled: true, order: 10 },
+  { id: "interests", type: "interests", title: "Interests",displayTitle:"", enabled: true, order: 11 },
+  {
+  id: "strengths",
+  type: "strengths",
+  title: "Strengths",
+  displayTitle: "",
+  enabled: true,
+  order: 12, // apne order ke hisab se
+},
 ];
 // ==================== INTERFACE ====================
 
@@ -50,6 +58,10 @@ export interface IResume extends Document {
     enabled: boolean;
     order: number;
   }[];
+  strengths: {
+  title: string;
+  description: string;
+}[];
 
   personalInfo: {
     fullName: string;
@@ -112,6 +124,9 @@ projects: {
   link?: string;
 }[];
 
+
+ 
+
   certifications: string[];
  languages: {
   name: string;
@@ -151,6 +166,10 @@ const ResumeSectionSchema = new Schema(
     title: { type: String, required: true },
     enabled: { type: Boolean, default: true },
     order: { type: Number, required: true },
+    displayTitle: {
+  type: String,
+  default: "",
+},
   },
   { _id: false }
 );
@@ -213,6 +232,7 @@ const resumeSchema = new Schema<IResume>(
       required: true,
       trim: true,
     },
+    
 
     version: {
       type: Number,
@@ -355,6 +375,19 @@ internships: [
     },
   },
 ],  
+
+strengths: [
+  {
+    title: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+  },
+],
 
     certifications: { type: [String], default: [] },
    languages: { type: [languageItemSchema], default: [] },

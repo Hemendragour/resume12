@@ -1,0 +1,54 @@
+import { Heart } from "lucide-react";
+
+import { useResumeStore } from "../../../../../../store/resume.store";
+
+import SectionHeader from "../shared/SectionHeader";
+
+import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
+
+export default function InterestsPreview() {
+  const resume = useResumeStore((state) => state.resume);
+
+  if (!resume) return null;
+
+  const interests = resume.interests ?? [];
+
+  const interestsSection = resume.sections.find(
+    (section) => section.id === "interests"
+  );
+
+  if (interests.length === 0) return null;
+
+  return (
+    <section className={T.spacing.section}>
+      <SectionHeader
+        title={
+          interestsSection?.displayTitle?.trim() ||
+          interestsSection?.title ||
+          "Interests"
+        }
+        // icon={<Heart size={16} />}
+      />
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {interests.map((interest, index) => (
+          <span
+            key={index}
+            className="
+              rounded-full
+              border
+              border-slate-300
+              px-3
+              py-1
+              text-sm
+              bg-slate-100
+              text-slate-700
+            "
+          >
+            {interest}
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}

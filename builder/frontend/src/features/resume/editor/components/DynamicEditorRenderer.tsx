@@ -10,6 +10,7 @@ import AwardsSection from "../sections/AwardsSection";
 import InterestsSection from "../sections/InterestsSection";
 import TemplatesSection from "../sections/TemplatesSection";
 import SettingsSection from "../sections/SettingsSection";
+import StrengthsSection from "../sections/StrengthsSection";
 
 import { useResumeStore } from "../../../../store/resume.store";
 import CustomSection from "../sections/CustomSection";
@@ -21,7 +22,7 @@ interface Props {
 
 const sectionComponentMap = {
   personalInfo: PersonalInfoSection,
-  internships: InternshipSection, 
+  internships: InternshipSection,
   summary: SummarySection,
   experience: ExperienceSection,
   education: EducationSection,
@@ -33,33 +34,24 @@ const sectionComponentMap = {
   interests: InterestsSection,
   templates: TemplatesSection,
   settings: SettingsSection,
- 
+  strengths: StrengthsSection,
 };
 
 export default function DynamicEditorRenderer({ activeSection }: Props) {
-    const resume = useResumeStore((state) => state.resume);
+  const resume = useResumeStore((state) => state.resume);
   const Component =
     sectionComponentMap[activeSection as keyof typeof sectionComponentMap];
 
- const customSection =
-  resume?.customSections.find(
-    (section) => section.id === activeSection
+  const customSection = resume?.customSections.find(
+    (section) => section.id === activeSection,
   );
 
-if (customSection) {
-  return (
-    <CustomSection
-      sectionId={activeSection}
-    />
-  );
-}
+  if (customSection) {
+    return <CustomSection sectionId={activeSection} />;
+  }
 
-if (!Component) {
-  return (
-    <div className="text-center text-gray-500">
-      Section not found
-    </div>
-  );
-}
+  if (!Component) {
+    return <div className="text-center text-gray-500">Section not found</div>;
+  }
   return <Component />;
 }

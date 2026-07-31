@@ -5,11 +5,19 @@ import Button from "../../../../components/ui/Button";
 import ProjectForm from "../components/ProjectForm";
 
 import { useResumeStore } from "../../../../store/resume.store";
+import Input from "../../../../components/ui/Input";
 
 export default function ProjectsSection() {
   const resume = useResumeStore((state) => state.resume);
 
   const deleteProject = useResumeStore((state) => state.deleteProject);
+
+  const renameSectionDisplayTitle = useResumeStore(
+    (state) => state.renameSectionDisplayTitle,
+  );
+  const projectSection = resume?.sections.find(
+    (section) => section.id === "projects",
+  );
 
   const [showForm, setShowForm] = useState(false);
 
@@ -20,8 +28,15 @@ export default function ProjectsSection() {
       {/* Header */}
 
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Projects</h2>
+        <div className="space-y-3">
+          <Input
+            label="Resume Heading"
+            placeholder="College Projects"
+            value={projectSection?.displayTitle ?? ""}
+            onChange={(e) =>
+              renameSectionDisplayTitle("projects", e.target.value)
+            }
+          />
 
           <p className="text-gray-500">Showcase your best work.</p>
         </div>
@@ -61,14 +76,14 @@ export default function ProjectsSection() {
               <div className="space-y-2">
                 <h3 className="text-lg font-bold">{project.title}</h3>
 
-               <ul className="mt-2 list-disc pl-5 space-y-1 text-gray-700">
-  {project.description
-    .split("\n")
-    .filter((line) => line.trim() !== "")
-    .map((line, index) => (
-      <li key={index}>{line}</li>
-    ))}
-</ul>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-gray-700">
+                  {project.description
+                    .split("\n")
+                    .filter((line) => line.trim() !== "")
+                    .map((line, index) => (
+                      <li key={index}>{line}</li>
+                    ))}
+                </ul>
 
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
@@ -82,38 +97,36 @@ export default function ProjectsSection() {
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-6 text-sm">
-  <div className="flex items-start justify-between">
-  <div>
-    <h3 className="text-[15px] font-bold">
-      {project.title}
-    </h3>
-  </div>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-[15px] font-bold">{project.title}</h3>
+                    </div>
 
-  <div className="flex gap-3 text-[12px]">
-    {project.link && (
-      <a
-        href={project.link}
-        target="_blank"
-        rel="noreferrer"
-        className="font-medium text-blue-600 hover:underline"
-      >
-        Live Demo
-      </a>
-    )}
+                    <div className="flex gap-3 text-[12px]">
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-medium text-blue-600 hover:underline"
+                        >
+                          Live Demo
+                        </a>
+                      )}
 
-    {project.github && (
-      <a
-        href={project.github}
-        target="_blank"
-        rel="noreferrer"
-        className="font-medium text-blue-600 hover:underline"
-      >
-        GitHub
-      </a>
-    )}
-  </div>
-</div>
-</div>
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-medium text-blue-600 hover:underline"
+                        >
+                          GitHub
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-2">

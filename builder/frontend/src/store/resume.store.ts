@@ -170,12 +170,29 @@ renameCustomSection: (
   sectionId: string,
   title: string
 ) => void;
+renameSectionDisplayTitle: (
+  sectionId: string,
+  displayTitle: string
+) => void;
 
 deleteCustomSection: (
   sectionId: string
 ) => void;
 
 renameSection: (sectionId: string, title: string) => void;
+
+addStrength: (
+  strength: Resume["strengths"][0]
+) => void;
+
+updateStrength: (
+  index: number,
+  strength: Resume["strengths"][0]
+) => void;
+
+deleteStrength: (
+  index: number
+) => void;
 
 }
 
@@ -675,24 +692,67 @@ toggleSection: (id) =>
     };
   }),
 
+  // addCustomSection: (title) =>
+  // set((state) => {
+  //   if (!state.resume) return state;
+
+  //   const id = title
+  //     .toLowerCase()
+  //     .replace(/\s+/g, "-");
+
+  //   // Duplicate section mat add karo
+  //   const exists =
+  //     state.resume.customSections.some(
+  //       (section) => section.id === id
+  //     );
+
+  //   if (exists) return state;
+
+  //   const nextOrder =
+  //     state.resume.sections.length + 1;
+
+  //   const newCustomSection: CustomSection = {
+  //     id,
+  //     type: "custom",
+  //     title,
+  //     enabled: true,
+  //     order: nextOrder,
+  //     items: [],
+  //   };
+
+  //   return {
+  //     resume: {
+  //       ...state.resume,
+
+  //       customSections: [
+  //         ...state.resume.customSections,
+  //         newCustomSection,
+  //       ],
+
+  //       sections: [
+  //         ...state.resume.sections,
+  //         {
+  //           id,
+  //           type: "custom",
+  //           title,
+  //           enabled: true,
+  //           order: nextOrder,
+  //         },
+  //       ],
+  //     },
+  //   };
+  // }),
+
+
   addCustomSection: (title) =>
   set((state) => {
     if (!state.resume) return state;
 
-    const id = title
-      .toLowerCase()
-      .replace(/\s+/g, "-");
+const id = title
+  .toLowerCase()
+  .replace(/\s+/g, "-");
 
-    // Duplicate section mat add karo
-    const exists =
-      state.resume.customSections.some(
-        (section) => section.id === id
-      );
-
-    if (exists) return state;
-
-    const nextOrder =
-      state.resume.sections.length + 1;
+    const nextOrder = state.resume.sections.length + 1;
 
     const newCustomSection: CustomSection = {
       id,
@@ -718,6 +778,7 @@ toggleSection: (id) =>
             id,
             type: "custom",
             title,
+            displayTitle: "",
             enabled: true,
             order: nextOrder,
           },
@@ -1046,6 +1107,75 @@ deleteInternship: (index) =>
       },
     };
   }),
+
+
+  renameSectionDisplayTitle: (
+  sectionId,
+  displayTitle
+) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        sections: state.resume.sections.map((section) =>
+          section.id === sectionId
+            ? {
+                ...section,
+                displayTitle,
+              }
+            : section
+        ),
+      },
+    };
+  }),
+
+addStrength: (strength) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        strengths: [
+          ...state.resume.strengths,
+          strength,
+        ],
+      },
+    };
+  }),
+
+updateStrength: (index, strength) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    const updated = [...state.resume.strengths];
+
+    updated[index] = strength;
+
+    return {
+      resume: {
+        ...state.resume,
+        strengths: updated,
+      },
+    };
+  }),
+
+deleteStrength: (index) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        strengths: state.resume.strengths.filter(
+          (_, i) => i !== index
+        ),
+      },
+    };
+  }),
+  
   // UNSER SAB 
   }));
 

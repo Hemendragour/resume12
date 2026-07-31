@@ -5,11 +5,19 @@ import Button from "../../../../components/ui/Button";
 import EducationForm from "../components/EducationForm";
 
 import { useResumeStore } from "../../../../store/resume.store";
+import Input from "../../../../components/ui/Input";
 
 export default function EducationSection() {
   const resume = useResumeStore((state) => state.resume);
 
   const deleteEducation = useResumeStore((state) => state.deleteEducation);
+  const renameSectionDisplayTitle = useResumeStore(
+    (state) => state.renameSectionDisplayTitle,
+  );
+
+  const educationSection = resume?.sections.find(
+    (section) => section.id === "education",
+  );
 
   const [showForm, setShowForm] = useState(false);
 
@@ -34,6 +42,12 @@ export default function EducationSection() {
           Add Education
         </Button>
       </div>
+      <Input
+        label="Resume Heading"
+        placeholder="Education"
+        value={educationSection?.displayTitle ?? ""}
+        onChange={(e) => renameSectionDisplayTitle("education", e.target.value)}
+      />
 
       {resume?.education.length === 0 && (
         <div className="rounded-xl border-2 border-dashed p-12 text-center">

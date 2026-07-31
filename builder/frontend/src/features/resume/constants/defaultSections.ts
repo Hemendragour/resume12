@@ -78,4 +78,12 @@ export const DefaultResumeSections: ResumeSection[] = [
     enabled: true,
     order: 11,
   },
+  {
+  id: "strengths",
+  type: "strengths",
+  title: "Strengths",
+  displayTitle: "Strengths",
+  enabled: true,
+  order: 12,
+}
 ];

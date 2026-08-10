@@ -6,6 +6,7 @@ import exportRoutes from "../modules/export/export.routes";
 import aiRoutes from "../modules/ai/ai.routes";
 // import atsRoutes from "../modules/ats/ats.routes";
 import { aiRateLimiter } from "../middleware/aiRateLimit.middleware";
+import uploadRoutes from "../modules/upload/upload.routes";
 // import { protect } from "../middleware/auth.middleware";
 import analyticsRoutes
 from "../modules/analytics/analytics.routes";
@@ -53,4 +54,8 @@ router.use(
   "/dashboard",
   dashboardRoutes
 );
+
+
+
+router.use("/upload", uploadRoutes);
 export default router;

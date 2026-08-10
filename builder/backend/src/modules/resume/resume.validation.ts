@@ -150,6 +150,7 @@ export const createResumeSchema = z.object({
   awards: z.array(z.string()).optional(),
 
   interests: z.array(z.string()).optional(),
+  achievements: z.array(z.string()).optional(),
 
   templateId: z.string().optional(),
 

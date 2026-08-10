@@ -36,6 +36,15 @@ export const DefaultResumeSections = [
   enabled: true,
   order: 12, // apne order ke hisab se
 },
+
+{
+  id: "achievements",
+  type: "achievements",
+  title: "Achievements",
+  displayTitle: "",
+  enabled: true,
+  order: 13,
+},
 ];
 // ==================== INTERFACE ====================
 
@@ -93,6 +102,9 @@ export interface IResume extends Document {
     achievements: string[];
     location?: string;
   }[];
+
+  achievements: string[];
+
 
   education: {
     institution: string;
@@ -393,6 +405,10 @@ strengths: [
    languages: { type: [languageItemSchema], default: [] },
     awards: { type: [String], default: [] },
     interests: { type: [String], default: [] },
+    achievements: {
+  type: [String],
+  default: [],
+},
 
     customSections: {
       type: [customSectionSchema],

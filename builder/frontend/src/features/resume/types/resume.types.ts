@@ -11,6 +11,7 @@ export const ResumeTemplates = {
   CORPORATE: "corporate",
   PROFESSIONAL_MODERN: "professional-modern",
   CORPORATE_BAND: "corporate-band",
+    HARVARD_ATS: "harvard-ats",
   SPLIT_LABEL: "split-label", 
    CLASSIC_SERIF: "classic-serif", 
     CORPORATE_CLASSIC: "corporate-classic", // ADD THIS LINE
@@ -45,6 +46,8 @@ export interface PersonalInfo {
   github?: string;
   portfolio?: string;
   photo?: string;
+  photoZoom?: number;
+  photoPosition?: { x: number; y: number };
 }
 
 export interface Experience {
@@ -162,6 +165,7 @@ skills: SkillCategory[];
   updatedAt: string;
    internships: Internship[]; 
    strengths: Strength[];
+   achievements: string[];
    
 }
 export interface Strength {
@@ -186,7 +190,8 @@ export interface ResumeSection {
     | "interests"
     | "custom"
     | "internships"
-    | "strengths";
+    | "strengths"
+    | "achievements";
 
   title: string;
 

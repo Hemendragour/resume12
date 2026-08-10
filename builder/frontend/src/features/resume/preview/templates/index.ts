@@ -10,9 +10,9 @@ import CorporateBandTemplate from "./CorporateBandTemplate";
 import ClassicSerifTemplate from "./ClassicSerifTemplate";
 import CorporateClassicTemplate from "./CorporateClassicTemplate";
 import ExecutiveBlueTemplate from "./ExecutiveBlueTemplate";
-import ProfessionalModernTemplate from "./ProfessionalModernTemplate";
-import EnhancvModernTemplate from "../../templates/enhancv-modern/EnhancvModernTemplate";
+import ModernProfessionalTemplate from "../../templates/modern-professional/ModernProfessionalTemplate";import EnhancvModernTemplate from "../../templates/enhancv-modern/EnhancvModernTemplate";
 // import EnhancvModernTemplate from "./enhancv-modern/EnhancvModernTemplate";
+import HarvardATSTemplate from "../../templates/harvard-ats/HarvardATSTemplate";
  
 
 export const ResumeTemplatesMap = {
@@ -20,8 +20,8 @@ export const ResumeTemplatesMap = {
 
   "technical-developer": TechnicalDeveloperTemplate,
 
-  "modern-professional": ModernTemplate,
- "professional-modern": ProfessionalModernTemplate,
+  // "modern-professional": ModernTemplate,
+ "modern-professional": ModernProfessionalTemplate,
   "minimal-clean": MinimalTemplate,
   "corporate-band": CorporateBandTemplate,
    "split-label": SplitLabelTemplate ,
@@ -29,6 +29,7 @@ export const ResumeTemplatesMap = {
      "corporate-classic": CorporateClassicTemplate,
      "executive-blue": ExecutiveBlueTemplate,
      "enhancv-modern": EnhancvModernTemplate,
+      "harvard-ats": HarvardATSTemplate,
 
   executive: ExecutiveTemplate,
 

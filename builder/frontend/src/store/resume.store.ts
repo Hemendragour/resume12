@@ -194,6 +194,14 @@ deleteStrength: (
   index: number
 ) => void;
 
+addAchievement: (achievement: string) => void;
+
+updateAchievement: (
+  index: number,
+  achievement: string
+) => void;
+
+removeAchievement: (achievement: string) => void;
 }
 
 export const useResumeStore =
@@ -1172,6 +1180,78 @@ deleteStrength: (index) =>
         strengths: state.resume.strengths.filter(
           (_, i) => i !== index
         ),
+      },
+    };
+  }),
+
+
+  addAchievement: (achievement) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    const trimmedAchievement = achievement.trim();
+
+    if (!trimmedAchievement) {
+      return state;
+    }
+
+    if (
+      state.resume.achievements.some(
+        (a) =>
+          a.toLowerCase() ===
+          trimmedAchievement.toLowerCase()
+      )
+    ) {
+      return state;
+    }
+
+    return {
+      resume: {
+        ...state.resume,
+        achievements: [
+          ...state.resume.achievements,
+          trimmedAchievement,
+        ],
+      },
+    };
+  }),
+
+removeAchievement: (achievement) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    return {
+      resume: {
+        ...state.resume,
+        achievements:
+          state.resume.achievements.filter(
+            (a) => a !== achievement
+          ),
+      },
+    };
+  }),
+
+
+  updateAchievement: (index, achievement) =>
+  set((state) => {
+    if (!state.resume) return state;
+
+    const trimmedAchievement = achievement.trim();
+
+    if (!trimmedAchievement) {
+      return state;
+    }
+
+    const updatedAchievements = [
+      ...state.resume.achievements,
+    ];
+
+    updatedAchievements[index] = trimmedAchievement;
+
+    return {
+      resume: {
+        ...state.resume,
+        achievements: updatedAchievements,
       },
     };
   }),

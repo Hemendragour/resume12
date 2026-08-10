@@ -1,5 +1,4 @@
 import { Mail, Phone } from "lucide-react";
-
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import { useResumeStore } from "../../../../store/resume.store";
@@ -21,33 +20,66 @@ export default function ProfessionalModernTemplate() {
 
   return (
     <div
-      className={`min-h-[1123px] ${T.colors.page} ${T.spacing.page} ${T.fontFamily}`}
+      className={`
+        w-full
+        h-full
+        overflow-hidden
+        bg-white
+        ${T.colors.page}
+        ${T.fontFamily}
+      `}
     >
-      {/* Header */}
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
       <div
-        className={`${T.colors.header} ${T.radius.header} px-8 py-6 flex justify-between items-start`}
+        className={`
+          ${T.colors.header}
+          ${T.radius.header}
+          px-8
+          py-6
+          flex
+          justify-between
+          items-start
+        `}
       >
-        {/* Left */}
-
-        <div>
+        {/* LEFT */}
+        <div className="min-w-0 flex-1">
           <h1
-            className={`${T.fontSize.name} font-extrabold tracking-wide ${T.colors.heading}`}
+            className={`
+              ${T.fontSize.name}
+              font-extrabold
+              tracking-wide
+              ${T.colors.heading}
+            `}
           >
             {personalInfo.fullName || "YOUR NAME"}
           </h1>
 
           <p
-            className={`mt-1 font-semibold uppercase tracking-wide ${T.fontSize.title} ${T.colors.body}`}
+            className={`
+              mt-1
+              font-semibold
+              uppercase
+              tracking-wide
+              ${T.fontSize.title}
+              ${T.colors.body}
+            `}
           >
             {personalInfo.title || "SOFTWARE ENGINEER"}
           </p>
         </div>
 
-        {/* Right */}
-
+        {/* RIGHT — CONTACT */}
         <div
-          className={`space-y-2 text-right ${T.fontSize.contact} ${T.colors.body}`}
+          className={`
+            shrink-0
+            space-y-2
+            text-right
+            ${T.fontSize.contact}
+            ${T.colors.body}
+          `}
         >
           {personalInfo.phone && (
             <div className="flex items-center justify-end gap-2">
@@ -83,12 +115,24 @@ export default function ProfessionalModernTemplate() {
         </div>
       </div>
 
-      {/* Resume Body */}
+      {/* =====================================================
+          RESUME BODY
+      ====================================================== */}
 
-      <div className="mt-6">
+      <div
+        className="
+          w-full
+          h-[calc(100%-120px)]
+          overflow-hidden
+          px-8
+          pt-6
+        "
+      >
         <DynamicSectionRenderer
           registry={ProfessionalModernSectionRegistry}
-          customSectionComponent={ProfessionalModernCustomSection}
+          customSectionComponent={
+            ProfessionalModernCustomSection
+          }
         />
       </div>
     </div>

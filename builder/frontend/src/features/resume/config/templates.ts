@@ -13,6 +13,7 @@ import corporateClassic from "../../../assets/templates/corporate-classic.png";
 import executiveBlue from "../../../assets/templates/executive-blue.png";
 import professionalModern from "../../../assets/templates/professional-modern.png";
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
+import harvardATS from "../../../assets/templates/harvard-ats.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -126,5 +127,14 @@ export const templates: TemplateOption[] = [
   ats: "99% ATS",
   color: "bg-slate-700",
   image: enhancvModern,
+},
+{
+  id: "harvard-ats",
+  name: "Harvard ATS",
+  description:
+    "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
+  ats: "99% ATS",
+  color: "bg-gray-800",
+  image: harvardATS,
 },
 ];

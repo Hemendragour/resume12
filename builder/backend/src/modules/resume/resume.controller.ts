@@ -54,6 +54,7 @@ strengths: data.strengths ?? [],
       languages: data.languages ?? [],
       awards: data.awards ?? [],
       interests: data.interests ?? [],
+      achievements: data.achievements ?? [],
       
     });
 

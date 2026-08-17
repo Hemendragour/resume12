@@ -8,6 +8,7 @@ import aiRoutes from "../modules/ai/ai.routes";
 import { aiRateLimiter } from "../middleware/aiRateLimit.middleware";
 import uploadRoutes from "../modules/upload/upload.routes";
 // import { protect } from "../middleware/auth.middleware";
+import atsRoutes from "../modules/ats/ats.routes";
 import analyticsRoutes
 from "../modules/analytics/analytics.routes";
 import versionRoutes
@@ -55,6 +56,8 @@ router.use(
   dashboardRoutes
 );
 
+
+router.use("/ats", atsRoutes);
 
 
 router.use("/upload", uploadRoutes);

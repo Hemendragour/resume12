@@ -226,63 +226,73 @@
 
 // export default PreviewPanel;
 
-
-// import {
-//   useRef,
-//   forwardRef,
-//   useEffect,
-//   useState,
-// } from "react";
-
+// import { forwardRef } from "react";
 // import TemplateRenderer from "../../preview/templates/TemplateRenderer";
+
+// /*
+//  * ============================================================
+//  * A4 CONFIGURATION
+//  * ============================================================
+//  */
 
 // const A4_WIDTH_MM = 210;
 // const A4_HEIGHT_MM = 297;
 
+// /*
+//  * CSS conversion:
+//  * 1mm ≈ 3.7795275591px
+//  */
+
 // const MM_TO_PX = 3.7795275591;
 
-// const A4_WIDTH_PX = A4_WIDTH_MM * MM_TO_PX;
-// const A4_HEIGHT_PX = A4_HEIGHT_MM * MM_TO_PX;
+// const A4_WIDTH_PX = Math.round(
+//   A4_WIDTH_MM * MM_TO_PX,
+// ); // 794px
 
-// const PreviewPanel = forwardRef<HTMLElement>((props, ref) => {
-//   const containerRef = useRef<HTMLDivElement>(null);
+// const A4_HEIGHT_PX = Math.round(
+//   A4_HEIGHT_MM * MM_TO_PX,
+// ); // 1123px
 
-//   const [scale, setScale] = useState(0.75);
+// /*
+//  * ============================================================
+//  * LIVE PREVIEW SCALE
+//  * ============================================================
+//  *
+//  * Actual resume page:
+//  *
+//  * 794px × 1123px
+//  *
+//  * Screen:
+//  *
+//  * 794 × 0.80 = ~635px
+//  * 1123 × 0.80 = ~898px
+//  *
+//  * PDF export is NOT affected by this scale.
+//  */
 
-//   useEffect(() => {
-//     const updateScale = () => {
-//       if (!containerRef.current) return;
+// const PREVIEW_SCALE = 0.8;
 
-//       const containerWidth =
-//         containerRef.current.clientWidth;
+// /*
+//  * ============================================================
+//  * PREVIEW PANEL
+//  * ============================================================
+//  */
 
-//       const availableWidth = Math.max(
-//         containerWidth - 64,
-//         300,
-//       );
+// const PreviewPanel = forwardRef<
+//   HTMLElement,
+//   Record<string, never>
+// >((_props, ref) => {
+//   /*
+//    * ==========================================================
+//    * VISUAL SCREEN SIZE
+//    * ==========================================================
+//    */
 
-//       const calculatedScale =
-//         availableWidth / A4_WIDTH_PX;
+//   const visualWidth =
+//     A4_WIDTH_PX * PREVIEW_SCALE;
 
-//       const nextScale = Math.min(
-//         0.75,
-//         Math.max(0.45, calculatedScale),
-//       );
-
-//       setScale(nextScale);
-//     };
-
-//     updateScale();
-
-//     window.addEventListener("resize", updateScale);
-
-//     return () => {
-//       window.removeEventListener("resize", updateScale);
-//     };
-//   }, []);
-
-//   const visualWidth = A4_WIDTH_PX * scale;
-//   const visualHeight = A4_HEIGHT_PX * scale;
+//   const visualHeight =
+//     A4_HEIGHT_PX * PREVIEW_SCALE;
 
 //   return (
 //     <aside
@@ -294,72 +304,109 @@
 //         h-full
 //         flex-col
 //         border-l
+//         border-slate-200
 //         bg-slate-100
 //       "
 //     >
-//       {/* Header */}
+//       {/* =====================================================
+//           HEADER
+//       ====================================================== */}
+
 //       <div
 //         className="
 //           shrink-0
+//           h-[64px]
 //           bg-white
 //           border-b
+//           border-slate-200
 //           px-6
-//           py-4
+//           flex
+//           items-center
+//           justify-between
 //           sticky
 //           top-0
 //           z-20
-//           shadow-sm
 //         "
 //       >
-//         <div className="flex items-center justify-between">
-//           <h2 className="text-xl font-bold text-gray-800">
-//             Live Preview
-//           </h2>
+//         <h2 className="text-xl font-bold text-gray-800">
+//           Live Preview
+//         </h2>
 
-//           <div className="flex items-center gap-2 text-sm text-gray-500">
-//             <span>A4</span>
+//         <div className="flex items-center gap-2 text-sm text-gray-500">
+//           <span>A4</span>
 
-//             <div className="h-3 w-px bg-gray-300" />
+//           <span className="h-3 w-px bg-gray-300" />
 
-//             <span>Real-time</span>
-//           </div>
+//           <span>Real-time</span>
 //         </div>
 //       </div>
 
-//       {/* Preview */}
+//       {/* =====================================================
+//           PREVIEW AREA
+//       ====================================================== */}
+
 //       <div
-//         ref={containerRef}
 //         className="
 //           flex-1
+//           min-h-0
 //           overflow-auto
 //           bg-slate-100
 //           p-8
 //         "
 //       >
-//         {/* Visual space */}
+//         {/* ===================================================
+//             VISUAL A4 SPACE
+
+//             This wrapper reserves the scaled screen size.
+//         ==================================================== */}
+
 //         <div
 //           className="mx-auto"
 //           style={{
 //             width: `${visualWidth}px`,
 //             height: `${visualHeight}px`,
+//             flexShrink: 0,
 //           }}
 //         >
-//           {/* Screen scaling only */}
+//           {/* =================================================
+//               A4 COORDINATE SYSTEM
+
+//               IMPORTANT:
+//               Actual page remains 794 × 1123px.
+//               Only visual representation is scaled.
+//           ================================================== */}
+
 //           <div
 //             style={{
 //               width: `${A4_WIDTH_PX}px`,
 //               height: `${A4_HEIGHT_PX}px`,
-//               transform: `scale(${scale})`,
+
+//               transform: `scale(${PREVIEW_SCALE})`,
+
 //               transformOrigin: "top left",
 //             }}
 //           >
-//             {/* Actual A4 page */}
+//             {/* ===============================================
+//                 ACTUAL A4 PAGE
+
+//                 PDF exporter targets this element:
+//                 #resume-export
+//             ================================================ */}
+
 //             <div
 //               id="resume-export"
+//               style={{
+//                 width: `${A4_WIDTH_PX}px`,
+//                 height: `${A4_HEIGHT_PX}px`,
+
+//                 minWidth: `${A4_WIDTH_PX}px`,
+//                 maxWidth: `${A4_WIDTH_PX}px`,
+
+//                 minHeight: `${A4_HEIGHT_PX}px`,
+//                 maxHeight: `${A4_HEIGHT_PX}px`,
+//               }}
 //               className="
 //                 relative
-//                 w-[210mm]
-//                 h-[297mm]
 //                 overflow-hidden
 //                 bg-white
 //                 shadow-2xl
@@ -371,26 +418,32 @@
 //         </div>
 //       </div>
 
-//       {/* Footer */}
+//       {/* =====================================================
+//           FOOTER
+//       ====================================================== */}
+
 //       <div
 //         className="
 //           shrink-0
+//           h-[46px]
 //           bg-white
 //           border-t
+//           border-slate-200
 //           px-6
-//           py-3
-//           text-xs
-//           text-gray-500
 //           flex
 //           items-center
 //           justify-between
+//           text-xs
+//           text-gray-500
 //         "
 //       >
-//         <div>A4 Live Preview</div>
+//         <span>
+//           A4 Live Preview
+//         </span>
 
-//         <div className="font-medium text-emerald-600">
+//         <span className="font-medium text-emerald-600">
 //           Ready for Export
-//         </div>
+//         </span>
 //       </div>
 //     </aside>
 //   );
@@ -400,133 +453,145 @@
 
 // export default PreviewPanel;
 
-
 import { forwardRef } from "react";
 import TemplateRenderer from "../../preview/templates/TemplateRenderer";
 
 /*
  * ============================================================
- * A4 SIZE
+ * A4 CONFIGURATION
  * ============================================================
  */
 
 const A4_WIDTH_MM = 210;
 const A4_HEIGHT_MM = 297;
 
-/*
- * CSS: 1mm ≈ 3.7795px
- */
 const MM_TO_PX = 3.7795275591;
 
-const A4_WIDTH_PX =
-  A4_WIDTH_MM * MM_TO_PX;
+/*
+ * 210mm × 3.7795 = 793.7px
+ * 297mm × 3.7795 = 1122.5px
+ *
+ * Rounded:
+ * 794 × 1123 px
+ */
 
-const A4_HEIGHT_PX =
-  A4_HEIGHT_MM * MM_TO_PX;
+const A4_WIDTH_PX = Math.round(A4_WIDTH_MM * MM_TO_PX);
+
+const A4_HEIGHT_PX = Math.round(A4_HEIGHT_MM * MM_TO_PX);
 
 /*
  * ============================================================
  * LIVE PREVIEW SCALE
  * ============================================================
  *
- * Actual page:
- * 210mm × 297mm
+ * IMPORTANT:
  *
- * 0.95 = large live preview
+ * Actual A4 page = 794 × 1123px
  *
- * PDF export is NOT affected by this.
+ * Preview panel = 860px
+ *
+ * Therefore 1.0 scale is appropriate.
+ *
+ * Do NOT use 0.8 here.
  */
 
-const PREVIEW_SCALE = 0.95;
+const PREVIEW_SCALE = 1;
 
-const PreviewPanel = forwardRef<HTMLElement>(
-  (props, ref) => {
+/*
+ * ============================================================
+ * PREVIEW PANEL
+ * ============================================================
+ */
+
+const PreviewPanel = forwardRef<HTMLElement, Record<string, never>>(
+  (_props, ref) => {
     /*
-     * Visual size on screen
+     * Visual size of the page
+     *
+     * Since scale = 1:
+     *
+     * width  = 794px
+     * height = 1123px
      */
-    const visualWidth =
-      A4_WIDTH_PX * PREVIEW_SCALE;
 
-    const visualHeight =
-      A4_HEIGHT_PX * PREVIEW_SCALE;
+    const visualWidth = A4_WIDTH_PX * PREVIEW_SCALE;
+
+    const visualHeight = A4_HEIGHT_PX * PREVIEW_SCALE;
 
     return (
       <aside
         ref={ref}
         className="
-          hidden
-          xl:flex
-          w-[860px]
-          h-full
-          flex-col
-          border-l
-          bg-slate-100
-        "
+        hidden
+        xl:flex
+        w-[860px]
+        h-full
+        flex-col
+        border-l
+        border-slate-200
+        bg-slate-100
+      "
       >
-        {/* ==================================================
-            HEADER
-        =================================================== */}
+        {/* =====================================================
+          HEADER
+      ====================================================== */}
 
         <div
           className="
-            shrink-0
-            bg-white
-            border-b
-            px-6
-            py-4
-            sticky
-            top-0
-            z-20
-            shadow-sm
-          "
+          shrink-0
+          h-[64px]
+          bg-white
+          border-b
+          border-slate-200
+          px-6
+          flex
+          items-center
+          justify-between
+          sticky
+          top-0
+          z-20
+        "
         >
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-800">
-              Live Preview
-            </h2>
+          <h2 className="text-xl font-bold text-gray-800">Live Preview</h2>
 
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>A4</span>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span>A4</span>
 
-              <div className="h-3 w-px bg-gray-300" />
+            <span className="h-3 w-px bg-gray-300" />
 
-              <span>Real-time</span>
-            </div>
+            <span>Real-time</span>
           </div>
         </div>
 
-        {/* ==================================================
-            PREVIEW AREA
-        =================================================== */}
+        {/* =====================================================
+          PREVIEW AREA
+      ====================================================== */}
 
         <div
           className="
-            flex-1
-            overflow-auto
-            bg-slate-100
-            p-8
-          "
+          flex-1
+          min-h-0
+          overflow-auto
+          bg-slate-100
+          px-4
+          py-6
+        "
         >
-          {/* ==================================================
-              VISUAL A4 SPACE
-
-              This wrapper reserves the scaled size so that
-              scrolling and centering work correctly.
-          =================================================== */}
+          {/* ===================================================
+            VISUAL A4 SPACE
+        ==================================================== */}
 
           <div
             className="mx-auto"
             style={{
               width: `${visualWidth}px`,
               height: `${visualHeight}px`,
+              flexShrink: 0,
             }}
           >
-            {/* ==================================================
-                SCREEN SCALE
-
-                Only visual display is scaled.
-                Actual resume-export remains A4.
-            =================================================== */}
+            {/* =================================================
+              SCREEN SCALE CONTAINER
+          ================================================== */}
 
             <div
               style={{
@@ -536,20 +601,30 @@ const PreviewPanel = forwardRef<HTMLElement>(
                 transformOrigin: "top left",
               }}
             >
-              {/* ==============================================
-                  ACTUAL A4 PAGE
-              =============================================== */}
+              {/* ===============================================
+                ACTUAL A4 PAGE
+
+                This is the element used by PDF export.
+            ================================================ */}
 
               <div
                 id="resume-export"
+                style={{
+                  width: `${A4_WIDTH_PX}px`,
+                  height: `${A4_HEIGHT_PX}px`,
+
+                  minWidth: `${A4_WIDTH_PX}px`,
+                  maxWidth: `${A4_WIDTH_PX}px`,
+
+                  minHeight: `${A4_HEIGHT_PX}px`,
+                  maxHeight: `${A4_HEIGHT_PX}px`,
+                }}
                 className="
-                  relative
-                  w-[210mm]
-                  h-[297mm]
-                  overflow-hidden
-                  bg-white
-                  shadow-2xl
-                "
+                relative
+                overflow-hidden
+                bg-white
+                shadow-2xl
+              "
               >
                 <TemplateRenderer />
               </div>
@@ -557,31 +632,28 @@ const PreviewPanel = forwardRef<HTMLElement>(
           </div>
         </div>
 
-        {/* ==================================================
-            FOOTER
-        =================================================== */}
+        {/* =====================================================
+          FOOTER
+      ====================================================== */}
 
         <div
           className="
-            shrink-0
-            bg-white
-            border-t
-            px-6
-            py-3
-            text-xs
-            text-gray-500
-            flex
-            items-center
-            justify-between
-          "
+          shrink-0
+          h-[46px]
+          bg-white
+          border-t
+          border-slate-200
+          px-6
+          flex
+          items-center
+          justify-between
+          text-xs
+          text-gray-500
+        "
         >
-          <div>
-            A4 Live Preview
-          </div>
+          <span>A4 Live Preview</span>
 
-          <div className="font-medium text-emerald-600">
-            Ready for Export
-          </div>
+          <span className="font-medium text-emerald-600">Ready for Export</span>
         </div>
       </aside>
     );

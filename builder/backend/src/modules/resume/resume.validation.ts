@@ -1,5 +1,3 @@
- 
-
 import { z } from "zod";
 
 const experienceSchema = z.object({
@@ -10,7 +8,7 @@ const experienceSchema = z.object({
   currentlyWorking: z.boolean().optional(),
   responsibilities: z.array(z.string()).optional(),
   achievements: z.array(z.string()).optional(),
-   location: z.string().optional(),
+  location: z.string().optional(),
 });
 
 const educationSchema = z.object({
@@ -41,6 +39,7 @@ const internshipSchema = z.object({
   currentlyInterning: z.boolean().optional(),
   responsibilities: z.array(z.string()).optional(),
   achievements: z.array(z.string()).optional(),
+  location: z.string().optional(),
 });
 
 const projectSchema = z.object({
@@ -58,19 +57,9 @@ const projectSchema = z.object({
 
   technologies: z.array(z.string()),
 
-  link: z
-    .union([
-      z.string().url(),
-      z.literal(""),
-    ])
-    .optional(),
+  link: z.union([z.string().url(), z.literal("")]).optional(),
 
-  github: z
-    .union([
-      z.string().url(),
-      z.literal(""),
-    ])
-    .optional(),
+  github: z.union([z.string().url(), z.literal("")]).optional(),
 });
 
 const skillCategorySchema = z.object({
@@ -158,13 +147,13 @@ export const createResumeSchema = z.object({
 
   customSections: z.array(customSectionSchema).optional(),
   strengths: z
-  .array(
-    z.object({
-      title: z.string(),
-      description: z.string(),
-    })
-  )
-  .optional(),
+    .array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 export const updateResumeSchema = createResumeSchema.partial();

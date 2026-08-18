@@ -3,11 +3,15 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const experienceSection = resume.sections.find(
+    (section) => section.id === "experience",
+  );
   return (
     <section className="mt-5">
       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
-        Experience
+        {experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Experience"}
       </h2>
 
       {resume.experience.length === 0 ? (

@@ -21,6 +21,7 @@ interface InternshipFormData {
   currentlyInterning: boolean;
   responsibilities: { value: string }[];
   achievements: { value: string }[];
+  location: string;
 }
 
 export default function InternshipForm({
@@ -45,6 +46,7 @@ export default function InternshipForm({
       currentlyInterning: false,
       responsibilities: [{ value: "" }],
       achievements: [{ value: "" }],
+      location: "",
     },
   });
 
@@ -56,6 +58,7 @@ export default function InternshipForm({
         startDate: initialData.startDate || "",
         endDate: initialData.endDate || "",
         currentlyInterning: initialData.currentlyInterning || false,
+        location: initialData.location || "",
         responsibilities: (initialData.responsibilities || []).map((r) => ({
           value: r,
         })),
@@ -85,7 +88,7 @@ export default function InternshipForm({
   });
 
   const updateInternshipItem = useResumeStore(
-    (state) => state.updateInternshipItem
+    (state) => state.updateInternshipItem,
   );
   const addInternship = useResumeStore((state) => state.addInternship);
 
@@ -121,15 +124,15 @@ export default function InternshipForm({
       const bullets = Array.isArray(result)
         ? result
         : typeof result === "string"
-        ? result
-            .split("\n")
-            .map((line: string) => line.trim())
-            .filter(Boolean)
-        : [];
+          ? result
+              .split("\n")
+              .map((line: string) => line.trim())
+              .filter(Boolean)
+          : [];
 
       setValue(
         "responsibilities",
-        bullets.map((r: string) => ({ value: r }))
+        bullets.map((r: string) => ({ value: r })),
       );
 
       setShowContextModal(false);
@@ -181,7 +184,9 @@ export default function InternshipForm({
             className="mt-2 h-12 w-full rounded-lg border px-4"
           />
           {errors.company && (
-            <p className="mt-1 text-sm text-red-500">{errors.company.message}</p>
+            <p className="mt-1 text-sm text-red-500">
+              {errors.company.message}
+            </p>
           )}
         </div>
 
@@ -197,6 +202,29 @@ export default function InternshipForm({
           />
           {errors.role && (
             <p className="mt-1 text-sm text-red-500">{errors.role.message}</p>
+          )}
+        </div>
+
+        {/* location added -------------*/}
+        <div className="col-span-2">
+          <label className="font-medium">Location</label>
+
+          <input
+            {...register("location", {
+              required: "Location is required",
+              minLength: {
+                value: 2,
+                message: "Minimum 2 characters required",
+              },
+            })}
+            placeholder="Bhopal.."
+            className="mt-2 h-12 w-full rounded-lg border px-4"
+          />
+
+          {errors.location && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.location.message}
+            </p>
           )}
         </div>
 
@@ -226,8 +254,8 @@ export default function InternshipForm({
       </div>
 
       <label className="flex items-center gap-3">
-        <input type="checkbox" {...register("currentlyInterning")} />
-        I currently intern here
+        <input type="checkbox" {...register("currentlyInterning")} />I currently
+        intern here
       </label>
 
       <div>
@@ -311,12 +339,12 @@ export default function InternshipForm({
           {editIndex !== undefined ? "Update Internship" : "Save Internship"}
         </Button>
       </div>
-<AIInternshipContextModal
-  open={showContextModal}
-  onClose={() => setShowContextModal(false)}
-  onSubmit={handleContextSubmit}
-  loading={isGenerating}
-/>
+      <AIInternshipContextModal
+        open={showContextModal}
+        onClose={() => setShowContextModal(false)}
+        onSubmit={handleContextSubmit}
+        loading={isGenerating}
+      />
     </form>
   );
 }

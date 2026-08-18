@@ -11,29 +11,23 @@ export const ResumeTemplates = {
   CORPORATE: "corporate",
   PROFESSIONAL_MODERN: "professional-modern",
   CORPORATE_BAND: "corporate-band",
-    HARVARD_ATS: "harvard-ats",
-  SPLIT_LABEL: "split-label", 
-   CLASSIC_SERIF: "classic-serif", 
-    CORPORATE_CLASSIC: "corporate-classic", // ADD THIS LINE
-    EXECUTIVE_BLUE: "executive-blue",
+  HARVARD_ATS: "harvard-ats",
+  SPLIT_LABEL: "split-label",
+  CLASSIC_SERIF: "classic-serif",
+  CORPORATE_CLASSIC: "corporate-classic", // ADD THIS LINE
+  EXECUTIVE_BLUE: "executive-blue",
 
-
-
-      // NEW
+  // NEW
   ENHANCV_MODERN: "enhancv-modern",
 } as const;
 
 export type ResumeTemplate =
-  typeof ResumeTemplates[keyof typeof ResumeTemplates];
-
- 
-
+  (typeof ResumeTemplates)[keyof typeof ResumeTemplates];
 
 export interface CreateResumeRequest {
   title: string;
   targetRole: string;
   templateId: ResumeTemplate;
- 
 }
 
 export interface PersonalInfo {
@@ -58,7 +52,7 @@ export interface Experience {
   currentlyWorking: boolean;
   responsibilities: string[];
   achievements?: string[];
-   location?: string;
+  location?: string;
 }
 
 // export interface Education {
@@ -140,6 +134,7 @@ export interface Internship {
   currentlyInterning?: boolean;
   responsibilities: string[];
   achievements: string[];
+  location?: string;
 }
 
 export interface Resume {
@@ -148,31 +143,29 @@ export interface Resume {
   version: number;
   status: "draft" | "completed";
   targetRole: string;
-templateId: ResumeTemplate;
-sections: ResumeSection[];
+  templateId: ResumeTemplate;
+  sections: ResumeSection[];
   personalInfo: PersonalInfo;
   summary: string;
-skills: SkillCategory[];
+  skills: SkillCategory[];
   experience: Experience[];
   education: Education[];
   projects: Project[];
-  certifications: string[];     // string[] hi hai
+  certifications: string[]; // string[] hi hai
   languages: LanguageItem[];
-  awards: string[];             // string[] hi hai
+  awards: string[]; // string[] hi hai
   interests: string[];
   customSections: CustomSection[];
   createdAt: string;
   updatedAt: string;
-   internships: Internship[]; 
-   strengths: Strength[];
-   achievements: string[];
-   
+  internships: Internship[];
+  strengths: Strength[];
+  achievements: string[];
 }
 export interface Strength {
   title: string;
   description: string;
 }
-
 
 export interface ResumeSection {
   id: string;

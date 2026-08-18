@@ -1,8 +1,4 @@
-import {
-  View,
-  Text,
-  Link,
-} from "@react-pdf/renderer";
+import { View, Text, Link } from "@react-pdf/renderer";
 
 import { styles } from "./PdfStyles";
 
@@ -61,7 +57,8 @@ export default function TechnicalPdfTemplate({ resume }: Props) {
                 {item.company}
               </Text>
               <Text style={{ fontSize: 9, color: "#888" }}>
-                {item.startDate} - {item.currentlyWorking ? "Present" : item.endDate}
+                {item.startDate} -{" "}
+                {item.currentlyWorking ? "Present" : item.endDate}
               </Text>
 
               {/* Responsibilities */}
@@ -150,32 +147,44 @@ export default function TechnicalPdfTemplate({ resume }: Props) {
 
       {/* SKILLS - Empty State Handled */}
       <View style={styles.section}>
-  <Text style={styles.heading}>SKILLS</Text>
+        <Text style={styles.heading}>SKILLS</Text>
 
-  {resume.skills?.length ? (
-    resume.skills.map((category, i) => (
-      <View key={i} style={{ marginBottom: 6 }}>
-        <Text style={styles.skill}>
-          <Text style={{ fontWeight: "bold" }}>
-            {category.title}:
-          </Text>{" "}
-          {category.skills.join(", ")}
-        </Text>
+        {resume.skills?.length ? (
+          resume.skills.map((category, i) => (
+            <View key={i} style={{ marginBottom: 6 }}>
+              <Text style={styles.skill}>
+                <Text style={{ fontWeight: "bold" }}>{category.title}:</Text>{" "}
+                {category.skills.join(", ")}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text>No skills added.</Text>
+        )}
       </View>
-    ))
-  ) : (
-    <Text>No skills added.</Text>
-  )}
-</View>
 
       {/* LANGUAGES */}
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Text style={styles.heading}>LANGUAGES</Text>
         <Text>
           {resume.languages?.length
             ? resume.languages.join(", ")
             : "No languages added."}
         </Text>
+      </View> */}
+
+      {/* LANGUAGES */}
+      <View style={styles.section}>
+        <Text style={styles.heading}>LANGUAGES</Text>
+        {resume.languages?.length ? (
+          resume.languages.map((lang, index) => (
+            <Text key={index} style={{ fontSize: 10, marginBottom: 2 }}>
+              {lang.name} ({lang.level})
+            </Text>
+          ))
+        ) : (
+          <Text>No languages added.</Text>
+        )}
       </View>
 
       {/* CERTIFICATIONS */}

@@ -4,13 +4,17 @@ import { ExecutiveBlueTheme as T } from "../../theme.executive-blue";
 export default function EducationPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const educationSection = resume.sections.find(
+    (section) => section.id === "education",
+  );
   return (
     <section className="mt-5">
       <h2
         className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}
       >
-        Education
+        {educationSection?.displayTitle?.trim() ||
+          educationSection?.title ||
+          "Education"}
       </h2>
 
       {resume.education.length === 0 ? (

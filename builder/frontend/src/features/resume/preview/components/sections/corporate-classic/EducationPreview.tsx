@@ -3,11 +3,15 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function EducationPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume || resume.education.length === 0) return null;
-
+  const educationSection = resume.sections.find(
+    (section) => section.id === "education",
+  );
   return (
     <section className="mt-6">
       <h2 className="border-y border-slate-700 py-1 text-center text-[12px] font-bold uppercase tracking-[0.6px] text-slate-900">
-        Education
+        {educationSection?.displayTitle?.trim() ||
+          educationSection?.title ||
+          "Education"}
       </h2>
 
       <div className="mt-3 space-y-3">
@@ -23,7 +27,9 @@ export default function EducationPreview() {
               </p>
             </div>
             <div className="whitespace-nowrap text-right text-[11px] text-slate-600">
-              <p>{edu.startYear} – {edu.current ? "Present" : edu.endYear}</p>
+              <p>
+                {edu.startYear} – {edu.current ? "Present" : edu.endYear}
+              </p>
               {edu.location && <p>{edu.location}</p>}
             </div>
           </div>

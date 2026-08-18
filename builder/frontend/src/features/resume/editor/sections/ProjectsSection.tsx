@@ -2,10 +2,10 @@ import { useState } from "react";
 import { FolderGit2, Pencil, Plus, Trash2 } from "lucide-react";
 
 import Button from "../../../../components/ui/Button";
+import Input from "../../../../components/ui/Input";
 import ProjectForm from "../components/ProjectForm";
 
 import { useResumeStore } from "../../../../store/resume.store";
-import Input from "../../../../components/ui/Input";
 
 export default function ProjectsSection() {
   const resume = useResumeStore((state) => state.resume);
@@ -15,6 +15,7 @@ export default function ProjectsSection() {
   const renameSectionDisplayTitle = useResumeStore(
     (state) => state.renameSectionDisplayTitle,
   );
+
   const projectSection = resume?.sections.find(
     (section) => section.id === "projects",
   );
@@ -23,10 +24,14 @@ export default function ProjectsSection() {
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingIndex(null);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-
       <div className="flex items-center justify-between">
         <div className="space-y-3">
           <Input
@@ -44,6 +49,7 @@ export default function ProjectsSection() {
         <Button
           leftIcon={<Plus size={18} />}
           onClick={() => {
+            // Add mode
             setEditingIndex(null);
             setShowForm(true);
           }}
@@ -53,8 +59,7 @@ export default function ProjectsSection() {
       </div>
 
       {/* Empty State */}
-
-      {resume?.projects.length === 0 && (
+      {resume?.projects.length === 0 && !showForm && (
         <div className="rounded-2xl border-2 border-dashed p-12 text-center">
           <FolderGit2 size={44} className="mx-auto mb-4 text-slate-400" />
 
@@ -64,112 +69,145 @@ export default function ProjectsSection() {
         </div>
       )}
 
-      {/* Cards */}
-
+      {/* Projects */}
       <div className="space-y-5">
         {resume?.projects.map((project, index) => (
-          <div
-            key={index}
-            className="rounded-2xl border bg-white p-6 shadow-sm"
-          >
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <h3 className="text-lg font-bold">{project.title}</h3>
+          <div key={index}>
+            {/* ============================= */}
+            {/* EDIT FORM - INLINE */}
+            {/* ============================= */}
+            {editingIndex === index ? (
+              <ProjectForm
+                onClose={handleCloseForm}
+                editIndex={index}
+                initialData={project}
+              />
+            ) : (
+              /* ============================= */
+              /* PROJECT CARD */
+              /* ============================= */
+              <div className="rounded-2xl border bg-white p-6 shadow-sm">
+                <div className="flex items-start justify-between gap-6">
+                  {/* Project Information */}
+                  <div className="min-w-0 flex-1 space-y-2">
+                    {/* Project Title */}
+                    <h3 className="text-lg font-bold">{project.title}</h3>
 
-                <ul className="mt-2 list-disc pl-5 space-y-1 text-gray-700">
-                  {project.description
-                    .split("\n")
-                    .filter((line) => line.trim() !== "")
-                    .map((line, index) => (
-                      <li key={index}>{line}</li>
-                    ))}
-                </ul>
+                    {/* Role */}
+                    {project.role && (
+                      <p className="text-sm font-medium text-gray-600">
+                        {project.role}
+                      </p>
+                    )}
 
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+                    {/* Description */}
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-gray-700">
+                      {project.description
+                        .split("\n")
+                        .filter((line) => line.trim() !== "")
+                        .map((line, descriptionIndex) => (
+                          <li key={descriptionIndex}>{line}</li>
+                        ))}
+                    </ul>
+
+                    {/* Technologies */}
+                    {project.technologies.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {project.technologies.map((tech) => (
+                          <span
+                            key={tech}
+                            className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Dates */}
+                    {(project.startDate ||
+                      project.endDate ||
+                      project.currentlyWorking) && (
+                      <div className="pt-2 text-sm text-gray-500">
+                        {project.startDate && <span>{project.startDate}</span>}
+
+                        {project.startDate &&
+                          (project.endDate || project.currentlyWorking) && (
+                            <span> - </span>
+                          )}
+
+                        {project.currentlyWorking ? (
+                          <span>Present</span>
+                        ) : (
+                          project.endDate && <span>{project.endDate}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Project Links */}
+                    {(project.link || project.github) && (
+                      <div className="mt-3 flex flex-wrap gap-6 text-sm">
+                        {project.link && (
+                          <a
+                            href={project.link}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-medium text-blue-600 hover:underline"
+                          >
+                            Live Demo
+                          </a>
+                        )}
+
+                        {project.github && (
+                          <a
+                            href={project.github}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-medium text-blue-600 hover:underline"
+                          >
+                            GitHub
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex shrink-0 gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      leftIcon={<Pencil size={16} />}
+                      onClick={() => {
+                        setEditingIndex(index);
+                        setShowForm(true);
+                      }}
                     >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
+                      Edit
+                    </Button>
 
-                <div className="mt-3 flex flex-wrap gap-6 text-sm">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-[15px] font-bold">{project.title}</h3>
-                    </div>
-
-                    <div className="flex gap-3 text-[12px]">
-                      {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
-                        >
-                          Live Demo
-                        </a>
-                      )}
-
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
-                        >
-                          GitHub
-                        </a>
-                      )}
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      leftIcon={<Trash2 size={16} />}
+                      onClick={() => deleteProject(index)}
+                    >
+                      Delete
+                    </Button>
                   </div>
                 </div>
               </div>
-
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  leftIcon={<Pencil size={16} />}
-                  onClick={() => {
-                    setEditingIndex(index);
-                    setShowForm(true);
-                  }}
-                >
-                  Edit
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="danger"
-                  leftIcon={<Trash2 size={16} />}
-                  onClick={() => deleteProject(index)}
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
         ))}
+
+        {/* ============================= */}
+        {/* ADD PROJECT FORM */}
+        {/* ============================= */}
+        {showForm && editingIndex === null && (
+          <ProjectForm onClose={handleCloseForm} />
+        )}
       </div>
-
-      {/* Form */}
-
-      {showForm && (
-        <ProjectForm
-          onClose={() => {
-            setShowForm(false);
-            setEditingIndex(null);
-          }}
-          editIndex={editingIndex ?? undefined}
-          initialData={
-            editingIndex !== null ? resume?.projects[editingIndex] : undefined
-          }
-        />
-      )}
     </div>
   );
 }

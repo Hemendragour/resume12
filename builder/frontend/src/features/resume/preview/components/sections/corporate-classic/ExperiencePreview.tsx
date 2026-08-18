@@ -3,11 +3,15 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume || resume.experience.length === 0) return null;
-
+  const experienceSection = resume.sections.find(
+    (section) => section.id === "experience",
+  );
   return (
     <section className="mt-6">
       <h2 className="border-y border-slate-700 py-1 text-center text-[12px] font-bold uppercase tracking-[0.6px] text-slate-900">
-        Professional Experience
+        {experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Professional Experience"}
       </h2>
 
       <div className="mt-3 space-y-4">
@@ -45,7 +49,10 @@ export default function ExperiencePreview() {
             </div>
 
             <div className="whitespace-nowrap text-right text-[11px] text-slate-600">
-              <p>{exp.startDate} – {exp.currentlyWorking ? "Present" : exp.endDate}</p>
+              <p>
+                {exp.startDate} –{" "}
+                {exp.currentlyWorking ? "Present" : exp.endDate}
+              </p>
               {exp.location && <p>{exp.location}</p>}
             </div>
           </div>

@@ -3,11 +3,15 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function SkillsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const skillsSection = resume.sections.find(
+    (section) => section.id === "skills",
+  );
   return (
     <section className="grid grid-cols-4 gap-6 mt-6 pb-4 border-b border-rose-100">
       <h2 className="col-span-1 text-[12px] font-semibold text-slate-800">
-        Relevant Skills
+        {skillsSection?.displayTitle?.trim() ||
+          skillsSection?.title ||
+          "Relevant Skills"}
       </h2>
 
       <div className="col-span-3">

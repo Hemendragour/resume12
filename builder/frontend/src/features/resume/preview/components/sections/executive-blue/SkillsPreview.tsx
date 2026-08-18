@@ -6,13 +6,18 @@ export default function SkillsPreview() {
   if (!resume) return null;
 
   const categories = resume.skills.filter((cat) => cat.skills.length > 0);
+  const skillsSection = resume.sections.find(
+    (section) => section.id === "skills",
+  );
 
   return (
     <section className="mt-5">
       <h2
         className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}
       >
-        Technical Skills
+        {skillsSection?.displayTitle?.trim() ||
+          skillsSection?.title ||
+          "Technical Skills"}
       </h2>
 
       {categories.length === 0 ? (

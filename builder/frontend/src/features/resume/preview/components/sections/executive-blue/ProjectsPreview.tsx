@@ -13,13 +13,17 @@ function formatMonthYear(value?: string) {
 export default function ProjectsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const projectSection = resume.sections.find(
+    (section) => section.id === "projects",
+  );
   return (
     <section className="mt-5">
       <h2
         className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}
       >
-        Projects
+        {projectSection?.displayTitle?.trim() ||
+          projectSection?.title ||
+          "Projects"}
       </h2>
 
       {resume.projects.length === 0 ? (
@@ -39,37 +43,39 @@ export default function ProjectsPreview() {
             return (
               <div key={index}>
                 <div className="flex items-baseline justify-between">
-             <p className={`${T.fontSize.itemTitle} font-bold ${T.colors.heading}`}>
-  {proj.title}
+                  <p
+                    className={`${T.fontSize.itemTitle} font-bold ${T.colors.heading}`}
+                  >
+                    {proj.title}
 
-  {proj.github && (
-    <>
-      <span className={T.colors.muted}> | </span>
-      <a
-        href={proj.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`font-normal ${T.colors.accent} underline`}
-      >
-        GitHub
-      </a>
-    </>
-  )}
+                    {proj.github && (
+                      <>
+                        <span className={T.colors.muted}> | </span>
+                        <a
+                          href={proj.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`font-normal ${T.colors.accent} underline`}
+                        >
+                          GitHub
+                        </a>
+                      </>
+                    )}
 
-  {proj.link && (
-    <>
-      <span className={T.colors.muted}> | </span>
-      <a
-        href={proj.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`font-normal ${T.colors.accent} underline`}
-      >
-        Live Demo
-      </a>
-    </>
-  )}
-</p>
+                    {proj.link && (
+                      <>
+                        <span className={T.colors.muted}> | </span>
+                        <a
+                          href={proj.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`font-normal ${T.colors.accent} underline`}
+                        >
+                          Live Demo
+                        </a>
+                      </>
+                    )}
+                  </p>
                   <span className={`${T.fontSize.date} ${T.colors.muted}`}>
                     {formatMonthYear(proj.startDate)} –{" "}
                     {proj.currentlyWorking

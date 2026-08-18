@@ -4,11 +4,15 @@ export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
 
   if (!resume || resume.experience.length === 0) return null;
-
+  const experienceSection = resume.sections.find(
+    (section) => section.id === "experience",
+  );
   return (
     <section className="mt-6">
       <h2 className="mb-3 border-b border-slate-700 pb-1 text-[13px] font-bold uppercase tracking-[0.6px] text-black">
-        Professional Experience
+        {experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Professional Experience"}
       </h2>
 
       <div className="space-y-5">

@@ -3,11 +3,15 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const experienceSection = resume.sections.find(
+    (section) => section.id === "experience",
+  );
   return (
     <section className="grid grid-cols-4 gap-6 mt-6 pb-4 border-b border-rose-100">
       <h2 className="col-span-1 text-[12px] font-semibold text-slate-800">
-        Work Experience
+        {experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Work Experience"}
       </h2>
 
       <div className="col-span-3">
@@ -22,19 +26,24 @@ export default function ExperiencePreview() {
                     {exp.position}
                   </h3>
                   <span className="text-[11px] text-slate-500">
-                    {exp.startDate} – {exp.currentlyWorking ? "Present" : exp.endDate}
+                    {exp.startDate} –{" "}
+                    {exp.currentlyWorking ? "Present" : exp.endDate}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">{exp.company}</p>
 
                 {exp.responsibilities.length > 0 && (
                   <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] leading-4 text-slate-700">
-                    {exp.responsibilities.map((item, i) => <li key={i}>{item}</li>)}
+                    {exp.responsibilities.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
                   </ul>
                 )}
                 {exp.achievements?.length ? (
                   <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] leading-4 text-slate-700">
-                    {exp.achievements.map((item, i) => <li key={i}>{item}</li>)}
+                    {exp.achievements.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
                   </ul>
                 ) : null}
               </div>

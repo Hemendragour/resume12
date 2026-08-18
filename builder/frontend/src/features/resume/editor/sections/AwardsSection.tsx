@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 import { useResumeStore } from "../../../../store/resume.store";
+import Button from "../../../../components/ui/Button";
 
 export default function AwardsSection() {
   const awards = useResumeStore((state) => state.resume?.awards ?? []);
@@ -12,34 +13,57 @@ export default function AwardsSection() {
 
   const [value, setValue] = useState("");
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return;
-
-    e.preventDefault();
-
+  // Add award
+  const handleAddAward = () => {
     const award = value.trim();
 
     if (!award) return;
 
     addAward(award);
+
     setValue("");
+  };
+
+  // Add award when pressing Enter
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    handleAddAward();
   };
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">Awards</h2>
-        <p className="text-gray-500">Press Enter to add an award.</p>
+
+        <p className="text-gray-500">
+          Press Enter or click Add to add an award.
+        </p>
       </div>
 
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Winner - Smart India Hackathon"
-        className="h-12 w-full rounded-xl border px-4"
-      />
+      {/* Award Input + Add Button */}
+      <div className="flex gap-3">
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Winner - Smart India Hackathon"
+          className="h-12 flex-1 rounded-xl border px-4 outline-none focus:border-blue-600"
+        />
 
+        <Button
+          type="button"
+          leftIcon={<Plus size={18} />}
+          onClick={handleAddAward}
+        >
+          Add
+        </Button>
+      </div>
+
+      {/* Awards List */}
       <div className="flex flex-wrap gap-3">
         {awards.map((award) => (
           <button

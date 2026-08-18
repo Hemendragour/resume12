@@ -7,16 +7,23 @@ export default function CertificationsPreview() {
 
   return (
     <section className="mt-5">
-      <h2 className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}>
+      <h2
+        className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}
+      >
         Certifications & Achievements
       </h2>
 
       {resume.certifications.length === 0 ? (
-        <p className={`mt-2 ${T.fontSize.body} ${T.colors.muted}`}>No certifications added.</p>
+        <p className={`mt-2 ${T.fontSize.body} ${T.colors.muted}`}>
+          No certifications added.
+        </p>
       ) : (
         <ul className="mt-2 space-y-1">
           {resume.certifications.map((cert, i) => (
-            <li key={i} className={`flex gap-2 ${T.fontSize.body} ${T.colors.body}`}>
+            <li
+              key={i}
+              className={`flex gap-2 ${T.fontSize.body} ${T.colors.body}`}
+            >
               <span className={T.colors.accent}>●</span>
               <span className="font-semibold">{cert}</span>
             </li>

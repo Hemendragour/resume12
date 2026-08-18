@@ -6,15 +6,19 @@ export default function CertificationsPreview() {
   if (!resume) return null;
 
   const certifications = resume.certifications.filter(
-    (cert) => cert.trim() !== ""
+    (cert) => cert.trim() !== "",
   );
 
   if (certifications.length === 0) return null;
-
+  const certificationsSection = resume.sections.find(
+    (section) => section.id === "certifications",
+  );
   return (
     <section className="mt-6">
       <h2 className="mb-2 border-b border-slate-700 pb-1 text-[13px] font-bold uppercase tracking-[0.6px] text-black">
-        Certificates
+        {certificationsSection?.displayTitle?.trim() ||
+          certificationsSection?.title ||
+          "Certificates"}
       </h2>
 
       <p className="text-[11.5px] leading-[1.6] text-slate-800">

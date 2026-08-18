@@ -4,13 +4,17 @@ import { ExecutiveBlueTheme as T } from "../../theme.executive-blue";
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
-
+  const experienceSection = resume.sections.find(
+    (section) => section.id === "experience",
+  );
   return (
     <section className="mt-5">
       <h2
         className={`border-b ${T.colors.sectionBorder} pb-1 ${T.fontSize.sectionHeader} font-bold uppercase tracking-wide ${T.colors.heading}`}
       >
-        Professional Experience
+        {experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Professional Experience"}
       </h2>
 
       {resume.experience.length === 0 ? (

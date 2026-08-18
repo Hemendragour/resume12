@@ -6,11 +6,15 @@ export default function SkillsPreview() {
 
   const allSkills = resume.skills.flatMap((cat) => cat.skills);
   if (allSkills.length === 0) return null;
-
+  const skillsSection = resume.sections.find(
+    (section) => section.id === "skills",
+  );
   return (
     <section className="mt-6">
       <h2 className="border-y border-slate-700 py-1 text-center text-[12px] font-bold uppercase tracking-[0.6px] text-slate-900">
-        Skills
+        {skillsSection?.displayTitle?.trim() ||
+          skillsSection?.title ||
+          "Skills"}
       </h2>
 
       <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-1.5 text-[11.5px] text-slate-700">

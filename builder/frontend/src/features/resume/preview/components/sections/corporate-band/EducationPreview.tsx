@@ -3,11 +3,16 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function EducationPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
+  const educationSection = resume.sections.find(
+    (section) => section.id === "education",
+  );
 
   return (
     <section className="mt-5">
       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
-        Education
+        {educationSection?.displayTitle?.trim() ||
+          educationSection?.title ||
+          "Education"}
       </h2>
 
       {resume.education.length === 0 ? (

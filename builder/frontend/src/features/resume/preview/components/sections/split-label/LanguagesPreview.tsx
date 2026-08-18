@@ -10,14 +10,13 @@ export default function LanguagesPreview() {
         Languages
       </h2>
 
-      <div className="col-span-3 flex flex-wrap gap-2">
+      <div className="space-y-1.5">
         {resume.languages.map((lang) => (
-          <span
-            key={lang.name}
-            className="rounded-full border border-rose-200 px-3 py-1 text-[11px] text-slate-700"
-          >
-            {lang.name}
-          </span>
+          <div key={lang.name} className="flex items-center justify-between">
+            <span className="text-[10px] text-slate-600">
+              {lang.name} ({lang.level})
+            </span>
+          </div>
         ))}
       </div>
     </section>

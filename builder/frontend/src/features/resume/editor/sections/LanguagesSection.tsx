@@ -4,12 +4,7 @@ import { X } from "lucide-react";
 
 import { useResumeStore } from "../../../../store/resume.store";
 
-const PROFICIENCY_LEVELS = [
-  "Native",
-  "Fluent",
-  "Conversational",
-  "Basic",
-];
+const PROFICIENCY_LEVELS = ["Native", "Fluent", "Conversational", "Basic"];
 
 export default function LanguagesSection() {
   const languages = useResumeStore((state) => state.resume?.languages ?? []);
@@ -17,7 +12,7 @@ export default function LanguagesSection() {
   const addLanguage = useResumeStore((state) => state.addLanguage);
   const removeLanguage = useResumeStore((state) => state.removeLanguage);
   const updateLanguageLevel = useResumeStore(
-    (state) => state.updateLanguageLevel
+    (state) => state.updateLanguageLevel,
   );
 
   const [name, setName] = useState("");
@@ -43,7 +38,8 @@ export default function LanguagesSection() {
       <div>
         <h2 className="text-2xl font-bold">Languages</h2>
         <p className="text-gray-500">
-          Add a language name and proficiency level, then press Enter or click Add.
+          Add a language name and proficiency level, then press Enter or click
+          Add.
         </p>
       </div>
 
@@ -81,21 +77,18 @@ export default function LanguagesSection() {
         {languages.map((language) => (
           <div
             key={language.name}
-            className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700"
+            className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm text-green-700"
           >
-            <span>
-              {language.name}
-              {language.level && (
-                <span className="text-green-600"> ({language.level})</span>
-              )}
-            </span>
+            {/* Language name */}
+            <span className="font-medium">{language.name}</span>
 
+            {/* Level dropdown */}
             <select
               value={language.level}
               onChange={(e) =>
                 updateLanguageLevel(language.name, e.target.value)
               }
-              className="rounded-full border-none bg-transparent text-xs text-green-700 focus:outline-none"
+              className="cursor-pointer appearance-none border-0 bg-transparent p-0 text-xs text-green-700 outline-none focus:ring-0"
             >
               {PROFICIENCY_LEVELS.map((lvl) => (
                 <option key={lvl} value={lvl}>
@@ -104,12 +97,13 @@ export default function LanguagesSection() {
               ))}
             </select>
 
+            {/* Remove */}
             <button
               type="button"
               onClick={() => removeLanguage(language.name)}
-              className="ml-1"
+              className="ml-1 flex items-center justify-center rounded-full hover:bg-green-200"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           </div>
         ))}

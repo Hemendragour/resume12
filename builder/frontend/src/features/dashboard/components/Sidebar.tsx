@@ -72,7 +72,6 @@
 //   );
 // }
 
-
 import {
   LayoutDashboard,
   FileText,
@@ -93,7 +92,7 @@ const menus = [
   },
   {
     title: "My Resumes",
-    path: "/dashboard",
+    path: "/myresume",
     icon: FileText,
   },
   {
@@ -121,21 +120,15 @@ const menus = [
 export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 flex h-screen w-72 flex-col border-r bg-white">
-
       {/* Logo */}
 
       <div className="flex h-20 items-center justify-center border-b">
-
-        <h1 className="text-3xl font-extrabold text-blue-600">
-          ResumeAI
-        </h1>
-
+        <h1 className="text-3xl font-extrabold text-blue-600">ResumeAI</h1>
       </div>
 
       {/* Menu */}
 
       <nav className="flex-1 space-y-2 p-5">
-
         {menus.map((menu) => {
           const Icon = menu.icon;
 
@@ -163,24 +156,18 @@ export default function Sidebar() {
       {/* Upgrade Card */}
 
       <div className="m-5 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 p-5 text-white">
-
         <Sparkles className="mb-3" />
 
-        <h3 className="font-bold">
-          Upgrade to Pro
-        </h3>
+        <h3 className="font-bold">Upgrade to Pro</h3>
 
         <p className="mt-2 text-sm opacity-90">
-          Unlock AI Resume Builder,
-          ATS Pro, Unlimited Resume
-          Downloads and Premium
-          Templates.
+          Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
+          Premium Templates.
         </p>
 
         <button className="mt-5 w-full rounded-xl bg-white py-2 font-semibold text-blue-600">
           Upgrade
         </button>
-
       </div>
     </aside>
   );

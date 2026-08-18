@@ -32,7 +32,9 @@ export default function InternshipSection() {
       <InternshipForm
         onClose={handleClose}
         editIndex={editIndex}
-        initialData={editIndex !== undefined ? resume.internships[editIndex] : undefined}
+        initialData={
+          editIndex !== undefined ? resume.internships[editIndex] : undefined
+        }
       />
     );
   }
@@ -56,6 +58,9 @@ export default function InternshipSection() {
               <div>
                 <p className="font-semibold">{intern.role}</p>
                 <p className="text-sm text-gray-500">{intern.company}</p>
+                {intern.location && (
+                  <p className="text-sm text-gray-400">{intern.location}</p>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => handleEdit(index)}>

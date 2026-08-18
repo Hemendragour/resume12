@@ -16,6 +16,11 @@ import PublicResumePage from "../pages/PublicResumePage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersPage from "../pages/admin/UsersPage";
 import HomePage from "../pages/HomePage";
+import TemplateGalleryPage from "../pages/TemplateGalleryPage";
+import MyResumePage from "../pages/MyResumePage";
+import AiPage from "../pages/AiPage";
+import AnalyticsPage from "../pages/AnalyticsPage";
+import Settings from "../pages/SettingsPage";
 
 export default function AppRoutes() {
   return (
@@ -40,6 +45,11 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/home" replace />} />{" "}
         {/* 👈 change */}
         <Route path="/home" element={<HomePage />} />
+        <Route path="/templates" element={<TemplateGalleryPage />} />
+        <Route path="/myresume" element={<MyResumePage />} />
+        <Route path="/ai" element={<AiPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/settings" element={<Settings />} />
         {/* <Route index element={<Navigate to="/dashboard" replace />} /> */}
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />

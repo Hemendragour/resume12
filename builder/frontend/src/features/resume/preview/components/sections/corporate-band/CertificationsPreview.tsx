@@ -3,11 +3,16 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 export default function CertificationsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
+  const certificationsSection = resume.sections.find(
+    (section) => section.id === "certifications",
+  );
 
   return (
     <section className="mt-5">
       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
-        Certifications
+        {certificationsSection?.displayTitle?.trim() ||
+          certificationsSection?.title ||
+          "Certifications"}
       </h2>
 
       {resume.certifications.length > 0 ? (

@@ -1,5 +1,3 @@
-import { BriefcaseBusiness } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 // import SectionHeader from "../../shared/peach-modern/SectionHeader";
@@ -15,21 +13,21 @@ export default function ExperiencePreview() {
 
   const experiences = resume.experience ?? [];
   const experienceSection = resume.sections.find(
-  (section) => section.id === "experience"
-);
+    (section) => section.id === "experience",
+  );
 
   if (experiences.length === 0) return null;
 
   return (
     <section className={T.spacing.section}>
       <SectionHeader
-  title={
-    experienceSection?.displayTitle?.trim() ||
-    experienceSection?.title ||
-    "Experience"
-  }
-  icon={<Briefcase size={16} />}
-/>
+        title={
+          experienceSection?.displayTitle?.trim() ||
+          experienceSection?.title ||
+          "Experience"
+        }
+        icon={<Briefcase size={16} />}
+      />
 
       <div className="mt-3 space-y-6">
         {experiences.map((item, index) => (

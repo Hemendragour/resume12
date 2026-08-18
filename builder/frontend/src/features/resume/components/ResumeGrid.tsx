@@ -17,7 +17,6 @@
 //   onCreate,
 //   onRefresh,
 // }: Props) {
-  
 
 //   if (loading) {
 //     return (
@@ -58,8 +57,8 @@
 import ResumeCard from "./ResumeCard";
 import EmptyState from "../../dashboard/components/EmptyState";
 
-import type { Resume } from "../types/resume.types";   // ← Ye import zaroori hai
-import { useResumes } from "../hooks/useResumes";
+import type { Resume } from "../types/resume.types"; // ← Ye import zaroori hai
+// import { useResumes } from "../hooks/useResumes";
 
 interface Props {
   resumes: Resume[];
@@ -97,11 +96,7 @@ export default function ResumeGrid({
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {resumes.map((resume) => (
-        <ResumeCard
-          key={resume._id}
-          resume={resume}
-          onRefresh={onRefresh}
-        />
+        <ResumeCard key={resume._id} resume={resume} onRefresh={onRefresh} />
       ))}
     </div>
   );

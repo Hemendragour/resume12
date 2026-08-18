@@ -1,25 +1,19 @@
- 
-
 import { logActivity } from "../../services/activity.service";
 import { ActivityTypes } from "../../models/activity.model";
 
 import { Request, Response, NextFunction } from "express";
-import { Resume, DefaultResumeSections, } from "../../models/resume.model";
+import { Resume, DefaultResumeSections } from "../../models/resume.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiError } from "../../utils/ApiError";
 import { AuthRequest } from "../../middleware/auth.middleware";
 import { getVisitorInfo } from "../../utils/visitor.util";
-import {
-  createResumeSchema,
-  updateResumeSchema,
-} from "./resume.validation";
+import { createResumeSchema, updateResumeSchema } from "./resume.validation";
 import { analyticsService } from "../analytics/analytics.service";
 import crypto from "crypto";
 
 export const createResume = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const data = createResumeSchema.parse(req.body);
-    
 
     const resume = await Resume.create({
       userId: req.userId,
@@ -42,55 +36,87 @@ export const createResume = asyncHandler(
         ...(data.personalInfo ?? {}),
       },
       summary: data.summary ?? "",
-      skills:
-  data.skills ??
-  [],
+      skills: data.skills ?? [],
       experience: data.experience ?? [],
       education: data.education ?? [],
       projects: data.projects ?? [],
 
-strengths: data.strengths ?? [],
+      strengths: data.strengths ?? [],
       certifications: data.certifications ?? [],
       languages: data.languages ?? [],
       awards: data.awards ?? [],
       interests: data.interests ?? [],
       achievements: data.achievements ?? [],
-      
     });
 
     // Create Analytics Document Automatically
     if (req.userId) {
-      await analyticsService.createAnalytics(
-        resume._id.toString(),
-        req.userId
-      );
+      await analyticsService.createAnalytics(resume._id.toString(), req.userId);
     }
 
     // Log activity
     await logActivity(
       req.userId as string,
       ActivityTypes.RESUME_CREATED,
-      `Created resume "${resume.title}"`
+      `Created resume "${resume.title}"`,
     );
 
     res.status(201).json({
       success: true,
       resume,
     });
-  }
+  },
 );
+
+// export const getResumes = asyncHandler(
+//   async (req: AuthRequest, res: Response) => {
+//     const resumes = await Resume.find({
+//       userId: req.userId,
+//     }).sort({ updatedAt: -1 });
+
+//     res.status(200).json({
+//       success: true,
+//       resumes,
+//     });
+//   },
+// );
 
 export const getResumes = asyncHandler(
   async (req: AuthRequest, res: Response) => {
-    const resumes = await Resume.find({
-      userId: req.userId,
-    }).sort({ updatedAt: -1 });
+    const page = Math.max(Number(req.query.page) || 1, 1);
+
+    const limit = 9;
+
+    const skip = (page - 1) * limit;
+
+    const [resumes, totalResumes] = await Promise.all([
+      Resume.find({
+        userId: req.userId,
+      })
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      Resume.countDocuments({
+        userId: req.userId,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalResumes / limit);
 
     res.status(200).json({
       success: true,
       resumes,
+      pagination: {
+        currentPage: page,
+        limit,
+        totalResumes,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     });
-  }
+  },
 );
 
 export const getResumeById = asyncHandler(
@@ -108,7 +134,7 @@ export const getResumeById = asyncHandler(
       success: true,
       resume,
     });
-  }
+  },
 );
 
 export const updateResume = asyncHandler(
@@ -136,14 +162,14 @@ export const updateResume = asyncHandler(
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     if (req.userId && resume) {
       await logActivity(
         req.userId,
         ActivityTypes.RESUME_UPDATED,
-        `Updated resume "${resume.title}"`
+        `Updated resume "${resume.title}"`,
       );
     }
 
@@ -151,7 +177,7 @@ export const updateResume = asyncHandler(
       success: true,
       resume,
     });
-  }
+  },
 );
 
 export const deleteResume = asyncHandler(
@@ -169,7 +195,7 @@ export const deleteResume = asyncHandler(
       await logActivity(
         req.userId,
         ActivityTypes.RESUME_DELETED,
-        `Deleted resume "${resume.title}"`
+        `Deleted resume "${resume.title}"`,
       );
     }
 
@@ -177,7 +203,7 @@ export const deleteResume = asyncHandler(
       success: true,
       message: "Resume deleted successfully",
     });
-  }
+  },
 );
 
 export const duplicateResume = asyncHandler(
@@ -191,13 +217,8 @@ export const duplicateResume = asyncHandler(
       throw new ApiError(404, "Resume not found");
     }
 
-    const {
-      _id,
-      createdAt,
-      updatedAt,
-      __v,
-      ...resumeData
-    } = existingResume.toObject();
+    const { _id, createdAt, updatedAt, __v, ...resumeData } =
+      existingResume.toObject();
 
     const duplicatedResume = await Resume.create({
       ...resumeData,
@@ -210,7 +231,7 @@ export const duplicateResume = asyncHandler(
       await logActivity(
         req.userId,
         ActivityTypes.RESUME_CREATED,
-        `Duplicated resume "${duplicatedResume.title}"`
+        `Duplicated resume "${duplicatedResume.title}"`,
       );
     }
 
@@ -218,7 +239,7 @@ export const duplicateResume = asyncHandler(
       success: true,
       resume: duplicatedResume,
     });
-  }
+  },
 );
 
 export const shareResume = asyncHandler(
@@ -239,7 +260,7 @@ export const shareResume = asyncHandler(
       {
         new: true,
         runValidators: false,
-      }
+      },
     );
 
     if (!resume) {
@@ -247,15 +268,13 @@ export const shareResume = asyncHandler(
     }
 
     // 👇 Analytics update
-    await analyticsService.incrementShares(
-      resume._id.toString()
-    );
+    await analyticsService.incrementShares(resume._id.toString());
 
     if (req.userId) {
       await logActivity(
         req.userId,
         ActivityTypes.RESUME_SHARED,
-        `Shared resume "${resume.title}"`
+        `Shared resume "${resume.title}"`,
       );
     }
 
@@ -264,7 +283,7 @@ export const shareResume = asyncHandler(
       message: "Resume shared successfully",
       shareId: resume.shareId,
     });
-  }
+  },
 );
 
 export const disableShareResume = asyncHandler(
@@ -286,7 +305,7 @@ export const disableShareResume = asyncHandler(
       success: true,
       message: "Resume sharing disabled",
     });
-  }
+  },
 );
 
 export const getPublicResume = asyncHandler(
@@ -302,26 +321,23 @@ export const getPublicResume = asyncHandler(
 
     // Visitor Info
     const ip =
-      (req.headers["x-forwarded-for"] as string)
-        ?.split(",")[0] ||
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
       req.ip ||
       "unknown";
 
-    const visitor = getVisitorInfo(
-      req.headers["user-agent"] ?? ""
-    );
+    const visitor = getVisitorInfo(req.headers["user-agent"] ?? "");
 
     // Analytics
     await analyticsService.incrementViews(
       resume._id.toString(),
       ip,
       visitor.browser,
-      visitor.device
+      visitor.device,
     );
 
     res.status(200).json({
       success: true,
       resume,
     });
-  }
+  },
 );

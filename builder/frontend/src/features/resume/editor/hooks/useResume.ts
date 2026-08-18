@@ -71,16 +71,12 @@ setResume(data);
 
   }, [id]);
 
-  return {
-
-    loading,
-
-    resume,
-
-    setResume,
-
-    refetch: fetchResume,
-
-  };
+ return {
+  loading,
+  resume,
+  setResume,
+  refetch: fetchResume,
+  resumeId: id,
+};
 
 };

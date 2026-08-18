@@ -1,21 +1,108 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-import { getATSScore } from "../services/ats.service";
+import {
+  analyzeATS,
+  getATSHistory,
+  getLatestATS,
+} from "../services/ats.service";
 
-export function useATSScore(
+import type {
+  ATSAnalyzeRequest,
+} from "../types/ats.types";
+
+// ============================================================
+// QUERY KEYS
+// ============================================================
+
+export const atsQueryKeys = {
+  all: ["ats"] as const,
+
+  latest: (resumeId: string) =>
+    ["ats", "latest", resumeId] as const,
+
+  history: (resumeId: string) =>
+    ["ats", "history", resumeId] as const,
+};
+
+// ============================================================
+// LATEST ATS ANALYSIS
+// ============================================================
+
+export function useLatestATS(
   resumeId?: string
 ) {
   return useQuery({
-    queryKey: [
-      "ats-score",
-      resumeId,
-    ],
+    queryKey: resumeId
+      ? atsQueryKeys.latest(resumeId)
+      : atsQueryKeys.all,
 
     queryFn: () =>
-      getATSScore(
-        resumeId!
-      ),
+      getLatestATS(resumeId!),
 
-    enabled: !!resumeId,
+    enabled: Boolean(resumeId),
+
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+// ============================================================
+// RUN ATS ANALYSIS
+// ============================================================
+
+export function useAnalyzeATS() {
+  const queryClient =
+    useQueryClient();
+
+  return useMutation({
+    mutationFn: (
+      payload: ATSAnalyzeRequest
+    ) => analyzeATS(payload),
+
+    onSuccess: (
+      response,
+      variables
+    ) => {
+      queryClient.setQueryData(
+        atsQueryKeys.latest(
+          variables.resumeId
+        ),
+        {
+          success: true,
+          data: response.data.result,
+        }
+      );
+
+      queryClient.invalidateQueries({
+        queryKey:
+          atsQueryKeys.history(
+            variables.resumeId
+          ),
+      });
+    },
+  });
+}
+
+// ============================================================
+// ATS ANALYSIS HISTORY
+// ============================================================
+
+export function useATSHistory(
+  resumeId?: string
+) {
+  return useQuery({
+    queryKey: resumeId
+      ? atsQueryKeys.history(resumeId)
+      : atsQueryKeys.all,
+
+    queryFn: () =>
+      getATSHistory(resumeId!),
+
+    enabled: Boolean(resumeId),
+
+    staleTime: 1000 * 60 * 5,
   });
 }

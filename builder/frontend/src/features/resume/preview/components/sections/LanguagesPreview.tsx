@@ -18,23 +18,16 @@ export default function LanguagesPreview() {
         Languages
       </h2>
 
-      {resume.languages.length > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {resume.languages.map((language) => (
-            <span
-              key={language}
-              className="rounded border px-2 py-0.5 text-[11px]"
-              style={{ borderColor: theme.colors.muted, color: theme.colors.text }}
-            >
-              {language}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-3 text-[11px]" style={{ color: theme.colors.muted }}>
-          No languages added.
-        </p>
-      )}
+      <div className="col-span-3 flex flex-wrap gap-2">
+        {resume.languages.map((lang) => (
+          <span
+            key={lang.name}
+            className="rounded-full border border-rose-200 px-3 py-1 text-[11px] text-slate-700"
+          >
+            {lang.name}
+          </span>
+        ))}
+      </div>
     </section>
   );
 }

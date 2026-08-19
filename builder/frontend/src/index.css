@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+@theme {
+  /* Brand */
+  --color-primary: #6b5643;
+  --color-dark: #4a3728;
+  --color-tan: #8b7355; /* new: lighter brown, used in gradients */
+  --color-accent: #c49a6c;
+
+  /* Backgrounds */
+  --color-background: #f5f0eb; /* or #d4c9bc if you want the deeper tone used in Home */
+  --color-card: #e0d8cf;
+  --color-modal: #f6ede8;
+
+  /* Dark mode */
+  --color-dark-bg: #0f172a; /* slate-900 */
+  --color-dark-card: #1e293b; /* slate-800 */
+  --color-dark-border: #334155; /* slate-700 */
+
+  /* Status/mood (keep as Tailwind defaults, or alias them) */
+  --color-success: #22c55e; /* green-500 */
+  --color-info: #3b82f6; /* blue-500 */
+  --color-warning: #f97316; /* orange-500 */
+  --color-danger: #ef4444; /* red-500 */
+  --color-reflective: #a855f7; /* purple-500 */
+  --color-grateful: #ec4899; /* pink-500 */
+}

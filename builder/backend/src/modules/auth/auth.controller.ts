@@ -1,4 +1,3 @@
-
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
@@ -10,107 +9,91 @@ import { ApiError } from "../../utils/ApiError";
 import { loginSchema } from "./auth.validation";
 import { AuthRequest } from "../../middleware/auth.middleware";
 
-export const register = asyncHandler(
-  async (req: Request, res: Response) => {
-    const validatedData = registerSchema.parse(req.body);
-        console.log("BODY RECEIVED:", req.body);
-    const { fullName, email, password } = validatedData;
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const validatedData = registerSchema.parse(req.body);
+  console.log("BODY RECEIVED:", req.body);
+  const { fullName, email, password } = validatedData;
 
-    const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email });
 
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message: "User already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      fullName,
-      email,
-      password: hashedPassword,
-    });
-
-    const token = generateToken(user._id.toString());
-
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      token,
-
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-      },
+  if (existingUser) {
+    return res.status(409).json({
+      success: false,
+      message: "User already exists",
     });
   }
-);
 
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-export const login = asyncHandler(
-  async (req: Request, res: Response) => {
+  const user = await User.create({
+    fullName,
+    email,
+    password: hashedPassword,
+  });
 
-    console.log("BODY:", req.body);
+  const token = generateToken(user._id.toString());
 
-    const validatedData = loginSchema.parse(req.body);
+  res.status(201).json({
+    success: true,
+    message: "User registered successfully",
+    token,
 
-    const { email, password } = validatedData;
+    user: {
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+    },
+  });
+});
 
-    const user = await User.findOne({ email });
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  console.log("BODY:", req.body);
 
-    if (!user) {
-      throw new ApiError(401, "Invalid credentials");
-    }
+  const validatedData = loginSchema.parse(req.body);
 
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.password
-    );
+  const { email, password } = validatedData;
 
-    if (!isPasswordValid) {
-      throw new ApiError(401, "Invalid credentials");
-    }
+  const user = await User.findOne({ email });
 
-    console.log("Before token");
-
-    const token = generateToken(user._id.toString());
-
-    console.log("After token");
-
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-      },
-    });
-
-    console.log("Response sent");
+  if (!user) {
+    throw new ApiError(401, "Invalid credentials");
   }
-);
 
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-export const getMe = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const user = await User.findById(req.userId).select("-password");
-
-    if (!user) {
-      throw new ApiError(404, "User not found");
-    }
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid credentials");
   }
-);
 
+  console.log("Before token");
 
+  const token = generateToken(user._id.toString());
 
+  console.log("After token");
 
+  res.status(200).json({
+    success: true,
+    message: "Login successful",
+    token,
+    user: {
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+    },
+  });
+
+  console.log("Response sent");
+});
+
+export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const user = await User.findById(req.userId).select("-password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});

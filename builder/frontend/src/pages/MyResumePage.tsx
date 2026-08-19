@@ -77,7 +77,7 @@ export default function MyResumePage() {
 
   if (error) {
     return (
-      <div className="flex min-h-100 items-center justify-center">
+      <div className="flex min-h-100 items-center bg-background justify-center">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-red-600">
             Failed to load resumes

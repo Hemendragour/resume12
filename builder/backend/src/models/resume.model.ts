@@ -1,3 +1,6 @@
+ 
+
+
 import mongoose, { Schema, Document } from "mongoose";
 
 export const ResumeStatus = {
@@ -12,112 +15,36 @@ export const ResumeTemplates = {
 } as const;
 
 export const DefaultResumeSections = [
-  {
-    id: "personalInfo",
-    type: "personalInfo",
-    title: "Personal Info",
-    enabled: true,
-    order: 1,
-  },
-  {
-    id: "summary",
-    type: "summary",
-    title: "Summary",
-    displayTitle: "",
-    enabled: true,
-    order: 2,
-  },
-  {
-    id: "experience",
-    type: "experience",
-    title: "Experience",
-    displayTitle: "",
-    enabled: true,
-    order: 3,
-  },
+  { id: "personalInfo", type: "personalInfo", title: "Personal Info", enabled: true, order: 1 },
+  { id: "summary", type: "summary", title: "Summary",displayTitle:"", enabled: true, order: 2 },
+  { id: "experience", type: "experience", title: "Experience",displayTitle:"", enabled: true, order: 3 },
 
-  {
-    id: "internships",
-    type: "internships",
-    title: "Internships",
-    displayTitle: "",
-    enabled: true,
-    order: 4,
-  },
+  { id: "internships", type: "internships", title: "Internships",displayTitle:"", enabled: true, order: 4 },
 
+  { id: "education", type: "education", title: "Education",displayTitle:"", enabled: true, order: 5 },
+  { id: "skills", type: "skills", title: "Skills",displayTitle:"", enabled: true, order: 6 },
+  { id: "projects", type: "projects", title: "Projects",displayTitle:"", enabled: true, order: 7 },
+  { id: "languages", type: "languages", title: "Languages",displayTitle:"", enabled: true, order: 8 },
+  { id: "certifications", type: "certifications", title: "Certificates",displayTitle:"", enabled: true, order: 9 },
+  { id: "awards", type: "awards", title: "Awards",displayTitle:"", enabled: true, order: 10 },
+  { id: "interests", type: "interests", title: "Interests",displayTitle:"", enabled: true, order: 11 },
   {
-    id: "education",
-    type: "education",
-    title: "Education",
-    displayTitle: "",
-    enabled: true,
-    order: 5,
-  },
-  {
-    id: "skills",
-    type: "skills",
-    title: "Skills",
-    displayTitle: "",
-    enabled: true,
-    order: 6,
-  },
-  {
-    id: "projects",
-    type: "projects",
-    title: "Projects",
-    displayTitle: "",
-    enabled: true,
-    order: 7,
-  },
-  {
-    id: "languages",
-    type: "languages",
-    title: "Languages",
-    displayTitle: "",
-    enabled: true,
-    order: 8,
-  },
-  {
-    id: "certifications",
-    type: "certifications",
-    title: "Certificates",
-    displayTitle: "",
-    enabled: true,
-    order: 9,
-  },
-  {
-    id: "awards",
-    type: "awards",
-    title: "Awards",
-    displayTitle: "",
-    enabled: true,
-    order: 10,
-  },
-  {
-    id: "interests",
-    type: "interests",
-    title: "Interests",
-    displayTitle: "",
-    enabled: true,
-    order: 11,
-  },
-  {
-    id: "strengths",
-    type: "strengths",
-    title: "Strengths",
-    displayTitle: "",
-    enabled: true,
-    order: 12, // apne order ke hisab se
-  },
+  id: "strengths",
+  type: "strengths",
+  title: "Strengths",
+  displayTitle: "",
+  enabled: true,
+  order: 12, // apne order ke hisab se
+},
 
-  {
-    id: "achievements",
-    type: "achievements",
-    title: "Achievements",
-    displayTitle: "",
-    enabled: true,
-    order: 13,
-  },
+{
+  id: "achievements",
+  type: "achievements",
+  title: "Achievements",
+  displayTitle: "",
+  enabled: true,
+  order: 13,
+},
 ];
 // ==================== INTERFACE ====================
 
@@ -141,9 +68,9 @@ export interface IResume extends Document {
     order: number;
   }[];
   strengths: {
-    title: string;
-    description: string;
-  }[];
+  title: string;
+  description: string;
+}[];
 
   personalInfo: {
     fullName: string;
@@ -178,6 +105,7 @@ export interface IResume extends Document {
 
   achievements: string[];
 
+
   education: {
     institution: string;
     degree: string;
@@ -187,33 +115,35 @@ export interface IResume extends Document {
     cgpa?: string;
   }[];
   internships: {
-    company: string;
-    role: string;
-    startDate: string;
-    endDate?: string;
-    currentlyInterning?: boolean;
-    responsibilities: string[];
-    achievements: string[];
-    location?: string;
-  }[];
+  company: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  currentlyInterning?: boolean;
+  responsibilities: string[];
+  achievements: string[];
+}[];
 
-  projects: {
-    title: string;
-    role?: string;
-    startDate: string;
-    endDate?: string;
-    currentlyWorking?: boolean;
-    description: string;
-    technologies: string[];
-    github?: string;
-    link?: string;
-  }[];
+projects: {
+  title: string;
+  role?: string;
+  startDate: string;
+  endDate?: string;
+  currentlyWorking?: boolean;
+  description: string;
+  technologies: string[];
+  github?: string;
+  link?: string;
+}[];
+
+
+ 
 
   certifications: string[];
-  languages: {
-    name: string;
-    level: string;
-  }[];
+ languages: {
+  name: string;
+  level: string;
+}[];
   awards: string[];
   interests: string[];
 
@@ -249,11 +179,11 @@ const ResumeSectionSchema = new Schema(
     enabled: { type: Boolean, default: true },
     order: { type: Number, required: true },
     displayTitle: {
-      type: String,
-      default: "",
-    },
+  type: String,
+  default: "",
+},
   },
-  { _id: false },
+  { _id: false }
 );
 
 const customSectionItemSchema = new Schema(
@@ -265,7 +195,7 @@ const customSectionItemSchema = new Schema(
     endDate: { type: String, default: "" },
     description: { type: String, default: "" },
   },
-  { _id: false },
+  { _id: false }
 );
 
 const skillCategorySchema = new Schema(
@@ -273,7 +203,7 @@ const skillCategorySchema = new Schema(
     title: { type: String, required: true },
     skills: { type: [String], default: [] },
   },
-  { _id: false },
+  { _id: false }
 );
 
 const languageItemSchema = new Schema(
@@ -281,8 +211,10 @@ const languageItemSchema = new Schema(
     name: { type: String, required: true },
     level: { type: String, default: "" },
   },
-  { _id: false },
+  { _id: false }
 );
+
+
 
 const customSectionSchema = new Schema(
   {
@@ -293,7 +225,7 @@ const customSectionSchema = new Schema(
     order: { type: Number, required: true },
     items: { type: [customSectionItemSchema], default: [] },
   },
-  { _id: false },
+  { _id: false }
 );
 
 // ==================== MAIN SCHEMA ====================
@@ -312,6 +244,7 @@ const resumeSchema = new Schema<IResume>(
       required: true,
       trim: true,
     },
+    
 
     version: {
       type: Number,
@@ -384,98 +317,98 @@ const resumeSchema = new Schema<IResume>(
     ],
 
     education: [
-      {
-        institution: { type: String, required: true },
-        degree: { type: String, required: true },
-        fieldOfStudy: { type: String, required: true },
+  {
+    institution: { type: String, required: true },
+    degree: { type: String, required: true },
+    fieldOfStudy: { type: String, required: true },
 
-        location: { type: String, default: "" },
+    location: { type: String, default: "" },
 
-        startMonth: { type: String, default: "" },
-        startYear: { type: Number, required: true },
+    startMonth: { type: String, default: "" },
+    startYear: { type: Number, required: true },
 
-        endMonth: { type: String, default: "" },
-        endYear: { type: Number },
+    endMonth: { type: String, default: "" },
+    endYear: { type: Number },
 
-        current: { type: Boolean, default: false },
+    current: { type: Boolean, default: false },
 
-        cgpa: { type: String, default: "" },
+    cgpa: { type: String, default: "" },
 
-        coursework: { type: String, default: "" },
-      },
-    ],
+    coursework: { type: String, default: "" },
+  },
+],
 
-    internships: [
-      {
-        company: { type: String, required: true },
-        role: { type: String, required: true },
-        startDate: { type: String, required: true },
-        endDate: { type: String, default: "" },
-        currentlyInterning: { type: Boolean, default: false },
-        responsibilities: { type: [String], default: [] },
-        achievements: { type: [String], default: [] },
-        location: { type: String, default: "" },
-      },
-    ],
+
+internships: [
+  {
+    company: { type: String, required: true },
+    role: { type: String, required: true },
+    startDate: { type: String, required: true },
+    endDate: { type: String, default: "" },
+    currentlyInterning: { type: Boolean, default: false },
+    responsibilities: { type: [String], default: [] },
+    achievements: { type: [String], default: [] },
+  },
+],
 
     projects: [
-      {
-        title: { type: String, required: true },
+  {
+    title: { type: String, required: true },
 
-        role: { type: String, default: "" },
+    role: { type: String, default: "" },
 
-        startDate: { type: String, default: "" },
+    startDate: { type: String, default: "" },
 
-        endDate: { type: String, default: "" },
+    endDate: { type: String, default: "" },
 
-        currentlyWorking: {
-          type: Boolean,
-          default: false,
-        },
+    currentlyWorking: {
+      type: Boolean,
+      default: false,
+    },
 
-        description: {
-          type: String,
-          required: true,
-        },
+    description: {
+      type: String,
+      required: true,
+    },
 
-        technologies: {
-          type: [String],
-          default: [],
-        },
-
-        github: {
-          type: String,
-          default: "",
-        },
-
-        link: {
-          type: String,
-          default: "",
-        },
-      },
-    ],
-
-    strengths: [
-      {
-        title: {
-          type: String,
-          default: "",
-        },
-        description: {
-          type: String,
-          default: "",
-        },
-      },
-    ],
-
-    certifications: { type: [String], default: [] },
-    languages: { type: [languageItemSchema], default: [] },
-    awards: { type: [String], default: [] },
-    interests: { type: [String], default: [] },
-    achievements: {
+    technologies: {
       type: [String],
       default: [],
     },
+
+    github: {
+      type: String,
+      default: "",
+    },
+
+    link: {
+      type: String,
+      default: "",
+    },
+  },
+],  
+
+strengths: [
+  {
+    title: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+  },
+],
+
+    certifications: { type: [String], default: [] },
+   languages: { type: [languageItemSchema], default: [] },
+    awards: { type: [String], default: [] },
+    interests: { type: [String], default: [] },
+    achievements: {
+  type: [String],
+  default: [],
+},
 
     customSections: {
       type: [customSectionSchema],
@@ -491,11 +424,18 @@ const resumeSchema = new Schema<IResume>(
       type: [ResumeSectionSchema],
       default: DefaultResumeSections,
     },
+
+    
+
+
+    
   },
+
+
 
   {
     timestamps: true,
-  },
+  }
 );
 
 // Indexes

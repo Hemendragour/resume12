@@ -16,6 +16,28 @@ export const generateContent = async (
   return response.text ?? "";
 };
 
+// export const generateJSON = async <T>(
+//   prompt: string
+// ): Promise<T> => {
+//   const response = await ai.models.generateContent({
+//     model: env.GEMINI_MODEL,
+//     contents: prompt,
+//     config: {
+//       responseMimeType: "application/json",
+//     },
+//   });
+
+//   const text = response.text ?? "{}";
+
+//   try {
+//     return JSON.parse(text) as T;
+//   } catch (err) {
+//     console.error("Gemini returned invalid JSON:", text);
+//     throw new Error("AI response could not be parsed. Please try again.");
+//   }
+// };
+
+
 export const generateJSON = async <T>(
   prompt: string
 ): Promise<T> => {
@@ -24,6 +46,8 @@ export const generateJSON = async <T>(
     contents: prompt,
     config: {
       responseMimeType: "application/json",
+      maxOutputTokens: 4000,
+      temperature: 0.2,
     },
   });
 
@@ -32,7 +56,13 @@ export const generateJSON = async <T>(
   try {
     return JSON.parse(text) as T;
   } catch (err) {
-    console.error("Gemini returned invalid JSON:", text);
-    throw new Error("AI response could not be parsed. Please try again.");
+    console.error(
+      "Gemini returned invalid JSON:",
+      text
+    );
+
+    throw new Error(
+      "AI response could not be parsed. Please try again."
+    );
   }
 };

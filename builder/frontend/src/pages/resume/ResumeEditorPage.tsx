@@ -1,8 +1,10 @@
  
 
 
-
-// import { useState } from "react";
+// import {
+//   useEffect,
+//   useState,
+// } from "react";
 
 // import { useResume } from "../../features/resume/editor/hooks/useResume";
 // import { useAutoSave } from "../../features/resume/editor/hooks/useAutoSave";
@@ -17,7 +19,12 @@
 // import ExportPdfButton from "../../features/resume/components/ExportPdfButton";
 
 // import ATSScoreCard from "../../features/ats/components/ATSScoreCard";
-// import { useLatestATS } from "../../features/ats/hooks/useATSScore";
+// import ATSSuggestions from "../../features/ats/components/ATSSuggestions";
+
+// import {
+//   useLatestATS,
+//   useAnalyzeATS,
+// } from "../../features/ats/hooks/useATSScore";
 
 // export default function ResumeEditorPage() {
 //   const [activeSection, setActiveSection] =
@@ -45,8 +52,40 @@
 //     isError: isATSError,
 //   } = useLatestATS(resumeId);
 
+//   const {
+//     mutate: analyzeATS,
+//     isPending: isAnalyzingATS,
+//     isError: isAnalyzeError,
+//   } = useAnalyzeATS();
+
 //   const ats =
-//   atsResponse?.data ?? null;
+//     atsResponse?.data ?? null;
+
+//   // ============================================================
+//   // TARGET ROLE
+//   // ============================================================
+
+//   const [targetRole, setTargetRole] =
+//     useState("");
+
+//   useEffect(() => {
+//     if (!resume) return;
+
+//     const resumeWithTargetRole =
+//       resume as typeof resume & {
+//         targetRole?: string;
+//       };
+
+//     if (
+//       typeof resumeWithTargetRole.targetRole ===
+//         "string" &&
+//       resumeWithTargetRole.targetRole.trim()
+//     ) {
+//       setTargetRole(
+//         resumeWithTargetRole.targetRole.trim()
+//       );
+//     }
+//   }, [resume]);
 
 //   // ============================================================
 //   // RESUME COMPLETION
@@ -54,6 +93,50 @@
 
 //   const completion =
 //     useResumeCompletion();
+
+//   // ============================================================
+//   // ANALYZE ATS
+//   // ============================================================
+
+//   const handleAnalyzeATS = () => {
+//     if (!resumeId) {
+//       return;
+//     }
+
+//     const cleanTargetRole =
+//       targetRole.trim();
+
+//     if (!cleanTargetRole) {
+//       return;
+//     }
+
+//     analyzeATS({
+//       resumeId,
+
+//       targetRole:
+//         cleanTargetRole,
+
+//       options: {
+//         includeAIAnalysis: true,
+
+//         includeOptimizedSummary: true,
+
+//         includeImprovedExperience: true,
+
+//         includeKeywordAnalysis: true,
+
+//         includeSemanticAnalysis: true,
+
+//         includeParseabilityAnalysis: true,
+
+//         includeContentQualityAnalysis: true,
+
+//         includeDateConsistencyAnalysis: true,
+
+//         includeSeniorityAnalysis: true,
+//       },
+//     });
+//   };
 
 //   // ============================================================
 //   // LOADING
@@ -94,17 +177,70 @@
 
 //       <div className="flex flex-wrap items-center justify-end gap-3 border-b bg-white px-6 py-3">
 
-//         {/* ATS SCORE */}
+//         {/* ==================================================== */}
+//         {/* TARGET ROLE */}
+//         {/* ==================================================== */}
+
+//         <div className="flex items-center gap-2">
+
+//           <input
+//             type="text"
+//             value={targetRole}
+//             onChange={(event) =>
+//               setTargetRole(
+//                 event.target.value
+//               )
+//             }
+//             placeholder="Target role"
+//             className="w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+//           />
+
+//         </div>
+
+//         {/* ==================================================== */}
+//         {/* ANALYZE ATS BUTTON */}
+//         {/* ==================================================== */}
+
+//         <button
+//           type="button"
+//           onClick={handleAnalyzeATS}
+//           disabled={
+//             !resumeId ||
+//             !targetRole.trim() ||
+//             isAnalyzingATS
+//           }
+//           className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+//         >
+
+//           {isAnalyzingATS && (
+//             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+//           )}
+
+//           {isAnalyzingATS
+//             ? "Analyzing..."
+//             : "Analyze Resume"}
+
+//         </button>
+
+//         {/* ==================================================== */}
+//         {/* ATS LOADING */}
+//         {/* ==================================================== */}
 
 //         {isATSLoading && (
 //           <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
+
 //             <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
 
 //             <span className="text-sm text-slate-500">
 //               Loading ATS...
 //             </span>
+
 //           </div>
 //         )}
+
+//         {/* ==================================================== */}
+//         {/* ATS SCORE */}
+//         {/* ==================================================== */}
 
 //         {!isATSLoading && ats && (
 //           <ATSScoreCard
@@ -113,25 +249,58 @@
 //           />
 //         )}
 
-//         {/* NO ANALYSIS YET */}
+//         {/* ==================================================== */}
+//         {/* NO ANALYSIS */}
+//         {/* ==================================================== */}
 
 //         {!isATSLoading &&
 //           !ats &&
 //           !isATSError && (
 //             <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
+
 //               <p className="text-sm font-medium text-slate-600">
 //                 ATS analysis not available yet
 //               </p>
+
 //             </div>
 //           )}
 
+//         {/* ==================================================== */}
+//         {/* ATS GET ERROR */}
+//         {/* ==================================================== */}
+
+//         {isATSError && (
+//           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+
+//             <p className="text-sm font-medium text-red-600">
+//               Unable to load ATS analysis.
+//             </p>
+
+//           </div>
+//         )}
+
+//         {/* ==================================================== */}
+//         {/* ATS ANALYZE ERROR */}
+//         {/* ==================================================== */}
+
+//         {isAnalyzeError && (
+//           <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+
+//             <p className="text-sm font-medium text-red-600">
+//               ATS analysis failed. Please try again.
+//             </p>
+
+//           </div>
+//         )}
+
+//         {/* ==================================================== */}
 //         {/* EXPORT PDF */}
+//         {/* ==================================================== */}
 
 //         {resume && (
-//           <ExportPdfButton
-            
-//           />
+//           <ExportPdfButton />
 //         )}
+
 //       </div>
 
 //       {/* ====================================================== */}
@@ -150,7 +319,7 @@
 //       )}
 
 //       {/* ====================================================== */}
-//       {/* EDITOR AREA */}
+//       {/* EDITOR WORKSPACE */}
 //       {/* ====================================================== */}
 
 //       <div className="flex flex-1 overflow-hidden">
@@ -209,15 +378,86 @@
 //         <PreviewPanel />
 
 //       </div>
+
+//       {/* ====================================================== */}
+//       {/* ATS ANALYSIS */}
+//       {/* ====================================================== */}
+
+//       {ats && (
+//         <section className="border-t bg-slate-50 px-6 py-8">
+
+//           <div className="mx-auto max-w-7xl">
+
+//             {/* ================================================= */}
+//             {/* ATS HEADER */}
+//             {/* ================================================= */}
+
+//             <div className="mb-6">
+
+//               <div className="flex flex-wrap items-end justify-between gap-4">
+
+//                 <div>
+
+//                   <h2 className="text-2xl font-bold text-slate-900">
+//                     ATS Analysis
+//                   </h2>
+
+//                   <p className="mt-1 text-sm text-slate-500">
+//                     Detailed analysis of your resume based on
+//                     the latest ATS evaluation.
+//                   </p>
+
+//                 </div>
+
+//                 <div className="text-right">
+
+//                   <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+//                     Target Role
+//                   </p>
+
+//                   <p className="mt-1 text-sm font-semibold text-slate-700">
+//                     {targetRole || "Not specified"}
+//                   </p>
+
+//                 </div>
+
+//               </div>
+
+//             </div>
+
+//             {/* ================================================= */}
+//             {/* ATS DETAILS */}
+//             {/* ================================================= */}
+
+//             <ATSSuggestions
+//               recommendations={
+//                 ats.recommendations
+//               }
+//               strengths={
+//                 ats.strengths
+//               }
+//               weaknesses={
+//                 ats.weaknesses
+//               }
+//               matchedKeywords={
+//                 ats.matchedKeywords
+//               }
+//               missingKeywords={
+//                 ats.missingKeywords
+//               }
+//             />
+
+//           </div>
+
+//         </section>
+//       )}
+
 //     </div>
 //   );
 // }
 
 
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import { useResume } from "../../features/resume/editor/hooks/useResume";
 import { useAutoSave } from "../../features/resume/editor/hooks/useAutoSave";
@@ -269,6 +509,7 @@ export default function ResumeEditorPage() {
     mutate: analyzeATS,
     isPending: isAnalyzingATS,
     isError: isAnalyzeError,
+    isSuccess: isAnalyzeSuccess,
   } = useAnalyzeATS();
 
   const ats =
@@ -301,6 +542,13 @@ export default function ResumeEditorPage() {
   }, [resume]);
 
   // ============================================================
+  // JOB DESCRIPTION
+  // ============================================================
+
+  const [jobDescription, setJobDescription] =
+    useState("");
+
+  // ============================================================
   // RESUME COMPLETION
   // ============================================================
 
@@ -319,15 +567,24 @@ export default function ResumeEditorPage() {
     const cleanTargetRole =
       targetRole.trim();
 
+    const cleanJobDescription =
+      jobDescription.trim();
+
+    // Target role is required
     if (!cleanTargetRole) {
       return;
     }
 
+    // JD is optional.
+    // If empty, backend can still perform general ATS analysis.
     analyzeATS({
       resumeId,
 
       targetRole:
         cleanTargetRole,
+
+      jobDescription:
+        cleanJobDescription,
 
       options: {
         includeAIAnalysis: true,
@@ -385,16 +642,16 @@ export default function ResumeEditorPage() {
       />
 
       {/* ====================================================== */}
-      {/* TOP ACTION BAR */}
+      {/* ATS CONTROL BAR */}
       {/* ====================================================== */}
 
-      <div className="flex flex-wrap items-center justify-end gap-3 border-b bg-white px-6 py-3">
+      <div className="border-b bg-white px-6 py-4">
 
-        {/* ==================================================== */}
-        {/* TARGET ROLE */}
-        {/* ==================================================== */}
+        <div className="flex flex-wrap items-center justify-end gap-3">
 
-        <div className="flex items-center gap-2">
+          {/* ================================================== */}
+          {/* TARGET ROLE */}
+          {/* ================================================== */}
 
           <input
             type="text"
@@ -404,123 +661,222 @@ export default function ResumeEditorPage() {
                 event.target.value
               )
             }
-            placeholder="Target role"
-            className="w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+            placeholder="Target role e.g. Backend Developer"
+            className="w-full max-w-xs rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
           />
 
-        </div>
+          {/* ================================================== */}
+          {/* ANALYZE BUTTON */}
+          {/* ================================================== */}
 
-        {/* ==================================================== */}
-        {/* ANALYZE ATS BUTTON */}
-        {/* ==================================================== */}
+          <button
+            type="button"
+            onClick={handleAnalyzeATS}
+            disabled={
+              !resumeId ||
+              !targetRole.trim() ||
+              isAnalyzingATS
+            }
+            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isAnalyzingATS && (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            )}
 
-        <button
-          type="button"
-          onClick={handleAnalyzeATS}
-          disabled={
-            !resumeId ||
-            !targetRole.trim() ||
-            isAnalyzingATS
-          }
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+            {isAnalyzingATS
+              ? "Analyzing..."
+              : "Analyze ATS"}
+          </button>
 
-          {isAnalyzingATS && (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-          )}
+          {/* ================================================== */}
+          {/* ATS LOADING */}
+          {/* ================================================== */}
 
-          {isAnalyzingATS
-            ? "Analyzing..."
-            : "Analyze Resume"}
+          {isATSLoading && (
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
 
-        </button>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
 
-        {/* ==================================================== */}
-        {/* ATS LOADING */}
-        {/* ==================================================== */}
-
-        {isATSLoading && (
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
-
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
-
-            <span className="text-sm text-slate-500">
-              Loading ATS...
-            </span>
-
-          </div>
-        )}
-
-        {/* ==================================================== */}
-        {/* ATS SCORE */}
-        {/* ==================================================== */}
-
-        {!isATSLoading && ats && (
-          <ATSScoreCard
-            score={ats.atsScore}
-            grade={ats.grade}
-          />
-        )}
-
-        {/* ==================================================== */}
-        {/* NO ANALYSIS */}
-        {/* ==================================================== */}
-
-        {!isATSLoading &&
-          !ats &&
-          !isATSError && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
-
-              <p className="text-sm font-medium text-slate-600">
-                ATS analysis not available yet
-              </p>
+              <span className="text-sm text-slate-500">
+                Loading ATS...
+              </span>
 
             </div>
           )}
 
-        {/* ==================================================== */}
-        {/* ATS GET ERROR */}
-        {/* ==================================================== */}
+          {/* ================================================== */}
+          {/* ATS SCORE */}
+          {/* ================================================== */}
 
-        {isATSError && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+          {!isATSLoading && ats && (
+            <ATSScoreCard
+              score={ats.atsScore}
+              grade={ats.grade}
+            />
+          )}
 
-            <p className="text-sm font-medium text-red-600">
-              Unable to load ATS analysis.
-            </p>
+          {/* ================================================== */}
+          {/* NO ATS ANALYSIS */}
+          {/* ================================================== */}
 
-          </div>
-        )}
+          {!isATSLoading &&
+            !ats &&
+            !isATSError && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
+                <p className="text-sm font-medium text-slate-600">
+                  ATS analysis not available yet
+                </p>
+              </div>
+            )}
 
-        {/* ==================================================== */}
-        {/* ATS ANALYZE ERROR */}
-        {/* ==================================================== */}
+          {/* ================================================== */}
+          {/* GET ATS ERROR */}
+          {/* ================================================== */}
 
-        {isAnalyzeError && (
-          <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+          {isATSError && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+              <p className="text-sm font-medium text-red-600">
+                Unable to load ATS analysis.
+              </p>
+            </div>
+          )}
 
-            <p className="text-sm font-medium text-red-600">
-              ATS analysis failed. Please try again.
-            </p>
+          {/* ================================================== */}
+          {/* ANALYZE ERROR */}
+          {/* ================================================== */}
 
-          </div>
-        )}
+          {isAnalyzeError && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2">
+              <p className="text-sm font-medium text-red-600">
+                ATS analysis failed. Please try again.
+              </p>
+            </div>
+          )}
 
-        {/* ==================================================== */}
-        {/* EXPORT PDF */}
-        {/* ==================================================== */}
+          {/* ================================================== */}
+          {/* SUCCESS */}
+          {/* ================================================== */}
 
-        {resume && (
-          <ExportPdfButton />
-        )}
+          {isAnalyzeSuccess && (
+            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-2">
+              <p className="text-sm font-medium text-green-700">
+                ATS analysis completed successfully.
+              </p>
+            </div>
+          )}
+
+          {/* ================================================== */}
+          {/* EXPORT PDF */}
+          {/* ================================================== */}
+
+          {resume && (
+            <ExportPdfButton />
+          )}
+
+        </div>
 
       </div>
+
+      {/* ====================================================== */}
+      {/* JOB DESCRIPTION */}
+      {/* ====================================================== */}
+
+      <section className="border-b bg-slate-50 px-6 py-6">
+
+        <div className="mx-auto max-w-7xl">
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+            {/* ================================================== */}
+            {/* JD HEADER */}
+            {/* ================================================== */}
+
+            <div className="mb-5">
+
+              <div className="flex flex-wrap items-start justify-between gap-4">
+
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    Job Description
+                  </h2>
+
+                  <p className="mt-1 max-w-2xl text-sm text-slate-500">
+                    Paste the job description to get a
+                    job-specific ATS score, keyword matching,
+                    missing keywords and recommendations.
+                  </p>
+                </div>
+
+                <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-500">
+                  Optional
+                </span>
+
+              </div>
+
+            </div>
+
+            {/* ================================================== */}
+            {/* JD TEXTAREA */}
+            {/* ================================================== */}
+
+            <textarea
+              value={jobDescription}
+              onChange={(event) =>
+                setJobDescription(
+                  event.target.value
+                )
+              }
+              placeholder={`Paste the complete job description here...
+
+Example:
+
+We are looking for a Backend Developer with experience in Node.js, Express.js, MongoDB, REST APIs and AWS.
+
+Requirements:
+- Strong JavaScript / TypeScript knowledge
+- Node.js and Express
+- MongoDB
+- REST API development
+- Git and GitHub
+- Good problem solving skills`}
+              className="min-h-[220px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100"
+            />
+
+            {/* ================================================== */}
+            {/* JD FOOTER */}
+            {/* ================================================== */}
+
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+
+              <p className="text-xs text-slate-400">
+                {jobDescription.length.toLocaleString()} characters
+              </p>
+
+              {jobDescription.trim() && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setJobDescription("")
+                  }
+                  className="text-xs font-medium text-slate-500 transition hover:text-red-600"
+                >
+                  Clear Job Description
+                </button>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
 
       {/* ====================================================== */}
       {/* RESUME COMPLETION */}
       {/* ====================================================== */}
 
-      {completion && (
+      {/* {completion && (
         <ResumeCompletionCard
           percentage={
             completion.percentage
@@ -529,7 +885,7 @@ export default function ResumeEditorPage() {
             completion.missing
           }
         />
-      )}
+      )} */}
 
       {/* ====================================================== */}
       {/* EDITOR WORKSPACE */}
@@ -593,7 +949,7 @@ export default function ResumeEditorPage() {
       </div>
 
       {/* ====================================================== */}
-      {/* ATS ANALYSIS */}
+      {/* ATS ANALYSIS RESULT */}
       {/* ====================================================== */}
 
       {ats && (
@@ -616,8 +972,8 @@ export default function ResumeEditorPage() {
                   </h2>
 
                   <p className="mt-1 text-sm text-slate-500">
-                    Detailed analysis of your resume based on
-                    the latest ATS evaluation.
+                    Detailed analysis of your resume based
+                    on the latest ATS evaluation.
                   </p>
 
                 </div>
@@ -629,12 +985,26 @@ export default function ResumeEditorPage() {
                   </p>
 
                   <p className="mt-1 text-sm font-semibold text-slate-700">
-                    {targetRole || "Not specified"}
+                    {targetRole ||
+                      "Not specified"}
                   </p>
 
                 </div>
 
               </div>
+
+            </div>
+
+            {/* ================================================= */}
+            {/* SCORE */}
+            {/* ================================================= */}
+
+            <div className="mb-6">
+
+              <ATSScoreCard
+                score={ats.atsScore}
+                grade={ats.grade}
+              />
 
             </div>
 

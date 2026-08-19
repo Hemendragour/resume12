@@ -46,6 +46,8 @@ export function useLatestATS(
     enabled: Boolean(resumeId),
 
     staleTime: 1000 * 60 * 5,
+
+    retry: false,
   });
 }
 

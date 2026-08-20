@@ -114,10 +114,10 @@ export default function Sidebar() {
   const visibleMenus = menus.filter((menu) => menu.roles.includes(currentRole));
 
   return (
-    <aside className="fixed left-0 top-0 flex h-screen w-72 flex-col border-r border-dark-border bg-card">
+    <aside className="fixed left-0 top-0 flex h-screen w-72 flex-col border-r border-primary/10 bg-card">
       {/* ================= LOGO ================= */}
 
-      <div className="flex h-20 items-center justify-center border-b border-dark-border">
+      <div className="flex h-20 items-center justify-center border-b border-primary/10">
         <h1 className="text-3xl font-extrabold text-primary">ResumeAI</h1>
       </div>
 

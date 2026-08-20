@@ -17,8 +17,6 @@ import AISuggestionsCard from "../features/dashboard/components/AISuggestionsCar
 import EmptyResumeState from "../features/resume/components/EmptyResumeState";
 import type { Resume } from "../features/resume/types/resume.types";
 
-
-
 import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
@@ -47,10 +45,9 @@ export default function DashboardPage() {
   const draft = data.stats.draftResumes;
 
   const completed = data.stats.completedResumes;
- 
 
   // ==================== FILTERING ====================
- const filteredResumes = resumes.filter((resume: Resume) => {
+  const filteredResumes = resumes.filter((resume: Resume) => {
     const keyword = search.toLowerCase().trim();
 
     const title = resume.title?.toString().toLowerCase() ?? "";
@@ -183,17 +180,15 @@ export default function DashboardPage() {
         </div>
 
         {sortedResumes.length === 0 ? (
-  <EmptyResumeState
-    onCreate={() => setOpen(true)}
-  />
-) : (
-  <ResumeGrid
-    resumes={sortedResumes}
-    loading={isLoading}
-    onCreate={() => setOpen(true)}
-    onRefresh={refetch}
-  />
-)}
+          <EmptyResumeState onCreate={() => setOpen(true)} />
+        ) : (
+          <ResumeGrid
+            resumes={sortedResumes}
+            loading={isLoading}
+            onCreate={() => setOpen(true)}
+            onRefresh={refetch}
+          />
+        )}
 
         {/* <RecentActivity /> */}
 

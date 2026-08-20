@@ -6,7 +6,7 @@ interface Props {
 
 export default function AISuggestionsCard({ suggestions }: Props) {
   return (
-    <section className="rounded-2xl border border-dark-border bg-card p-6 shadow-sm">
+    <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
       <div className="mb-5 flex items-center gap-3">
         <Sparkles className="text-accent" />
         <h2 className="text-xl font-bold text-dark">AI Suggestions</h2>

@@ -1,5 +1,3 @@
-// ============PROTECTED ROUTE IT WILL ONLY CHECK THE USER IS AUTHENTICATED OR NOT AND FOR ADMIN WE HAVE TO CREATE SEPERATE ADMIN PROCTED REOUTE ===========================
-
 import { Navigate } from "react-router-dom";
 
 import { useAuthStore } from "../store/auth.store";
@@ -10,11 +8,15 @@ interface Props {
   children: ReactNode;
 }
 
-export default function ProtectedRoute({ children }: Props) {
+export default function AdminProtectedRoute({ children }: Props) {
   const user = useAuthStore((state) => state.user);
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== "admin") {
+    return <Navigate to="/404" replace />;
   }
 
   return children;

@@ -17,6 +17,7 @@ import {
 
 import {
   analyzeResumeATS,
+   analyzeJobDescriptionMatch,
 } from "./ats.scorer";
 
 import type {
@@ -25,6 +26,10 @@ import type {
   ATSRuleAnalysis,
   ATSAIAnalysis,
   ATSResult,
+  ATSAnalysisMode,
+ATSModeAnalysis,
+ATSJobDescriptionAnalysis,
+ 
 } from "./ats.types";
 
 // ============================================================
@@ -460,11 +465,13 @@ const mergeRecommendations = (
 // ============================================================
 // BUILD FINAL RESULT
 // ============================================================
-
 const buildATSResult = (
   resumeId: string,
   ruleAnalysis: ATSRuleAnalysis,
-  aiAnalysis?: ATSAIAnalysis
+  targetRole: string,
+  jobDescription: string | undefined,
+  aiAnalysis: ATSAIAnalysis | undefined,
+  finalATSScore: number
 ): ATSResult => {
   const ai =
     aiAnalysis ?? {
@@ -475,8 +482,16 @@ const buildATSResult = (
       recommendations: [],
       optimizedSummary: "",
       improvedExperience: [],
-      
     };
+
+  const hasJobDescription =
+    typeof jobDescription === "string" &&
+    jobDescription.trim().length > 0;
+
+  const mode: ATSAnalysisMode =
+    hasJobDescription
+      ? "job-description"
+      : "role";
 
   const matchedKeywords = [
     ...ruleAnalysis.keywords.matchedKeywords,
@@ -491,22 +506,20 @@ const buildATSResult = (
   const uniqueMatchedKeywords =
     Array.from(
       new Set(
-        matchedKeywords.map(
-          (keyword) =>
-            keyword.trim()
-        )
+        matchedKeywords
+          .map((keyword) => keyword.trim())
+          .filter(Boolean)
       )
-    ).filter(Boolean);
+    );
 
   const uniqueMissingKeywords =
     Array.from(
       new Set(
-        missingKeywords.map(
-          (keyword) =>
-            keyword.trim()
-        )
+        missingKeywords
+          .map((keyword) => keyword.trim())
+          .filter(Boolean)
       )
-    ).filter(Boolean);
+    );
 
   const strengths =
     Array.from(
@@ -530,16 +543,79 @@ const buildATSResult = (
       ai
     );
 
+  /*
+   * IMPORTANT:
+   *
+   * modeAnalysis is currently built from the
+   * deterministic analysis available in ruleAnalysis.
+   *
+   * JD-specific intelligence will be expanded
+   * in the next layer.
+   */
+  const modeAnalysis: ATSModeAnalysis = {
+  mode,
+
+  targetRole:
+    targetRole.trim(),
+
+  hasJobDescription,
+
+  skillEvidence: [],
+
+  scoreDimensions: [],
+
+  scoreExplanation: {
+    positiveFactors:
+      ruleAnalysis.strengths.slice(0, 5),
+
+    negativeFactors:
+      ruleAnalysis.weaknesses.slice(0, 5),
+
+    criticalFactors:
+      ruleAnalysis.weaknesses.slice(0, 3),
+
+    scoreCalculation:
+      hasJobDescription
+        ? `JD-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`
+        : `Role-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`,
+
+    confidence:
+      hasJobDescription
+        ? 90
+        : 80,
+  },
+
+  quickWins: [],
+};
   return {
     resumeId,
 
-    atsScore:
-      ruleAnalysis.overallScore,
+    // ==========================================================
+    // ANALYSIS MODE
+    // ==========================================================
+
+    mode,
+
+    targetRole:
+      targetRole.trim(),
+
+    hasJobDescription,
+
+    // ==========================================================
+    // FINAL SCORE
+    // ==========================================================
+
+   atsScore:
+  finalATSScore,
 
     grade:
-      getGradeFromScore(
-        ruleAnalysis.overallScore
-      ),
+     getGradeFromScore(
+  finalATSScore,
+),
+
+    // ==========================================================
+    // RULE BASED ANALYSIS
+    // ==========================================================
 
     breakdown:
       ruleAnalysis.breakdown,
@@ -547,16 +623,34 @@ const buildATSResult = (
     categories:
       ruleAnalysis.categories,
 
+    // ==========================================================
+    // MODE ANALYSIS
+    // ==========================================================
+
+    modeAnalysis,
+
+    // ==========================================================
+    // KEYWORDS
+    // ==========================================================
+
     matchedKeywords:
       uniqueMatchedKeywords,
 
     missingKeywords:
-  uniqueMissingKeywords,
+      uniqueMissingKeywords,
 
-dateConsistency:
-  ruleAnalysis.dateConsistency,
+    // ==========================================================
+    // DATE
+    // ==========================================================
 
-strengths,
+    dateConsistency:
+      ruleAnalysis.dateConsistency,
+
+    // ==========================================================
+    // AI
+    // ==========================================================
+
+    strengths,
 
     weaknesses,
 
@@ -568,11 +662,14 @@ strengths,
     improvedExperience:
       ai.improvedExperience,
 
+    // ==========================================================
+    // META
+    // ==========================================================
+
     analyzedAt:
       new Date().toISOString(),
   };
 };
-
 // ============================================================
 // GRADE
 // ============================================================
@@ -657,6 +754,246 @@ const saveATSAnalysis = async (
   return analysis;
 };
 
+
+
+const extractJDRequirements = async (
+  jobDescription: string,
+  targetRole: string
+): Promise<ATSJobDescriptionAnalysis> => {
+  const prompt = `
+You are an expert ATS job-description parser.
+
+Analyze the following job description for the target role.
+
+TARGET ROLE:
+${targetRole}
+
+JOB DESCRIPTION:
+${jobDescription}
+
+Return ONLY valid JSON.
+Do not use markdown.
+Do not add explanations.
+
+Return EXACTLY this compact structure:
+
+{
+  "jobTitle": "",
+  "seniority": "",
+  "experienceRequirement": "",
+  "educationRequirements": [],
+  "certificationRequirements": [],
+  "requiredSkills": [],
+  "preferredSkills": [],
+  "responsibilities": [],
+  "softSkills": [],
+  "tools": [],
+  "technologies": [],
+  "domains": []
+}
+
+Rules:
+
+- Required means explicitly mandatory or strongly required.
+- Preferred means bonus, preferred, plus, nice-to-have or similar wording.
+- Do not invent requirements.
+- Preserve terminology used in the JD.
+- Split combined technologies into separate items.
+- Node.js and Express.js must be separate when explicitly present.
+- TypeScript must be separate when explicitly present.
+- JWT, Authentication and RBAC must be separate when explicitly present.
+- Git and GitHub must be separate when explicitly present.
+- Postman must be included in tools when explicitly present.
+- Redis must be preferred when the JD says it is a plus/bonus/preferred.
+- Responsibilities must contain actual work expected from the candidate.
+- Keep each item concise.
+- Do not create duplicate items.
+`;
+
+  const result = await generateJSON<any>(prompt);
+
+  // ----------------------------------------------------------
+  // Build deterministic requirements.
+  // Gemini should NOT generate these.
+  // ----------------------------------------------------------
+
+  const requirements: any[] = [];
+
+  const addRequirements = (
+    values: unknown,
+    category: string,
+    defaultPriority: "required" | "preferred"
+  ) => {
+    if (!Array.isArray(values)) return;
+
+    for (const value of values) {
+      if (typeof value !== "string") continue;
+
+      const name = value.trim();
+      if (!name) continue;
+
+      const normalizedName = name
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const exists = requirements.some(
+        (item) =>
+          item.normalizedName === normalizedName
+      );
+
+      if (exists) continue;
+
+      requirements.push({
+        id: normalizedName
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, ""),
+        name,
+        normalizedName,
+        category,
+        priority: defaultPriority,
+        requiredByJD:
+          defaultPriority === "required",
+        sourceText: name,
+      });
+    }
+  };
+
+  addRequirements(
+    result.requiredSkills,
+    "skill",
+    "required"
+  );
+
+  addRequirements(
+    result.technologies,
+    "technology",
+    "required"
+  );
+
+  addRequirements(
+    result.tools,
+    "tool",
+    "required"
+  );
+
+  addRequirements(
+    result.responsibilities,
+    "responsibility",
+    "required"
+  );
+
+  addRequirements(
+    result.softSkills,
+    "soft-skill",
+    "required"
+  );
+
+  addRequirements(
+    result.preferredSkills,
+    "skill",
+    "preferred"
+  );
+
+  // Redis/basic-plus type items should remain preferred
+  // if Gemini classified them as preferred.
+  const preferredSet = new Set(
+    (result.preferredSkills ?? [])
+      .filter(
+        (item: unknown): item is string =>
+          typeof item === "string"
+      )
+      .map((item: string) =>
+        item.toLowerCase().trim()
+      )
+  );
+
+  for (const requirement of requirements) {
+    if (
+      preferredSet.has(
+        requirement.name.toLowerCase().trim()
+      )
+    ) {
+      requirement.priority = "preferred";
+      requirement.requiredByJD = false;
+    }
+  }
+
+  return {
+    jobTitle:
+      result.jobTitle ?? targetRole,
+
+    seniority:
+      result.seniority ?? "",
+
+    experienceRequirement:
+      result.experienceRequirement ?? "",
+
+    educationRequirements:
+      Array.isArray(
+        result.educationRequirements
+      )
+        ? result.educationRequirements
+        : [],
+
+    certificationRequirements:
+      Array.isArray(
+        result.certificationRequirements
+      )
+        ? result.certificationRequirements
+        : [],
+
+    requiredSkills:
+      Array.isArray(result.requiredSkills)
+        ? result.requiredSkills
+        : [],
+
+    preferredSkills:
+      Array.isArray(result.preferredSkills)
+        ? result.preferredSkills
+        : [],
+
+    responsibilities:
+      Array.isArray(result.responsibilities)
+        ? result.responsibilities
+        : [],
+
+    softSkills:
+      Array.isArray(result.softSkills)
+        ? result.softSkills
+        : [],
+
+    tools:
+      Array.isArray(result.tools)
+        ? result.tools
+        : [],
+
+    technologies:
+      Array.isArray(result.technologies)
+        ? result.technologies
+        : [],
+
+    domains:
+      Array.isArray(result.domains)
+        ? result.domains
+        : [],
+
+    // Deterministic fields
+    requirements,
+
+    matches: [],
+    requiredMatchPercentage: 0,
+    preferredMatchPercentage: 0,
+    responsibilityMatchPercentage: 0,
+    overallMatchPercentage: 0,
+    criticalMissingRequirements: [],
+    partialRequirements: [],
+    matchedRequirements: [],
+    issues: [],
+    suggestions: [],
+  };
+};
+
 // ============================================================
 // MAIN SERVICE
 // ============================================================
@@ -709,11 +1046,80 @@ export const analyzeResumeService =
     // 3. Deterministic ATS analysis
     // --------------------------------------------------------
 
-    const ruleAnalysis =
-      analyzeResumeATS(
-        resumeObject as any
-      );
+ const ruleAnalysis =
+  analyzeResumeATS(
+    atsResume as any,
+    jobDescription
+  );
 
+
+  let jdAnalysis:
+  | ATSJobDescriptionAnalysis
+  | undefined;
+
+if (
+  jobDescription?.trim()
+) {
+  const extractedJD =
+    await extractJDRequirements(
+      jobDescription,
+      targetRole
+    );
+
+  jdAnalysis =
+    analyzeJobDescriptionMatch(
+      atsResume as any,
+      extractedJD
+    );
+
+
+    console.log("========== JD MATCH DEBUG ==========");
+
+console.log(
+  "JD overallMatchPercentage:",
+  jdAnalysis?.overallMatchPercentage
+);
+
+console.log(
+  "Required match:",
+  jdAnalysis?.requiredMatchPercentage
+);
+
+console.log(
+  "Preferred match:",
+  jdAnalysis?.preferredMatchPercentage
+);
+
+console.log(
+  "Responsibility match:",
+  jdAnalysis?.responsibilityMatchPercentage
+);
+
+console.log(
+  "Matched requirements:",
+  jdAnalysis?.matchedRequirements
+);
+
+console.log(
+  "Critical missing:",
+  jdAnalysis?.criticalMissingRequirements
+);
+
+console.log("====================================");
+
+}
+
+
+let finalATSScore =
+  ruleAnalysis.overallScore;
+
+if (jdAnalysis) {
+  finalATSScore =
+    Math.round(
+      ruleAnalysis.overallScore * 0.60 +
+      jdAnalysis.overallMatchPercentage * 0.40
+    );
+}
     // --------------------------------------------------------
     // 4. AI analysis
     // --------------------------------------------------------
@@ -747,13 +1153,15 @@ export const analyzeResumeService =
     // 5. Merge
     // --------------------------------------------------------
 
-    const result =
-      buildATSResult(
-        resumeId,
-        ruleAnalysis,
-        aiAnalysis
-      );
-
+const result =
+  buildATSResult(
+    resumeId,
+    ruleAnalysis,
+    targetRole,
+    jobDescription,
+    aiAnalysis,
+    finalATSScore
+  );
     // --------------------------------------------------------
     // 6. Save
     // --------------------------------------------------------

@@ -383,6 +383,350 @@ export interface ATSSemanticRelevanceAnalysis {
   suggestions: string[];
 }
 
+
+
+// ============================================================
+// JD / ROLE INTELLIGENCE
+// ============================================================
+
+export type ATSRequirementPriority =
+  | "required"
+  | "preferred";
+
+export type ATSEvidenceStrength =
+  | "strong"
+  | "moderate"
+  | "weak"
+  | "missing";
+
+export type ATSMatchStatus =
+  | "matched"
+  | "partial"
+  | "missing"
+  | "not-applicable";
+
+// ============================================================
+// JOB REQUIREMENT
+// ============================================================
+
+export interface ATSJobRequirement {
+  id: string;
+
+  name: string;
+
+  normalizedName: string;
+
+  category:
+    | "skill"
+    | "technology"
+    | "framework"
+    | "database"
+    | "cloud"
+    | "devops"
+    | "testing"
+    | "tool"
+    | "api"
+    | "architecture"
+    | "responsibility"
+    | "education"
+    | "certification"
+    | "soft-skill"
+    | "domain"
+    | "other";
+
+  priority: ATSRequirementPriority;
+
+  requiredByJD: boolean;
+
+  evidence?: string;
+
+  sourceText?: string;
+}
+
+// ============================================================
+// JD REQUIREMENT MATCH
+// ============================================================
+
+export interface ATSRequirementMatch {
+  requirementId: string;
+
+  requirement: string;
+
+  normalizedRequirement: string;
+
+  priority: ATSRequirementPriority;
+
+  status: ATSMatchStatus;
+
+  evidenceStrength: ATSEvidenceStrength;
+
+  matchedResumeEvidence: string[];
+
+  matchedResumeSections: string[];
+
+  confidence: number;
+
+  explanation: string;
+}
+
+// ============================================================
+// JD INTELLIGENCE
+// ============================================================
+
+export interface ATSJobDescriptionAnalysis {
+  jobTitle?: string;
+
+  seniority?: string;
+
+  experienceRequirement?: string;
+
+  educationRequirements: string[];
+
+  certificationRequirements: string[];
+
+  requiredSkills: ATSJobRequirement[];
+
+  preferredSkills: ATSJobRequirement[];
+
+  responsibilities: ATSJobRequirement[];
+
+  softSkills: ATSJobRequirement[];
+
+  tools: ATSJobRequirement[];
+
+  technologies: ATSJobRequirement[];
+
+  domains: ATSJobRequirement[];
+
+  requirements: ATSJobRequirement[];
+
+  matches: ATSRequirementMatch[];
+
+  requiredMatchPercentage: number;
+
+  preferredMatchPercentage: number;
+
+  responsibilityMatchPercentage: number;
+
+  overallMatchPercentage: number;
+
+  criticalMissingRequirements: string[];
+
+  partialRequirements: string[];
+
+  matchedRequirements: string[];
+
+  issues: string[];
+
+  suggestions: string[];
+}
+
+// ============================================================
+// RESPONSIBILITY MATCHING
+// ============================================================
+
+export interface ATSResponsibilityMatch {
+  responsibility: string;
+
+  status: ATSMatchStatus;
+
+  evidenceStrength: ATSEvidenceStrength;
+
+  resumeEvidence: string[];
+
+  explanation: string;
+
+  confidence: number;
+}
+
+export interface ATSResponsibilityAnalysis {
+  totalResponsibilities: number;
+
+  matchedResponsibilities: number;
+
+  partiallyMatchedResponsibilities: number;
+
+  missingResponsibilities: number;
+
+  matchPercentage: number;
+
+  matches: ATSResponsibilityMatch[];
+
+  strengths: string[];
+
+  gaps: string[];
+
+  suggestions: string[];
+}
+
+// ============================================================
+// SKILL EVIDENCE
+// ============================================================
+
+export interface ATSSkillEvidence {
+  skill: string;
+
+  normalizedSkill: string;
+
+  status: ATSMatchStatus;
+
+  evidenceStrength: ATSEvidenceStrength;
+
+  resumeSections: string[];
+
+  evidence: string[];
+
+  mentionCount: number;
+
+  contextQuality: number;
+
+  confidence: number;
+
+  explanation: string;
+}
+
+// ============================================================
+// ROLE INTELLIGENCE
+// ============================================================
+
+export interface ATSRoleBenchmark {
+  role: string;
+
+  normalizedRole: string;
+
+  coreSkills: string[];
+
+  supportingSkills: string[];
+
+  commonTechnologies: string[];
+
+  commonTools: string[];
+
+  commonResponsibilities: string[];
+
+  seniorityExpectations: string[];
+
+  projectExpectations: string[];
+
+  domainExpectations: string[];
+}
+
+export interface ATSRoleReadinessAnalysis {
+  role: string;
+
+  benchmark: ATSRoleBenchmark;
+
+  skillAlignmentScore: number;
+
+  technicalDepthScore: number;
+
+  experienceRelevanceScore: number;
+
+  projectRelevanceScore: number;
+
+  keywordQualityScore: number;
+
+  achievementQualityScore: number;
+
+  resumeQualityScore: number;
+
+  atsCompatibilityScore: number;
+
+  overallReadinessScore: number;
+
+  strongAreas: string[];
+
+  skillGaps: string[];
+
+  experienceGaps: string[];
+
+  projectGaps: string[];
+
+  recommendations: ATSRecommendation[];
+}
+
+// ============================================================
+// SCORE BREAKDOWN
+// ============================================================
+
+export interface ATSScoreDimension {
+  id: string;
+
+  title: string;
+
+  score: number;
+
+  maxScore: number;
+
+  percentage: number;
+
+  weight: number;
+
+  summary: string;
+
+  issues: string[];
+
+  suggestions: string[];
+}
+
+export interface ATSScoreExplanation {
+  positiveFactors: string[];
+
+  negativeFactors: string[];
+
+  criticalFactors: string[];
+
+  scoreCalculation: string;
+
+  confidence: number;
+}
+
+// ============================================================
+// QUICK WINS
+// ============================================================
+
+export interface ATSQuickWin {
+  id: string;
+
+  title: string;
+
+  description: string;
+
+  estimatedImpact: number;
+
+  category: ATSScoreCategory;
+
+  evidence: string;
+
+  suggestedFix: string;
+}
+
+// ============================================================
+// FINAL MODE-SPECIFIC ANALYSIS
+// ============================================================
+
+export interface ATSModeAnalysis {
+  mode: ATSAnalysisMode;
+
+  targetRole: string;
+
+  hasJobDescription: boolean;
+
+  jdAnalysis?: ATSJobDescriptionAnalysis;
+
+  roleAnalysis?: ATSRoleReadinessAnalysis;
+
+  responsibilityAnalysis?: ATSResponsibilityAnalysis;
+
+  skillEvidence: ATSSkillEvidence[];
+
+  scoreDimensions: ATSScoreDimension[];
+
+  scoreExplanation: ATSScoreExplanation;
+
+  quickWins: ATSQuickWin[];
+}
+
 // ============================================================
 // EXPERIENCE ANALYSIS
 // ============================================================
@@ -707,11 +1051,19 @@ export interface ATSRecommendation {
 // ============================================================
 
 export interface ATSRuleAnalysis {
+  // ==========================================================
+  // CORE SCORE
+  // ==========================================================
+
   overallScore: number;
 
   breakdown: ATSBreakdown;
 
   categories: ATSCategoryResult[];
+
+  // ==========================================================
+  // CORE ANALYSES
+  // ==========================================================
 
   contact: ATSContactAnalysis;
 
@@ -745,6 +1097,58 @@ export interface ATSRuleAnalysis {
 
   seniorityAlignment?: ATSSeniorityAlignmentAnalysis;
 
+  // ==========================================================
+  // MODE
+  // ==========================================================
+
+  mode?: ATSAnalysisMode;
+
+  targetRole?: string;
+
+  hasJobDescription?: boolean;
+
+  // ==========================================================
+  // JD INTELLIGENCE
+  // ==========================================================
+
+  jdAnalysis?: ATSJobDescriptionAnalysis;
+
+  // ==========================================================
+  // RESPONSIBILITY MATCHING
+  // ==========================================================
+
+  responsibilityAnalysis?: ATSResponsibilityAnalysis;
+
+  // ==========================================================
+  // SKILL EVIDENCE
+  // ==========================================================
+
+  skillEvidence?: ATSSkillEvidence[];
+
+  // ==========================================================
+  // ROLE READINESS
+  // ==========================================================
+
+  roleAnalysis?: ATSRoleReadinessAnalysis;
+
+  // ==========================================================
+  // SCORE EXPLANATION
+  // ==========================================================
+
+  scoreDimensions?: ATSScoreDimension[];
+
+  scoreExplanation?: ATSScoreExplanation;
+
+  // ==========================================================
+  // QUICK WINS
+  // ==========================================================
+
+  quickWins?: ATSQuickWin[];
+
+  // ==========================================================
+  // SUMMARY
+  // ==========================================================
+
   strengths: string[];
 
   weaknesses: string[];
@@ -777,25 +1181,57 @@ export interface ATSAIAnalysis {
 // ============================================================
 
 export interface ATSResult {
-  /**
-   * API/Frontend-safe identifier.
-   *
-   * Keep Mongoose Types.ObjectId out of shared ATS DTOs.
-   */
   resumeId: string;
+
+  // ==========================================================
+  // ANALYSIS MODE
+  // ==========================================================
+
+  mode: ATSAnalysisMode;
+
+  targetRole: string;
+
+  hasJobDescription: boolean;
+
+  // ==========================================================
+  // FINAL SCORE
+  // ==========================================================
 
   atsScore: number;
 
   grade: ATSGrade;
 
+  // ==========================================================
+  // RULE-BASED BREAKDOWN
+  // ==========================================================
+
   breakdown: ATSBreakdown;
 
   categories: ATSCategoryResult[];
 
+  // ==========================================================
+  // MODE-SPECIFIC INTELLIGENCE
+  // ==========================================================
+
+  modeAnalysis: ATSModeAnalysis;
+
+  // ==========================================================
+  // KEYWORDS
+  // ==========================================================
+
   matchedKeywords: string[];
 
   missingKeywords: string[];
+
+  // ==========================================================
+  // DATE ANALYSIS
+  // ==========================================================
+
   dateConsistency?: ATSDateConsistencyAnalysis;
+
+  // ==========================================================
+  // AI / INTELLIGENCE
+  // ==========================================================
 
   strengths: string[];
 
@@ -807,6 +1243,10 @@ export interface ATSResult {
 
   improvedExperience: string[];
 
+  // ==========================================================
+  // META
+  // ==========================================================
+
   analyzedAt: string;
 }
 
@@ -815,6 +1255,15 @@ export interface ATSResult {
 // ============================================================
 
 export type ATSGrade = "A" | "B" | "C" | "D" | "F";
+
+
+ // ============================================================
+// ATS ANALYSIS MODE
+// ============================================================
+
+export type ATSAnalysisMode =
+  | "role"
+  | "job-description";
 
 // ============================================================
 // ATS ANALYSIS REQUEST

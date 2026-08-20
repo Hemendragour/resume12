@@ -12,6 +12,7 @@ import {
   ATS_WEAK_BULLET_PATTERNS,
   ATS_METRIC_PATTERNS,
   ATS_YEAR_PATTERN,
+
   ATSBreakdown,
   ATSCategoryResult,
   ATSContactAnalysis,
@@ -29,10 +30,19 @@ import {
   ATSRecommendation,
   ATSCategoryStatus,
   ATSScoreCategory,
+
+  ATSDateConsistencyAnalysis,
+  ATSMatchStatus,
+  ATSEvidenceStrength,
+
+  ATSJobRequirement,
+  ATSRequirementMatch,
+  ATSJobDescriptionAnalysis,
+
   clampATSScore,
   calculateATSPercentage,
   getATSCategoryStatus,
-  ATSDateConsistencyAnalysis,
+  ATSRequirementPriority,
 } from "./ats.types";
 
 import {
@@ -182,20 +192,48 @@ const containsNormalizedPhrase = (
   text: string,
   phrase: string
 ): boolean => {
-  const normalizedText = ` ${normalizeText(text)} `;
-  const normalizedPhrase = normalizeText(phrase);
+  const normalizedText =
+    normalizeRequirementForMatch(text)
+      .toLowerCase()
+      .replace(/[./+#-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
 
-  if (!normalizedPhrase) {
+  const normalizedPhrase =
+    normalizeRequirementForMatch(phrase)
+      .toLowerCase()
+      .replace(/[./+#-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  if (!normalizedText || !normalizedPhrase) {
     return false;
   }
 
-  return (
-    normalizedText.includes(
-      ` ${normalizedPhrase} `
-    )
+  // Exact phrase
+  if (normalizedText.includes(normalizedPhrase)) {
+    return true;
+  }
+
+  // Token-based matching
+  const textTokens = new Set(
+    normalizedText.split(/\s+/)
+  );
+
+  const phraseTokens =
+    normalizedPhrase.split(/\s+/);
+
+  // Single-word requirement
+  if (phraseTokens.length === 1) {
+    return textTokens.has(phraseTokens[0]);
+  }
+
+  // Multi-word requirement:
+  // all important words must exist
+  return phraseTokens.every((token) =>
+    textTokens.has(token)
   );
 };
-
 const countMatchingSignals = (
   textValues: string[],
   signals: string[]
@@ -3383,7 +3421,8 @@ const buildWeaknesses = (
  * It only performs deterministic analysis.
  */
 export const analyzeResumeATS = (
-  resume: ATSResume
+  resume: ATSResume,
+  jobDescription?: string
 ): ATSRuleAnalysis => {
   const contact =
     analyzeContact(
@@ -3409,10 +3448,11 @@ export const analyzeResumeATS = (
    * JD-specific keyword matching will be implemented
    * separately in the Job Matcher layer.
    */
-  const keywordAnalysis =
-    analyzeResumeKeywords(
-      resume
-    );
+ const keywordAnalysis =
+  analyzeResumeKeywords(
+    resume,
+    jobDescription
+  );
 
   const experience =
     analyzeExperience(
@@ -3544,6 +3584,1283 @@ const formatting =
 };
 };
 
+
+
+// ============================================================
+// JD REQUIREMENT MATCHING ENGINE
+// ============================================================
+
+const getResumeEvidenceSources = (
+  resume: ATSResume
+): Array<{
+  section: string;
+  text: string;
+}> => {
+  const sources: Array<{
+    section: string;
+    text: string;
+  }> = [];
+
+  if (resume.summary) {
+    sources.push({
+      section: "summary",
+      text: resume.summary,
+    });
+  }
+
+  for (const skillGroup of resume.skills ?? []) {
+    for (const skill of skillGroup.skills ?? []) {
+      sources.push({
+        section: "skills",
+        text: skill,
+      });
+    }
+  }
+
+  for (const experience of resume.experience ?? []) {
+    for (const bullet of [
+      ...(experience.responsibilities ?? []),
+      ...(experience.achievements ?? []),
+    ]) {
+      sources.push({
+        section: "experience",
+        text: bullet,
+      });
+    }
+  }
+
+  for (const internship of resume.internships ?? []) {
+    for (const bullet of [
+      ...(internship.responsibilities ?? []),
+      ...(internship.achievements ?? []),
+    ]) {
+      sources.push({
+        section: "internship",
+        text: bullet,
+      });
+    }
+  }
+
+  for (const project of resume.projects ?? []) {
+    if (project.description) {
+      sources.push({
+        section: "projects",
+        text: project.description,
+      });
+    }
+
+    for (const technology of project.technologies ?? []) {
+      sources.push({
+        section: "projects",
+        text: technology,
+      });
+    }
+  }
+
+  return sources;
+};
+
+const normalizeRequirementForMatch = (
+  value: string
+): string => {
+  return normalizeText(value)
+    .replace(/\bnode\s*\.\s*js\b/g, "node.js")
+    .replace(/\bnodejs\b/g, "node.js")
+    .replace(/\bnode\s+js\b/g, "node.js")
+
+    .replace(/\bexpress\s*\.\s*js\b/g, "express")
+    .replace(/\bexpressjs\b/g, "express")
+
+    .replace(/\breact\s*\.\s*js\b/g, "react")
+    .replace(/\breactjs\b/g, "react")
+
+    .replace(/\brestful\s+apis?\b/g, "rest api")
+    .replace(/\brest\s+apis?\b/g, "rest api")
+
+    .replace(/\bpostgres\b/g, "postgresql")
+    .replace(/\bmongo\b/g, "mongodb")
+
+    .trim();
+};
+
+const getRequirementAliases = (
+  requirement: string
+): string[] => {
+  const normalized =
+    normalizeRequirementForMatch(requirement);
+
+  const aliases = new Set<string>();
+
+  const add = (value: string) => {
+    const normalizedValue =
+      normalizeRequirementForMatch(value);
+
+    if (normalizedValue) {
+      aliases.add(normalizedValue);
+    }
+  };
+
+  // Always keep original requirement
+  add(requirement);
+
+  const aliasMap: Record<string, string[]> = {
+    javascript: [
+      "javascript",
+      "js",
+      "ecmascript",
+    ],
+
+    typescript: [
+      "typescript",
+      "ts",
+    ],
+
+    "node.js": [
+      "node.js",
+      "nodejs",
+      "node js",
+      "node",
+    ],
+
+    express: [
+      "express",
+      "express.js",
+      "expressjs",
+    ],
+
+    "rest api": [
+      "rest api",
+      "rest apis",
+      "restful api",
+      "restful apis",
+      "restful",
+      "rest api development",
+      "restful api development",
+      "rest api development using express",
+    ],
+
+    "rest api development": [
+      "rest api development",
+      "rest api",
+      "restful api development",
+      "restful apis",
+      "restful api",
+      "restful",
+      "developed rest apis",
+      "developed restful apis",
+      "built rest apis",
+      "build rest apis",
+    ],
+
+    mongodb: [
+      "mongodb",
+      "mongo",
+      "mongo db",
+    ],
+
+    mongoose: [
+      "mongoose",
+    ],
+
+    postgresql: [
+      "postgresql",
+      "postgres",
+      "postgres db",
+    ],
+
+    authentication: [
+      "authentication",
+      "authenticate",
+      "authenticated",
+      "auth",
+      "jwt authentication",
+      "user authentication",
+    ],
+
+    authorization: [
+      "authorization",
+      "authorize",
+      "authorized",
+      "rbac",
+      "role based access control",
+      "role-based access control",
+    ],
+
+    jwt: [
+      "jwt",
+      "json web token",
+      "json web tokens",
+    ],
+
+    redis: [
+      "redis",
+      "redis cache",
+      "redis caching",
+    ],
+
+    git: [
+      "git",
+      "version control",
+    ],
+
+    github: [
+      "github",
+      "git hub",
+    ],
+
+    postman: [
+      "postman",
+      "api testing with postman",
+      "api testing",
+    ],
+
+    "api testing": [
+      "api testing",
+      "api tests",
+      "tested apis",
+      "testing apis",
+      "postman",
+    ],
+
+    "database schemas": [
+      "database schemas",
+      "database schema",
+      "design database schemas",
+      "designed database schemas",
+      "database design",
+      "designed database",
+    ],
+
+    "database design": [
+      "database design",
+      "database schema",
+      "database schemas",
+      "designed database",
+      "designed database schemas",
+    ],
+
+    "api design": [
+      "api design",
+      "api architecture",
+      "rest api design",
+      "restful api design",
+      "designed apis",
+      "designed rest apis",
+    ],
+
+    "api architecture": [
+      "api architecture",
+      "api design",
+      "rest api architecture",
+      "restful api architecture",
+      "designed api architecture",
+    ],
+
+    "error handling": [
+      "error handling",
+      "error handler",
+      "exception handling",
+      "handled errors",
+    ],
+
+    logging: [
+      "logging",
+      "application logging",
+      "error logging",
+      "logger",
+    ],
+
+    security: [
+      "security",
+      "backend security",
+      "api security",
+      "application security",
+      "secure apis",
+    ],
+
+    scalability: [
+      "scalability",
+      "scalable",
+      "scalable backend",
+      "scalable apis",
+      "scalable rest apis",
+    ],
+
+    caching: [
+      "caching",
+      "cache",
+      "redis caching",
+      "redis cache",
+    ],
+
+    "problem-solving": [
+      "problem solving",
+      "problem-solving",
+      "problem solving skills",
+      "problem-solving skills",
+    ],
+
+    debugging: [
+      "debugging",
+      "debug",
+      "debugging skills",
+      "debug backend",
+    ],
+
+    "ci/cd": [
+      "ci/cd",
+      "continuous integration",
+      "continuous delivery",
+      "continuous deployment",
+    ],
+  };
+
+  // Find aliases by exact normalized key
+  for (const [key, values] of Object.entries(aliasMap)) {
+    const normalizedKey =
+      normalizeRequirementForMatch(key);
+
+    if (
+      normalized === normalizedKey ||
+      values.some(
+        (value) =>
+          normalizeRequirementForMatch(value) ===
+          normalized
+      )
+    ) {
+      values.forEach(add);
+      add(key);
+    }
+  }
+
+  // ----------------------------------------------------------
+  // GENERIC COMPOSITE REQUIREMENT EXPANSION
+  // ----------------------------------------------------------
+
+  if (
+    normalized.includes("rest api") ||
+    normalized.includes("restful api")
+  ) {
+    add("rest api");
+    add("rest apis");
+    add("restful api");
+    add("restful apis");
+    add("restful");
+  }
+
+  if (
+    normalized.includes("database schema") ||
+    normalized.includes("database schemas")
+  ) {
+    add("database schema");
+    add("database schemas");
+    add("database design");
+  }
+
+  if (
+    normalized.includes("authentication")
+  ) {
+    add("authentication");
+    add("auth");
+    add("jwt authentication");
+  }
+
+  if (
+    normalized.includes("authorization") ||
+    normalized.includes("rbac")
+  ) {
+    add("authorization");
+    add("rbac");
+    add("role based access control");
+  }
+
+  if (
+    normalized.includes("api testing")
+  ) {
+    add("api testing");
+    add("postman");
+  }
+
+  if (
+    normalized.includes("security")
+  ) {
+    add("security");
+    add("api security");
+    add("backend security");
+  }
+
+  return Array.from(aliases);
+};
+
+// const findRequirementEvidence = (
+//   requirement: string,
+//   resume: ATSResume
+// ): {
+//   status: ATSMatchStatus;
+//   evidenceStrength: ATSEvidenceStrength;
+//   evidence: string[];
+//   sections: string[];
+//   confidence: number;
+//   explanation: string;
+// } => {
+//   const sources =
+//     getResumeEvidenceSources(resume);
+
+//   const aliases =
+//     getRequirementAliases(requirement);
+
+//     if (
+//   ["Node.js", "Express.js", "TypeScript"].includes(
+//     requirement
+//   )
+// ) {
+//   console.log("========== REQUIREMENT DEBUG ==========");
+//   console.log("Requirement:", requirement);
+//   console.log(
+//     "Normalized requirement:",
+//     normalizeRequirementForMatch(requirement)
+//   );
+//   console.log("Aliases:", aliases);
+
+//   console.log(
+//     "Resume sources:",
+//     sources.filter((source) =>
+//       /node|express|typescript/i.test(
+//         source.text
+//       )
+//     )
+//   );
+
+//   console.log("=======================================");
+// }
+
+//     const matchedSources: Array<{
+//     section: string;
+//     text: string;
+//   }> = [];
+
+//   for (const source of sources) {
+//     const sourceText =
+//       normalizeRequirementForMatch(
+//         source.text
+//       );
+
+//     if (!sourceText) {
+//       continue;
+//     }
+
+//     const matched =
+//       aliases.some((alias) => {
+//         const result =
+//           containsNormalizedPhrase(
+//             sourceText,
+//             alias
+//           );
+
+//         console.log(
+//           "MATCH CHECK:",
+//           {
+//             requirement,
+//             sourceText,
+//             alias,
+//             result,
+//           }
+//         );
+
+//         return result;
+//       });
+
+//     if (matched) {
+//       matchedSources.push(source);
+//     }
+//   }
+
+//   // ----------------------------------------------------------
+//   // NO EVIDENCE
+//   // ----------------------------------------------------------
+
+//   if (matchedSources.length === 0) {
+//     return {
+//       status: "missing",
+
+//       evidenceStrength: "missing",
+
+//       evidence: [],
+
+//       sections: [],
+
+//       confidence: 95,
+
+//       explanation:
+//         `"${requirement}" is not demonstrated anywhere in the resume.`,
+//     };
+//   }
+
+//   const sections =
+//     uniqueStrings(
+//       matchedSources.map(
+//         (item) => item.section
+//       )
+//     );
+
+//   const evidence =
+//     uniqueStrings(
+//       matchedSources.map(
+//         (item) => item.text
+//       )
+//     );
+
+//   return {
+//     status: "matched",
+
+//     evidenceStrength:
+//       matchedSources.length >= 2
+//         ? "strong"
+//         : "moderate",
+
+//     evidence,
+
+//     sections,
+
+//     confidence:
+//       matchedSources.length >= 2
+//         ? 95
+//         : 85,
+
+//     explanation:
+//       `"${requirement}" is demonstrated in the resume through ${sections.join(", ")}.`,
+//   };
+// };
+
+
+const findRequirementEvidence = (
+  requirement: string,
+  resume: ATSResume
+): {
+  status: ATSMatchStatus;
+  evidenceStrength: ATSEvidenceStrength;
+  evidence: string[];
+  sections: string[];
+  confidence: number;
+  explanation: string;
+} => {
+  const sources =
+    getResumeEvidenceSources(resume);
+
+  const aliases =
+    getRequirementAliases(requirement);
+
+  // ----------------------------------------------------------
+  // DEBUG
+  // ----------------------------------------------------------
+
+  if (
+    ["Node.js", "Express.js", "TypeScript"].includes(
+      requirement
+    )
+  ) {
+    console.log(
+      "========== REQUIREMENT DEBUG =========="
+    );
+
+    console.log(
+      "Requirement:",
+      requirement
+    );
+
+    console.log(
+      "Normalized requirement:",
+      normalizeRequirementForMatch(
+        requirement
+      )
+    );
+
+    console.log(
+      "Aliases:",
+      aliases
+    );
+
+    console.log(
+      "Resume sources:",
+      sources.filter((source) =>
+        /node|express|typescript/i.test(
+          source.text
+        )
+      )
+    );
+
+    console.log(
+      "======================================="
+    );
+  }
+
+  // ----------------------------------------------------------
+  // MATCHED SOURCES
+  // ----------------------------------------------------------
+
+  const matchedSources: Array<{
+    section: string;
+    text: string;
+  }> = [];
+
+  // ----------------------------------------------------------
+  // FIND EVIDENCE
+  // ----------------------------------------------------------
+
+  for (const source of sources) {
+    const sourceText =
+      normalizeRequirementForMatch(
+        source.text
+      );
+
+    if (!sourceText) {
+      continue;
+    }
+
+    const matched =
+      aliases.some((alias) => {
+        const result =
+          containsNormalizedPhrase(
+            sourceText,
+            alias
+          );
+
+        // Keep debug only for important requirements.
+        if (
+          ["Node.js", "Express.js", "TypeScript"].includes(
+            requirement
+          )
+        ) {
+          console.log(
+            "MATCH CHECK:",
+            {
+              requirement,
+              sourceText,
+              alias,
+              result,
+            }
+          );
+        }
+
+        return result;
+      });
+
+    if (matched) {
+      matchedSources.push(source);
+    }
+  }
+
+  // ----------------------------------------------------------
+  // NO EVIDENCE
+  // ----------------------------------------------------------
+
+  if (matchedSources.length === 0) {
+    return {
+      status: "missing",
+
+      evidenceStrength: "missing",
+
+      evidence: [],
+
+      sections: [],
+
+      confidence: 95,
+
+      explanation:
+        `"${requirement}" is not demonstrated anywhere in the resume.`,
+    };
+  }
+
+  // ----------------------------------------------------------
+  // BUILD EVIDENCE
+  // ----------------------------------------------------------
+
+  const sections =
+    uniqueStrings(
+      matchedSources.map(
+        (item) => item.section
+      )
+    );
+
+  const evidence =
+    uniqueStrings(
+      matchedSources.map(
+        (item) => item.text
+      )
+    ).slice(0, 5);
+
+  // ----------------------------------------------------------
+  // EVIDENCE LEVEL
+  //
+  // Experience / Internship
+  //      ↓
+  // Projects
+  //      ↓
+  // Skills
+  //      ↓
+  // Other
+  // ----------------------------------------------------------
+
+  const hasExperience =
+    sections.includes("experience");
+
+  const hasInternship =
+    sections.includes("internship") ||
+    sections.includes("internships");
+
+  const hasProject =
+    sections.includes("projects");
+
+  const hasSkills =
+    sections.includes("skills");
+
+  // ----------------------------------------------------------
+  // STRONG EVIDENCE: EXPERIENCE / INTERNSHIP
+  // ----------------------------------------------------------
+
+  if (
+    hasExperience ||
+    hasInternship
+  ) {
+    return {
+      status: "matched",
+
+      evidenceStrength: "strong",
+
+      evidence,
+
+      sections,
+
+      confidence: 95,
+
+      explanation:
+        `"${requirement}" is directly demonstrated through practical experience.`,
+    };
+  }
+
+  // ----------------------------------------------------------
+  // STRONG EVIDENCE: PROJECT
+  // ----------------------------------------------------------
+
+  if (hasProject) {
+    return {
+      status: "matched",
+
+      evidenceStrength: "strong",
+
+      evidence,
+
+      sections,
+
+      confidence: 90,
+
+      explanation:
+        `"${requirement}" is demonstrated through project work.`,
+    };
+  }
+
+  // ----------------------------------------------------------
+  // PARTIAL EVIDENCE: SKILLS ONLY
+  // ----------------------------------------------------------
+
+  if (hasSkills) {
+    return {
+      status: "partial",
+
+      evidenceStrength: "moderate",
+
+      evidence,
+
+      sections,
+
+      confidence: 80,
+
+      explanation:
+        `"${requirement}" is listed in the skills section but lacks supporting evidence in experience or projects.`,
+    };
+  }
+
+  // ----------------------------------------------------------
+  // WEAK EVIDENCE
+  // ----------------------------------------------------------
+
+  return {
+    status: "partial",
+
+    evidenceStrength: "weak",
+
+    evidence,
+
+    sections,
+
+    confidence: 70,
+
+    explanation:
+      `"${requirement}" appears in the resume but has limited supporting evidence.`,
+  };
+};
+
+// ============================================================
+// JD REQUIREMENT MATCHING
+// ============================================================
+
+const analyzeJDRequirements = (
+  resume: ATSResume,
+  jd: ATSJobDescriptionAnalysis
+): ATSJobDescriptionAnalysis => {
+  const requirements = [
+    ...jd.requiredSkills,
+    ...jd.preferredSkills,
+    ...jd.responsibilities,
+    ...jd.softSkills,
+    ...jd.tools,
+    ...jd.technologies,
+    ...jd.domains,
+    ...jd.requirements,
+  ];
+
+  const uniqueRequirements = Array.from(
+    new Map(
+      requirements.map((item) => [
+        normalizeRequirementForMatch(item.name),
+        item,
+      ])
+    ).values()
+  );
+
+  const matches: ATSRequirementMatch[] =
+    uniqueRequirements.map((requirement) => {
+      const evidence = findRequirementEvidence(
+        requirement.name,
+        resume
+      );
+
+      return {
+        requirementId: requirement.id,
+
+      requirement: requirement.name,
+
+        normalizedRequirement:
+          normalizeRequirementForMatch(
+            requirement.name
+          ),
+
+        priority:
+          requirement.priority,
+
+        status:
+          evidence.status,
+
+        evidenceStrength:
+          evidence.evidenceStrength,
+
+        matchedResumeEvidence:
+          evidence.evidence,
+
+        matchedResumeSections:
+          evidence.sections,
+
+        confidence:
+          evidence.confidence,
+
+        explanation:
+          evidence.explanation,
+      };
+    });
+
+  const calculatePercentage = (
+    items: ATSRequirementMatch[]
+  ): number => {
+    if (items.length === 0) {
+      return 100;
+    }
+
+    let points = 0;
+
+    for (const item of items) {
+      if (item.status === "matched") {
+        points += 1;
+      } else if (item.status === "partial") {
+        points += 0.5;
+      }
+    }
+
+    return Number(
+      ((points / items.length) * 100).toFixed(1)
+    );
+  };
+
+  const requiredMatches = matches.filter(
+    (match) => match.priority === "required"
+  );
+
+  const preferredMatches = matches.filter(
+    (match) => match.priority === "preferred"
+  );
+
+ const responsibilityMatches =
+  matches.filter((match) =>
+    jd.requirements.some(
+      (requirement) =>
+        requirement.category === "responsibility" &&
+        requirement.id === match.requirementId
+    )
+  );  
+
+  const requiredMatchPercentage =
+    calculatePercentage(requiredMatches);
+
+  const preferredMatchPercentage =
+    calculatePercentage(preferredMatches);
+
+  const responsibilityMatchPercentage =
+    calculatePercentage(responsibilityMatches);
+
+  const overallMatchPercentage = Number(
+    (
+      requiredMatchPercentage * 0.6 +
+      responsibilityMatchPercentage * 0.2 +
+      preferredMatchPercentage * 0.2
+    ).toFixed(1)
+  );
+
+  const criticalMissingRequirements =
+    matches
+      .filter(
+        (match) =>
+          match.priority === "required" &&
+          match.status === "missing"
+      )
+      .map(
+        (match) => match.requirement
+      );
+
+  const partialRequirements =
+    matches
+      .filter(
+        (match) =>
+          match.status === "partial"
+      )
+      .map(
+        (match) => match.requirement
+      );
+
+  const matchedRequirements =
+    matches
+      .filter(
+        (match) =>
+          match.status === "matched"
+      )
+      .map(
+        (match) => match.requirement
+      );
+
+  return {
+    ...jd,
+
+    matches,
+
+    requiredMatchPercentage,
+
+    preferredMatchPercentage,
+
+    responsibilityMatchPercentage,
+
+    overallMatchPercentage,
+
+    criticalMissingRequirements,
+
+    partialRequirements,
+
+    matchedRequirements,
+
+    issues: [
+      ...(jd.issues ?? []),
+    ],
+
+    suggestions: [
+      ...(jd.suggestions ?? []),
+    ],
+  };
+};
+
+
+// ============================================================
+// JD ANALYSIS + REQUIREMENT MATCHING
+// ============================================================
+
+export const analyzeJobDescriptionMatch = (
+  resume: ATSResume,
+  jd: ATSJobDescriptionAnalysis
+): ATSJobDescriptionAnalysis => {
+  const allRequirements: ATSJobRequirement[] =
+  Array.isArray(jd.requirements)
+    ? jd.requirements
+    : [];
+
+const uniqueRequirements =
+  Array.from(
+    new Map(
+      allRequirements.map((item) => [
+        normalizeRequirementForMatch(
+          item.name
+        ),
+        item,
+      ])
+    ).values()
+  );
+
+  const matches: ATSRequirementMatch[] =
+    uniqueRequirements.map((requirement) => {
+      const evidence = findRequirementEvidence(
+        requirement.name,
+        resume
+      );
+
+      return {
+        requirementId: requirement.id,
+
+        requirement: requirement.name,
+
+        normalizedRequirement:
+          normalizeRequirementForMatch(
+            requirement.name
+          ),
+
+        priority:
+          requirement.priority,
+
+        status:
+          evidence.status,
+
+        evidenceStrength:
+          evidence.evidenceStrength,
+
+        matchedResumeEvidence:
+          evidence.evidence,
+
+        matchedResumeSections:
+          evidence.sections,
+
+        confidence:
+          evidence.confidence,
+
+        explanation:
+          evidence.explanation,
+      };
+    });
+
+  const requiredMatches =
+    matches.filter(
+      (match) =>
+        match.priority === "required"
+    );
+
+  const preferredMatches =
+    matches.filter(
+      (match) =>
+        match.priority === "preferred"
+    );
+
+  const responsibilityMatches =
+    matches.filter((match) =>
+      jd.responsibilities.some(
+        (responsibility) =>
+          normalizeRequirementForMatch(
+            responsibility.name
+          ) ===
+          match.normalizedRequirement
+      )
+    );
+
+  const calculateMatchPercentage = (
+    items: ATSRequirementMatch[]
+  ): number => {
+    if (items.length === 0) {
+      return 100;
+    }
+
+    let score = 0;
+
+    for (const item of items) {
+      if (item.status === "matched") {
+        score += 1;
+      } else if (
+        item.status === "partial"
+      ) {
+        score += 0.5;
+      }
+    }
+
+    return Number(
+      (
+        (score / items.length) *
+        100
+      ).toFixed(1)
+    );
+  };
+
+  const requiredMatchPercentage =
+    calculateMatchPercentage(
+      requiredMatches
+    );
+
+  const preferredMatchPercentage =
+    calculateMatchPercentage(
+      preferredMatches
+    );
+
+  const responsibilityMatchPercentage =
+    calculateMatchPercentage(
+      responsibilityMatches
+    );
+
+  /*
+   * Required requirements get the highest weight.
+   *
+   * 60% Required
+   * 20% Responsibilities
+   * 10% Preferred
+   * 10% Other JD requirements
+   */
+
+  const otherMatches =
+    matches.filter(
+      (match) =>
+        !requiredMatches.includes(match) &&
+        !preferredMatches.includes(match) &&
+        !responsibilityMatches.includes(match)
+    );
+
+  const otherMatchPercentage =
+    calculateMatchPercentage(
+      otherMatches
+    );
+
+  const overallMatchPercentage =
+    Number(
+      (
+        requiredMatchPercentage * 0.60 +
+        responsibilityMatchPercentage * 0.20 +
+        preferredMatchPercentage * 0.10 +
+        otherMatchPercentage * 0.10
+      ).toFixed(1)
+    );
+
+  const criticalMissingRequirements =
+    requiredMatches
+      .filter(
+        (match) =>
+          match.status === "missing"
+      )
+      .map(
+        (match) =>
+          match.requirement
+      );
+
+  const partialRequirements =
+    matches
+      .filter(
+        (match) =>
+          match.status === "partial"
+      )
+      .map(
+        (match) =>
+          match.requirement
+      );
+
+  const matchedRequirements =
+    matches
+      .filter(
+        (match) =>
+          match.status === "matched"
+      )
+      .map(
+        (match) =>
+          match.requirement
+      );
+
+  const issues: string[] = [];
+
+  const suggestions: string[] = [];
+
+  if (
+    criticalMissingRequirements.length > 0
+  ) {
+    issues.push(
+      `${criticalMissingRequirements.length} required JD requirement(s) are missing from the resume.`
+    );
+
+    suggestions.push(
+      `Address required requirements such as ${criticalMissingRequirements
+        .slice(0, 5)
+        .join(", ")} if you genuinely have experience with them.`
+    );
+  }
+
+  if (
+    responsibilityMatchPercentage < 60
+  ) {
+    issues.push(
+      "Resume experience does not sufficiently demonstrate the responsibilities described in the JD."
+    );
+
+    suggestions.push(
+      "Rewrite relevant experience and project bullets to demonstrate the JD responsibilities using truthful evidence."
+    );
+  }
+
+  if (
+    requiredMatchPercentage < 70
+  ) {
+    issues.push(
+      `Required-skill match is only ${requiredMatchPercentage}%.`
+    );
+  }
+
+  if (
+    overallMatchPercentage < 70
+  ) {
+    suggestions.push(
+      "Prioritize high-impact missing requirements before optimizing secondary keywords."
+    );
+  }
+
+  return {
+    ...jd,
+
+    matches,
+
+    requiredMatchPercentage,
+
+    preferredMatchPercentage,
+
+    responsibilityMatchPercentage,
+
+    overallMatchPercentage,
+
+    criticalMissingRequirements,
+
+    partialRequirements,
+
+    matchedRequirements,
+
+    issues: Array.from(
+      new Set([
+        ...(jd.issues ?? []),
+        ...issues,
+      ])
+    ),
+
+    suggestions: Array.from(
+      new Set([
+        ...(jd.suggestions ?? []),
+        ...suggestions,
+      ])
+    ),
+  };
+};
+
 // ============================================================
 // GENERAL RESUME KEYWORD ANALYSIS
 // ============================================================
@@ -3566,7 +4883,8 @@ const formatting =
  * JD-specific matching comes later.
  */
 const analyzeResumeKeywords = (
-  resume: ATSResume
+  resume: ATSResume,
+  jobDescription?: string
 ): ATSKeywordAnalysis => {
   const targetRole =
     cleanText(

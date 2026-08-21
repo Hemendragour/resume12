@@ -882,10 +882,11 @@ const displayRole =
   // ------------------------------------------------------------
 
   if (
-    hasRoleBenchmark(targetRole) &&
-    roleSkillPool.length > 0 &&
-    roleCoverage < 40
-  ) {
+  
+  hasRoleBenchmark(targetRole) &&
+  roleSkillPool.length > 0 &&
+  roleCoverage < 40
+) {
     issues.push(
       `Low alignment with the ${displayRole} role benchmark (${Number(
         roleCoverage.toFixed(1)
@@ -897,11 +898,12 @@ const displayRole =
     );
   }
 
-  if (
-    hasRoleBenchmark(targetRole) &&
-    roleCoreSkillPool.length > 0 &&
-    coreCoverage < 50
-  ) {
+ if (
+  
+  hasRoleBenchmark(targetRole) &&
+  roleCoreSkillPool.length > 0 &&
+  coreCoverage < 50
+) {
     suggestions.push(
       "Prioritize core skills expected for the target role."
     );
@@ -962,10 +964,11 @@ const displayRole =
   // Role alignment only contributes when
   // actual skills exist.
   if (
-    skills.length > 0 &&
-    hasRoleBenchmark(targetRole) &&
-    roleSkillPool.length > 0
-  ) {
+  skills.length > 0 &&
+ 
+  hasRoleBenchmark(targetRole) &&
+  roleSkillPool.length > 0
+) {
     score +=
       (Math.min(
         roleCoverage,
@@ -3992,147 +3995,102 @@ const getRequirementAliases = (
   return Array.from(aliases);
 };
 
-// const findRequirementEvidence = (
-//   requirement: string,
-//   resume: ATSResume
-// ): {
-//   status: ATSMatchStatus;
-//   evidenceStrength: ATSEvidenceStrength;
-//   evidence: string[];
-//   sections: string[];
-//   confidence: number;
-//   explanation: string;
-// } => {
-//   const sources =
-//     getResumeEvidenceSources(resume);
+//  
 
-//   const aliases =
-//     getRequirementAliases(requirement);
+const getResponsibilityAliases = (
+  requirement: string
+): string[] => {
+  const normalized =
+    normalizeRequirementForMatch(requirement);
 
-//     if (
-//   ["Node.js", "Express.js", "TypeScript"].includes(
-//     requirement
-//   )
-// ) {
-//   console.log("========== REQUIREMENT DEBUG ==========");
-//   console.log("Requirement:", requirement);
-//   console.log(
-//     "Normalized requirement:",
-//     normalizeRequirementForMatch(requirement)
-//   );
-//   console.log("Aliases:", aliases);
+  const aliases: Record<string, string[]> = {
+    "develop and maintain backend apis": [
+      "backend api",
+      "backend apis",
+      "rest api",
+      "restful api",
+      "rest apis",
+      "api development",
+      "api development",
+      "api development using express",
+      "developed apis",
+      "develop apis",
+      "maintain apis",
+    ],
 
-//   console.log(
-//     "Resume sources:",
-//     sources.filter((source) =>
-//       /node|express|typescript/i.test(
-//         source.text
-//       )
-//     )
-//   );
+    "design database schemas": [
+      "database schema",
+      "database schemas",
+      "mongodb schema",
+      "mongoose schema",
+      "designed database",
+      "database design",
+      "schema design",
+      "data modeling",
+    ],
 
-//   console.log("=======================================");
-// }
+    "implement authentication and authorization": [
+      "authentication",
+      "authorization",
+      "jwt authentication",
+      "jwt",
+      "auth",
+      "rbac",
+      "role based access",
+      "access control",
+      "login authentication",
+    ],
 
-//     const matchedSources: Array<{
-//     section: string;
-//     text: string;
-//   }> = [];
+    "integrate third-party apis": [
+      "third party api",
+      "third-party api",
+      "third party apis",
+      "external api",
+      "external apis",
+      "api integration",
+      "integrated api",
+      "api integrations",
+    ],
 
-//   for (const source of sources) {
-//     const sourceText =
-//       normalizeRequirementForMatch(
-//         source.text
-//       );
+    "debug and optimize backend services": [
+      "debug backend",
+      "debugging backend",
+      "backend debugging",
+      "optimize backend",
+      "backend optimization",
+      "optimized backend",
+      "performance optimization",
+      "api optimization",
+      "debugged",
+      "optimized",
+    ],
 
-//     if (!sourceText) {
-//       continue;
-//     }
+    "collaborate with frontend developers": [
+      "frontend developers",
+      "front end developers",
+      "frontend team",
+      "frontend development",
+      "worked with frontend",
+      "collaborated with frontend",
+      "api integration with frontend",
+      "frontend backend integration",
+    ],
 
-//     const matched =
-//       aliases.some((alias) => {
-//         const result =
-//           containsNormalizedPhrase(
-//             sourceText,
-//             alias
-//           );
+    "problem-solving": [
+      "problem solving",
+      "problem-solving",
+      "debugging",
+      "troubleshooting",
+      "resolved issues",
+      "solved technical issues",
+    ],
+  };
 
-//         console.log(
-//           "MATCH CHECK:",
-//           {
-//             requirement,
-//             sourceText,
-//             alias,
-//             result,
-//           }
-//         );
-
-//         return result;
-//       });
-
-//     if (matched) {
-//       matchedSources.push(source);
-//     }
-//   }
-
-//   // ----------------------------------------------------------
-//   // NO EVIDENCE
-//   // ----------------------------------------------------------
-
-//   if (matchedSources.length === 0) {
-//     return {
-//       status: "missing",
-
-//       evidenceStrength: "missing",
-
-//       evidence: [],
-
-//       sections: [],
-
-//       confidence: 95,
-
-//       explanation:
-//         `"${requirement}" is not demonstrated anywhere in the resume.`,
-//     };
-//   }
-
-//   const sections =
-//     uniqueStrings(
-//       matchedSources.map(
-//         (item) => item.section
-//       )
-//     );
-
-//   const evidence =
-//     uniqueStrings(
-//       matchedSources.map(
-//         (item) => item.text
-//       )
-//     );
-
-//   return {
-//     status: "matched",
-
-//     evidenceStrength:
-//       matchedSources.length >= 2
-//         ? "strong"
-//         : "moderate",
-
-//     evidence,
-
-//     sections,
-
-//     confidence:
-//       matchedSources.length >= 2
-//         ? 95
-//         : 85,
-
-//     explanation:
-//       `"${requirement}" is demonstrated in the resume through ${sections.join(", ")}.`,
-//   };
-// };
-
-
+  return [
+    normalized,
+    ...(aliases[normalized] ?? []),
+  ];
+};
 const findRequirementEvidence = (
   requirement: string,
   resume: ATSResume
@@ -4154,45 +4112,7 @@ const findRequirementEvidence = (
   // DEBUG
   // ----------------------------------------------------------
 
-  if (
-    ["Node.js", "Express.js", "TypeScript"].includes(
-      requirement
-    )
-  ) {
-    console.log(
-      "========== REQUIREMENT DEBUG =========="
-    );
-
-    console.log(
-      "Requirement:",
-      requirement
-    );
-
-    console.log(
-      "Normalized requirement:",
-      normalizeRequirementForMatch(
-        requirement
-      )
-    );
-
-    console.log(
-      "Aliases:",
-      aliases
-    );
-
-    console.log(
-      "Resume sources:",
-      sources.filter((source) =>
-        /node|express|typescript/i.test(
-          source.text
-        )
-      )
-    );
-
-    console.log(
-      "======================================="
-    );
-  }
+   
 
   // ----------------------------------------------------------
   // MATCHED SOURCES
@@ -4231,15 +4151,15 @@ const findRequirementEvidence = (
             requirement
           )
         ) {
-          console.log(
-            "MATCH CHECK:",
-            {
-              requirement,
-              sourceText,
-              alias,
-              result,
-            }
-          );
+          // console.log(
+          //   "MATCH CHECK:",
+          //   {
+          //     requirement,
+          //     sourceText,
+          //     alias,
+          //     result,
+          //   }
+          // );
         }
 
         return result;
@@ -4408,6 +4328,7 @@ const analyzeJDRequirements = (
   resume: ATSResume,
   jd: ATSJobDescriptionAnalysis
 ): ATSJobDescriptionAnalysis => {
+   console.log("🔥 NEW analyzeJDRequirements RUNNING 🔥");
   const requirements = [
     ...jd.requiredSkills,
     ...jd.preferredSkills,
@@ -4427,6 +4348,9 @@ const analyzeJDRequirements = (
       ])
     ).values()
   );
+
+ 
+  
 
   const matches: ATSRequirementMatch[] =
     uniqueRequirements.map((requirement) => {
@@ -4468,11 +4392,28 @@ const analyzeJDRequirements = (
       };
     });
 
+
+//     console.log(
+//   "========== JD REQUIREMENT CLASSIFICATION =========="
+// );
+
+// matches.forEach((match) => {
+//   console.log({
+//     requirement: match.requirement,
+//     priority: match.priority,
+//     status: match.status,
+//   });
+// });
+
+// console.log(
+//   "=================================================="
+// );
+
   const calculatePercentage = (
     items: ATSRequirementMatch[]
   ): number => {
     if (items.length === 0) {
-      return 100;
+      return 0;
     }
 
     let points = 0;
@@ -4498,14 +4439,36 @@ const analyzeJDRequirements = (
     (match) => match.priority === "preferred"
   );
 
- const responsibilityMatches =
-  matches.filter((match) =>
-    jd.requirements.some(
-      (requirement) =>
-        requirement.category === "responsibility" &&
-        requirement.id === match.requirementId
-    )
-  );  
+const responsibilityMatches =
+  (jd.responsibilities ?? [])
+    .map((responsibility) => {
+      const evidence =
+        findRequirementEvidence(
+          responsibility.name,
+          resume
+        );
+
+      return {
+        responsibility,
+        evidence,
+      };
+    })
+    .filter(
+      ({ evidence }) =>
+        evidence.status === "matched" ||
+        evidence.status === "partial"
+    );
+
+const responsibilityMatchPercentage =
+  jd.responsibilities?.length
+    ? Number(
+        (
+          (responsibilityMatches.length /
+            jd.responsibilities.length) *
+          100
+        ).toFixed(1)
+      )
+    : 0;
 
   const requiredMatchPercentage =
     calculatePercentage(requiredMatches);
@@ -4513,16 +4476,26 @@ const analyzeJDRequirements = (
   const preferredMatchPercentage =
     calculatePercentage(preferredMatches);
 
-  const responsibilityMatchPercentage =
-    calculatePercentage(responsibilityMatches);
 
-  const overallMatchPercentage = Number(
-    (
-      requiredMatchPercentage * 0.6 +
-      responsibilityMatchPercentage * 0.2 +
-      preferredMatchPercentage * 0.2
-    ).toFixed(1)
+
+const otherMatches =
+  matches.filter(
+    (match) =>
+      !requiredMatches.includes(match) &&
+      !preferredMatches.includes(match)
   );
+
+const otherMatchPercentage =
+  calculatePercentage(otherMatches);
+
+const overallMatchPercentage = Number(
+  (
+    requiredMatchPercentage * 0.6 +
+    responsibilityMatchPercentage * 0.2 +
+    preferredMatchPercentage * 0.1 +
+    otherMatchPercentage * 0.1
+  ).toFixed(1)
+);
 
   const criticalMissingRequirements =
     matches
@@ -4610,12 +4583,42 @@ const uniqueRequirements =
     ).values()
   );
 
+
+  console.log(
+  "========== LIVE JD REQUIREMENTS =========="
+);
+
+console.log(
+  allRequirements.map((item) => ({
+    name: item.name,
+    priority: item.priority,
+  }))
+);
+
+console.log(
+  "========== LIVE JD RESPONSIBILITIES =========="
+);
+
+console.log(
+  jd.responsibilities.map((item) => ({
+    name: item.name,
+    priority: item.priority,
+  }))
+);
+
+console.log(
+  "============================================="
+);
+
   const matches: ATSRequirementMatch[] =
     uniqueRequirements.map((requirement) => {
       const evidence = findRequirementEvidence(
         requirement.name,
         resume
       );
+
+
+      
 
       return {
         requirementId: requirement.id,
@@ -4650,6 +4653,7 @@ const uniqueRequirements =
       };
     });
 
+    
   const requiredMatches =
     matches.filter(
       (match) =>
@@ -4663,21 +4667,31 @@ const uniqueRequirements =
     );
 
   const responsibilityMatches =
-    matches.filter((match) =>
-      jd.responsibilities.some(
-        (responsibility) =>
+  matches.filter((match) =>
+    jd.responsibilities?.some(
+      (responsibility) => {
+        const responsibilityText =
           normalizeRequirementForMatch(
             responsibility.name
-          ) ===
-          match.normalizedRequirement
-      )
-    );
+          );
+
+        const matchText =
+          match.normalizedRequirement;
+
+        return (
+          responsibilityText === matchText ||
+          responsibilityText.includes(matchText) ||
+          matchText.includes(responsibilityText)
+        );
+      }
+    )
+  );
 
   const calculateMatchPercentage = (
     items: ATSRequirementMatch[]
   ): number => {
     if (items.length === 0) {
-      return 100;
+      return 0;
     }
 
     let score = 0;
@@ -4715,6 +4729,46 @@ const uniqueRequirements =
       responsibilityMatches
     );
 
+
+//     console.log(
+//   "========== RESPONSIBILITY MATCH DEBUG =========="
+// );
+
+// console.log(
+//   "JD responsibilities:",
+//   jd.responsibilities?.map((r) => ({
+//     name: r.name,
+//     normalized: normalizeRequirementForMatch(r.name),
+//   }))
+// );
+
+// console.log(
+//   "Requirement matches:",
+//   matches.map((m) => ({
+//     requirement: m.requirement,
+//     normalized: m.normalizedRequirement,
+//     priority: m.priority,
+//     status: m.status,
+//   }))
+// );
+
+// console.log(
+//   "Responsibility matches:",
+//   responsibilityMatches.map((m) => ({
+//     requirement: m.requirement,
+//     status: m.status,
+//   }))
+// );
+
+// console.log(
+//   "Responsibility percentage:",
+//   responsibilityMatchPercentage
+// );
+
+// console.log(
+//   "==============================================="
+// );
+
   /*
    * Required requirements get the highest weight.
    *
@@ -4736,6 +4790,21 @@ const uniqueRequirements =
     calculateMatchPercentage(
       otherMatches
     );
+    console.log("========== JD SCORE BREAKDOWN ==========");
+console.log("Required:", requiredMatchPercentage);
+console.log("Responsibilities:", responsibilityMatchPercentage);
+console.log("Preferred:", preferredMatchPercentage);
+console.log("Other:", otherMatchPercentage);
+console.log(
+  "Calculated Overall:",
+  (
+    requiredMatchPercentage * 0.60 +
+    responsibilityMatchPercentage * 0.20 +
+    preferredMatchPercentage * 0.10 +
+    otherMatchPercentage * 0.10
+  ).toFixed(1)
+);
+console.log("========================================");
 
   const overallMatchPercentage =
     Number(
@@ -4861,50 +4930,26 @@ const uniqueRequirements =
   };
 };
 
-// ============================================================
-// GENERAL RESUME KEYWORD ANALYSIS
-// ============================================================
 
-/**
- * General ATS keyword analysis.
- *
- * IMPORTANT:
- *
- * This is NOT the final JD keyword matcher.
- *
- * Without a Job Description, we cannot honestly say that a
- * keyword is "missing from the job".
- *
- * Therefore this layer checks:
- * - important technical terms already present
- * - repeated terminology
- * - skill coverage
- *
- * JD-specific matching comes later.
- */
+
+
 const analyzeResumeKeywords = (
   resume: ATSResume,
   jobDescription?: string
 ): ATSKeywordAnalysis => {
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
+  const targetRole = cleanText(
+    resume.targetRole
+  );
 
-  const roleMatchInfo =
-    targetRole
-      ? getRoleMatchInfo(
-          targetRole
-        )
-      : null;
+  const roleMatchInfo = targetRole
+    ? getRoleMatchInfo(targetRole)
+    : null;
 
-  const skillNames =
-    flattenStrings(
-      (resume.skills ?? []).map(
-        (category) =>
-          category.skills ?? []
-      )
-    );
+  const skillNames = flattenStrings(
+    (resume.skills ?? []).map(
+      (category) => category.skills ?? []
+    )
+  );
 
   const technologies =
     (resume.projects ?? []).flatMap(
@@ -4913,9 +4958,7 @@ const analyzeResumeKeywords = (
     );
 
   const experienceText =
-    getExperienceBullets(
-      resume
-    );
+    getExperienceBullets(resume);
 
   const projectDescriptions =
     (resume.projects ?? []).map(
@@ -4936,154 +4979,358 @@ const analyzeResumeKeywords = (
     textSources.join(" ");
 
   const normalized =
-    normalizeText(
-      combinedText
-    );
+    normalizeText(combinedText);
+
+  // ============================================================
+  // MODE DETECTION
+  // ============================================================
+
+  const jdText =
+    cleanText(jobDescription);
+
+  const hasJD =
+    jdText.length > 0;
 
   const roleBenchmarkAvailable =
-    hasRoleBenchmark(
-      targetRole
-    );
+    hasRoleBenchmark(targetRole);
 
   const roleKeywordPool =
-    roleBenchmarkAvailable
-      ? getRoleKeywordPool(
-          targetRole
+    !hasJD && roleBenchmarkAvailable
+      ? getRoleKeywordPool(targetRole)
+      : [];
+
+  // ============================================================
+  // JD KEYWORD DEFINITIONS
+  // ============================================================
+
+  const jdKeywordPatterns: Array<{
+    keyword: string;
+    aliases: string[];
+  }> = [
+    {
+      keyword: "Node.js",
+      aliases: [
+        "node.js",
+        "nodejs",
+        "node js",
+      ],
+    },
+
+    {
+      keyword: "Express.js",
+      aliases: [
+        "express.js",
+        "expressjs",
+        "express",
+      ],
+    },
+
+    {
+      keyword: "JavaScript",
+      aliases: [
+        "javascript",
+        "js",
+      ],
+    },
+
+    {
+      keyword: "TypeScript",
+      aliases: [
+        "typescript",
+        "ts",
+      ],
+    },
+
+    {
+      keyword: "MongoDB",
+      aliases: [
+        "mongodb",
+        "mongo db",
+        "mongo",
+      ],
+    },
+
+    {
+      keyword: "Mongoose",
+      aliases: [
+        "mongoose",
+      ],
+    },
+
+    {
+      keyword: "REST APIs",
+      aliases: [
+        "rest api",
+        "rest apis",
+        "restful api",
+        "restful apis",
+      ],
+    },
+
+    {
+      keyword: "JWT",
+      aliases: [
+        "jwt",
+        "json web token",
+        "json web tokens",
+      ],
+    },
+
+    {
+      keyword: "Authentication",
+      aliases: [
+        "authentication",
+        "authenticate",
+        "authenticated",
+      ],
+    },
+
+    {
+      keyword: "Authorization",
+      aliases: [
+        "authorization",
+        "authorize",
+        "rbac",
+        "role based access control",
+      ],
+    },
+
+    {
+      keyword: "Git",
+      aliases: [
+        "git",
+      ],
+    },
+
+    {
+      keyword: "GitHub",
+      aliases: [
+        "github",
+        "git hub",
+      ],
+    },
+
+    {
+      keyword: "Postman",
+      aliases: [
+        "postman",
+      ],
+    },
+
+    {
+      keyword: "Redis",
+      aliases: [
+        "redis",
+        "redis cache",
+        "redis caching",
+      ],
+    },
+  ];
+
+  // ============================================================
+  // JD KEYWORDS
+  // ============================================================
+
+  let jdKeywordCandidates: string[] = [];
+
+  if (hasJD) {
+    jdKeywordCandidates =
+      uniqueStrings(
+        jdKeywordPatterns
+          .filter((item) =>
+            item.aliases.some(
+              (alias) =>
+                containsNormalizedPhrase(
+                  jdText,
+                  alias
+                )
+            )
+          )
+          .map(
+            (item) => item.keyword
+          )
+      );
+  }
+
+  // ============================================================
+  // FINAL KEYWORD CANDIDATES
+  //
+  // JD MODE:
+  //   ONLY JD keywords
+  //
+  // ROLE MODE:
+  //   Resume skills + technologies + role benchmark
+  // ============================================================
+
+  const keywordCandidates =
+    hasJD
+      ? jdKeywordCandidates
+      : uniqueStrings([
+          ...skillNames,
+          ...technologies,
+          ...roleKeywordPool,
+        ]);
+
+  // ============================================================
+  // KEYWORD FREQUENCY
+  // ============================================================
+
+  const keywordFrequency:
+    Record<string, number> = {};
+
+  const matchedKeywords: string[] = [];
+
+  // ============================================================
+  // ROLE MODE / GENERAL KEYWORD MATCHING
+  //
+  // This runs only when there is NO JD.
+  // ============================================================
+
+  if (!hasJD) {
+    for (const keyword of keywordCandidates) {
+      const normalizedKeyword =
+        normalizeText(keyword);
+
+      if (!normalizedKeyword) {
+        continue;
+      }
+
+      const escaped =
+        normalizedKeyword.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          "\\$&"
+        );
+
+      const regex =
+        new RegExp(
+          `\\b${escaped}\\b`,
+          "gi"
+        );
+
+      const matches =
+        normalized.match(regex) ?? [];
+
+      const frequency =
+        matches.length;
+
+      keywordFrequency[keyword] =
+        frequency;
+
+      if (frequency > 0) {
+        matchedKeywords.push(
+          keyword
+        );
+      }
+    }
+  }
+
+  // ============================================================
+  // JD MODE
+  //
+  // ONLY compare JD requirements against resume.
+  // ============================================================
+
+  const missingKeywords: string[] = [];
+
+  if (hasJD) {
+    for (const item of jdKeywordPatterns) {
+      const appearsInJD =
+        item.aliases.some(
+          (alias) =>
+            containsNormalizedPhrase(
+              jdText,
+              alias
+            )
+        );
+
+      if (!appearsInJD) {
+        continue;
+      }
+
+      const appearsInResume =
+        item.aliases.some(
+          (alias) =>
+            containsNormalizedPhrase(
+              combinedText,
+              alias
+            )
+        );
+
+      if (appearsInResume) {
+        matchedKeywords.push(
+          item.keyword
+        );
+      } else {
+        missingKeywords.push(
+          item.keyword
+        );
+      }
+    }
+  }
+
+  // ============================================================
+  // ROLE MODE
+  //
+  // Missing keywords are based on role benchmark.
+  // ============================================================
+
+  if (!hasJD) {
+    for (const keyword of roleKeywordPool) {
+      const appearsInResume =
+        containsNormalizedPhrase(
+          combinedText,
+          keyword
+        );
+
+      if (!appearsInResume) {
+        missingKeywords.push(
+          keyword
+        );
+      }
+    }
+  }
+
+  // ============================================================
+  // ROLE MATCHED KEYWORDS
+  // ============================================================
+
+  const roleMatchedKeywords =
+    !hasJD
+      ? roleKeywordPool.filter(
+          (keyword) =>
+            containsNormalizedPhrase(
+              combinedText,
+              keyword
+            )
         )
       : [];
 
-  const keywordCandidates =
-    uniqueStrings([
-      ...skillNames,
-      ...technologies,
-      ...roleKeywordPool,
-    ]);
-
-  const keywordFrequency:
-    Record<string, number> =
-    {};
-
-  const matchedKeywords:
-    string[] = [];
-
-  for (const keyword of keywordCandidates) {
-    const normalizedKeyword =
-      normalizeText(
-        keyword
-      );
-
-    if (!normalizedKeyword) {
-      continue;
-    }
-
-    const escaped =
-      normalizedKeyword.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        "\\$&"
-      );
-
-    const regex =
-      new RegExp(
-        `\\b${escaped}\\b`,
-        "gi"
-      );
-
-    const matches =
-      normalized.match(regex) ??
-      [];
-
-    const frequency =
-      matches.length;
-
-    keywordFrequency[
-      keyword
-    ] = frequency;
-
-    if (frequency > 0) {
-      matchedKeywords.push(
-        keyword
-      );
-    }
-  }
-
-  const roleMatchedKeywords =
-    roleKeywordPool.filter(
-      (keyword) =>
-        containsNormalizedPhrase(
-          combinedText,
-          keyword
-        )
-    );
-
-  const roleMissingKeywords =
-    roleKeywordPool.filter(
-      (keyword) =>
-        !containsNormalizedPhrase(
-          combinedText,
-          keyword
-        )
-    );
-
-  const missingKeywords: string[] =
-    [];
-
-  // Role benchmark is the primary source of
-  // missing keywords when a known role is supplied.
-  if (
-    roleBenchmarkAvailable
-  ) {
-    missingKeywords.push(
-      ...roleMissingKeywords
-    );
-  }
-
-  // Also identify skills that are listed in
-  // the structured skill section but absent
-  // from the actual resume text.
-  const skillsPresentInText =
-    uniqueStrings(
-      skillNames
-    ).filter(
-      (skill) =>
-        containsNormalizedPhrase(
-          combinedText,
-          skill
-        )
-    );
-
-  for (const skill of skillNames) {
-    if (
-      !skillsPresentInText.some(
-        (existing) =>
-          normalizeText(
-            existing
-          ) ===
-          normalizeText(
-            skill
-          )
-      )
-    ) {
-      missingKeywords.push(
-        skill
-      );
-    }
-  }
+  // ============================================================
+  // COVERAGE
+  // ============================================================
 
   const roleCoverage =
-    roleKeywordPool.length === 0
-      ? 0
-      : (
+    !hasJD &&
+    roleKeywordPool.length > 0
+      ? (
           roleMatchedKeywords.length /
           roleKeywordPool.length
-        ) * 100;
+        ) * 100
+      : 0;
 
   const keywordCoverage =
-    keywordCandidates.length === 0
-      ? 0
-      : (
-          matchedKeywords.length /
+    keywordCandidates.length > 0
+      ? (
+          uniqueStrings(
+            matchedKeywords
+          ).length /
           keywordCandidates.length
-        ) * 100;
+        ) * 100
+      : 0;
+
+  // ============================================================
+  // ISSUES / SUGGESTIONS
+  // ============================================================
 
   const issues: string[] = [];
   const suggestions: string[] = [];
@@ -5092,51 +5339,39 @@ const analyzeResumeKeywords = (
     keywordCandidates.length === 0
   ) {
     issues.push(
-      "Very few role-related keywords were detected."
-    );
-
-    suggestions.push(
-      "Add relevant skills and technologies that genuinely match your target role."
+      hasJD
+        ? "No recognizable job-specific keywords were detected in the job description."
+        : "Very few role-related keywords were detected."
     );
   }
 
   if (
-    roleBenchmarkAvailable &&
-    roleMatchInfo?.matchedProfile
+    hasJD &&
+    missingKeywords.length > 0
   ) {
     suggestions.push(
-      `Role benchmark matched: ${roleMatchInfo.matchedProfile} (${roleMatchInfo.matchScore}% title match).`
+      `Prioritize relevant missing JD requirements such as: ${uniqueStrings(
+        missingKeywords
+      )
+        .slice(0, 5)
+        .join(", ")}.`
     );
   }
 
   if (
-  roleBenchmarkAvailable &&
-  roleKeywordPool.length > 0 &&
-  roleCoverage < 50
-) {
-  const resolvedRole =
-    roleMatchInfo?.matchedProfile ||
-    targetRole;
-
-  issues.push(
-    `Only ${Number(
-      roleCoverage.toFixed(1)
-    )}% of benchmark keywords for ${resolvedRole} are present.`
-  );
-
-  suggestions.push(
-    `Review missing ${resolvedRole} keywords and add only those that accurately reflect your experience.`
-  );
-}
-
-  if (
-    roleBenchmarkAvailable &&
-    roleMissingKeywords.length > 0
+    !hasJD &&
+    roleKeywordPool.length > 0 &&
+    roleMatchedKeywords.length <
+      roleKeywordPool.length
   ) {
     suggestions.push(
-      `Prioritize relevant missing role terms such as: ${roleMissingKeywords.slice(0, 5).join(", ")}.`
+      `Strengthen role alignment by adding relevant ${targetRole} skills and technologies.`
     );
   }
+
+  // ============================================================
+  // BASE SCORE
+  // ============================================================
 
   const baseMaxScore =
     getCategoryMaxScore(
@@ -5146,49 +5381,72 @@ const analyzeResumeKeywords = (
   let score = 0;
 
   if (
-  roleBenchmarkAvailable &&
-  roleKeywordPool.length > 0
-) {
-  // Role benchmark is the primary signal.
-  // General keyword coverage provides a smaller
-  // secondary signal.
-
-  score = Number(
-    (
+    !hasJD &&
+    roleBenchmarkAvailable &&
+    roleKeywordPool.length > 0
+  ) {
+    // ROLE MODE
+    score = Number(
       (
-        (Math.min(
-          roleCoverage,
-          100
-        ) / 100) * 0.7 +
+        (
+          (Math.min(
+            roleCoverage,
+            100
+          ) /
+            100) *
+            0.7 +
+          (Math.min(
+            keywordCoverage,
+            100
+          ) /
+            100) *
+            0.3
+        ) *
+        baseMaxScore
+      ).toFixed(2)
+    );
+  } else {
+    // JD MODE
+    score = Number(
+      (
         (Math.min(
           keywordCoverage,
           100
-        ) / 100) * 0.3
-      ) * baseMaxScore
-    ).toFixed(2)
-  );
-} else {
-  score = Number(
-    (
-      (keywordCoverage / 100) *
-      baseMaxScore
-    ).toFixed(2)
-  );
-}
+        ) /
+          100) *
+        baseMaxScore
+      ).toFixed(2)
+    );
+  }
 
+  // ============================================================
+  // FINAL CLEANUP
+  // ============================================================
 
   const finalMatchedKeywords =
-  uniqueStrings(matchedKeywords);
+    uniqueStrings(
+      matchedKeywords
+    );
 
-const finalMissingKeywords =
-  uniqueStrings(missingKeywords).filter(
-    (keyword) =>
-      !finalMatchedKeywords.some(
-        (matched) =>
-          normalizeText(matched) ===
-          normalizeText(keyword)
-      )
-  );
+  const finalMissingKeywords =
+    uniqueStrings(
+      missingKeywords
+    ).filter(
+      (keyword) =>
+        !finalMatchedKeywords.some(
+          (matched) =>
+            normalizeText(
+              matched
+            ) ===
+            normalizeText(
+              keyword
+            )
+        )
+    );
+
+  // ============================================================
+  // RETURN
+  // ============================================================
 
   return {
     keywords:
@@ -5197,10 +5455,10 @@ const finalMissingKeywords =
       ),
 
     matchedKeywords:
-  finalMatchedKeywords,
+      finalMatchedKeywords,
 
-missingKeywords:
-  finalMissingKeywords,
+    missingKeywords:
+      finalMissingKeywords,
 
     keywordFrequency,
 
@@ -5209,19 +5467,23 @@ missingKeywords:
         keywordCoverage.toFixed(2)
       ),
 
-    keywordDensity: undefined,
+    keywordDensity:
+      undefined,
 
-    stuffingDetected: false,
+    stuffingDetected:
+      false,
 
-    score: clampATSScore(
-      score,
-      0,
-      baseMaxScore
-    ),
+    score:
+      clampATSScore(
+        score,
+        0,
+        baseMaxScore
+      ),
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues:
+      uniqueStrings(
+        issues
+      ),
 
     suggestions:
       uniqueStrings(

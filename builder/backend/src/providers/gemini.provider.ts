@@ -91,6 +91,8 @@ export const generateContent = async (
   return response.text ?? "";
 };
 
+console.log("🔥 GEMINI API CALL:", new Date().toISOString());
+
 // ============================================================
 // GENERATE JSON
 // ============================================================

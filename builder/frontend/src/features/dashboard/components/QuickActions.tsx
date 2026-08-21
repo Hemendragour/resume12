@@ -30,7 +30,7 @@
 // export default function QuickActions({ onCreate }: Props) {
 //   return (
 //     <section>
-//       <h2 className="mb-5 text-2xl font-bold">⚡ Quick Actions</h2>
+//       <h2 className="mb-5 text-2xl font-bold text-dark">⚡ Quick Actions</h2>
 
 //       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
 //         {actions.map((item) => {
@@ -44,15 +44,15 @@
 //                   onCreate();
 //                 }
 //               }}
-//               className="rounded-2xl border bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+//               className="rounded-2xl border border-dark-border bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
 //             >
-//               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-//                 <Icon size={24} className="text-blue-600" />
+//               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-info/10">
+//                 <Icon size={24} className="text-info" />
 //               </div>
 
-//               <h3 className="font-semibold">{item.title}</h3>
+//               <h3 className="font-semibold text-dark">{item.title}</h3>
 
-//               <p className="mt-2 text-sm text-gray-500">{item.description}</p>
+//               <p className="mt-2 text-sm text-primary/70">{item.description}</p>
 //             </button>
 //           );
 //         })}
@@ -61,6 +61,7 @@
 //   );
 // }
 
+// QuickActions.tsx
 import { FilePlus2, Sparkles, ScanSearch, Upload } from "lucide-react";
 
 interface Props {
@@ -107,10 +108,10 @@ export default function QuickActions({ onCreate }: Props) {
                   onCreate();
                 }
               }}
-              className="rounded-2xl border border-dark-border bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-info/10">
-                <Icon size={24} className="text-info" />
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
+                <Icon size={24} className="text-primary" />
               </div>
 
               <h3 className="font-semibold text-dark">{item.title}</h3>

@@ -1,19 +1,10 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant =
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "danger"
-  | "ghost";
+type Variant = "primary" | "secondary" | "outline" | "danger" | "ghost";
 
-type Size =
-  | "sm"
-  | "md"
-  | "lg";
+type Size = "sm" | "md" | "lg";
 
-interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 
   variant?: Variant;
@@ -29,30 +20,19 @@ interface ButtonProps
   rightIcon?: ReactNode;
 }
 
-const variantClasses: Record<
-  Variant,
-  string
-> = {
-  primary:
-    "bg-blue-600 text-white hover:bg-blue-700",
+const variantClasses: Record<Variant, string> = {
+  primary: "bg-primary text-background hover:bg-dark",
 
-  secondary:
-    "bg-slate-900 text-white hover:bg-black",
+  secondary: "bg-dark text-white hover:bg-primary",
 
-  outline:
-    "border border-slate-300 bg-white hover:bg-slate-100",
+  outline: "border border-primary/15 bg-card text-dark hover:bg-background",
 
-  danger:
-    "bg-red-600 text-white hover:bg-red-700",
+  danger: "bg-danger text-white hover:opacity-90",
 
-  ghost:
-    "hover:bg-slate-100",
+  ghost: "text-dark hover:bg-background",
 };
 
-const sizeClasses: Record<
-  Size,
-  string
-> = {
+const sizeClasses: Record<Size, string> = {
   sm: "h-9 px-4 text-sm",
 
   md: "h-11 px-5",
@@ -83,9 +63,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      disabled={
-        disabled || loading
-      }
+      disabled={disabled || loading}
       className={`
       inline-flex
       items-center
@@ -99,22 +77,14 @@ export default function Button({
       disabled:opacity-60
       ${variantClasses[variant]}
       ${sizeClasses[size]}
-      ${
-        fullWidth
-          ? "w-full"
-          : ""
-      }
+      ${fullWidth ? "w-full" : ""}
       ${className}
       `}
       {...props}
     >
       {loading ? (
         <>
-          <svg
-            className="h-5 w-5 animate-spin"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
+          <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle
               cx="12"
               cy="12"
@@ -130,7 +100,6 @@ export default function Button({
               strokeWidth="3"
             />
           </svg>
-
           Loading...
         </>
       ) : (

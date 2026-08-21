@@ -24,10 +24,10 @@ export default function TemplateGalleryPage() {
           <button
             key={template.id}
             onClick={() => handleTemplateClick(template.id)}
-            className={`relative text-left border rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+            className={`relative text-left border border-primary/10 rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
           >
             {template.featured && (
-              <span className="absolute top-3 right-3 text-xs font-medium bg-black text-white px-2 py-0.5 rounded-full">
+              <span className="absolute top-3 right-3 text-xs font-medium bg-primary text-white px-2 py-0.5 rounded-full">
                 Featured
               </span>
             )}

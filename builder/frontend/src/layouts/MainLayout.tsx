@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../features/dashboard/components/Sidebar";
 import Navbar from "../features/dashboard/components/Navbar";
 
-export default function AdminLayout() {
+export default function MainLayout() {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />

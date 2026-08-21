@@ -1,28 +1,46 @@
 import { create } from "zustand";
 
 import type { AuthState } from "../types/auth.types";
+import { getMe } from "../services/auth.service";
 
-export const useAuthStore =
-  create<AuthState>((set) => ({
-    user: null,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
 
-    token: localStorage.getItem("token"),
+  isLoading: true,
 
-    setAuth: (user, token) => {
-      localStorage.setItem("token", token);
+  setAuth: (user) => {
+    set({
+      user,
+      isLoading: false,
+    });
+  },
+
+  logout: () => {
+    set({
+      user: null,
+      isLoading: false,
+    });
+  },
+
+  setLoading: (loading) => {
+    set({
+      isLoading: loading,
+    });
+  },
+
+  initializeAuth: async () => {
+    try {
+      const response = await getMe();
 
       set({
-        user,
-        token,
+        user: response.user,
+        isLoading: false,
       });
-    },
-
-    logout: () => {
-      localStorage.removeItem("token");
-
+    } catch {
       set({
         user: null,
-        token: null,
+        isLoading: false,
       });
-    },
-  }));
+    }
+  },
+}));

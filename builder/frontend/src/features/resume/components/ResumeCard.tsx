@@ -1,3 +1,4 @@
+// ResumeCard.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -57,10 +58,10 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   const progressColor =
     completion >= 80
-      ? "bg-green-500"
+      ? "bg-success"
       : completion >= 50
-        ? "bg-yellow-500"
-        : "bg-red-500";
+        ? "bg-warning"
+        : "bg-danger";
 
   const handleRename = async (newTitle: string) => {
     await renameMutation.mutateAsync({
@@ -76,6 +77,11 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(resume._id);
+
+      // delete the resume from the resume array
+      //  setResumes((prev) =>
+      //       prev.filter((item) => item._id !== resume._id)
+      //     );
       setDeleteOpen(false);
     } catch (err) {
       console.error(err);
@@ -103,16 +109,33 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   };
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="flex h-56 items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-        <ResumeThumbnail resume={resume} />
+    <Card className="group overflow-visible transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="h-64 overflow-hidden rounded-t-xl bg-linear-to-br from-card to-background">
+        <div className="flex h-full items-center justify-center">
+          <ResumeThumbnail resume={resume} />
+        </div>
       </div>
 
       {/* Body */}
-      <div className="space-y-4 p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-bold line-clamp-1">{title}</h3>
+      <div className="space-y-4 p-4">
+        {/* Top Section */}
+        <div className="flex justify-between">
+          <h3 className="text-lg font-bold line-clamp-1 text-dark">{title}</h3>{" "}
+          <ResumeCardMenu
+            onRename={() => setRenameOpen(true)}
+            onDuplicate={handleDuplicate}
+            onDelete={() => setDeleteOpen(true)}
+            onDownload={() => navigate(`/resume/${resume._id}/edit`)}
+            onShare={handleShare}
+          />
+        </div>
+
+        <div className="flex items-start justify-between gap-6">
+          {/* Left Side */}
+          <div className="min-w-0 flex-1">
+            {/* <h3 className="text-lg font-bold line-clamp-1 text-dark">
+              {title}
+            </h3> */}
 
             <div className="mt-2 flex items-center gap-2">
               <Badge color={resume.status === "draft" ? "yellow" : "green"}>
@@ -124,11 +147,12 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
             {/* Progress Bar */}
             <div className="mt-4">
-              <div className="flex justify-between text-xs text-slate-500">
+              <div className="flex justify-between text-xs text-primary/60">
                 <span>Profile Completion</span>
                 <span>{completion}%</span>
               </div>
-              <div className="mt-2 h-2 rounded-full bg-slate-200">
+
+              <div className="mt-2 h-2 rounded-full bg-background">
                 <div
                   className={`${progressColor} h-2 rounded-full transition-all duration-500`}
                   style={{ width: `${completion}%` }}
@@ -137,27 +161,34 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
             </div>
           </div>
 
-          <ResumeCardMenu
+          {/* Right Side */}
+          <div className="w-52 shrink-0 space-y-4 pt-1">
+            {/* Target Role */}
+            <div className="flex items-center gap-2 text-sm text-primary/70">
+              <Briefcase size={16} className="shrink-0" />
+              <span className="truncate">
+                {resume.targetRole || "Target role not selected"}
+              </span>
+            </div>
+
+            {/* Last Updated */}
+            <div className="flex items-center gap-2 text-sm text-primary/60">
+              <Clock size={16} className="shrink-0" />
+              <span>
+                Last Updated {new Date(resume.updatedAt).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+
+          {/* Menu */}
+          {/* <ResumeCardMenu
             onRename={() => setRenameOpen(true)}
             onDuplicate={handleDuplicate}
             onDelete={() => setDeleteOpen(true)}
             onDownload={() => navigate(`/resume/${resume._id}/edit`)}
             onShare={handleShare}
-          />
+          /> */}
         </div>
-
-        {/* Target Role */}
-        <div className="flex items-center gap-2 text-sm text-slate-600">
-          <Briefcase size={16} />
-          {resume.targetRole || "Target role not selected"}
-        </div>
-
-        {/* Last Updated */}
-        <div className="flex items-center gap-2 text-sm text-slate-500">
-          <Clock size={16} />
-          Last Updated {new Date(resume.updatedAt).toLocaleDateString()}
-        </div>
-
         {/* Edit Button */}
         <div className="pt-2">
           <Button

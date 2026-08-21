@@ -11,7 +11,9 @@ import { AuthRequest } from "../../middleware/auth.middleware";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const validatedData = registerSchema.parse(req.body);
+
   console.log("BODY RECEIVED:", req.body);
+
   const { fullName, email, password } = validatedData;
 
   const existingUser = await User.findOne({ email });
@@ -33,15 +35,23 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const token = generateToken(user._id.toString());
 
+  // Set JWT in HTTP-only cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+
   res.status(201).json({
     success: true,
     message: "User registered successfully",
-    token,
 
     user: {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
+      role: user.role,
     },
   });
 });
@@ -71,14 +81,23 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   console.log("After token");
 
+  // Set JWT in HTTP-only cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   res.status(200).json({
     success: true,
     message: "Login successful",
-    token,
+
     user: {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
+      role: user.role,
     },
   });
 

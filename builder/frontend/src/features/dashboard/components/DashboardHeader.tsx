@@ -25,11 +25,11 @@
 //   onCreate,
 // }: Props) {
 //   return (
-//     <div className="flex flex-col gap-6 rounded-2xl border bg-white p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+//     <div className="flex flex-col gap-6 rounded-2xl border border-dark-border bg-card p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
 //       {/* Left Side - Title */}
 //       <div>
-//         <h1 className="text-3xl font-bold">My Resumes</h1>
-//         <p className="mt-2 text-slate-500">{total} resumes available</p>
+//         <h1 className="text-3xl font-bold text-dark">My Resumes</h1>
+//         <p className="mt-2 text-primary/70">{total} resumes available</p>
 //       </div>
 
 //       {/* Right Side - Controls */}
@@ -50,7 +50,7 @@
 //           onChange={(e) =>
 //             onFilter(e.target.value as "all" | "draft" | "completed")
 //           }
-//           className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-slate-500 focus:outline-none lg:w-auto"
+//           className="h-12 w-full rounded-xl border border-primary/10 bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
 //         >
 //           <option value="all">All</option>
 //           <option value="draft">Draft</option>
@@ -61,11 +61,9 @@
 //         <select
 //           value={sort}
 //           onChange={(e) =>
-//             onSort(
-//               e.target.value as "updated" | "newest" | "oldest" | "az"
-//             )
+//             onSort(e.target.value as "updated" | "newest" | "oldest" | "az")
 //           }
-//           className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-slate-500 focus:outline-none lg:w-auto"
+//           className="h-12 w-full rounded-xl border border-dark-border bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
 //         >
 //           <option value="updated">Recently Updated</option>
 //           <option value="newest">Newest</option>
@@ -86,6 +84,7 @@
 //   );
 // }
 
+// DashboardHeader.tsx
 import { Search, Plus } from "lucide-react";
 
 import Button from "../../../components/ui/Button";
@@ -113,7 +112,7 @@ export default function DashboardHeader({
   onCreate,
 }: Props) {
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-dark-border bg-card p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-6 rounded-2xl border border-primary/10 bg-card p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
       {/* Left Side - Title */}
       <div>
         <h1 className="text-3xl font-bold text-dark">My Resumes</h1>
@@ -138,7 +137,7 @@ export default function DashboardHeader({
           onChange={(e) =>
             onFilter(e.target.value as "all" | "draft" | "completed")
           }
-          className="h-12 w-full rounded-xl border border-dark-border bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
+          className="h-12 w-full rounded-xl border border-primary/10 bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
         >
           <option value="all">All</option>
           <option value="draft">Draft</option>
@@ -151,7 +150,7 @@ export default function DashboardHeader({
           onChange={(e) =>
             onSort(e.target.value as "updated" | "newest" | "oldest" | "az")
           }
-          className="h-12 w-full rounded-xl border border-dark-border bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
+          className="h-12 w-full rounded-xl border border-primary/10 bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
         >
           <option value="updated">Recently Updated</option>
           <option value="newest">Newest</option>

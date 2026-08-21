@@ -1,4 +1,218 @@
- 
+// import { useGenerateCoursework } from "../../../ai/hooks/useGenerateCoursework";
+// import { useResumeStore as useResumeStoreAI } from "../../../../store/resume.store";
+
+// import { useForm } from "react-hook-form";
+
+// import Button from "../../../../components/ui/Button";
+
+// import { useResumeStore } from "../../../../store/resume.store";
+
+// import type { Resume } from "../../types/resume.types";
+
+// interface Props {
+//   onClose: () => void;
+//   editIndex?: number;
+//   initialData?: Resume["education"][number];
+// }
+
+// type EducationFormData = Resume["education"][number];
+
+// const MONTHS = [
+//   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+//   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+// ];
+
+// export default function EducationForm({
+//   onClose,
+//   editIndex,
+//   initialData,
+// }: Props) {
+//   const addEducation = useResumeStore((state) => state.addEducation);
+
+//   const updateEducationItem = useResumeStore(
+//     (state) => state.updateEducationItem,
+//   );
+
+//   const { register, handleSubmit, reset, watch,setValue } = useForm<EducationFormData>({
+//     defaultValues: initialData ?? {
+//       institution: "",
+//       degree: "",
+//       fieldOfStudy: "",
+//       location: "",
+//       startMonth: "Jan",
+//       startYear: new Date().getFullYear(),
+//       endMonth: "Jan",
+//       endYear: new Date().getFullYear(),
+//       current: false,
+//       cgpa: "",
+//       coursework: "",
+//     },
+//   });
+
+//   const resume = useResumeStore((state) => state.resume);
+// const degree = watch("degree");
+// const fieldOfStudy = watch("fieldOfStudy");
+
+// const { mutateAsync: generateCoursework, isPending: isGeneratingCoursework } =
+//   useGenerateCoursework();
+
+// const handleGenerateCoursework = async () => {
+//   if (!degree?.trim() || !fieldOfStudy?.trim()) {
+//     alert("Please enter Degree and Field of Study first.");
+//     return;
+//   }
+
+//   try {
+//     const result = await generateCoursework({
+//       degree: degree.trim(),
+//       fieldOfStudy: fieldOfStudy.trim(),
+//       targetRole: resume?.targetRole,
+//     });
+
+//     setValue("coursework", result);
+//   } catch (error) {
+//     console.error("Coursework generation failed:", error);
+//     alert("Failed to generate coursework. Please try again.");
+//   }
+// };
+
+//   const isCurrent = watch("current");
+
+//   const onSubmit = (data: EducationFormData) => {
+//     if (editIndex !== undefined) {
+//       updateEducationItem(editIndex, data);
+//     } else {
+//       addEducation(data);
+//     }
+
+//     reset();
+
+//     onClose();
+//   };
+
+//   return (
+//     <form
+//       onSubmit={handleSubmit(onSubmit)}
+//       className="space-y-6 rounded-2xl border bg-white p-8"
+//     >
+//       <h2 className="text-2xl font-bold">
+//         {editIndex !== undefined ? "Edit Education" : "Add Education"}
+//       </h2>
+
+//       <div className="grid grid-cols-2 gap-6">
+//         <input
+//           {...register("institution")}
+//           placeholder="College / University"
+//           className="h-12 rounded-lg border px-4"
+//         />
+
+//         <input
+//           {...register("location")}
+//           placeholder="Location (e.g. Hyderabad, India)"
+//           className="h-12 rounded-lg border px-4"
+//         />
+
+//         <input
+//           {...register("degree")}
+//           placeholder="Degree (e.g. B.E., B.Tech)"
+//           className="h-12 rounded-lg border px-4"
+//         />
+
+//         <input
+//           {...register("fieldOfStudy")}
+//           placeholder="Field of Study (e.g. Computer Science)"
+//           className="h-12 rounded-lg border px-4"
+//         />
+
+//         {/* Start date */}
+//         <div className="flex gap-2">
+//           <select
+//             {...register("startMonth")}
+//             className="h-12 w-1/2 rounded-lg border px-2"
+//           >
+//             {MONTHS.map((m) => (
+//               <option key={m} value={m}>
+//                 {m}
+//               </option>
+//             ))}
+//           </select>
+
+//           <input
+//             type="number"
+//             {...register("startYear", { valueAsNumber: true })}
+//             placeholder="Start Year"
+//             className="h-12 w-1/2 rounded-lg border px-2"
+//           />
+//         </div>
+
+//         {/* End date */}
+//         <div className="flex gap-2">
+//           <select
+//             {...register("endMonth")}
+//             disabled={isCurrent}
+//             className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+//           >
+//             {MONTHS.map((m) => (
+//               <option key={m} value={m}>
+//                 {m}
+//               </option>
+//             ))}
+//           </select>
+
+//           <input
+//             type="number"
+//             {...register("endYear", { valueAsNumber: true })}
+//             disabled={isCurrent}
+//             placeholder="End Year"
+//             className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+//           />
+//         </div>
+
+//         <input
+//           {...register("cgpa")}
+//           placeholder="CGPA / GPA (e.g. 7.96/10)"
+//           className="h-12 rounded-lg border px-4"
+//         />
+
+//         <label className="flex items-center gap-2 text-sm text-gray-600">
+//           <input type="checkbox" {...register("current")} />
+//           Currently studying here
+//         </label>
+//       </div>
+
+//     <div>
+//         <div className="flex items-center justify-between mb-2">
+//           <label className="text-sm font-medium text-gray-700">
+//             Relevant Coursework
+//           </label>
+//           <button
+//             type="button"
+//             onClick={handleGenerateCoursework}
+//             disabled={isGeneratingCoursework}
+//             className="rounded-lg bg-violet-600 px-3 py-1.5 text-white text-sm flex items-center gap-2 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+//           >
+//             {isGeneratingCoursework ? "Generating..." : "✨ Generate with AI"}
+//           </button>
+//         </div>
+//         <textarea
+//           {...register("coursework")}
+//           placeholder="Relevant Coursework (comma-separated, e.g. OOP, DBMS, DSA, Machine Learning)"
+//           className="min-h-[80px] w-full rounded-lg border px-4 py-3"
+//         />
+//       </div>
+
+//       <div className="flex justify-end gap-3">
+//         <Button type="button" variant="outline" onClick={onClose}>
+//           Cancel
+//         </Button>
+
+//         <Button type="submit">Save Education</Button>
+//       </div>
+//     </form>
+//   );
+// }
+
+// EducationForm.tsx
 import { useGenerateCoursework } from "../../../ai/hooks/useGenerateCoursework";
 import { useResumeStore as useResumeStoreAI } from "../../../../store/resume.store";
 
@@ -19,8 +233,18 @@ interface Props {
 type EducationFormData = Resume["education"][number];
 
 const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 export default function EducationForm({
@@ -34,49 +258,49 @@ export default function EducationForm({
     (state) => state.updateEducationItem,
   );
 
-  const { register, handleSubmit, reset, watch,setValue } = useForm<EducationFormData>({
-    defaultValues: initialData ?? {
-      institution: "",
-      degree: "",
-      fieldOfStudy: "",
-      location: "",
-      startMonth: "Jan",
-      startYear: new Date().getFullYear(),
-      endMonth: "Jan",
-      endYear: new Date().getFullYear(),
-      current: false,
-      cgpa: "",
-      coursework: "",
-    },
-  });
-
-
-  const resume = useResumeStore((state) => state.resume);
-const degree = watch("degree");
-const fieldOfStudy = watch("fieldOfStudy");
-
-const { mutateAsync: generateCoursework, isPending: isGeneratingCoursework } =
-  useGenerateCoursework();
-
-const handleGenerateCoursework = async () => {
-  if (!degree?.trim() || !fieldOfStudy?.trim()) {
-    alert("Please enter Degree and Field of Study first.");
-    return;
-  }
-
-  try {
-    const result = await generateCoursework({
-      degree: degree.trim(),
-      fieldOfStudy: fieldOfStudy.trim(),
-      targetRole: resume?.targetRole,
+  const { register, handleSubmit, reset, watch, setValue } =
+    useForm<EducationFormData>({
+      defaultValues: initialData ?? {
+        institution: "",
+        degree: "",
+        fieldOfStudy: "",
+        location: "",
+        startMonth: "Jan",
+        startYear: new Date().getFullYear(),
+        endMonth: "Jan",
+        endYear: new Date().getFullYear(),
+        current: false,
+        cgpa: "",
+        coursework: "",
+      },
     });
 
-    setValue("coursework", result);
-  } catch (error) {
-    console.error("Coursework generation failed:", error);
-    alert("Failed to generate coursework. Please try again.");
-  }
-};
+  const resume = useResumeStore((state) => state.resume);
+  const degree = watch("degree");
+  const fieldOfStudy = watch("fieldOfStudy");
+
+  const { mutateAsync: generateCoursework, isPending: isGeneratingCoursework } =
+    useGenerateCoursework();
+
+  const handleGenerateCoursework = async () => {
+    if (!degree?.trim() || !fieldOfStudy?.trim()) {
+      alert("Please enter Degree and Field of Study first.");
+      return;
+    }
+
+    try {
+      const result = await generateCoursework({
+        degree: degree.trim(),
+        fieldOfStudy: fieldOfStudy.trim(),
+        targetRole: resume?.targetRole,
+      });
+
+      setValue("coursework", result);
+    } catch (error) {
+      console.error("Coursework generation failed:", error);
+      alert("Failed to generate coursework. Please try again.");
+    }
+  };
 
   const isCurrent = watch("current");
 
@@ -95,9 +319,9 @@ const handleGenerateCoursework = async () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border bg-white p-8"
+      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
     >
-      <h2 className="text-2xl font-bold">
+      <h2 className="text-2xl font-bold text-dark">
         {editIndex !== undefined ? "Edit Education" : "Add Education"}
       </h2>
 
@@ -105,32 +329,32 @@ const handleGenerateCoursework = async () => {
         <input
           {...register("institution")}
           placeholder="College / University"
-          className="h-12 rounded-lg border px-4"
+          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
 
         <input
           {...register("location")}
           placeholder="Location (e.g. Hyderabad, India)"
-          className="h-12 rounded-lg border px-4"
+          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
 
         <input
           {...register("degree")}
           placeholder="Degree (e.g. B.E., B.Tech)"
-          className="h-12 rounded-lg border px-4"
+          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
 
         <input
           {...register("fieldOfStudy")}
           placeholder="Field of Study (e.g. Computer Science)"
-          className="h-12 rounded-lg border px-4"
+          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
 
         {/* Start date */}
         <div className="flex gap-2">
           <select
             {...register("startMonth")}
-            className="h-12 w-1/2 rounded-lg border px-2"
+            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent"
           >
             {MONTHS.map((m) => (
               <option key={m} value={m}>
@@ -143,7 +367,7 @@ const handleGenerateCoursework = async () => {
             type="number"
             {...register("startYear", { valueAsNumber: true })}
             placeholder="Start Year"
-            className="h-12 w-1/2 rounded-lg border px-2"
+            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
         </div>
 
@@ -152,7 +376,7 @@ const handleGenerateCoursework = async () => {
           <select
             {...register("endMonth")}
             disabled={isCurrent}
-            className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent disabled:bg-background"
           >
             {MONTHS.map((m) => (
               <option key={m} value={m}>
@@ -166,32 +390,32 @@ const handleGenerateCoursework = async () => {
             {...register("endYear", { valueAsNumber: true })}
             disabled={isCurrent}
             placeholder="End Year"
-            className="h-12 w-1/2 rounded-lg border px-2 disabled:bg-gray-100"
+            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:bg-background"
           />
         </div>
 
         <input
           {...register("cgpa")}
           placeholder="CGPA / GPA (e.g. 7.96/10)"
-          className="h-12 rounded-lg border px-4"
+          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
 
-        <label className="flex items-center gap-2 text-sm text-gray-600">
+        <label className="flex items-center gap-2 text-sm text-primary/70">
           <input type="checkbox" {...register("current")} />
           Currently studying here
         </label>
       </div>
 
-    <div>
+      <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-dark">
             Relevant Coursework
           </label>
           <button
             type="button"
             onClick={handleGenerateCoursework}
             disabled={isGeneratingCoursework}
-            className="rounded-lg bg-violet-600 px-3 py-1.5 text-white text-sm flex items-center gap-2 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-lg bg-accent px-3 py-1.5 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isGeneratingCoursework ? "Generating..." : "✨ Generate with AI"}
           </button>
@@ -199,7 +423,7 @@ const handleGenerateCoursework = async () => {
         <textarea
           {...register("coursework")}
           placeholder="Relevant Coursework (comma-separated, e.g. OOP, DBMS, DSA, Machine Learning)"
-          className="min-h-[80px] w-full rounded-lg border px-4 py-3"
+          className="min-h-[80px] w-full rounded-lg border border-primary/15 bg-card px-4 py-3 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
       </div>
 

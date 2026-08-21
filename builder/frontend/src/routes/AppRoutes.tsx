@@ -1,31 +1,32 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
+import AdminProtectedRoute from "./AdminProtectedRoute";
 
-import DashboardLayout from "../layouts/DashboardLayout";
-import AdminLayout from "../layouts/AdminLayout";
+import MainLayout from "../layouts/MainLayout";
 
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 
-import DashboardPage from "../pages/DashboardPage";
-
-import ResumeEditorPage from "../pages/resume/ResumeEditorPage";
+import HomePage from "../pages/HomePage";
+import TemplateGalleryPage from "../pages/TemplateGalleryPage";
+import AiPage from "../pages/AiPage";
 import PublicResumePage from "../pages/PublicResumePage";
+
+import DashboardPage from "../pages/DashboardPage";
+import MyResumePage from "../pages/MyResumePage";
+import AnalyticsPage from "../pages/AnalyticsPage";
+import Settings from "../pages/SettingsPage";
+import ResumeEditorPage from "../pages/resume/ResumeEditorPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersPage from "../pages/admin/UsersPage";
-import HomePage from "../pages/HomePage";
-import TemplateGalleryPage from "../pages/TemplateGalleryPage";
-import MyResumePage from "../pages/MyResumePage";
-import AiPage from "../pages/AiPage";
-import AnalyticsPage from "../pages/AnalyticsPage";
-import Settings from "../pages/SettingsPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public */}
+      {/* ================= PUBLIC AUTH ================= */}
 
       <Route path="/login" element={<LoginPage />} />
 
@@ -33,41 +34,53 @@ export default function AppRoutes() {
 
       <Route path="/resume/public/:shareId" element={<PublicResumePage />} />
 
-      {/* User */}
+      {/* ================= PUBLIC + LAYOUT ================= */}
+
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomePage />} />
+
+        <Route path="/home" element={<HomePage />} />
+
+        <Route path="/templates" element={<TemplateGalleryPage />} />
+
+        <Route path="/ai" element={<AiPage />} />
+      </Route>
+
+      {/* ================= AUTHENTICATED USER ================= */}
 
       <Route
         element={
           <ProtectedRoute>
-            <DashboardLayout />
+            <MainLayout />
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/home" replace />} />{" "}
-        {/* 👈 change */}
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/templates" element={<TemplateGalleryPage />} />
-        <Route path="/myresume" element={<MyResumePage />} />
-        <Route path="/ai" element={<AiPage />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
-        <Route path="/settings" element={<Settings />} />
-        {/* <Route index element={<Navigate to="/dashboard" replace />} /> */}
         <Route path="/dashboard" element={<DashboardPage />} />
+
+        <Route path="/myresume" element={<MyResumePage />} />
+
+        <Route path="/analytics" element={<AnalyticsPage />} />
+
+        <Route path="/settings" element={<Settings />} />
+
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
       </Route>
 
-      {/* Admin */}
+      {/* ================= ADMIN ================= */}
 
       <Route
         element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
+          <AdminProtectedRoute>
+            <MainLayout />
+          </AdminProtectedRoute>
         }
       >
         <Route path="/admin" element={<AdminDashboardPage />} />
 
         <Route path="/admin/users" element={<UsersPage />} />
       </Route>
+      <Route path="/404" element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

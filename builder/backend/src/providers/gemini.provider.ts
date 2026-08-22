@@ -18,6 +18,8 @@ export const generateContent = async (prompt: string): Promise<string> => {
   return response.text ?? "";
 };
 
+console.log("🔥 GEMINI API CALL:", new Date().toISOString());
+
 // ============================================================
 // GENERATE JSON
 // ============================================================

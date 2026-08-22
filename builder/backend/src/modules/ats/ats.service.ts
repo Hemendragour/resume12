@@ -493,16 +493,11 @@ const buildATSResult = (
       ? "job-description"
       : "role";
 
-  const matchedKeywords = [
-    ...ruleAnalysis.keywords.matchedKeywords,
-    ...ai.matchedKeywords,
-  ];
+  const matchedKeywords =
+  ruleAnalysis.keywords.matchedKeywords;
 
-  const missingKeywords = [
-    ...ruleAnalysis.keywords.missingKeywords,
-    ...ai.missingKeywords,
-  ];
-
+const missingKeywords =
+  ruleAnalysis.keywords.missingKeywords;
   const uniqueMatchedKeywords =
     Array.from(
       new Set(
@@ -954,9 +949,10 @@ Rules:
         : [],
 
     responsibilities:
-      Array.isArray(result.responsibilities)
-        ? result.responsibilities
-        : [],
+  requirements.filter(
+    (requirement) =>
+      requirement.category === "responsibility"
+  ),
 
     softSkills:
       Array.isArray(result.softSkills)

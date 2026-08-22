@@ -1,33 +1,27 @@
 import { ResumeAnalytics } from "../../models/resume-analytics.model";
 
 class AnalyticsService {
-
-  async createAnalytics(
-    resumeId: string,
-    userId: string
-  ) {
+  async createAnalytics(resumeId: string, userId: string) {
     return ResumeAnalytics.create({
       resumeId,
       userId,
     });
   }
 
-  async getAnalytics(
-    resumeId: string
-  ) {
+  async getAnalytics(resumeId: string) {
     return ResumeAnalytics.findOne({
       resumeId,
     });
   }
 
   async incrementViews(
-  resumeId: string,
-  ip: string,
-  browser: string,
-  device: string
-) {
-  const analytics =
-    await ResumeAnalytics.findOneAndUpdate(
+    resumeId: string,
+    userId: string,
+    ip: string,
+    browser: string,
+    device: string,
+  ) {
+    const analytics = await ResumeAnalytics.findOneAndUpdate(
       {
         resumeId,
       },
@@ -44,6 +38,7 @@ class AnalyticsService {
         },
 
         $set: {
+          userId,
           lastViewedAt: new Date(),
           lastVisitorIp: ip,
           lastBrowser: browser,
@@ -51,27 +46,25 @@ class AnalyticsService {
         },
       },
       {
-        new: true,
+        // new: true,
+        returnDocument: "after",
         upsert: true,
-      }
+        runValidators: true,
+      },
     );
 
-  if (!analytics) {
-    return null;
+    if (!analytics) {
+      return null;
+    }
+
+    analytics.uniqueVisitors = analytics.visitorIps.length;
+
+    await analytics.save();
+
+    return analytics;
   }
 
-  analytics.uniqueVisitors =
-    analytics.visitorIps.length;
-
-  await analytics.save();
-
-  return analytics;
-}
-
-
-  async incrementDownloads(
-    resumeId: string
-  ) {
+  async incrementDownloads(resumeId: string) {
     return ResumeAnalytics.findOneAndUpdate(
       {
         resumeId,
@@ -87,13 +80,11 @@ class AnalyticsService {
       {
         new: true,
         upsert: true,
-      }
+      },
     );
   }
 
-  async incrementShares(
-    resumeId: string
-  ) {
+  async incrementShares(resumeId: string) {
     return ResumeAnalytics.findOneAndUpdate(
       {
         resumeId,
@@ -109,43 +100,40 @@ class AnalyticsService {
       {
         new: true,
         upsert: true,
-      }
+      },
     );
   }
 
   // ✅ Ye method CLASS KE ANDAR hona chahiye
-  async getUserAnalytics(
-    userId: string
-  ) {
-    const result =
-      await ResumeAnalytics.aggregate([
-        {
-          $match: {
-            userId,
+  async getUserAnalytics(userId: string) {
+    const result = await ResumeAnalytics.aggregate([
+      {
+        $match: {
+          userId,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+
+          views: {
+            $sum: "$views",
+          },
+
+          downloads: {
+            $sum: "$downloads",
+          },
+
+          shares: {
+            $sum: "$shares",
+          },
+
+          resumes: {
+            $sum: 1,
           },
         },
-        {
-          $group: {
-            _id: null,
-
-            views: {
-              $sum: "$views",
-            },
-
-            downloads: {
-              $sum: "$downloads",
-            },
-
-            shares: {
-              $sum: "$shares",
-            },
-
-            resumes: {
-              $sum: 1,
-            },
-          },
-        },
-      ]);
+      },
+    ]);
 
     return (
       result[0] ?? {
@@ -158,5 +146,4 @@ class AnalyticsService {
   }
 }
 
-export const analyticsService =
-  new AnalyticsService();
+export const analyticsService = new AnalyticsService();

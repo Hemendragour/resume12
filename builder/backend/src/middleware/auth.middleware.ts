@@ -27,7 +27,7 @@ export const protect = async (
     const authHeader = req.headers.authorization;
 
     let token: string | undefined;
-    console.log("getting the token from authheader before cookie", token);
+
     if (authHeader?.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
     }
@@ -61,7 +61,7 @@ export const protect = async (
     // 6. Attach user information
     req.user = user;
     req.userId = user._id.toString();
-    console.log("checking people data", user);
+
     next();
   } catch (error: any) {
     console.error("Auth Middleware Error:", error);

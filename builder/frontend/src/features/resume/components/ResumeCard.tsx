@@ -33,12 +33,12 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [title, setTitle] = useState(resume.title);
+  const [shareOpen, setShareOpen] = useState(false);
+  // //////////////////////
 
   const renameMutation = useRenameResume();
   const deleteMutation = useDeleteResume();
   const duplicateMutation = useDuplicateResume();
-
-  const [shareOpen, setShareOpen] = useState(false);
 
   const [shareId, setShareId] = useState("");
 
@@ -78,10 +78,6 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     try {
       await deleteMutation.mutateAsync(resume._id);
 
-      // delete the resume from the resume array
-      //  setResumes((prev) =>
-      //       prev.filter((item) => item._id !== resume._id)
-      //     );
       setDeleteOpen(false);
     } catch (err) {
       console.error(err);

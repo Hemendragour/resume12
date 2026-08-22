@@ -1,30 +1,3 @@
-// import type { ReactNode } from "react";
-
-// interface CardProps {
-//   children: ReactNode;
-//   className?: string;
-// }
-
-// export default function Card({ children, className = "" }: CardProps) {
-//   return (
-//     <div
-//       className={`
-//       rounded-2xl
-//       border
-//       border-slate-200
-//       bg-white
-//       shadow-sm
-//       transition-all
-//       duration-200
-//       hover:shadow-lg
-//       ${className}
-//       `}
-//     >
-//       {children}
-//     </div>
-//   );
-// }
-
 // Card.tsx
 import type { ReactNode } from "react";
 
@@ -37,6 +10,7 @@ export default function Card({ children, className = "" }: CardProps) {
   return (
     <div
       className={`
+       
       rounded-2xl
       border
       border-primary/10

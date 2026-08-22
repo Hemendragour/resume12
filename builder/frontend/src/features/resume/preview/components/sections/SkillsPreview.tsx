@@ -1,60 +1,3 @@
-// import { useResumeStore } from "../../../../../store/resume.store";
-
-// export default function SkillsPreview() {
-//   const resume = useResumeStore((state) => state.resume);
-
-//   if (!resume) return null;
-
-//   return (
-//     <section className="mt-6">
-//       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
-//         Skills
-//       </h2>
-
-//       {resume.skills.length === 0 ? (
-//         <p className="mt-3 text-[11px] text-slate-500">
-//           No skills added.
-//         </p>
-//       ) : (
-//         <p className="mt-3 text-[11px] leading-6 text-slate-700">
-//           {resume.skills.join(" • ")}
-//         </p>
-//       )}
-//     </section>
-//   );
-// }
-
-// import { useResumeStore } from "../../../../../store/resume.store";
-
-// export default function SkillsPreview() {
-//   const resume = useResumeStore((state) => state.resume);
-
-//   if (!resume) return null;
-
-//   return (
-//     <section className="mt-5">
-//       <h2 className="border-b border-slate-500 pb-1 text-[13px] font-bold uppercase tracking-wide text-slate-800">
-//         Skills
-//       </h2>
-
-//       {resume.skills.length === 0 ? (
-//         <p className="mt-3 text-[11px] text-slate-500">No skills added.</p>
-//       ) : (
-//         <div className="mt-3 space-y-0.1">
-//           {resume.skills.map((category, index) => (
-//             <p key={index} className="text-[11px] leading-4 text-slate-700">
-//               <span className="font-semibold">{category.title}:</span>{" "}
-//               {category.skills.join(", ")}
-//             </p>
-//           ))}
-//         </div>
-//       )}
-//     </section>
-//   );
-// }
-
-
-
 import { useResumeStore } from "../../../../../store/resume.store";
 import { useTheme } from "../../themes/ThemeProvider";
 
@@ -84,11 +27,17 @@ export default function SkillsPreview() {
       </p>
     ) : theme.skills.layout === "tags" ? (
       <div className="grid grid-cols-3 gap-x-6 gap-y-1">
-        {resume.skills.flatMap((c) => c.skills).map((skill, i) => (
-          <div key={i} className="text-[11px]" style={{ color: theme.colors.text }}>
-            • {skill}
-          </div>
-        ))}
+        {resume.skills
+          .flatMap((c) => c.skills)
+          .map((skill, i) => (
+            <div
+              key={i}
+              className="text-[11px]"
+              style={{ color: theme.colors.text }}
+            >
+              • {skill}
+            </div>
+          ))}
       </div>
     ) : (
       <div className="space-y-3">
@@ -100,7 +49,10 @@ export default function SkillsPreview() {
             >
               {category.title}
             </p>
-            <p className="text-[11px] leading-4 mt-0.5" style={{ color: theme.colors.text }}>
+            <p
+              className="text-[11px] leading-4 mt-0.5"
+              style={{ color: theme.colors.text }}
+            >
               {category.skills.join(", ")}
             </p>
           </div>

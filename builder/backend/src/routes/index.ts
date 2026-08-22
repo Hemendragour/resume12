@@ -9,22 +9,17 @@ import { aiRateLimiter } from "../middleware/aiRateLimit.middleware";
 import uploadRoutes from "../modules/upload/upload.routes";
 // import { protect } from "../middleware/auth.middleware";
 import atsRoutes from "../modules/ats/ats.routes";
-import analyticsRoutes
-from "../modules/analytics/analytics.routes";
-import versionRoutes
-from "../modules/version/version.routes";
+import analyticsRoutes from "../modules/analytics/analytics.routes";
+import versionRoutes from "../modules/version/version.routes";
 
-import adminRoutes
-from "../modules/admin/admin.routes";
+import adminRoutes from "../modules/admin/admin.routes";
 
-import dashboardRoutes
-from "../modules/dashboard/dashboard.routes";
-
+import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 
 const router = Router();
 // router.use(protect);
 
-router.use(aiRateLimiter);
+// router.use(aiRateLimiter);
 
 router.use("/auth", authRoutes);
 
@@ -36,29 +31,15 @@ router.use("/ai", aiRoutes);
 
 // router.use("/ats", atsRoutes);
 
-router.use(
-  "/analytics",
-  analyticsRoutes
-);
+router.use("/analytics", analyticsRoutes);
 
-router.use(
-  "/versions",
-  versionRoutes
-);
+router.use("/versions", versionRoutes);
 
-router.use(
-  "/admin",
-  adminRoutes
-);
+router.use("/admin", adminRoutes);
 
-router.use(
-  "/dashboard",
-  dashboardRoutes
-);
-
+router.use("/dashboard", dashboardRoutes);
 
 router.use("/ats", atsRoutes);
-
 
 router.use("/upload", uploadRoutes);
 export default router;

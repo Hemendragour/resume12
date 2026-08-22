@@ -310,6 +310,7 @@ export const disableShareResume = asyncHandler(
 
 export const getPublicResume = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log("resume shared id is ", req.params.shareId);
     const resume = await Resume.findOne({
       shareId: req.params.shareId,
       isPublic: true,
@@ -318,6 +319,7 @@ export const getPublicResume = asyncHandler(
     if (!resume) {
       throw new ApiError(404, "Resume not found");
     }
+    console.log("resume fond", resume);
 
     // Visitor Info
     const ip =
@@ -330,6 +332,7 @@ export const getPublicResume = asyncHandler(
     // Analytics
     await analyticsService.incrementViews(
       resume._id.toString(),
+      resume.userId.toString(),
       ip,
       visitor.browser,
       visitor.device,

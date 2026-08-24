@@ -8,15 +8,25 @@ ${JSON.stringify(formData, null, 2)}
 
 IMPORTANT:
 - Understand English, Hindi, Hinglish, and mixed-language input.
-- Translate informal Hindi/Hinglish into professional English.
-- Improve grammar, wording, clarity, and impact.
-- NEVER invent facts, technologies, metrics, companies, dates, responsibilities, achievements, or features.
-- You may infer professional wording from facts clearly stated by the user.
-- Do not simply copy raw user sentences when they can be improved.
+- Professionally rewrite and improve grammar, clarity, and impact.
+- NEVER invent facts, experience, projects, technologies, metrics, companies, dates, or achievements.
+- Return ONLY valid JSON. No markdown or explanation.
 
-RETURN ONLY VALID JSON. No markdown, explanation, or code fences.
+JOB DESCRIPTION:
+${formData.jobDescription || "No job description provided."}
 
-Use exactly this core structure:
+If a job description is provided:
+- Tailor the entire resume to match the JD as closely as possible.
+- Identify important skills, technologies, responsibilities, and keywords from the JD.
+- Naturally prioritize relevant existing skills, experience, projects, and achievements.
+- You may add a JD-required skill to the skills section ONLY if it is clearly supported by the user's existing resume/data or they have demonstrated that skill elsewhere.
+- NEVER claim the user has a skill, technology, experience, or responsibility that is not supported by their data.
+- Rewrite project descriptions and experience points to emphasize aspects relevant to the JD without changing their factual meaning.
+- Optimize wording and keyword placement for ATS while keeping the resume truthful.
+- Do not create a separate JD-related section or mention the JD in the resume.
+- If no JD is provided, generate the resume normally from the user's data.
+
+Use exactly this structure:
 
 {
   "personalInfo": {
@@ -73,7 +83,7 @@ Use exactly this core structure:
     {
       "title": "",
       "role": "",
-      "description":[""],
+      "description": [""],
       "technologies": [""],
       "github": "",
       "link": ""
@@ -90,100 +100,22 @@ Use exactly this core structure:
 }
 
 RULES:
-
-1. DYNAMIC SECTIONS
-- Keep all core fields.
-- Array sections can contain zero, one, or many entries depending on the user's data.
-- If a section has no data, return [].
-- Never create fake placeholder entries.
-
-2. SUMMARY
-- Write a concise professional summary from ALL relevant information available.
-- If the user provides a summary, improve it.
-- If the user does not provide a summary, CREATE one by analyzing their experience, internships, projects, education, skills, and achievements.
-- Do not invent years of experience.
-- For students/freshers, emphasize education, projects, internships, skills, and achievements.
-- Avoid generic filler such as hardworking, passionate, dedicated, motivated, or team player.
-
-3. EXPERIENCE & INTERNSHIPS
-Convert raw responsibilities into strong professional resume points.
-
-Example:
-"bugs fix kiye aur login page banaya"
-→ "Developed user authentication interfaces and resolved application defects to improve application reliability."
-
-- Understand Hindi/Hinglish descriptions.
-- Use strong action verbs.
-- When the user provides enough information, create at least 4 meaningful responsibility/achievement points for the entry.
-- If the user provides only a small amount of information, do not invent details just to reach 4 points.
-- Never add unsupported technologies, metrics, scope, or business impact.
-
-4. PROJECTS
-Turn the user's raw project information into a professional description.
-
-- Understand informal English, Hindi, and Hinglish.
-- Extract every real feature/functionality mentioned by the user.
-- Convert those details into clear, impactful resume points.
-- When enough project information is provided, create at least 4 meaningful points in the description.
-- If the user provides fewer details, expand the wording professionally without inventing new functionality.
-- Mention technologies only when provided by the user.
-
-Example input:
-"Mene login page banaya, cart add kiya, bahut accha UI banaya aur auth based authentication kiya."
-
-Possible professional output:
-"Developed a responsive login interface for secure user access.
-Implemented cart functionality to allow users to manage selected products.
-Designed a user-friendly interface with a responsive and intuitive layout.
-Implemented authentication-based access control for protected application features."
-
-Do not invent features that were not mentioned.
-
-5. ACHIEVEMENTS
-Professionally rewrite achievements while preserving the exact factual meaning.
-
-Example:
-"Mene LeetCode pe 500 questions kar liye."
-
-→
-"Solved 500+ coding problems on LeetCode, demonstrating strong problem-solving and algorithmic skills."
-
-Do not invent rankings, ratings, contest positions, or percentages.
-
-6. SKILLS
-- Preserve the user's actual skills.
-- Group related skills into logical categories when useful.
-- Never add technologies that the user did not mention.
-
-7. EDUCATION & CERTIFICATIONS
-- Preserve factual information.
-- Never invent institutions, dates, grades, providers, or credentials.
-- Missing information should remain empty.
-
-8. PERSONAL INFORMATION
-Preserve names, emails, phone numbers, addresses, and links accurately.
-Do not invent missing contact information.
-
-9. FACTUAL ACCURACY
-Professional rewriting and reasonable interpretation are allowed.
-Factual invention is strictly forbidden.
-
-10. MISSING DATA
-Use:
-- [] for missing arrays
-- "" for missing strings
-- false for missing booleans
-- 0 for missing numeric year fields
+- Keep all fields in the structure.
+- Missing arrays → [].
+- Missing strings → "".
+- Missing booleans → false.
+- Missing years → 0.
+- Do not create fake entries.
+- Preserve all factual information.
+- Rewrite Hindi/Hinglish into professional English.
+- Create a professional summary even if the user did not provide one.
+- Use strong action verbs for experience and projects.
+- Generate multiple meaningful points when enough information exists.
+- Preserve the actual technologies used in projects.
+- Do not invent technologies or achievements.
+- Keep project descriptions as an array of individual resume bullet points.
+- Optimize the resume for the provided JD while remaining completely truthful.
 
 FINAL CHECK:
-- Return valid JSON only.
-- Keep the exact core structure.
-- Preserve all user facts.
-- Professionally rewrite raw/informal language.
-- Understand Hindi/Hinglish/English mixed input.
-- Create the summary when the user does not provide one.
-- Generate rich project and experience points when enough information is available.
-- Never fabricate information.
-
 Return ONLY the JSON object.
 `;

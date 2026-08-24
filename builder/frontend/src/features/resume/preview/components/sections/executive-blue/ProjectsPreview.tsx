@@ -34,7 +34,6 @@ export default function ProjectsPreview() {
         <div className="mt-3 space-y-3">
           {resume.projects.map((proj, index) => {
             const lines = (proj.description || "")
-              .split("\n")
               .map((line) => line.trim())
               .filter(Boolean);
 

@@ -1,5 +1,3 @@
- 
-
 import { Response } from "express";
 
 import { Resume } from "../../models/resume.model";
@@ -20,6 +18,7 @@ import {
   generateCourseworkService,
   generateCustomSectionService,
   generateInternshipService,
+  generateFullResumeService,
 } from "./ai.service";
 
 export const generateSummary = asyncHandler(
@@ -35,43 +34,30 @@ export const generateSummary = asyncHandler(
       throw new ApiError(404, "Resume not found");
     }
 
-    const summary =
-      await generateSummaryService(
-        resume.toObject()
-      );
+    const summary = await generateSummaryService(resume.toObject());
 
-    await trackAIUsage(
-      req.userId!,
-      "generate-summary"
-    );
+    await trackAIUsage(req.userId!, "generate-summary");
 
     res.status(200).json({
       success: true,
       summary,
     });
-  }
+  },
 );
 
 export const rewriteExperience = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { experience, targetRole } = req.body;
 
-    const content =
-      await rewriteExperienceService(
-        experience,
-        targetRole
-      );
+    const content = await rewriteExperienceService(experience, targetRole);
 
-    await trackAIUsage(
-      req.userId!,
-      "rewrite-experience"
-    );
+    await trackAIUsage(req.userId!, "rewrite-experience");
 
     res.status(200).json({
       success: true,
       content,
     });
-  }
+  },
 );
 
 export const suggestSkills = asyncHandler(
@@ -87,7 +73,10 @@ export const suggestSkills = asyncHandler(
       throw new ApiError(404, "Resume not found");
     }
 
-    const skills = await suggestSkillsService(resume.toObject(), selectedCategory);
+    const skills = await suggestSkillsService(
+      resume.toObject(),
+      selectedCategory,
+    );
 
     await trackAIUsage(req.userId!, "suggest-skills");
 
@@ -95,7 +84,7 @@ export const suggestSkills = asyncHandler(
       success: true,
       skills,
     });
-  }
+  },
 );
 
 export const generateExperience = asyncHandler(
@@ -105,62 +94,45 @@ export const generateExperience = asyncHandler(
     const responsibilities = await generateExperienceService(
       company,
       position,
-      context
+      context,
     );
 
-      await trackAIUsage(
-        req.userId!,
-        "generate-experience"
-      );
+    await trackAIUsage(req.userId!, "generate-experience");
 
-      res.status(200).json({
-        success: true,
-        responsibilities,
-      });
-    }
-  );
+    res.status(200).json({
+      success: true,
+      responsibilities,
+    });
+  },
+);
 
+export const generateProjectDescription = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { projectName, technologies, context } = req.body;
 
+    const description = await generateProjectDescriptionService(
+      projectName,
+      technologies,
+      context,
+    );
 
-  export const generateProjectDescription =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const {
-        projectName,
-        technologies,
-        context,
-      } = req.body;
+    await trackAIUsage(req.userId!, "generate-project-description");
 
-      const description =
-        await generateProjectDescriptionService(
-          projectName,
-          technologies,
-          context
-        );
+    res.status(200).json({
+      success: true,
+      description,
+    });
+  },
+);
 
-      await trackAIUsage(
-        req.userId!,
-        "generate-project-description"
-      );
-
-      res.status(200).json({
-        success: true,
-        description,
-      });
-    }
-  );
-
-  export const generateCoursework = asyncHandler(
+export const generateCoursework = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { degree, fieldOfStudy, targetRole } = req.body;
 
     const coursework = await generateCourseworkService(
       degree,
       fieldOfStudy,
-      targetRole
+      targetRole,
     );
 
     await trackAIUsage(req.userId!, "generate-coursework");
@@ -169,9 +141,8 @@ export const generateExperience = asyncHandler(
       success: true,
       coursework,
     });
-  }
+  },
 );
-
 
 export const generateCustomSection = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -181,7 +152,7 @@ export const generateCustomSection = asyncHandler(
       sectionType,
       itemTitle,
       itemSubtitle,
-      context
+      context,
     );
 
     await trackAIUsage(req.userId!, "generate-custom-section");
@@ -190,10 +161,8 @@ export const generateCustomSection = asyncHandler(
       success: true,
       description,
     });
-  }
+  },
 );
-
-
 
 export const generateInternship = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -207,5 +176,24 @@ export const generateInternship = asyncHandler(
       success: true,
       description,
     });
-  }
+  },
+);
+
+export const generateResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { formData } = req.body;
+
+    if (!formData?.personalInfo?.fullName || !formData?.personalInfo?.email) {
+      throw new ApiError(400, "Full name and email are required");
+    }
+
+    const resume = await generateFullResumeService(formData);
+
+    await trackAIUsage(req.userId!, "generate-resume");
+
+    res.status(200).json({
+      success: true,
+      resume,
+    });
+  },
 );

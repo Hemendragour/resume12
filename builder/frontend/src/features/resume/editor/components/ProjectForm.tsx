@@ -1,3 +1,4 @@
+// // ProjectForm.tsx
 // import { useEffect, useState } from "react";
 // import { useForm } from "react-hook-form";
 
@@ -144,25 +145,25 @@
 //   return (
 //     <form
 //       onSubmit={handleSubmit(onSubmit)}
-//       className="space-y-6 rounded-2xl border bg-white p-8"
+//       className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
 //     >
-//       <h2 className="text-2xl font-bold">
+//       <h2 className="text-2xl font-bold text-dark">
 //         {editIndex !== undefined ? "Edit Project" : "Add Project"}
 //       </h2>
 
 //       {/* Project Title */}
 //       <div>
-//         <label className="font-medium">Project Title</label>
+//         <label className="font-medium text-dark">Project Title</label>
 //         <input
 //           {...register("title", {
 //             required: "Project title is required",
 //             minLength: { value: 2, message: "Minimum 2 characters required" },
 //           })}
 //           placeholder="AI Resume Builder using React, Node.js & MongoDB"
-//           className="mt-2 h-12 w-full rounded-lg border px-4"
+//           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
 //         />
 //         {errors.title && (
-//           <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
+//           <p className="mt-1 text-sm text-danger">{errors.title.message}</p>
 //         )}
 //       </div>
 
@@ -177,12 +178,12 @@
 //       {/* Description */}
 //       <div>
 //         <div className="flex items-center justify-between mb-2">
-//           <label className="font-medium">Description</label>
+//           <label className="font-medium text-dark">Description</label>
 //           <button
 //             type="button"
 //             onClick={handleGenerateClick}
 //             disabled={isGenerating}
-//             className="rounded-lg bg-violet-600 px-4 py-2 text-white text-sm flex items-center gap-2 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+//             className="rounded-lg bg-accent px-4 py-2 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 //           >
 //             {isGenerating ? "Generating..." : "✨ Generate with AI"}
 //           </button>
@@ -194,10 +195,10 @@
 //           })}
 //           rows={5}
 //           placeholder="One achievement per line."
-//           className="mt-2 w-full rounded-lg border p-4"
+//           className="mt-2 w-full rounded-lg border border-primary/15 bg-card p-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
 //         />
 //         {errors.description && (
-//           <p className="mt-1 text-sm text-red-500">
+//           <p className="mt-1 text-sm text-danger">
 //             {errors.description.message}
 //           </p>
 //         )}
@@ -217,7 +218,7 @@
 //         </div>
 
 //         {/* Currently Working Checkbox */}
-//         <label className="flex items-center gap-2">
+//         <label className="flex items-center gap-2 text-dark">
 //           <input type="checkbox" {...register("currentlyWorking")} />
 //           Currently Working
 //         </label>
@@ -225,7 +226,7 @@
 
 //       {/* Technologies */}
 //       <div>
-//         <label className="font-medium">Technologies</label>
+//         <label className="font-medium text-dark">Technologies</label>
 //         <div className="mt-2 flex gap-3">
 //           <input
 //             type="text"
@@ -238,7 +239,7 @@
 //               }
 //             }}
 //             placeholder="React"
-//             className="h-12 flex-1 rounded-lg border px-4"
+//             className="h-12 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
 //           />
 //           <Button type="button" onClick={addTechnology}>
 //             Add
@@ -251,7 +252,7 @@
 //               key={tech}
 //               type="button"
 //               onClick={() => removeTechnology(tech)}
-//               className="rounded-full bg-blue-100 px-4 py-2 text-sm text-blue-700 hover:bg-blue-200 transition-colors"
+//               className="rounded-full bg-accent/15 px-4 py-2 text-sm text-primary hover:bg-accent/25 transition-colors"
 //             >
 //               {tech} ✕
 //             </button>
@@ -261,7 +262,7 @@
 
 //       {/* GitHub URL */}
 //       <div>
-//         <label className="font-medium">GitHub URL (Optional)</label>
+//         <label className="font-medium text-dark">GitHub URL (Optional)</label>
 //         <input
 //           type="text"
 //           {...register("github", {
@@ -276,16 +277,18 @@
 //             },
 //           })}
 //           placeholder="https://github.com/username/project"
-//           className="mt-2 h-12 w-full rounded-lg border px-4"
+//           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
 //         />
 //         {errors.github && (
-//           <p className="mt-1 text-sm text-red-500">{errors.github.message}</p>
+//           <p className="mt-1 text-sm text-danger">{errors.github.message}</p>
 //         )}
 //       </div>
 
 //       {/* Live Demo URL */}
 //       <div>
-//         <label className="font-medium">Live Demo URL (Optional)</label>
+//         <label className="font-medium text-dark">
+//           Live Demo URL (Optional)
+//         </label>
 //         <input
 //           type="text"
 //           {...register("link", {
@@ -300,10 +303,10 @@
 //             },
 //           })}
 //           placeholder="https://project.vercel.app"
-//           className="mt-2 h-12 w-full rounded-lg border px-4"
+//           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
 //         />
 //         {errors.link && (
-//           <p className="mt-1 text-sm text-red-500">{errors.link.message}</p>
+//           <p className="mt-1 text-sm text-danger">{errors.link.message}</p>
 //         )}
 //       </div>
 
@@ -327,17 +330,15 @@
 //   );
 // }
 
-/////////////  color
-
 // ProjectForm.tsx
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
 import Button from "../../../../components/ui/Button";
-import Input from "../../../../components/ui/Input"; // ← Added Import
+import Input from "../../../../components/ui/Input";
 import { useResumeStore } from "../../../../store/resume.store";
 import type { Resume } from "../../types/resume.types";
-// import { useState } from "react";
+
 import { useGenerateProject } from "../../../ai/hooks/useGenerateProject";
 import AIProjectContextModal from "../../../ai/components/AIProjectContextModal";
 
@@ -347,7 +348,17 @@ interface Props {
   initialData?: Resume["projects"][number];
 }
 
-type ProjectFormData = Resume["projects"][number];
+interface ProjectFormData {
+  title: string;
+  role: string;
+  description: { value: string }[];
+  startDate: string;
+  endDate: string;
+  currentlyWorking: boolean;
+  technologies: string[];
+  github: string;
+  link: string;
+}
 
 export default function ProjectForm({
   onClose,
@@ -358,6 +369,7 @@ export default function ProjectForm({
   const updateProject = useResumeStore((state) => state.updateProject);
 
   const [technology, setTechnology] = useState("");
+  const [showContextModal, setShowContextModal] = useState(false);
 
   const {
     register,
@@ -365,12 +377,13 @@ export default function ProjectForm({
     watch,
     reset,
     setValue,
+    control,
     formState: { errors },
   } = useForm<ProjectFormData>({
     defaultValues: {
       title: "",
       role: "",
-      description: "",
+      description: [{ value: "" }],
       startDate: "",
       endDate: "",
       currentlyWorking: false,
@@ -380,17 +393,59 @@ export default function ProjectForm({
     },
   });
 
-  // Reset form when initialData changes (for edit mode)
+  /*
+   * ---------------------------------------------------------
+   * DESCRIPTION FIELD ARRAY
+   * ---------------------------------------------------------
+   */
+
+  const {
+    fields: descriptionFields,
+    append: addDescription,
+    remove: removeDescription,
+  } = useFieldArray({
+    control,
+    name: "description",
+  });
+
+  /*
+   * ---------------------------------------------------------
+   * EDIT MODE
+   * ---------------------------------------------------------
+   */
+
   useEffect(() => {
     if (initialData) {
-      reset(initialData);
+      reset({
+        title: initialData.title || "",
+        role: initialData.role || "",
+
+        // Convert string[] -> { value: string }[]
+        description: (initialData.description || []).map((description) => ({
+          value: description,
+        })),
+
+        startDate: initialData.startDate || "",
+        endDate: initialData.endDate || "",
+        currentlyWorking: initialData.currentlyWorking || false,
+        technologies: initialData.technologies || [],
+        github: initialData.github || "",
+        link: initialData.link || "",
+      });
     }
   }, [initialData, reset]);
 
-  const technologies = watch("technologies");
+  /*
+   * ---------------------------------------------------------
+   * TECHNOLOGIES
+   * ---------------------------------------------------------
+   */
+
+  const technologies = watch("technologies") || [];
 
   const addTechnology = () => {
     const value = technology.trim();
+
     if (!value) return;
 
     // Prevent duplicate technologies
@@ -405,10 +460,26 @@ export default function ProjectForm({
       shouldValidate: true,
       shouldDirty: true,
     });
+
     setTechnology("");
   };
 
-  const [showContextModal, setShowContextModal] = useState(false);
+  const removeTechnology = (tech: string) => {
+    setValue(
+      "technologies",
+      technologies.filter((t) => t !== tech),
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
+    );
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * AI GENERATION
+   * ---------------------------------------------------------
+   */
 
   const { mutateAsync: generateProject, isPending: isGenerating } =
     useGenerateProject();
@@ -420,6 +491,7 @@ export default function ProjectForm({
       alert("Please enter Project Title first.");
       return;
     }
+
     setShowContextModal(true);
   };
 
@@ -438,7 +510,35 @@ export default function ProjectForm({
 
       const bullets = Array.isArray(result) ? result : [];
 
-      setValue("description", bullets.join("\n"));
+      /*
+       * AI result:
+       *
+       * [
+       *   "Built a real-time chat application...",
+       *   "Implemented JWT authentication...",
+       *   "Used Socket.IO..."
+       * ]
+       *
+       * Convert to react-hook-form field array:
+       *
+       * [
+       *   { value: "Built..." },
+       *   { value: "Implemented..." },
+       *   { value: "Used..." }
+       * ]
+       */
+
+      setValue(
+        "description",
+        bullets.map((bullet: string) => ({
+          value: bullet,
+        })),
+        {
+          shouldDirty: true,
+          shouldValidate: true,
+        },
+      );
+
       setShowContextModal(false);
     } catch (error) {
       console.error("Generate failed:", error);
@@ -446,22 +546,54 @@ export default function ProjectForm({
     }
   };
 
-  const removeTechnology = (tech: string) => {
-    setValue(
-      "technologies",
-      technologies.filter((t) => t !== tech),
-      { shouldValidate: true, shouldDirty: true },
-    );
-  };
+  /*
+   * ---------------------------------------------------------
+   * SUBMIT
+   * ---------------------------------------------------------
+   */
 
   const onSubmit = (data: ProjectFormData) => {
-    console.log("SUBMIT DATA", data);
+    console.log("PROJECT FORM DATA", data);
+
+    /*
+     * Convert:
+     *
+     * description: [
+     *   { value: "Bullet 1" },
+     *   { value: "Bullet 2" }
+     * ]
+     *
+     * into:
+     *
+     * description: [
+     *   "Bullet 1",
+     *   "Bullet 2"
+     * ]
+     */
 
     const cleanedData = {
-      ...data,
+      title: data.title.trim(),
+
+      role: data.role?.trim() ?? "",
+
+      description: data.description
+        .map((item) => item.value.trim())
+        .filter(Boolean),
+
+      startDate: data.startDate,
+
+      endDate: data.currentlyWorking ? "" : data.endDate,
+
+      currentlyWorking: data.currentlyWorking,
+
+      technologies: data.technologies,
+
       github: data.github?.trim() ?? "",
+
       link: data.link?.trim() ?? "",
     };
+
+    console.log("CLEANED PROJECT DATA", cleanedData);
 
     if (editIndex !== undefined) {
       updateProject(editIndex, cleanedData);
@@ -470,72 +602,123 @@ export default function ProjectForm({
     }
 
     reset();
+
     onClose();
   };
+
+  /*
+   * ---------------------------------------------------------
+   * UI
+   * ---------------------------------------------------------
+   */
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
     >
+      {/* TITLE */}
+
       <h2 className="text-2xl font-bold text-dark">
         {editIndex !== undefined ? "Edit Project" : "Add Project"}
       </h2>
 
-      {/* Project Title */}
+      {/* PROJECT TITLE */}
+
       <div>
         <label className="font-medium text-dark">Project Title</label>
+
         <input
           {...register("title", {
             required: "Project title is required",
-            minLength: { value: 2, message: "Minimum 2 characters required" },
+            minLength: {
+              value: 2,
+              message: "Minimum 2 characters required",
+            },
           })}
           placeholder="AI Resume Builder using React, Node.js & MongoDB"
           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
+
         {errors.title && (
           <p className="mt-1 text-sm text-danger">{errors.title.message}</p>
         )}
       </div>
 
-      {/* Role - Added as per requirement */}
+      {/* ROLE */}
+
       <Input
         label="Role"
         placeholder="Full Stack Developer"
         {...register("role")}
       />
 
-      {/* Description */}
-      {/* Description */}
+      {/* DESCRIPTION */}
+
       <div>
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-3 flex items-center justify-between">
           <label className="font-medium text-dark">Description</label>
+
           <button
             type="button"
             onClick={handleGenerateClick}
             disabled={isGenerating}
-            className="rounded-lg bg-accent px-4 py-2 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm text-dark transition-colors hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isGenerating ? "Generating..." : "✨ Generate with AI"}
           </button>
         </div>
-        <textarea
-          {...register("description", {
-            required: "Description is required",
-            minLength: { value: 10, message: "Minimum 10 characters required" },
-          })}
-          rows={5}
-          placeholder="One achievement per line."
-          className="mt-2 w-full rounded-lg border border-primary/15 bg-card p-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-        />
-        {errors.description && (
-          <p className="mt-1 text-sm text-danger">
-            {errors.description.message}
-          </p>
-        )}
+
+        <div className="mt-3 space-y-3">
+          {descriptionFields.map((field, index) => (
+            <div key={field.id} className="flex gap-3">
+              <input
+                {...register(`description.${index}.value`, {
+                  required: "Description is required",
+                  minLength: {
+                    value: 10,
+                    message: "Description must be at least 10 characters",
+                  },
+                })}
+                placeholder={
+                  index === 0
+                    ? "Built a real-time chat application using Socket.IO"
+                    : "Describe another achievement or feature"
+                }
+                className="h-11 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              />
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => removeDescription(index)}
+                disabled={descriptionFields.length === 1}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+
+          {/* Description validation */}
+
+          {errors.description?.message && (
+            <p className="text-sm text-danger">{errors.description.message}</p>
+          )}
+
+          {/* ADD DESCRIPTION */}
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => addDescription({ value: "" })}
+          >
+            + Add Description
+          </Button>
+        </div>
       </div>
 
-      {/* Start & End Date + Currently Working */}
+      {/* START & END DATE */}
+
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <Input label="Start Date" type="month" {...register("startDate")} />
@@ -548,16 +731,19 @@ export default function ProjectForm({
           />
         </div>
 
-        {/* Currently Working Checkbox */}
+        {/* CURRENTLY WORKING */}
+
         <label className="flex items-center gap-2 text-dark">
           <input type="checkbox" {...register("currentlyWorking")} />
           Currently Working
         </label>
       </div>
 
-      {/* Technologies */}
+      {/* TECHNOLOGIES */}
+
       <div>
         <label className="font-medium text-dark">Technologies</label>
+
         <div className="mt-2 flex gap-3">
           <input
             type="text"
@@ -572,10 +758,13 @@ export default function ProjectForm({
             placeholder="React"
             className="h-12 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
+
           <Button type="button" onClick={addTechnology}>
             Add
           </Button>
         </div>
+
+        {/* TECHNOLOGY TAGS */}
 
         <div className="mt-4 flex flex-wrap gap-2">
           {technologies.map((tech) => (
@@ -583,7 +772,7 @@ export default function ProjectForm({
               key={tech}
               type="button"
               onClick={() => removeTechnology(tech)}
-              className="rounded-full bg-accent/15 px-4 py-2 text-sm text-primary hover:bg-accent/25 transition-colors"
+              className="rounded-full bg-accent/15 px-4 py-2 text-sm text-primary transition-colors hover:bg-accent/25"
             >
               {tech} ✕
             </button>
@@ -591,14 +780,19 @@ export default function ProjectForm({
         </div>
       </div>
 
-      {/* GitHub URL */}
+      {/* GITHUB */}
+
       <div>
         <label className="font-medium text-dark">GitHub URL (Optional)</label>
+
         <input
           type="text"
           {...register("github", {
             validate: (value) => {
-              if (value == null || value.trim() === "") return true;
+              if (!value || value.trim() === "") {
+                return true;
+              }
+
               try {
                 new URL(value);
                 return true;
@@ -610,21 +804,27 @@ export default function ProjectForm({
           placeholder="https://github.com/username/project"
           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
+
         {errors.github && (
           <p className="mt-1 text-sm text-danger">{errors.github.message}</p>
         )}
       </div>
 
-      {/* Live Demo URL */}
+      {/* LIVE DEMO */}
+
       <div>
         <label className="font-medium text-dark">
           Live Demo URL (Optional)
         </label>
+
         <input
           type="text"
           {...register("link", {
             validate: (value) => {
-              if (value == null || value.trim() === "") return true;
+              if (!value || value.trim() === "") {
+                return true;
+              }
+
               try {
                 new URL(value);
                 return true;
@@ -636,20 +836,25 @@ export default function ProjectForm({
           placeholder="https://project.vercel.app"
           className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
+
         {errors.link && (
           <p className="mt-1 text-sm text-danger">{errors.link.message}</p>
         )}
       </div>
 
-      {/* Action Buttons */}
+      {/* ACTION BUTTONS */}
+
       <div className="flex justify-end gap-4 pt-4">
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
+
         <Button type="submit">
           {editIndex !== undefined ? "Update Project" : "Save Project"}
         </Button>
       </div>
+
+      {/* AI CONTEXT MODAL */}
 
       <AIProjectContextModal
         open={showContextModal}

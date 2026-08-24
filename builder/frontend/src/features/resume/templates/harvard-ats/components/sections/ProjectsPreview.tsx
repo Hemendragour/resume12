@@ -13,7 +13,7 @@ export default function ProjectsPreview() {
   if (!projects.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "projects"
+    (section) => section.type === "projects",
   );
 
   return (
@@ -80,38 +80,38 @@ export default function ProjectsPreview() {
                     : project.endDate || "Present"}
                 </p>
                 {/* Links */}
-            {(project.github || project.link) && (
-              <div
-                className={`
+                {(project.github || project.link) && (
+                  <div
+                    className={`
                   flex
                   gap-4
                   ${T.spacing.itemHeader}
                   ${T.fontSize.body}
                 `}
-              >
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={T.links.default}
                   >
-                    GitHub
-                  </a>
-                )}
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={T.links.default}
+                      >
+                        GitHub
+                      </a>
+                    )}
 
-                {project.link && (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={T.links.default}
-                  >
-                    Live Demo
-                  </a>
+                    {project.link && (
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={T.links.default}
+                      >
+                        Live Demo
+                      </a>
+                    )}
+                  </div>
                 )}
-              </div>
-            )}
               </div>
             </div>
 
@@ -133,27 +133,23 @@ export default function ProjectsPreview() {
             
             */}
 
-
             {project.description && (
-  <ul
-    className={`
+              <ul
+                className={`
       ${T.spacing.itemHeader}
       ${T.fontSize.body}
       ${T.lineHeight.body}
       ${T.colors.body}
       list-disc pl-5
     `}
-  >
-    {project.description
-      .split("\n")
-      .filter((line) => line.trim() !== "")
-      .map((line, index) => (
-        <li key={index}>{line.replace(/^•\s*/, "")}</li>
-      ))}
-  </ul>
-)}
-
-            
+              >
+                {project.description
+                  .filter((line) => line.trim() !== "")
+                  .map((line, index) => (
+                    <li key={index}>{line.replace(/^•\s*/, "")}</li>
+                  ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>

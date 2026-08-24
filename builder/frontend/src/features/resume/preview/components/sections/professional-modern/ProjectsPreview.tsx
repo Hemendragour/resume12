@@ -13,35 +13,48 @@ export default function ProjectsPreview() {
 
   const projects = resume.projects ?? [];
   const projectSection = resume.sections.find(
-  (section) => section.id === "projects"
-);
+    (section) => section.id === "projects",
+  );
 
   if (projects.length === 0) return null;
 
   return (
     <section className={T.spacing.section}>
       <SectionHeader
-  title={
-    projectSection?.displayTitle?.trim() ||
-    projectSection?.title ||
-    "Projects"
-  }
-  icon={<FolderKanban size={16} />}
-/>
+        title={
+          projectSection?.displayTitle?.trim() ||
+          projectSection?.title ||
+          "Projects"
+        }
+        icon={<FolderKanban size={16} />}
+      />
       <div className="mt-3 space-y-6">
         {projects.map((project, index) => (
           <div key={index}>
-            <h3 className={`font-semibold ${T.fontSize.itemTitle} ${T.colors.heading}`}>
+            <h3
+              className={`font-semibold ${T.fontSize.itemTitle} ${T.colors.heading}`}
+            >
               {project.title}
             </h3>
 
             <p className={`${T.fontSize.date} ${T.colors.muted}`}>
-              {project.startDate} - {project.currentlyWorking ? "Present" : project.endDate}
+              {project.startDate} -{" "}
+              {project.currentlyWorking ? "Present" : project.endDate}
             </p>
 
-            <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>
+            {/* <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>
               {project.description}
-            </p>
+            </p> */}
+
+            {project.description?.length > 0 && (
+              <ul
+                className={`mt-2 list-disc pl-5 ${T.fontSize.body} ${T.colors.body}`}
+              >
+                {project.description.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            )}
 
             {project.technologies.length > 0 && (
               <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>

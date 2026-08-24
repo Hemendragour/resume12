@@ -103,7 +103,7 @@ export default function ProjectsSection() {
                     {/* Description */}
                     <ul className="mt-2 list-disc space-y-1 pl-5 text-gray-700">
                       {project.description
-                        .split("\n")
+
                         .filter((line) => line.trim() !== "")
                         .map((line, descriptionIndex) => (
                           <li key={descriptionIndex}>{line}</li>

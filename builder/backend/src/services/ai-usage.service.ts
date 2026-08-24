@@ -9,14 +9,15 @@ type AIFeature =
   | "ats-analysis"
   | "generate-experience"
   | "generate-project-description"
-   | "generate-coursework"
-    | "generate-custom-section"
-    | "generate-internship";
+  | "generate-coursework"
+  | "generate-custom-section"
+  | "generate-internship"
+  | "generate-resume";
 
 export const trackAIUsage = async (
   userId: string,
   feature: AIFeature,
-  tokensUsed = 0
+  tokensUsed = 0,
 ) => {
   await AIUsage.create({
     userId: new mongoose.Types.ObjectId(userId),

@@ -53,7 +53,7 @@ const projectSchema = z.object({
 
   currentlyWorking: z.boolean().optional(),
 
-  description: z.string().min(1),
+  description: z.array(z.string()),
 
   technologies: z.array(z.string()),
 

@@ -13,7 +13,8 @@ export interface IAIUsage extends Document {
     | "generate-project-description"
     | "generate-coursework"
     | "generate-custom-section"
-      | "generate-internship";
+    | "generate-internship"
+    | "generate-resume";
 
   tokensUsed: number;
 
@@ -42,10 +43,7 @@ const aiUsageSchema = new Schema<IAIUsage>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export const AIUsage = mongoose.model<IAIUsage>(
-  "AIUsage",
-  aiUsageSchema
-);
+export const AIUsage = mongoose.model<IAIUsage>("AIUsage", aiUsageSchema);

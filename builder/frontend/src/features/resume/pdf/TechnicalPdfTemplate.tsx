@@ -130,7 +130,16 @@ export default function TechnicalPdfTemplate({ resume }: Props) {
           resume.projects.map((project, index) => (
             <View key={index} style={{ marginBottom: 12 }}>
               <Text style={{ fontWeight: "bold" }}>{project.title}</Text>
-              <Text style={{ marginTop: 3 }}>{project.description}</Text>
+              {/* <Text style={{ marginTop: 3 }}>{project.description}</Text> */}
+              {project.description?.length > 0 && (
+                <View style={{ marginTop: 3 }}>
+                  {project.description.map((description, descIndex) => (
+                    <Text key={descIndex} style={{ marginBottom: 2 }}>
+                      • {description}
+                    </Text>
+                  ))}
+                </View>
+              )}
               {project.technologies?.length > 0 && (
                 <Text style={{ marginTop: 4, fontSize: 9 }}>
                   Tech: {project.technologies.join(", ")}

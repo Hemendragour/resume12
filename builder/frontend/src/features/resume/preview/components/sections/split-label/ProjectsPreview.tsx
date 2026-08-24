@@ -17,7 +17,6 @@ export default function ProjectsPreview() {
       <div className="col-span-3 space-y-4">
         {resume.projects.map((project, index) => {
           const bullets = project.description
-            .split("\n")
             .map((item) => item.replace(/^•\s*/, "").trim())
             .filter(Boolean);
 

@@ -91,7 +91,7 @@ export interface Project {
 
   currentlyWorking?: boolean;
 
-  description: string;
+  description: string[];
 
   technologies: string[];
 

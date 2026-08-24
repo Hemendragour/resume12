@@ -14,7 +14,7 @@ export default function ProjectsPreview() {
   const projects = resume.projects ?? [];
 
   const projectSection = resume.sections.find(
-    (section) => section.id === "projects"
+    (section) => section.id === "projects",
   );
 
   if (projects.length === 0) return null;
@@ -64,7 +64,7 @@ export default function ProjectsPreview() {
               </div>
             </div>
 
-            {project.description && (
+            {/* {project.description && (
               <p
                 className={`
                   ${T.spacing.itemHeader}
@@ -76,6 +76,24 @@ export default function ProjectsPreview() {
               >
                 {project.description}
               </p>
+            )} */}
+
+            {project.description?.length > 0 && (
+              <ul
+                className={`
+      ${T.spacing.itemHeader}
+      ${T.lineHeight.body}
+      ${T.fontSize.body}
+      ${T.colors.body}
+      list-disc
+      pl-5
+      space-y-1
+    `}
+              >
+                {project.description.map((description, index) => (
+                  <li key={index}>{description}</li>
+                ))}
+              </ul>
             )}
 
             {project.technologies.length > 0 && (
@@ -87,8 +105,7 @@ export default function ProjectsPreview() {
                   ${T.lineHeight.body}
                 `}
               >
-                <strong>Tech:</strong>{" "}
-                {project.technologies.join(", ")}
+                <strong>Tech:</strong> {project.technologies.join(", ")}
               </p>
             )}
 

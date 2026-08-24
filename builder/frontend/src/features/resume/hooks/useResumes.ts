@@ -1,38 +1,3 @@
-// import { useEffect, useState } from "react";
-
-// import { getResumes } from "../services/resume.service";
-
-// import type { Resume } from "../types/resume.types";
-
-// export const useResumes = () => {
-//   const [loading, setLoading] =
-//     useState(true);
-
-//   const [resumes, setResumes] =
-//     useState<Resume[]>([]);
-
-//   const fetchResumes = async () => {
-//     try {
-//       const data =
-//         await getResumes();
-
-//       setResumes(data);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchResumes();
-//   }, []);
-
-//   return {
-//     loading,
-//     resumes,
-//     refetch: fetchResumes,
-//   };
-// };
-
 // -------- ORG CODE ----------------
 // import { useQuery } from "@tanstack/react-query";
 

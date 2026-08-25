@@ -12,6 +12,14 @@ import ATSPanel from "../../features/resume/editor/components/ATSPanel/ATSPanel"
 // import ResumeCompletionCard from "../../features/resume/components/ResumeCompletionCard";
 // import { useResumeCompletion } from "../../features/resume/hooks/useResumeCompletion";
 import ExportPdfButton from "../../features/resume/components/ExportPdfButton";
+import { useResumeStore } from "../../store/resume.store";
+import { useGenerateFullResume } from "../../features/ai/hooks/useGenerateGeneralResume";
+import type { QuickGenerateFormData } from "../../features/ai/services/generate-general-resume.service";
+import { mapGeneratedResumeToResume } from "../../features/resume/editor/utils/mapGeneratedResume";
+import GenerateResumeLoader from "../../features/resume/editor/components/GenerateGeneralResumeLoader";
+import QuickGenerateForm from "../../features/resume/editor/components/GenerateGeneralResumeForm";
+import { Sparkles } from "lucide-react";
+import { mapResumeToQuickGenerateFormData } from "../../features/resume/editor/utils/mapResumeToGenerateForm";
 
 export default function ResumeEditorPage() {
   const [activeSection, setActiveSection] = useState("personal");
@@ -24,11 +32,73 @@ export default function ResumeEditorPage() {
 
   const saveStatus = useAutoSave();
 
+  // ///////////////////////////
+  const setResume = useResumeStore((state) => state.setResume);
+
+  const [isATSPanelOpen, setIsATSPanelOpen] = useState(false);
+
+  // Quick AI generate
+  // const [showQuickGenerate, setShowQuickGenerate] = useState(false);
+  // const { mutateAsync: generateResume, isPending: isGenerating } =
+  //   useGenerateFullResume();
+
+  // Quick AI generate
+  const [showQuickGenerate, setShowQuickGenerate] = useState(false);
+  const [formInitialData, setFormInitialData] = useState<
+    QuickGenerateFormData | undefined
+  >(undefined);
+  const [hasGeneratedWithAI, setHasGeneratedWithAI] = useState(false);
+  const { mutateAsync: generateResume, isPending: isGenerating } =
+    useGenerateFullResume();
+
+  const openGenerate = () => {
+    setFormInitialData(undefined); // start blank
+    setShowQuickGenerate(true);
+  };
+
+  const openEditWithAI = () => {
+    if (!resume) return;
+    setFormInitialData(mapResumeToQuickGenerateFormData(resume)); // pre-filled
+    setShowQuickGenerate(true);
+  };
+
+  // ////////////
+  // const handleGenerate = async (formData: QuickGenerateFormData) => {
+  //   setShowQuickGenerate(false);
+  //   try {
+  //     const generated = await generateResume(formData);
+  //     if (resume) {
+  //       setResume(mapGeneratedResumeToResume(resume, generated));
+  //     }
+  //   } catch (error) {
+  //     console.error("Resume generation failed:", error);
+  //     alert(
+  //       "Something went wrong while generating your resume. Please try again.",
+  //     );
+  //   }
+  // };
+
+  const handleGenerate = async (formData: QuickGenerateFormData) => {
+    setShowQuickGenerate(false);
+    try {
+      const generated = await generateResume(formData);
+      if (resume) {
+        setResume(mapGeneratedResumeToResume(resume, generated));
+      }
+      setHasGeneratedWithAI(true);
+    } catch (error) {
+      console.error("Resume generation failed:", error);
+      alert(
+        "Something went wrong while generating your resume. Please try again.",
+      );
+    }
+  };
+
   // ============================================================
   // ATS PANEL
   // ============================================================
 
-  const [isATSPanelOpen, setIsATSPanelOpen] = useState(false);
+  // const [isATSPanelOpen, setIsATSPanelOpen] = useState(false);
 
   // ============================================================
   // RESUME COMPLETION
@@ -67,19 +137,19 @@ export default function ResumeEditorPage() {
       {/* ACTION BAR */}
       {/* ====================================================== */}
 
-      <div className="border-b border-card bg-modal px-6 py-4">
-        <div className="flex flex-wrap items-center justify-end gap-3">
+      {/* <div className="border-b border-card bg-modal px-6 py-4">
+        <div className="flex flex-nowrap items-center justify-end gap-3 overflow-x-auto">
           <button
             type="button"
             onClick={() => setIsATSPanelOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition shrink-0 hover:bg-dark"
           >
             Analyze ATS
           </button>
 
           {resume && <ExportPdfButton />}
         </div>
-      </div>
+      </div> */}
 
       {/* ====================================================== */}
       {/* RESUME COMPLETION */}
@@ -96,46 +166,91 @@ export default function ResumeEditorPage() {
       {/* EDITOR WORKSPACE */}
       {/* ====================================================== */}
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* ==================================================== */}
-        {/* LEFT SIDEBAR */}
-        {/* ==================================================== */}
+      <div className="border-b border-card bg-modal px-6 py-4">
+        <div className="flex flex-nowrap items-center justify-end gap-3 overflow-x-auto">
+          <button
+            type="button"
+            onClick={openGenerate}
+            disabled={showQuickGenerate || isGenerating}
+            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Sparkles size={16} />
+            Generate Resume in 2 Minutes
+          </button>
 
-        <EditorSidebar
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-        />
+          <button
+            type="button"
+            onClick={openEditWithAI}
+            disabled={!hasGeneratedWithAI || showQuickGenerate || isGenerating}
+            title={
+              !hasGeneratedWithAI
+                ? "Generate a resume with AI first"
+                : undefined
+            }
+            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Sparkles size={16} />
+            Edit with AI
+          </button>
 
-        {/* ==================================================== */}
-        {/* CENTER EDITOR */}
-        {/* ==================================================== */}
+          <button
+            type="button"
+            onClick={() => setIsATSPanelOpen(true)}
+            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark"
+          >
+            Analyze ATS
+          </button>
 
-        <main className="flex-1 overflow-y-auto bg-background p-8">
-          <div className="mx-auto max-w-3xl">
-            <div className="rounded-2xl border border-card bg-modal p-8 shadow-sm">
-              <h2 className="mb-2 text-2xl font-bold capitalize text-dark">
-                {activeSection}
-              </h2>
-
-              <p className="mb-8 text-dark/60">
-                Fill this section of your resume.
-              </p>
-
-              {/* ================================================= */}
-              {/* DYNAMIC EDITOR */}
-              {/* ================================================= */}
-
-              <DynamicEditorRenderer activeSection={activeSection} />
-            </div>
-          </div>
-        </main>
-
-        {/* ==================================================== */}
-        {/* RIGHT PREVIEW */}
-        {/* ==================================================== */}
-
-        <PreviewPanel />
+          {resume && <ExportPdfButton />}
+        </div>
       </div>
+
+      {/* EDITOR WORKSPACE */}
+      {/* {showQuickGenerate ? (
+        <div className="flex-1 overflow-y-auto bg-background p-8">
+          <QuickGenerateForm
+            onGenerate={handleGenerate}
+            onCancel={() => setShowQuickGenerate(false)}
+          />
+        </div> */}
+      {showQuickGenerate ? (
+        <div className="flex-1 overflow-y-auto bg-background p-8">
+          <QuickGenerateForm
+            onGenerate={handleGenerate}
+            onCancel={() => setShowQuickGenerate(false)}
+            initialData={formInitialData}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-1 overflow-hidden">
+          <EditorSidebar
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+          />
+
+          <main className="flex-1 overflow-y-auto bg-background p-8">
+            <div className="mx-auto max-w-3xl">
+              <div className="rounded-2xl border border-card bg-modal p-8 shadow-sm">
+                {isGenerating ? (
+                  <GenerateResumeLoader />
+                ) : (
+                  <>
+                    <h2 className="mb-2 text-2xl font-bold capitalize text-dark">
+                      {activeSection}
+                    </h2>
+                    <p className="mb-8 text-dark/60">
+                      Fill this section of your resume.
+                    </p>
+                    <DynamicEditorRenderer activeSection={activeSection} />
+                  </>
+                )}
+              </div>
+            </div>
+          </main>
+
+          <PreviewPanel />
+        </div>
+      )}
 
       {/* ====================================================== */}
       {/* ATS PANEL (slide-in) */}

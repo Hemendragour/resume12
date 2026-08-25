@@ -8,6 +8,7 @@ import api from "../../../api/axios";
 export interface QuickGenerateFormData {
   jobDescription?: string;
   summary?: string;
+  summaryInstruction?: string;
   personalInfo: {
     fullName: string;
     title?: string;
@@ -19,6 +20,7 @@ export interface QuickGenerateFormData {
     portfolio?: string;
   };
   skills: { title: string; skillsText: string }[];
+  skillsInstruction?: string;
   experience: {
     company: string;
     position: string;
@@ -29,6 +31,7 @@ export interface QuickGenerateFormData {
     responsibilitiesText?: string; // one per line
     achievementsText?: string; // one per line
   }[];
+  experienceInstruction?: string;
   internships: {
     company: string;
     role: string;
@@ -38,6 +41,7 @@ export interface QuickGenerateFormData {
     responsibilitiesText?: string; // one per line
     achievementsText?: string; // one per line
   }[];
+  internshipsInstruction?: string;
   education: {
     institution: string;
     degree: string;
@@ -54,9 +58,11 @@ export interface QuickGenerateFormData {
     github?: string;
     link?: string;
   }[];
+  projectsInstruction?: string;
   languages: { name: string; level: string }[];
   certifications?: string; // one per line
   achievements?: string; // one per line
+  achievementsInstruction?: string;
 }
 
 // Raw shape returned by the AI (matches backend prompt's JSON contract)
@@ -137,14 +143,14 @@ function buildRawFormData(form: QuickGenerateFormData) {
     jobDescription: form.jobDescription || "",
     personalInfo: form.personalInfo,
     summary: form.summary || "",
-
+    summaryInstruction: form.summaryInstruction || "",
     skills: (form.skills || [])
       .filter((s) => s.title?.trim() || s.skillsText?.trim())
       .map((s) => ({
         title: s.title,
         skills: toCsv(s.skillsText),
       })),
-
+    skillsInstruction: form.skillsInstruction || "",
     experience: (form.experience || [])
       .filter((e) => e.company?.trim() || e.position?.trim())
       .map((e) => ({
@@ -157,7 +163,7 @@ function buildRawFormData(form: QuickGenerateFormData) {
         responsibilities: toLines(e.responsibilitiesText),
         achievements: toLines(e.achievementsText),
       })),
-
+    experienceInstruction: form.experienceInstruction || "",
     internships: (form.internships || [])
       .filter((i) => i.company?.trim() || i.role?.trim())
       .map((i) => ({
@@ -169,7 +175,7 @@ function buildRawFormData(form: QuickGenerateFormData) {
         responsibilities: toLines(i.responsibilitiesText),
         achievements: toLines(i.achievementsText),
       })),
-
+    internshipsInstruction: form.internshipsInstruction || "",
     education: (form.education || [])
       .filter((edu) => edu.institution?.trim() || edu.degree?.trim())
       .map((edu) => ({
@@ -191,12 +197,13 @@ function buildRawFormData(form: QuickGenerateFormData) {
         github: p.github || "",
         link: p.link || "",
       })),
-
+    projectsInstruction: form.projectsInstruction || "",
     certifications: toLines(form.certifications),
     languages: (form.languages || []).filter(
       (l) => l.name?.trim() || l.level?.trim(),
     ),
     achievements: toLines(form.achievements),
+    achievementsInstruction: form.achievementsInstruction || "",
   };
 }
 

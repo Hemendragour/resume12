@@ -1,13 +1,9 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import { Plus, Sparkles, X } from "lucide-react";
+import { Plus, Sparkles, X, Wand2 } from "lucide-react";
 
 import Button from "../../../../components/ui/Button";
 import type { QuickGenerateFormData } from "../../../ai/services/generate-general-resume.service";
-
-// interface Props {
-//   onGenerate: (data: QuickGenerateFormData) => void;
-//   onCancel: () => void;
-// }
+import { useState } from "react";
 
 interface Props {
   onGenerate: (data: QuickGenerateFormData) => void;
@@ -40,11 +36,13 @@ function SectionHeader({
   optional,
   onAdd,
   addLabel,
+  onCustomize,
 }: {
   title: string;
   optional?: boolean;
   onAdd: () => void;
   addLabel: string;
+  onCustomize?: () => void;
 }) {
   return (
     <div className="mb-3 flex items-center justify-between">
@@ -54,15 +52,57 @@ function SectionHeader({
           <span className="text-sm font-normal text-dark/50">(optional)</span>
         )}
       </h3>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        leftIcon={<Plus size={16} />}
-        onClick={onAdd}
-      >
-        {addLabel}
-      </Button>
+      <div className="flex items-center gap-3">
+        {onCustomize && (
+          <button
+            type="button"
+            onClick={onCustomize}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            <Wand2 size={13} />
+            Tell how you want to customize
+          </button>
+        )}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          leftIcon={<Plus size={16} />}
+          onClick={onAdd}
+        >
+          {addLabel}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function CustomizeInstructionBox({
+  registerName,
+  register,
+  placeholder,
+}: {
+  registerName:
+    | "summaryInstruction"
+    | "skillsInstruction"
+    | "experienceInstruction"
+    | "internshipsInstruction"
+    | "projectsInstruction"
+    | "achievementsInstruction";
+  register: ReturnType<typeof useForm<QuickGenerateFormData>>["register"];
+  placeholder: string;
+}) {
+  return (
+    <div className="mt-3 rounded-xl border border-primary/15 bg-card p-4">
+      <label className={labelClass}>
+        How should this section be customized?
+      </label>
+      <textarea
+        {...register(registerName)}
+        rows={2}
+        className={textAreaClass}
+        placeholder={placeholder}
+      />
     </div>
   );
 }
@@ -76,6 +116,7 @@ export default function QuickGenerateForm({
     defaultValues: initialData ?? {
       jobDescription: "",
       summary: "",
+      summaryInstruction: "",
       personalInfo: {
         fullName: "",
         title: "",
@@ -87,13 +128,18 @@ export default function QuickGenerateForm({
         portfolio: "",
       },
       skills: [{ title: "", skillsText: "" }],
+      skillsInstruction: "",
       experience: [],
+      experienceInstruction: "",
       internships: [],
+      internshipsInstruction: "",
       education: [{ institution: "", degree: "" }],
       projects: [{ title: "", technologies: "", descriptionText: "" }],
+      projectsInstruction: "",
       languages: [],
       certifications: "",
       achievements: "",
+      achievementsInstruction: "",
     },
   });
 
@@ -103,6 +149,14 @@ export default function QuickGenerateForm({
   const education = useFieldArray({ control, name: "education" });
   const projects = useFieldArray({ control, name: "projects" });
   const languages = useFieldArray({ control, name: "languages" });
+  const [showSummaryCustomize, setShowSummaryCustomize] = useState(false);
+  const [showSkillsCustomize, setShowSkillsCustomize] = useState(false);
+  const [showProjectsCustomize, setShowProjectsCustomize] = useState(false);
+  const [showExperienceCustomize, setShowExperienceCustomize] = useState(false);
+  const [showInternshipsCustomize, setShowInternshipsCustomize] =
+    useState(false);
+  const [showAchievementsCustomize, setShowAchievementsCustomize] =
+    useState(false);
 
   const onSubmit = (data: QuickGenerateFormData) => onGenerate(data);
 
@@ -203,18 +257,35 @@ export default function QuickGenerateForm({
 
       {/* SUMMARY */}
       <section>
-        <label className={labelClass}>
-          Summary{" "}
-          <span className="font-normal text-dark/50">
-            (optional — a few rough lines is enough, AI will polish it)
-          </span>
-        </label>
+        <div className="flex items-center justify-between">
+          <label className={labelClass}>
+            Summary{" "}
+            <span className="font-normal text-dark/50">
+              (optional — a few rough lines is enough, AI will polish it)
+            </span>
+          </label>
+          <button
+            type="button"
+            onClick={() => setShowSummaryCustomize((v) => !v)}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            <Wand2 size={13} />
+            Tell how you want to customize
+          </button>
+        </div>
         <textarea
           {...register("summary")}
           rows={2}
           className={textAreaClass}
           placeholder="Software developer with experience in building web applications..."
         />
+        {showSummaryCustomize && (
+          <CustomizeInstructionBox
+            registerName="summaryInstruction"
+            register={register}
+            placeholder="e.g. I want a short summary, similar to the JD"
+          />
+        )}
       </section>
 
       {/* SKILLS */}
@@ -223,6 +294,7 @@ export default function QuickGenerateForm({
           title="Skills"
           onAdd={() => skills.append({ title: "", skillsText: "" })}
           addLabel="Add Category"
+          onCustomize={() => setShowSkillsCustomize((v) => !v)}
         />
         <div className="space-y-4">
           {skills.fields.map((field, index) => (
@@ -252,6 +324,13 @@ export default function QuickGenerateForm({
             </div>
           ))}
         </div>
+        {showSkillsCustomize && (
+          <CustomizeInstructionBox
+            registerName="skillsInstruction"
+            register={register}
+            placeholder="e.g. Prioritize skills that match the JD"
+          />
+        )}
       </section>
 
       {/* PROJECTS */}
@@ -266,6 +345,7 @@ export default function QuickGenerateForm({
             })
           }
           addLabel="Add Project"
+          onCustomize={() => setShowProjectsCustomize((v) => !v)}
         />
         <div className="space-y-4">
           {projects.fields.map((field, index) => (
@@ -314,6 +394,13 @@ export default function QuickGenerateForm({
             </div>
           ))}
         </div>
+        {showProjectsCustomize && (
+          <CustomizeInstructionBox
+            registerName="projectsInstruction"
+            register={register}
+            placeholder="e.g. Focus more on backend work, keep descriptions concise"
+          />
+        )}
       </section>
 
       {/* EXPERIENCE */}
@@ -323,6 +410,7 @@ export default function QuickGenerateForm({
           optional
           onAdd={() => experience.append({ company: "", position: "" })}
           addLabel="Add Experience"
+          onCustomize={() => setShowExperienceCustomize((v) => !v)}
         />
         <div className="space-y-4">
           {experience.fields.map((field, index) => (
@@ -380,6 +468,13 @@ export default function QuickGenerateForm({
             </div>
           ))}
         </div>
+        {showExperienceCustomize && (
+          <CustomizeInstructionBox
+            registerName="experienceInstruction"
+            register={register}
+            placeholder="e.g. Make responsibilities more detailed and technical"
+          />
+        )}
       </section>
 
       {/* INTERNSHIPS */}
@@ -389,6 +484,7 @@ export default function QuickGenerateForm({
           optional
           onAdd={() => internships.append({ company: "", role: "" })}
           addLabel="Add Internship"
+          onCustomize={() => setShowInternshipsCustomize((v) => !v)}
         />
         <div className="space-y-4">
           {internships.fields.map((field, index) => (
@@ -434,6 +530,13 @@ export default function QuickGenerateForm({
             </div>
           ))}
         </div>
+        {showInternshipsCustomize && (
+          <CustomizeInstructionBox
+            registerName="internshipsInstruction"
+            register={register}
+            placeholder="e.g. Keep it short, 2 bullets per internship"
+          />
+        )}
       </section>
 
       {/* EDUCATION */}
@@ -523,13 +626,30 @@ export default function QuickGenerateForm({
       {/* ACHIEVEMENTS + CERTIFICATIONS */}
       <div className="grid grid-cols-2 gap-4">
         <section>
-          <label className={labelClass}>Achievements</label>
+          <div className="flex items-center justify-between">
+            <label className={labelClass}>Achievements</label>
+            <button
+              type="button"
+              onClick={() => setShowAchievementsCustomize((v) => !v)}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            >
+              <Wand2 size={13} />
+              Customize
+            </button>
+          </div>
           <textarea
             {...register("achievements")}
             rows={4}
             className={textAreaClass}
             placeholder="One achievement per line"
           />
+          {showAchievementsCustomize && (
+            <CustomizeInstructionBox
+              registerName="achievementsInstruction"
+              register={register}
+              placeholder="e.g. Keep only the top 2-3"
+            />
+          )}
         </section>
         <section>
           <label className={labelClass}>Certifications</label>

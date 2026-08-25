@@ -12,6 +12,7 @@ export function mapResumeToQuickGenerateFormData(
   return {
     jobDescription: "",
     summary: resume.summary || "",
+    summaryInstruction: "",
 
     personalInfo: {
       fullName: resume.personalInfo?.fullName || "",
@@ -30,7 +31,11 @@ export function mapResumeToQuickGenerateFormData(
           skillsText: (s.skills || []).join(", "),
         }))
       : [{ title: "", skillsText: "" }],
-
+    skillsInstruction: "",
+    experienceInstruction: "",
+    internshipsInstruction: "",
+    projectsInstruction: "",
+    achievementsInstruction: "",
     experience: (resume.experience || []).map((e) => ({
       company: e.company,
       position: e.position,

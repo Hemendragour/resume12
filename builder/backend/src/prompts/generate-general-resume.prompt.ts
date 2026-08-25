@@ -9,6 +9,21 @@ ${JSON.stringify(formData, null, 2)}
 JOB DESCRIPTION:
 ${formData.jobDescription || "No job description provided."}
 
+PER-SECTION CUSTOMIZATION INSTRUCTIONS:
+The RAW USER DATA above may contain these optional fields: summaryInstruction, skillsInstruction, experienceInstruction, internshipsInstruction, projectsInstruction, achievementsInstruction.
+
+For each one that is present and non-empty, apply it ONLY to that specific section — never let one section's instruction bleed into another. Use it to control that section's length, depth, tone, and JD-alignment. Examples:
+
+- summaryInstruction: "short summary similar to the JD" → keep the summary to 2–3 lines, closely aligned to the JD's key requirements, using only facts already present in the user's data.
+- experienceInstruction / internshipsInstruction: "more detailed" → use 5–6 bullets per entry with more technical depth, still only from supported facts.
+- projectsInstruction: "focus more on backend work" → prioritize and expand backend-related bullets over frontend ones, without inventing backend work that wasn't mentioned.
+- skillsInstruction: "prioritize skills relevant to the JD" → reorder categories/skills to surface JD-matching ones first.
+- achievementsInstruction: "keep only the top 2" → include at most 2 of the strongest achievements.
+
+If a section has no instruction, use this prompt's default rules for that section instead.
+
+These instructions control style and emphasis ONLY. They must NEVER override the ABSOLUTE TRUTHFULNESS RULE below — never invent facts, technologies, metrics, or achievements to satisfy an instruction.
+
 ==================================================
 CORE OBJECTIVE
 ==============

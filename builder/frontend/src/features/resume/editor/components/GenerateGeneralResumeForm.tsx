@@ -1,9 +1,17 @@
-import { useForm, useFieldArray } from "react-hook-form";
-import { Plus, Sparkles, X, Wand2 } from "lucide-react";
+import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { Plus, Sparkles, X, Wand2, Loader2 } from "lucide-react";
 
 import Button from "../../../../components/ui/Button";
 import type { QuickGenerateFormData } from "../../../ai/services/generate-general-resume.service";
 import { useState } from "react";
+import TagAutocompleteInput from "./TagAutocompleteInput";
+import {
+  ALL_TECHNOLOGY_SUGGESTIONS,
+  SKILL_CATEGORY_PRESETS,
+  getSkillSuggestions,
+} from "../utils/skillSuggestions";
+import { useGenerateCoursework } from "../../../ai/hooks/useGenerateCoursework";
+import MonthYearPicker from "./MonthYearPicker";
 
 interface Props {
   onGenerate: (data: QuickGenerateFormData) => void;
@@ -18,6 +26,12 @@ const textAreaClass =
   "mt-1.5 w-full rounded-lg border border-primary/15 bg-card px-4 py-3 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
 
 const labelClass = "text-sm font-medium text-dark";
+
+const CURRENT_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from(
+  { length: CURRENT_YEAR + 6 - 1980 + 1 },
+  (_, i) => CURRENT_YEAR + 5 - i,
+);
 
 function RemoveRowButton({ onClick }: { onClick: () => void }) {
   return (
@@ -57,10 +71,10 @@ function SectionHeader({
           <button
             type="button"
             onClick={onCustomize}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
           >
             <Wand2 size={13} />
-            Tell how you want to customize
+            customize
           </button>
         )}
         <Button
@@ -112,38 +126,47 @@ export default function QuickGenerateForm({
   onCancel,
   initialData,
 }: Props) {
-  const { register, control, handleSubmit } = useForm<QuickGenerateFormData>({
-    defaultValues: initialData ?? {
-      jobDescription: "",
-      summary: "",
-      summaryInstruction: "",
-      personalInfo: {
-        fullName: "",
-        title: "",
-        email: "",
-        phone: "",
-        address: "",
-        linkedIn: "",
-        github: "",
-        portfolio: "",
+  const { register, control, handleSubmit, watch, setValue } =
+    useForm<QuickGenerateFormData>({
+      defaultValues: initialData ?? {
+        jobDescription: "",
+        summary: "",
+        summaryInstruction: "",
+        personalInfo: {
+          fullName: "",
+          title: "",
+          email: "",
+          phone: "",
+          address: "",
+          linkedIn: "",
+          github: "",
+          portfolio: "",
+        },
+        skills: [],
+        skillsInstruction: "",
+        experience: [],
+        experienceInstruction: "",
+        internships: [],
+        internshipsInstruction: "",
+        education: [{ institution: "", degree: "" }],
+        projects: [{ title: "", technologies: "", descriptionText: "" }],
+        projectsInstruction: "",
+        languages: [],
+        certifications: "",
+        achievements: "",
+        achievementsInstruction: "",
       },
-      skills: [{ title: "", skillsText: "" }],
-      skillsInstruction: "",
-      experience: [],
-      experienceInstruction: "",
-      internships: [],
-      internshipsInstruction: "",
-      education: [{ institution: "", degree: "" }],
-      projects: [{ title: "", technologies: "", descriptionText: "" }],
-      projectsInstruction: "",
-      languages: [],
-      certifications: "",
-      achievements: "",
-      achievementsInstruction: "",
-    },
-  });
+    });
 
   const skills = useFieldArray({ control, name: "skills" });
+
+  const currentSkillTitles = (watch("skills") || []).map((s) =>
+    (s?.title || "").trim().toLowerCase(),
+  );
+  const availableSkillPresets = SKILL_CATEGORY_PRESETS.filter(
+    (preset) => !currentSkillTitles.includes(preset.toLowerCase()),
+  );
+
   const experience = useFieldArray({ control, name: "experience" });
   const internships = useFieldArray({ control, name: "internships" });
   const education = useFieldArray({ control, name: "education" });
@@ -155,8 +178,14 @@ export default function QuickGenerateForm({
   const [showExperienceCustomize, setShowExperienceCustomize] = useState(false);
   const [showInternshipsCustomize, setShowInternshipsCustomize] =
     useState(false);
+
   const [showAchievementsCustomize, setShowAchievementsCustomize] =
     useState(false);
+  const { mutate: generateCourseworkMutate } = useGenerateCoursework();
+  const [courseworkLoadingIndex, setCourseworkLoadingIndex] = useState<
+    number | null
+  >(null);
+  const watchedEducation = watch("education");
 
   const onSubmit = (data: QuickGenerateFormData) => onGenerate(data);
 
@@ -267,10 +296,10 @@ export default function QuickGenerateForm({
           <button
             type="button"
             onClick={() => setShowSummaryCustomize((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
           >
             <Wand2 size={13} />
-            Tell how you want to customize
+            customize
           </button>
         </div>
         <textarea
@@ -296,15 +325,29 @@ export default function QuickGenerateForm({
           addLabel="Add Category"
           onCustomize={() => setShowSkillsCustomize((v) => !v)}
         />
+
+        {availableSkillPresets.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {availableSkillPresets.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => skills.append({ title: preset, skillsText: "" })}
+                className="rounded-full border border-primary/15 px-3 py-1.5 text-xs font-medium text-dark/70 transition hover:border-accent hover:text-dark"
+              >
+                + {preset}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="space-y-4">
           {skills.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative grid grid-cols-[200px_1fr] items-end gap-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative grid grid-cols-[200px_1fr] items-start gap-3 rounded-xl border border-primary/10 bg-card p-4"
             >
-              {skills.fields.length > 1 && (
-                <RemoveRowButton onClick={() => skills.remove(index)} />
-              )}
+              <RemoveRowButton onClick={() => skills.remove(index)} />
               <div>
                 <label className={labelClass}>Category</label>
                 <input
@@ -315,15 +358,31 @@ export default function QuickGenerateForm({
               </div>
               <div>
                 <label className={labelClass}>Skills</label>
-                <input
-                  {...register(`skills.${index}.skillsText`)}
-                  className={inputClass}
-                  placeholder="React, Node.js, MongoDB (comma-separated)"
+                <Controller
+                  name={`skills.${index}.skillsText`}
+                  control={control}
+                  render={({ field }) => (
+                    <TagAutocompleteInput
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      suggestions={getSkillSuggestions(
+                        watch(`skills.${index}.title`) || "",
+                      )}
+                      placeholder="Type a skill and press Enter, or pick a suggestion"
+                    />
+                  )}
                 />
               </div>
             </div>
           ))}
         </div>
+
+        {skills.fields.length === 0 && (
+          <p className="text-sm text-dark/40">
+            Pick a category above, or use "Add Category" for a custom one.
+          </p>
+        )}
+
         {showSkillsCustomize && (
           <CustomizeInstructionBox
             registerName="skillsInstruction"
@@ -367,11 +426,21 @@ export default function QuickGenerateForm({
                   className={inputClass}
                   placeholder="Your role (optional)"
                 />
-                <input
-                  {...register(`projects.${index}.technologies`)}
-                  className={inputClass}
-                  placeholder="Technologies (comma-separated)"
-                />
+                <div>
+                  <label className={labelClass}></label>
+                  <Controller
+                    name={`projects.${index}.technologies`}
+                    control={control}
+                    render={({ field }) => (
+                      <TagAutocompleteInput
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        suggestions={ALL_TECHNOLOGY_SUGGESTIONS}
+                        placeholder="Type a technology and press Enter, or pick a suggestion"
+                      />
+                    )}
+                  />
+                </div>
               </div>
               <textarea
                 {...register(`projects.${index}.descriptionText`)}
@@ -430,16 +499,35 @@ export default function QuickGenerateForm({
                   className={inputClass}
                   placeholder="Position"
                 />
-                <input
-                  {...register(`experience.${index}.startDate`)}
-                  className={inputClass}
-                  placeholder="Start date"
-                />
-                <input
-                  {...register(`experience.${index}.endDate`)}
-                  className={inputClass}
-                  placeholder="End date"
-                />
+                <div>
+                  <label className={labelClass}>Start Date</label>
+                  <Controller
+                    name={`experience.${index}.startDate`}
+                    control={control}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        maxYear={CURRENT_YEAR}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>End Date</label>
+                  <Controller
+                    name={`experience.${index}.endDate`}
+                    control={control}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        maxYear={CURRENT_YEAR}
+                        disabled={watch(`experience.${index}.currentlyWorking`)}
+                      />
+                    )}
+                  />
+                </div>
                 <input
                   {...register(`experience.${index}.location`)}
                   className={inputClass}
@@ -448,10 +536,35 @@ export default function QuickGenerateForm({
                 <label className="flex items-center gap-2 text-sm text-dark">
                   <input
                     type="checkbox"
-                    {...register(`experience.${index}.currentlyWorking`)}
+                    {...register(`experience.${index}.currentlyWorking`, {
+                      onChange: (e) => {
+                        if (e.target.checked) {
+                          setValue(`experience.${index}.endDate`, "");
+                        }
+                      },
+                    })}
                   />
                   Currently working here
                 </label>
+              </div>
+
+              <div>
+                <label className={labelClass}>
+                  Technologies{" "}
+                  <span className="font-normal text-dark/50">(optional)</span>
+                </label>
+                <Controller
+                  name={`experience.${index}.technologies`}
+                  control={control}
+                  render={({ field }) => (
+                    <TagAutocompleteInput
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      suggestions={ALL_TECHNOLOGY_SUGGESTIONS}
+                      placeholder="Type a technology and press Enter, or pick a suggestion"
+                    />
+                  )}
+                />
               </div>
               <textarea
                 {...register(`experience.${index}.responsibilitiesText`)}
@@ -504,16 +617,50 @@ export default function QuickGenerateForm({
                   className={inputClass}
                   placeholder="Role"
                 />
-                <input
-                  {...register(`internships.${index}.startDate`)}
-                  className={inputClass}
-                  placeholder="Start date"
-                />
-                <input
-                  {...register(`internships.${index}.endDate`)}
-                  className={inputClass}
-                  placeholder="End date"
-                />
+                <div>
+                  <label className={labelClass}>Start Date</label>
+                  <Controller
+                    name={`internships.${index}.startDate`}
+                    control={control}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        maxYear={CURRENT_YEAR}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>End Date</label>
+                  <Controller
+                    name={`internships.${index}.endDate`}
+                    control={control}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        maxYear={CURRENT_YEAR}
+                        disabled={watch(
+                          `internships.${index}.currentlyInterning`,
+                        )}
+                      />
+                    )}
+                  />
+                </div>
+                <label className="flex items-center gap-2 text-sm text-dark">
+                  <input
+                    type="checkbox"
+                    {...register(`internships.${index}.currentlyInterning`, {
+                      onChange: (e) => {
+                        if (e.target.checked) {
+                          setValue(`internships.${index}.endDate`, "");
+                        }
+                      },
+                    })}
+                  />
+                  Currently interning here
+                </label>
               </div>
               <textarea
                 {...register(`internships.${index}.responsibilitiesText`)}
@@ -543,7 +690,9 @@ export default function QuickGenerateForm({
       <section>
         <SectionHeader
           title="Education"
-          onAdd={() => education.append({ institution: "", degree: "" })}
+          onAdd={() =>
+            education.append({ institution: "", degree: "", coursework: "" })
+          }
           addLabel="Add Education"
         />
         <div className="space-y-4">
@@ -575,16 +724,119 @@ export default function QuickGenerateForm({
                 className={inputClass}
                 placeholder="CGPA / grade"
               />
-              <input
+              <select
                 {...register(`education.${index}.startYear`)}
                 className={inputClass}
-                placeholder="Start year"
-              />
-              <input
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Start year
+                </option>
+                {YEAR_OPTIONS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+
+              <select
                 {...register(`education.${index}.endYear`)}
                 className={inputClass}
-                placeholder="End year"
-              />
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  End year
+                </option>
+                {YEAR_OPTIONS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+
+              {/* <div>
+                <label className={labelClass}>Start Date</label>
+                <EducationDatePicker
+                  monthValue={watch(`education.${index}.startMonth`) || ""}
+                  yearValue={watch(`education.${index}.startYear`) || ""}
+                  onChange={(month, year) => {
+                    setValue(`education.${index}.startMonth`, month);
+                    setValue(`education.${index}.startYear`, year);
+                  }}
+                  maxYear={CURRENT_YEAR}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>End Date</label>
+                <EducationDatePicker
+                  monthValue={watch(`education.${index}.endMonth`) || ""}
+                  yearValue={watch(`education.${index}.endYear`) || ""}
+                  onChange={(month, year) => {
+                    setValue(`education.${index}.endMonth`, month);
+                    setValue(`education.${index}.endYear`, year);
+                  }}
+                  maxYear={CURRENT_YEAR + 10}
+                />
+              </div> */}
+
+              <div className="col-span-2">
+                <div className="flex items-center justify-between">
+                  <label className={labelClass}>
+                    Relevant Coursework{" "}
+                    <span className="font-normal text-dark/50">(optional)</span>
+                  </label>
+                  <button
+                    type="button"
+                    disabled={courseworkLoadingIndex === index}
+                    onClick={() => {
+                      const degree = watchedEducation?.[index]?.degree || "";
+                      const fieldOfStudy =
+                        watchedEducation?.[index]?.fieldOfStudy || "";
+                      if (!degree.trim()) {
+                        alert("Enter a degree first");
+                        return;
+                      }
+                      setCourseworkLoadingIndex(index);
+                      generateCourseworkMutate(
+                        { degree, fieldOfStudy },
+                        {
+                          onSuccess: (coursework) => {
+                            setValue(
+                              `education.${index}.coursework`,
+                              coursework,
+                            );
+                            setCourseworkLoadingIndex(null);
+                          },
+                          onError: () => {
+                            setCourseworkLoadingIndex(null);
+                            alert(
+                              "Couldn't generate coursework. Please try again.",
+                            );
+                          },
+                        },
+                      );
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline disabled:opacity-50"
+                  >
+                    {courseworkLoadingIndex === index ? (
+                      <>
+                        <Loader2 size={13} className="animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={13} />
+                        Generate
+                      </>
+                    )}
+                  </button>
+                </div>
+                <input
+                  {...register(`education.${index}.coursework`)}
+                  className={inputClass}
+                  placeholder="OOP, DBMS, DSA, Machine Learning"
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -631,7 +883,7 @@ export default function QuickGenerateForm({
             <button
               type="button"
               onClick={() => setShowAchievementsCustomize((v) => !v)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
             >
               <Wand2 size={13} />
               Customize

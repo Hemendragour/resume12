@@ -9,6 +9,7 @@ const experienceSchema = z.object({
   responsibilities: z.array(z.string()).optional(),
   achievements: z.array(z.string()).optional(),
   location: z.string().optional(),
+  technologies: z.array(z.string()).optional(),
 });
 
 const educationSchema = z.object({

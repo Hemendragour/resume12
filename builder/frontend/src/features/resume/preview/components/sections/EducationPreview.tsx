@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../store/resume.store";
+import { formatMonthYear } from "../../../editor/utils/formatDate";
 import { useTheme } from "../../themes/ThemeProvider";
 
 export default function EducationPreview() {
@@ -40,8 +41,10 @@ export default function EducationPreview() {
                     className="text-[11px]"
                     style={{ color: theme.colors.muted }}
                   >
-                    {edu.startMonth} {edu.startYear} –{" "}
-                    {edu.current ? "Present" : `${edu.endMonth} ${edu.endYear}`}
+                    {formatMonthYear(edu.startMonth)} {edu.startYear} –{" "}
+                    {edu.current
+                      ? "Present"
+                      : `${formatMonthYear(edu.endMonth)} ${edu.endYear}`}
                   </span>
                 )}
               </div>

@@ -43,6 +43,7 @@ export function mapResumeToQuickGenerateFormData(
       endDate: e.endDate || "",
       currentlyWorking: e.currentlyWorking || false,
       location: e.location || "",
+      technologies: (e.technologies || []).join(", "),
       responsibilitiesText: (e.responsibilities || []).join("\n"),
       achievementsText: (e.achievements || []).join("\n"),
     })),
@@ -65,6 +66,7 @@ export function mapResumeToQuickGenerateFormData(
           startYear: edu.startYear ? String(edu.startYear) : "",
           endYear: edu.endYear ? String(edu.endYear) : "",
           cgpa: edu.cgpa || "",
+          coursework: edu.coursework || "",
         }))
       : [{ institution: "", degree: "" }],
 

@@ -5,6 +5,7 @@ import { Briefcase } from "lucide-react";
 
 import { PeachModernTheme as T } from "../../theme.peach-modern";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -49,8 +50,10 @@ export default function ExperiencePreview() {
               <p
                 className={`whitespace-nowrap ${T.fontSize.date} ${T.colors.muted}`}
               >
-                {item.startDate} -{" "}
-                {item.currentlyWorking ? "Present" : item.endDate}
+                {formatMonthYear(item.startDate)} -{" "}
+                {item.currentlyWorking
+                  ? "Present"
+                  : formatMonthYear(item.endDate)}
               </p>
             </div>
 

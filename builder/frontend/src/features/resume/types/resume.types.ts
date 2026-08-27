@@ -53,6 +53,7 @@ export interface Experience {
   responsibilities: string[];
   achievements?: string[];
   location?: string;
+  technologies?: string[];
 }
 
 // export interface Education {

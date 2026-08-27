@@ -6,6 +6,7 @@ export default function EducationPreview() {
   const educationSection = resume.sections.find(
     (section) => section.id === "education",
   );
+  console.log("checking resume education -- ", resume.education);
   return (
     <section className="grid grid-cols-4 gap-6 mt-6 pb-4 border-b border-rose-100">
       <h2 className="col-span-1 text-[12px] font-semibold text-slate-800">
@@ -25,9 +26,10 @@ export default function EducationPreview() {
                   <h3 className="text-[12px] font-bold text-rose-700">
                     {edu.institution}
                   </h3>
+
                   <span className="text-[11px] text-slate-500">
-                    {edu.startMonth} {edu.startYear} –{" "}
-                    {edu.current ? "Present" : `${edu.endMonth} ${edu.endYear}`}
+                    {edu.startYear} –{" "}
+                    {edu.current ? "Present" : ` ${edu.endYear}`}
                   </span>
                 </div>
                 <div className="flex justify-between">

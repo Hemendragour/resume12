@@ -28,8 +28,9 @@ export interface QuickGenerateFormData {
     endDate?: string;
     currentlyWorking?: boolean;
     location?: string;
-    responsibilitiesText?: string; // one per line
-    achievementsText?: string; // one per line
+    technologies?: string;
+    responsibilitiesText?: string;
+    achievementsText?: string;
   }[];
   experienceInstruction?: string;
   internships: {
@@ -46,9 +47,12 @@ export interface QuickGenerateFormData {
     institution: string;
     degree: string;
     fieldOfStudy?: string;
+
     startYear?: string;
+
     endYear?: string;
     cgpa?: string;
+    coursework?: string;
   }[];
   projects: {
     title: string;
@@ -88,6 +92,7 @@ export interface GeneratedResumeData {
     responsibilities: string[];
     achievements: string[];
     location: string;
+    technologies: string[];
   }[];
   internships: {
     company: string;
@@ -102,9 +107,12 @@ export interface GeneratedResumeData {
     institution: string;
     degree: string;
     fieldOfStudy: string;
+
     startYear: number;
+
     endYear: number;
     cgpa: string;
+    coursework: string;
   }[];
   projects: {
     title: string;
@@ -160,6 +168,7 @@ function buildRawFormData(form: QuickGenerateFormData) {
         endDate: e.endDate || "",
         currentlyWorking: e.currentlyWorking || false,
         location: e.location || "",
+        technologies: toCsv(e.technologies),
         responsibilities: toLines(e.responsibilitiesText),
         achievements: toLines(e.achievementsText),
       })),
@@ -182,9 +191,12 @@ function buildRawFormData(form: QuickGenerateFormData) {
         institution: edu.institution,
         degree: edu.degree,
         fieldOfStudy: edu.fieldOfStudy || "",
+
         startYear: Number(edu.startYear) || 0,
+
         endYear: Number(edu.endYear) || 0,
         cgpa: edu.cgpa || "",
+        coursework: edu.coursework || "",
       })),
 
     projects: (form.projects || [])

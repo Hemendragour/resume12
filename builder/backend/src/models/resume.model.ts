@@ -379,6 +379,7 @@ const resumeSchema = new Schema<IResume>(
         responsibilities: { type: [String], default: [] },
         achievements: { type: [String], default: [] },
         location: { type: String, default: "" },
+        technologies: { type: [String], default: [] },
       },
     ],
 

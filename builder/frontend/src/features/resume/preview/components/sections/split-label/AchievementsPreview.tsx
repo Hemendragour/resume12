@@ -1,15 +1,15 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
 import { splitLabelTheme as theme } from "../../../themes/split-label.theme";
 
-export default function AwardsPreview() {
+export default function AchievementsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
 
-  const awards = resume.awards ?? [];
-  if (!awards.length) return null; // empty template stays empty
+  const achievements = resume.achievements ?? [];
+  if (!achievements.length) return null; // empty template stays empty
 
-  const awardsSection = resume.sections.find(
-    (section) => section.id === "awards",
+  const achievementsSection = resume.sections.find(
+    (section) => section.id === "achievements",
   );
 
   return (
@@ -29,9 +29,9 @@ export default function AwardsPreview() {
         }`}
         style={{ color: theme.colors.text }}
       >
-        {awardsSection?.displayTitle?.trim() ||
-          awardsSection?.title ||
-          "Awards"}
+        {achievementsSection?.displayTitle?.trim() ||
+          achievementsSection?.title ||
+          "Achievements"}
       </h2>
 
       <div className="col-span-3">
@@ -39,8 +39,8 @@ export default function AwardsPreview() {
           className="list-disc space-y-1 pl-5 text-[11px] leading-4"
           style={{ color: theme.colors.text }}
         >
-          {awards.map((award, i) => (
-            <li key={i}>{award}</li>
+          {achievements.map((item, i) => (
+            <li key={i}>{item}</li>
           ))}
         </ul>
       </div>

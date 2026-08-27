@@ -16,7 +16,7 @@ export const splitLabelTheme: ResumeTheme = {
     padding: "40px",
     fontFamily: "Inter",
     fontSize: "12px",
-    lineHeight: 1.5,
+    lineHeight: 1,
   },
 
   header: {
@@ -36,8 +36,18 @@ export const splitLabelTheme: ResumeTheme = {
     layout: "split",
   },
 
-  experience: { companyLeft: true, dateRight: true, roleItalic: false, bullets: true },
+  experience: {
+    companyLeft: true,
+    dateRight: true,
+    roleItalic: false,
+    bullets: true,
+  },
   education: { dateRight: true },
-  projects: { dateRight: true, linksBelowDate: true, technologiesInline: true, bullets: true },
+  projects: {
+    dateRight: true,
+    linksBelowDate: true,
+    technologiesInline: true,
+    bullets: true,
+  },
   skills: { layout: "inline" },
 };

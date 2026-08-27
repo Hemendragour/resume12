@@ -1,5 +1,3 @@
- 
-
 export const HarvardATSTheme = {
   page: {
     container:
@@ -9,7 +7,7 @@ export const HarvardATSTheme = {
   colors: {
     heading: "text-black",
     body: "text-black",
-   muted: "text-black",
+    muted: "text-black",
     light: "text-slate-500",
     link: "text-blue-700",
   },
@@ -39,10 +37,10 @@ export const HarvardATSTheme = {
   },
 
   lineHeight: {
-  heading: "leading-none",   // sabse compact
-  title: "leading-tight",    // headings ke liye
-  body: "leading-4",         // body text compact
-},
+    heading: "leading-none", // sabse compact
+    title: "leading-tight", // headings ke liye
+    body: "leading-4", // body text compact
+  },
 
   spacing: {
     page: "space-y-6",
@@ -58,10 +56,10 @@ export const HarvardATSTheme = {
     dark: "border-black",
   },
 
-divider: {
-  header: "border-b-2 border-black mt-3",
-  section: "border-b-2 border-black mt-1 w-full",
-},
+  divider: {
+    header: "border-b-2 border-black mt-3",
+    section: "border-b-2 border-black mt-1 w-full",
+  },
   layout: {
     between: "flex justify-between items-start",
     center: "flex justify-center items-center",
@@ -119,18 +117,17 @@ divider: {
     separator: "text-slate-400 mx-1",
   },
   // templates/harvard-ats/components/theme.harvard-ats.ts
-// add this block inside HarvardATSTheme, alongside your existing "colors" key
+  // add this block inside HarvardATSTheme, alongside your existing "colors" key
 
-
-iconColors: {
-  body: "#0f172a",   // slate-900 — dark, image2 jaisa
-  light: "#334155",  // slate-700
-  link: "#1d4ed8",
-},
-content: {
-  indent: "pl-8",       // paragraph/body text ka left indent, heading se offset
-  noIndent: "pl-0",
-},
+  iconColors: {
+    body: "#0f172a", // slate-900 — dark, image2 jaisa
+    light: "#334155", // slate-700
+    link: "#1d4ed8",
+  },
+  content: {
+    indent: "pl-8", // paragraph/body text ka left indent, heading se offset
+    noIndent: "pl-0",
+  },
 } as const;
 
 export type HarvardATSThemeType = typeof HarvardATSTheme;

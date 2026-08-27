@@ -1,9 +1,7 @@
 import { FolderKanban } from "lucide-react";
 
 import { useResumeStore } from "../../../../../../store/resume.store";
-
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
-
 import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 
 export default function ProjectsPreview() {
@@ -28,51 +26,67 @@ export default function ProjectsPreview() {
         }
         icon={<FolderKanban size={16} />}
       />
+
       <div className="mt-3 space-y-6">
         {projects.map((project, index) => (
           <div key={index}>
-            <h3
-              className={`font-semibold ${T.fontSize.itemTitle} ${T.colors.heading}`}
-            >
-              {project.title}
-            </h3>
+            {/* Title row: title + links on the left, date pinned to the far right */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h3
+                  className={`font-semibold ${T.fontSize.itemTitle} ${T.colors.heading}`}
+                >
+                  {project.title}
+                </h3>
 
-            <p className={`${T.fontSize.date} ${T.colors.muted}`}>
-              {project.startDate} -{" "}
-              {project.currentlyWorking ? "Present" : project.endDate}
-            </p>
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${T.fontSize.date} text-blue-600 hover:underline`}
+                  >
+                    Live
+                  </a>
+                ) : null}
 
-            {/* <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>
-              {project.description}
-            </p> */}
+                {project.github ? (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${T.fontSize.date} text-blue-600 hover:underline`}
+                  >
+                    GitHub
+                  </a>
+                ) : null}
+              </div>
 
-            {project.description?.length > 0 && (
+              <span
+                className={`shrink-0 whitespace-nowrap ${T.fontSize.date} ${T.colors.muted}`}
+              >
+                {project.startDate} -{" "}
+                {project.currentlyWorking ? "Present" : project.endDate}
+              </span>
+            </div>
+
+            {/* Technologies directly under the title */}
+            {project.technologies.length > 0 ? (
+              <p className={`mt-1 ${T.fontSize.body} ${T.colors.body}`}>
+                <strong>Tech:</strong> {project.technologies.join(", ")}
+              </p>
+            ) : null}
+
+            {/* Description bullets */}
+            {project.description?.length > 0 ? (
               <ul
                 className={`mt-2 list-disc pl-5 ${T.fontSize.body} ${T.colors.body}`}
               >
-                {project.description.map((item, index) => (
-                  <li key={index}>{item}</li>
+                {project.description.map((item, i) => (
+                  <li key={i}>{item}</li>
                 ))}
               </ul>
-            )}
-
-            {project.technologies.length > 0 && (
-              <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>
-                <strong>Tech:</strong> {project.technologies.join(", ")}
-              </p>
-            )}
-
-            {project.github && (
-              <p className={`${T.fontSize.body} text-blue-600`}>
-                GitHub : {project.github}
-              </p>
-            )}
-
-            {project.link && (
-              <p className={`${T.fontSize.body} text-blue-600`}>
-                Live : {project.link}
-              </p>
-            )}
+            ) : null}
           </div>
         ))}
       </div>

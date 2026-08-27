@@ -2,9 +2,7 @@ import { GraduationCap } from "lucide-react";
 
 import { useResumeStore } from "../../../../../../store/resume.store";
 
-// import SectionHeader from "../../shared/peach-modern/SectionHeader";
-
-import { PeachModernTheme as T } from "../../theme.peach-modern";
+import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
 
 export default function EducationPreview() {
@@ -14,21 +12,21 @@ export default function EducationPreview() {
 
   const education = resume.education ?? [];
   const educationSection = resume.sections.find(
-  (section) => section.id === "education"
-);
+    (section) => section.id === "education",
+  );
 
   if (education.length === 0) return null;
 
   return (
     <section className={T.spacing.section}>
-     <SectionHeader
-  title={
-    educationSection?.displayTitle?.trim() ||
-    educationSection?.title ||
-    "Education"
-  }
-  icon={<GraduationCap size={16} />}
-/>
+      <SectionHeader
+        title={
+          educationSection?.displayTitle?.trim() ||
+          educationSection?.title ||
+          "Education"
+        }
+        icon={<GraduationCap size={16} />}
+      />
 
       <div className="mt-3 space-y-5">
         {education.map((item, index) => (

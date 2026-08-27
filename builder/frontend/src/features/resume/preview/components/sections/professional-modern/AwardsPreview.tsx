@@ -1,8 +1,36 @@
+// import { Trophy } from "lucide-react";
+
+// import { useResumeStore } from "../../../../../../store/resume.store";
+
+// import SectionHeader from "../../shared/professional-modern/SectionHeader";
+
+// export default function AwardsPreview() {
+//   const resume = useResumeStore((state) => state.resume);
+
+//   if (!resume) return null;
+
+//   const awards = resume.awards ?? [];
+
+//   if (awards.length === 0) return null;
+
+//   return (
+//     <section>
+//       <SectionHeader title="Awards" icon={<Trophy size={16} />} />
+
+//       <ul className="mt-3 list-disc list-inside">
+//         {awards.map((award, index) => (
+//           <li key={index}>{award}</li>
+//         ))}
+//       </ul>
+//     </section>
+//   );
+// }
+
 import { Trophy } from "lucide-react";
 
 import { useResumeStore } from "../../../../../../store/resume.store";
-
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
+import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 
 export default function AwardsPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -13,11 +41,31 @@ export default function AwardsPreview() {
 
   if (awards.length === 0) return null;
 
-  return (
-    <section>
-      <SectionHeader title="Awards" icon={<Trophy size={16} />} />
+  const awardsSection = resume.sections.find(
+    (section) => section.id === "awards",
+  );
 
-      <ul className="mt-3 list-disc list-inside">
+  return (
+    <section className={T.spacing.section}>
+      <SectionHeader
+        title={
+          awardsSection?.displayTitle?.trim() ||
+          awardsSection?.title ||
+          "Awards"
+        }
+        icon={<Trophy size={16} />}
+      />
+
+      <ul
+        className={`
+          mt-3
+          list-disc
+          list-inside
+          space-y-1
+          ${T.fontSize.body}
+          ${T.colors.body}
+        `}
+      >
         {awards.map((award, index) => (
           <li key={index}>{award}</li>
         ))}

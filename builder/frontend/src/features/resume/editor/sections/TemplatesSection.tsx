@@ -29,6 +29,14 @@ const templates = [
     popular: false,
   },
   {
+    id: "professional-modern",
+    title: "Professional Modern",
+    badge: "95% ATS",
+    bestFor: "Business & Corporate roles",
+    description: "Peach header band with icon-based section headers.",
+    popular: false,
+  },
+  {
     id: "executive",
     title: "Executive",
     badge: "Corporate",
@@ -70,32 +78,32 @@ const templates = [
   },
 
   {
-  id: "classic-serif",
-  title: "Classic Serif",
-  badge: "98% ATS",
-  bestFor: "Operations & Business roles",
-  description: "Centered serif header, clean underlined sections.",
-  popular: false,
-},
+    id: "classic-serif",
+    title: "Classic Serif",
+    badge: "98% ATS",
+    bestFor: "Operations & Business roles",
+    description: "Centered serif header, clean underlined sections.",
+    popular: false,
+  },
 
-{
-  id: "corporate-classic",
-  title: "Corporate Classic",
-  badge: "97% ATS",
-  bestFor: "Marketing & Business roles",
-  description: "Centered bordered headers, clean grid layout.",
-  popular: false,
-},
-{
-  id: "executive-blue",
-  title: "Executive Blue",
-  badge: "96% ATS",
-  bestFor: "Full Stack & Backend Engineers",
-  description: "Bold blue accents, badge certifications, GitHub project links.",
-  popular: false,
-},
+  {
+    id: "corporate-classic",
+    title: "Corporate Classic",
+    badge: "97% ATS",
+    bestFor: "Marketing & Business roles",
+    description: "Centered bordered headers, clean grid layout.",
+    popular: false,
+  },
+  {
+    id: "executive-blue",
+    title: "Executive Blue",
+    badge: "96% ATS",
+    bestFor: "Full Stack & Backend Engineers",
+    description:
+      "Bold blue accents, badge certifications, GitHub project links.",
+    popular: false,
+  },
 ] as const;
- 
 
 export default function TemplatesSection() {
   const resume = useResumeStore((state) => state.resume);

@@ -1,6 +1,6 @@
 import { User } from "lucide-react";
 
-import { PeachModernTheme as T } from "../../theme.peach-modern";
+import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 import { useResumeStore } from "../../../../../../store/resume.store";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
 

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
-import { PeachModernTheme as T } from "../../theme.peach-modern";
-
+import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 interface SectionHeaderProps {
   title: string;
   icon: ReactNode;

@@ -3,7 +3,7 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 // import SectionHeader from "../../shared/peach-modern/SectionHeader";
 import { Briefcase } from "lucide-react";
 
-import { PeachModernTheme as T } from "../../theme.peach-modern";
+import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
 import { formatMonthYear } from "../../../../editor/utils/formatDate";
 

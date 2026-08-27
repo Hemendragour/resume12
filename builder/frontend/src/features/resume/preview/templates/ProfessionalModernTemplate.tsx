@@ -33,83 +33,127 @@ export default function ProfessionalModernTemplate() {
           HEADER
       ====================================================== */}
 
+      {/* =====================================================
+    HEADER
+====================================================== */}
+
       <div
         className={`
-          ${T.colors.header}
-          ${T.radius.header}
-          px-8
-          py-6
-          flex
-          justify-between
-          items-start
-        `}
+    ${T.colors.header}
+    ${T.radius.header}
+    px-8
+    py-6
+    flex
+    justify-between
+    items-start
+  `}
       >
         {/* LEFT */}
         <div className="min-w-0 flex-1">
           <h1
             className={`
-              ${T.fontSize.name}
-              font-extrabold
-              tracking-wide
-              ${T.colors.heading}
-            `}
+        ${T.fontSize.name}
+        font-extrabold
+        tracking-wide
+        ${T.colors.heading}
+      `}
           >
-            {personalInfo.fullName || "YOUR NAME"}
+            {personalInfo.fullName}
           </h1>
 
           <p
             className={`
-              mt-1
-              font-semibold
-              uppercase
-              tracking-wide
-              ${T.fontSize.title}
-              ${T.colors.body}
-            `}
+        mt-1
+        font-semibold
+        uppercase
+        tracking-wide
+        ${T.fontSize.title}
+        ${T.colors.body}
+      `}
           >
-            {personalInfo.title || "SOFTWARE ENGINEER"}
+            {personalInfo.title}
           </p>
+
+          {/* ADDRESS */}
+          {personalInfo.address && (
+            <div
+              className={`
+          mt-2
+          flex
+          items-center
+          gap-2
+          ${T.fontSize.contact}
+          ${T.colors.body}
+        `}
+            >
+              <span>{personalInfo.address}</span>
+            </div>
+          )}
         </div>
 
         {/* RIGHT — CONTACT */}
         <div
           className={`
-            shrink-0
-            space-y-2
-            text-right
-            ${T.fontSize.contact}
-            ${T.colors.body}
-          `}
+      shrink-0
+      space-y-2
+      text-right
+      ${T.fontSize.contact}
+      ${T.colors.body}
+    `}
         >
+          {/* PHONE */}
           {personalInfo.phone && (
             <div className="flex items-center justify-end gap-2">
               <Phone size={14} />
-
               <span>{personalInfo.phone}</span>
             </div>
           )}
 
+          {/* EMAIL */}
           {personalInfo.email && (
             <div className="flex items-center justify-end gap-2">
               <Mail size={14} />
-
               <span>{personalInfo.email}</span>
             </div>
           )}
 
+          {/* LINKEDIN */}
           {personalInfo.linkedIn && (
             <div className="flex items-center justify-end gap-2">
               <FaLinkedin size={14} />
 
-              <span>{personalInfo.linkedIn}</span>
+              <a
+                href={
+                  personalInfo.linkedIn.startsWith("http")
+                    ? personalInfo.linkedIn
+                    : `https://${personalInfo.linkedIn}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                LinkedIn
+              </a>
             </div>
           )}
 
+          {/* GITHUB */}
           {personalInfo.github && (
             <div className="flex items-center justify-end gap-2">
               <FaGithub size={14} />
 
-              <span>{personalInfo.github}</span>
+              <a
+                href={
+                  personalInfo.github.startsWith("http")
+                    ? personalInfo.github
+                    : `https://${personalInfo.github}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                GitHub
+              </a>
             </div>
           )}
         </div>
@@ -130,9 +174,7 @@ export default function ProfessionalModernTemplate() {
       >
         <DynamicSectionRenderer
           registry={ProfessionalModernSectionRegistry}
-          customSectionComponent={
-            ProfessionalModernCustomSection
-          }
+          customSectionComponent={ProfessionalModernCustomSection}
         />
       </div>
     </div>

@@ -6,6 +6,8 @@ export default function SkillsPreview() {
   if (!resume) return null;
 
   const categories = resume.skills.filter((cat) => cat.skills.length > 0);
+  if (categories.length === 0) return null;
+
   const skillsSection = resume.sections.find(
     (section) => section.id === "skills",
   );
@@ -20,23 +22,14 @@ export default function SkillsPreview() {
           "Technical Skills"}
       </h2>
 
-      {categories.length === 0 ? (
-        <p className={`mt-2 ${T.fontSize.body} ${T.colors.muted}`}>
-          No skills added.
-        </p>
-      ) : (
-        <div className="mt-2 space-y-1">
-          {categories.map((cat) => (
-            <p
-              key={cat.title}
-              className={`${T.fontSize.body} ${T.colors.body}`}
-            >
-              <span className="font-bold">{cat.title}:</span>{" "}
-              {cat.skills.join(", ")}
-            </p>
-          ))}
-        </div>
-      )}
+      <div className="mt-2 space-y-1">
+        {categories.map((cat) => (
+          <p key={cat.title} className={`${T.fontSize.body} ${T.colors.body}`}>
+            <span className="font-bold">{cat.title}:</span>{" "}
+            {cat.skills.join(", ")}
+          </p>
+        ))}
+      </div>
     </section>
   );
 }

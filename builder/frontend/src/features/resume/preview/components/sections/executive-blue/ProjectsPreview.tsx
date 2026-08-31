@@ -13,9 +13,12 @@ function formatMonthYear(value?: string) {
 export default function ProjectsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume) return null;
+  if (resume.projects.length === 0) return null;
+
   const projectSection = resume.sections.find(
     (section) => section.id === "projects",
   );
+
   return (
     <section className="mt-5">
       <h2
@@ -26,93 +29,87 @@ export default function ProjectsPreview() {
           "Projects"}
       </h2>
 
-      {resume.projects.length === 0 ? (
-        <p className={`mt-2 ${T.fontSize.body} ${T.colors.muted}`}>
-          No projects added.
-        </p>
-      ) : (
-        <div className="mt-3 space-y-3">
-          {resume.projects.map((proj, index) => {
-            const lines = (proj.description || "")
-              .map((line) => line.trim())
-              .filter(Boolean);
+      <div className="mt-3 space-y-3">
+        {resume.projects.map((proj, index) => {
+          const lines = (proj.description || "")
+            .map((line) => line.trim())
+            .filter(Boolean);
 
-            const [introLine, ...bulletLines] = lines;
+          const [introLine, ...bulletLines] = lines;
 
-            return (
-              <div key={index}>
-                <div className="flex items-baseline justify-between">
-                  <p
-                    className={`${T.fontSize.itemTitle} font-bold ${T.colors.heading}`}
-                  >
-                    {proj.title}
+          return (
+            <div key={index}>
+              <div className="flex items-baseline justify-between">
+                <p
+                  className={`${T.fontSize.itemTitle} font-bold ${T.colors.heading}`}
+                >
+                  {proj.title}
 
-                    {proj.github && (
-                      <>
-                        <span className={T.colors.muted}> | </span>
-                        <a
-                          href={proj.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`font-normal ${T.colors.accent} underline`}
-                        >
-                          GitHub
-                        </a>
-                      </>
-                    )}
+                  {proj.github && (
+                    <>
+                      <span className={T.colors.muted}> | </span>
+                      <a
+                        href={proj.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`font-normal ${T.colors.accent} underline`}
+                      >
+                        GitHub
+                      </a>
+                    </>
+                  )}
 
-                    {proj.link && (
-                      <>
-                        <span className={T.colors.muted}> | </span>
-                        <a
-                          href={proj.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`font-normal ${T.colors.accent} underline`}
-                        >
-                          Live Demo
-                        </a>
-                      </>
-                    )}
-                  </p>
-                  <span className={`${T.fontSize.date} ${T.colors.muted}`}>
-                    {formatMonthYear(proj.startDate)} –{" "}
-                    {proj.currentlyWorking
-                      ? "Present"
-                      : formatMonthYear(proj.endDate)}
-                  </span>
-                </div>
-
-                {proj.technologies?.length > 0 && (
-                  <p
-                    className={`italic ${T.fontSize.itemSubtitle} ${T.colors.muted}`}
-                  >
-                    {proj.technologies.join(", ")}
-                  </p>
-                )}
-
-                {introLine && (
-                  <p className={`italic ${T.fontSize.body} ${T.colors.body}`}>
-                    {introLine}
-                  </p>
-                )}
-
-                {bulletLines.length > 0 && (
-                  <ul
-                    className={`mt-1 space-y-0.5 pl-4 ${T.fontSize.body} leading-5 ${T.colors.body}`}
-                  >
-                    {bulletLines.map((line, i) => (
-                      <li key={i} className="list-disc">
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  {proj.link && (
+                    <>
+                      <span className={T.colors.muted}> | </span>
+                      <a
+                        href={proj.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`font-normal ${T.colors.accent} underline`}
+                      >
+                        Live Demo
+                      </a>
+                    </>
+                  )}
+                </p>
+                <span className={`${T.fontSize.date} ${T.colors.muted}`}>
+                  {formatMonthYear(proj.startDate)} –{" "}
+                  {proj.currentlyWorking
+                    ? "Present"
+                    : formatMonthYear(proj.endDate)}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {proj.technologies?.length > 0 && (
+                <p
+                  className={`italic ${T.fontSize.itemSubtitle} ${T.colors.muted}`}
+                >
+                  {proj.technologies.join(", ")}
+                </p>
+              )}
+
+              {introLine && (
+                <p className={`italic ${T.fontSize.body} ${T.colors.body}`}>
+                  {introLine}
+                </p>
+              )}
+
+              {bulletLines.length > 0 && (
+                <ul
+                  className={`mt-1 space-y-0.5 pl-4 ${T.fontSize.body} leading-5 ${T.colors.body}`}
+                >
+                  {bulletLines.map((line, i) => (
+                    <li key={i} className="list-disc">
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }

@@ -1,5 +1,3 @@
- 
-
 import { useResumeStore } from "../../../../../store/resume.store";
 import { useTheme } from "../../themes/ThemeProvider";
 

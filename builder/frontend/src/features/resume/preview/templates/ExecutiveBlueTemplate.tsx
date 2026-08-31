@@ -1,5 +1,3 @@
- 
-
 import { useResumeStore } from "../../../../store/resume.store";
 import DynamicSectionRenderer from "../components/DynamicSectionRenderer";
 import { ExecutiveBlueSectionRegistry } from "../components/SectionRegistry.executive-blue";
@@ -7,6 +5,10 @@ import ExecutiveBlueCustomSection from "../components/sections/executive-blue/Cu
 import { ExecutiveBlueTheme as T } from "../components/theme.executive-blue";
 import { MapPin, Mail, Phone } from "lucide-react";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
+
+function withProtocol(url: string) {
+  return url.startsWith("http") ? url : `https://${url}`;
+}
 
 export default function ExecutiveBlueTemplate() {
   const resume = useResumeStore((state) => state.resume);
@@ -23,7 +25,7 @@ export default function ExecutiveBlueTemplate() {
         <h1
           className={`${T.fontSize.name} font-bold tracking-wide ${T.colors.heading}`}
         >
-          {personalInfo.fullName || "Your Name"}
+          {personalInfo.fullName}
         </h1>
 
         <div
@@ -53,17 +55,27 @@ export default function ExecutiveBlueTemplate() {
           {personalInfo.github && (
             <>
               <span>|</span>
-              <span className="flex items-center gap-1">
-                <FaGithub size={11} /> {personalInfo.github}
-              </span>
+              <a
+                href={withProtocol(personalInfo.github)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 hover:underline`}
+              >
+                <FaGithub size={11} /> GitHub
+              </a>
             </>
           )}
           {personalInfo.linkedIn && (
             <>
               <span>|</span>
-              <span className="flex items-center gap-1">
-                <FaLinkedin size={11} /> {personalInfo.linkedIn}
-              </span>
+              <a
+                href={withProtocol(personalInfo.linkedIn)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 hover:underline`}
+              >
+                <FaLinkedin size={11} /> LinkedIn
+              </a>
             </>
           )}
         </div>

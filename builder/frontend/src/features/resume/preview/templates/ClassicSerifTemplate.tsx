@@ -19,7 +19,7 @@ export default function ClassicSerifTemplate() {
       {/* Header */}
       <div className="text-center">
         <h1 className="font-serif text-[28px] font-bold tracking-wide text-slate-900">
-          {personalInfo.fullName || "Your Name"}
+          {personalInfo.fullName}
         </h1>
 
         {personalInfo.title && (
@@ -53,9 +53,21 @@ export default function ClassicSerifTemplate() {
           {personalInfo.linkedIn && (
             <>
               <span className="text-slate-300">|</span>
-              <span className="flex items-center gap-1">
-                <FaLinkedin size={12} /> {personalInfo.linkedIn}
-              </span>
+
+              <a
+                href={
+                  personalInfo.linkedIn.startsWith("http://") ||
+                  personalInfo.linkedIn.startsWith("https://")
+                    ? personalInfo.linkedIn
+                    : `https://${personalInfo.linkedIn}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:underline"
+              >
+                <FaLinkedin size={12} />
+                LinkedIn
+              </a>
             </>
           )}
         </div>

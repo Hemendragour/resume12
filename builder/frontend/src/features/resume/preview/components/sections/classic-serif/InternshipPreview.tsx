@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function InternshipPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -19,21 +20,28 @@ export default function InternshipPreview() {
                 {intern.role && <span className="italic">, {intern.role}</span>}
               </p>
               <span className="text-[11.5px] text-slate-600">
-                {intern.startDate} – {intern.currentlyInterning ? "Present" : intern.endDate}
+                {formatMonthYear(intern.startDate)} –{" "}
+                {intern.currentlyInterning
+                  ? "Present"
+                  : formatMonthYear(intern.endDate)}
               </span>
             </div>
 
             {intern.responsibilities.length > 0 && (
               <ul className="mt-1 space-y-0.5 pl-4 text-[11.5px] leading-5 text-slate-700">
                 {intern.responsibilities.map((item, i) => (
-                  <li key={i} className="list-disc">{item}</li>
+                  <li key={i} className="list-disc">
+                    {item}
+                  </li>
                 ))}
               </ul>
             )}
             {intern.achievements?.length ? (
               <ul className="mt-1 space-y-0.5 pl-4 text-[11.5px] leading-5 text-slate-700">
                 {intern.achievements.map((item, i) => (
-                  <li key={i} className="list-disc">{item}</li>
+                  <li key={i} className="list-disc">
+                    {item}
+                  </li>
                 ))}
               </ul>
             ) : null}

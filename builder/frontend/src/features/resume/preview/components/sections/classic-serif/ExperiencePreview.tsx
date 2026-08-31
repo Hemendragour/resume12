@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -33,8 +34,10 @@ export default function ExperiencePreview() {
               </div>
 
               <div className="whitespace-nowrap text-right text-[11px] text-slate-700">
-                {exp.startDate} –{" "}
-                {exp.currentlyWorking ? "Present" : exp.endDate}
+                {formatMonthYear(exp.startDate)} –{" "}
+                {exp.currentlyWorking
+                  ? "Present"
+                  : formatMonthYear(exp.endDate)}
                 {exp.location && <> | {exp.location}</>}
               </div>
             </div>
@@ -44,7 +47,7 @@ export default function ExperiencePreview() {
               <ul className="mt-1.5 space-y-1 text-[11.5px] leading-[1.55] text-slate-800">
                 {exp.responsibilities.map((item, i) => (
                   <li key={i} className="flex items-start">
-                    <span className="mr-2 mt-[2px]">-</span>
+                    <span className="mr-2 mt-0.5">-</span>
                     <span className="flex-1 text-justify">{item}</span>
                   </li>
                 ))}
@@ -56,7 +59,7 @@ export default function ExperiencePreview() {
               <ul className="mt-1.5 space-y-1 text-[11.5px] leading-[1.55] text-slate-800">
                 {exp.achievements.map((item, i) => (
                   <li key={i} className="flex items-start">
-                    <span className="mr-2 mt-[2px]">-</span>
+                    <span className="mr-2 mt-0.5">-</span>
                     <span className="flex-1 text-justify">{item}</span>
                   </li>
                 ))}

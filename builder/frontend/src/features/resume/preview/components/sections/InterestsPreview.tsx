@@ -6,7 +6,7 @@ export default function InterestsPreview() {
   const theme = useTheme();
 
   if (!resume) return null;
-
+  if (!resume.interests.length) return null;
   return (
     <section style={{ marginTop: theme.section.spacing }}>
       <h2
@@ -19,7 +19,7 @@ export default function InterestsPreview() {
       </h2>
 
       {resume.interests.length > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {resume.interests.map((interest) => (
             <span
               key={interest}

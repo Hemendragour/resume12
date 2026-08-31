@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
@@ -28,10 +29,7 @@ export default function InternshipPreview() {
 
       <div className={`${T.spacing.itemHeader} space-y-4`}>
         {internships.map((item, index) => (
-          <div
-            key={index}
-            className={index !== 0 ? T.spacing.item : ""}
-          >
+          <div key={index} className={index !== 0 ? T.spacing.item : ""}>
             {/* Header */}
             <div className="flex justify-between items-start">
               {/* Left */}
@@ -67,10 +65,10 @@ export default function InternshipPreview() {
                     ${T.colors.muted}
                   `}
                 >
-                  {item.startDate} -{" "}
+                  {formatMonthYear(item.startDate)} -{" "}
                   {item.currentlyInterning
                     ? "Present"
-                    : item.endDate || "Present"}
+                    : formatMonthYear(item.endDate) || "Present"}
                 </p>
               </div>
             </div>

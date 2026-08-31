@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { HarvardATSTheme as T } from "../theme.harvard-ats";
@@ -74,10 +75,10 @@ export default function ProjectsPreview() {
                     ${T.colors.muted}
                   `}
                 >
-                  {project.startDate} -{" "}
+                  {formatMonthYear(project.startDate)} -{" "}
                   {project.currentlyWorking
                     ? "Present"
-                    : project.endDate || "Present"}
+                    : formatMonthYear(project.endDate) || "Present"}
                 </p>
                 {/* Links */}
                 {(project.github || project.link) && (

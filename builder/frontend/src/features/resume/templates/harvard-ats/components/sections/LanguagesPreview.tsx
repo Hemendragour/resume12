@@ -13,7 +13,7 @@ export default function LanguagesPreview() {
   if (!languages.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "languages"
+    (section) => section.type === "languages",
   );
 
   return (
@@ -32,15 +32,13 @@ export default function LanguagesPreview() {
             key={index}
             className={`
               flex
-              justify-between
+              gap-4
               items-center
               ${T.fontSize.body}
               ${T.colors.body}
             `}
           >
-            <span className={T.fontWeight.bold}>
-              {language.name}
-            </span>
+            <span className={T.fontWeight.bold}>{language.name}</span>
 
             <span>{language.level}</span>
           </div>

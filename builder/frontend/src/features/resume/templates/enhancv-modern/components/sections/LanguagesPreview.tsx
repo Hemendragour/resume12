@@ -1,5 +1,3 @@
-import { Languages } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";
@@ -14,7 +12,7 @@ export default function LanguagesPreview() {
   const languages = resume.languages ?? [];
 
   const languagesSection = resume.sections.find(
-    (section) => section.id === "languages"
+    (section) => section.id === "languages",
   );
 
   if (languages.length === 0) return null;
@@ -32,10 +30,7 @@ export default function LanguagesPreview() {
 
       <div className="mt-4 space-y-3">
         {languages.map((language, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between border-l-2 border-slate-300 pl-4"
-          >
+          <div key={index} className="flex items-center gap-4">
             <span
               className={`
                 ${T.fontSize.body}

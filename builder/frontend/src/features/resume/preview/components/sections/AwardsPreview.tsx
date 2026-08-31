@@ -6,7 +6,7 @@ export default function AwardsPreview() {
   const theme = useTheme();
 
   if (!resume) return null;
-
+  if (!resume.awards.length) return null;
   return (
     <section style={{ marginTop: theme.section.spacing }}>
       <h2
@@ -19,7 +19,10 @@ export default function AwardsPreview() {
       </h2>
 
       {resume.awards.length > 0 ? (
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px]" style={{ color: theme.colors.text }}>
+        <ul
+          className="mt-2 list-disc space-y-1 pl-5 text-[11px]"
+          style={{ color: theme.colors.text }}
+        >
           {resume.awards.map((award) => (
             <li key={award}>{award}</li>
           ))}

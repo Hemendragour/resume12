@@ -1,6 +1,5 @@
-import { FolderKanban } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 
@@ -32,12 +31,7 @@ export default function ProjectsPreview() {
 
       <div className={`${T.spacing.itemHeader} space-y-4`}>
         {projects.map((project, index) => (
-          <div
-            key={index}
-            className={`border-l-2 border-slate-300 pl-4 ${
-              index !== 0 ? T.spacing.item : ""
-            }`}
-          >
+          <div key={index} className={` ${index !== 0 ? T.spacing.item : ""}`}>
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <h3
@@ -58,25 +52,13 @@ export default function ProjectsPreview() {
                     ${T.colors.muted}
                   `}
                 >
-                  {project.startDate} -{" "}
-                  {project.currentlyWorking ? "Present" : project.endDate}
+                  {formatMonthYear(project.startDate)} -{" "}
+                  {project.currentlyWorking
+                    ? "Present"
+                    : formatMonthYear(project.endDate)}
                 </p>
               </div>
             </div>
-
-            {/* {project.description && (
-              <p
-                className={`
-                  ${T.spacing.itemHeader}
-                  whitespace-pre-line
-                  ${T.lineHeight.body}
-                  ${T.fontSize.body}
-                  ${T.colors.body}
-                `}
-              >
-                {project.description}
-              </p>
-            )} */}
 
             {project.description?.length > 0 && (
               <ul

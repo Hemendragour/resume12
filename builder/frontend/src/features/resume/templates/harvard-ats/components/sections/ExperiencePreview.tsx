@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { HarvardATSTheme as T } from "../theme.harvard-ats";
@@ -13,7 +14,7 @@ export default function ExperiencePreview() {
   if (!experience.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "experience"
+    (section) => section.type === "experience",
   );
 
   return (
@@ -60,10 +61,10 @@ export default function ExperiencePreview() {
                     ${T.colors.muted}
                   `}
                 >
-                  {item.startDate} -{" "}
+                  {formatMonthYear(item.startDate)} -{" "}
                   {item.currentlyWorking
                     ? "Present"
-                    : item.endDate || "Present"}
+                    : formatMonthYear(item.endDate) || "Present"}
                 </p>
 
                 {item.location && (
@@ -98,10 +99,10 @@ export default function ExperiencePreview() {
             )}
 
             {/* Achievements */}
-           {/* Achievements */}
-{item.achievements?.length ? (
-  <ul
-    className={`
+            {/* Achievements */}
+            {item.achievements?.length ? (
+              <ul
+                className={`
       ${T.list.bullet}
       ${T.spacing.itemHeader}
       ${T.spacing.bullet}
@@ -109,12 +110,12 @@ export default function ExperiencePreview() {
       ${T.lineHeight.body}
       ${T.colors.body}
     `}
-  >
-    {item.achievements.map((point, i) => (
-      <li key={i}>{point}</li>
-    ))}
-  </ul>
-) : null}
+              >
+                {item.achievements.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         ))}
       </div>

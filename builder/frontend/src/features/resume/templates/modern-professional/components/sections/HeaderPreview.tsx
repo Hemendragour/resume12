@@ -155,21 +155,21 @@ export default function HeaderPreview() {
         {/* LEFT */}
         <div className="flex-1">
           <h1 className="text-[32px] font-extrabold uppercase tracking-wide leading-tight">
-            {personalInfo.fullName || "YOUR NAME"}
+            {personalInfo.fullName}
           </h1>
 
           <h2 className="mt-1 text-[15px] font-bold tracking-wide text-[#63A5FF] uppercase">
-            {personalInfo.title || "Professional Title"}
+            {personalInfo.title}
           </h2>
 
-          {summary && (
+          {/* {summary && (
             <p className="mt-3 max-w-[520px] text-[12.5px] leading-6 text-slate-300">
               {summary}
             </p>
-          )}
+          )} */}
 
           {/* Contact */}
-        <div className="mt-5 flex flex-nowrap items-center gap-x-4 gap-y-2 text-[12px] whitespace-nowrap">
+          <div className="mt-5 flex flex-nowrap items-center gap-x-4 gap-y-2 text-[12px] whitespace-nowrap">
             {personalInfo.email && (
               <div className="flex items-center gap-2">
                 <FaEnvelope className="text-[13px] text-slate-200" />

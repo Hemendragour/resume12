@@ -1,5 +1,3 @@
-import { GraduationCap } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";

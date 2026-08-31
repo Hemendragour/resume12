@@ -1,8 +1,5 @@
- 
-
-import { Briefcase } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
@@ -70,8 +67,10 @@ export default function ExperiencePreview() {
                 )}
 
                 <p className={`${T.fontSize.date} ${T.colors.muted}`}>
-                  {exp.startDate} -{" "}
-                  {exp.currentlyWorking ? "Present" : exp.endDate}
+                  {formatMonthYear(exp.startDate)} -{" "}
+                  {exp.currentlyWorking
+                    ? "Present"
+                    : formatMonthYear(exp.endDate)}
                 </p>
               </div>
             </div>

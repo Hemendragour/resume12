@@ -6,15 +6,15 @@ export default function SkillsPreview() {
   const theme = useTheme();
 
   if (!resume) return null;
-
+  if (!resume.skills.length) return null;
   const isSplit = theme.section.layout === "split";
 
   const title = (
     <h2
-      className={`text-[12px] font-semibold tracking-wide ${
+      className={`pb-1 text-[13px] font-bold tracking-wide ${
         theme.section.uppercase ? "uppercase" : ""
-      }`}
-      style={{ color: theme.colors.text }}
+      } ${theme.section.divider ? "border-b" : ""}`}
+      style={{ color: theme.colors.primary, borderColor: theme.colors.muted }}
     >
       Relevant Skills
     </h2>
@@ -61,27 +61,15 @@ export default function SkillsPreview() {
     );
 
   return (
-    <section
-      className={isSplit ? "grid grid-cols-4 gap-6" : ""}
-      style={{
-        marginTop: theme.section.spacing,
-        paddingBottom: theme.section.divider ? "16px" : "0",
-        borderBottom: theme.section.divider ? `1px solid #e5e7eb` : "none",
-      }}
-    >
+    <section style={{ marginTop: theme.section.spacing }}>
       {isSplit ? (
-        <>
+        <div className="grid grid-cols-4 gap-6">
           <div className="col-span-1">{title}</div>
           <div className="col-span-3">{content}</div>
-        </>
+        </div>
       ) : (
         <>
-          <div
-            className={`pb-1 ${theme.section.divider ? "border-b" : ""}`}
-            style={{ borderColor: theme.colors.muted }}
-          >
-            {title}
-          </div>
+          {title}
           <div className="mt-3">{content}</div>
         </>
       )}

@@ -1,37 +1,34 @@
-import { Trophy } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";
 
 import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
 
-export default function AwardsPreview() {
+export default function AchievementsPreview() {
   const resume = useResumeStore((state) => state.resume);
 
   if (!resume) return null;
 
-  const awards = resume.awards ?? [];
+  const achievements = resume.achievements ?? [];
 
-  const awardsSection = resume.sections.find(
-    (section) => section.id === "awards",
+  const achievementsSection = resume.sections.find(
+    (section) => section.id === "achievements",
   );
 
-  if (awards.length === 0) return null;
+  if (achievements.length === 0) return null;
 
   return (
     <section className={T.spacing.section}>
       <SectionHeader
         title={
-          awardsSection?.displayTitle?.trim() ||
-          awardsSection?.title ||
-          "Awards"
+          achievementsSection?.displayTitle?.trim() ||
+          achievementsSection?.title ||
+          "Achievements"
         }
-        // icon={<Trophy size={16} />}
       />
 
       <div className="mt-4 space-y-3">
-        {awards.map((award, index) => (
+        {achievements.map((item, index) => (
           <div key={index} className="">
             <p
               className={`
@@ -39,7 +36,7 @@ export default function AwardsPreview() {
                 ${T.colors.body}
               `}
             >
-              {award}
+              {item}
             </p>
           </div>
         ))}

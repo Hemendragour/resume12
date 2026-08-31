@@ -3,6 +3,7 @@ import { FaUserGraduate } from "react-icons/fa6";
 
 import { ModernProfessionalTheme as T } from "../theme.modern-professional";
 import SectionHeader from "../shared/SectionHeader";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function InternshipPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -36,10 +37,10 @@ export default function InternshipPreview() {
 
               <div className="text-right shrink-0">
                 <p className="text-[11.5px] font-semibold text-slate-700">
-                  {internship.startDate} –{" "}
+                  {formatMonthYear(internship.startDate)} –{" "}
                   {internship.currentlyInterning
                     ? "Present"
-                    : internship.endDate}
+                    : formatMonthYear(internship.endDate)}
                 </p>
               </div>
             </div>

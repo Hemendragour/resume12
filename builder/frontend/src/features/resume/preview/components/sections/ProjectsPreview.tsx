@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../store/resume.store";
+import { formatMonthYear } from "../../../editor/utils/formatDate";
 import { useTheme } from "../../themes/ThemeProvider";
 
 export default function ProjectsPreview() {
@@ -41,8 +42,10 @@ export default function ProjectsPreview() {
                       className="text-[11px]"
                       style={{ color: theme.colors.muted }}
                     >
-                      {project.startDate} –{" "}
-                      {project.currentlyWorking ? "Present" : project.endDate}
+                      {formatMonthYear(project.startDate)} –{" "}
+                      {project.currentlyWorking
+                        ? "Present"
+                        : formatMonthYear(project.endDate)}
                     </span>
                   )}
 

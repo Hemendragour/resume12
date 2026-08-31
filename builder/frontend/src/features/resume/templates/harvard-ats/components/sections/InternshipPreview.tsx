@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { HarvardATSTheme as T } from "../theme.harvard-ats";
@@ -13,7 +14,7 @@ export default function InternshipPreview() {
   if (!internships.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "internships"
+    (section) => section.type === "internships",
   );
 
   return (
@@ -60,10 +61,10 @@ export default function InternshipPreview() {
                     ${T.colors.muted}
                   `}
                 >
-                  {item.startDate} -{" "}
+                  {formatMonthYear(item.startDate)} -{" "}
                   {item.currentlyInterning
                     ? "Present"
-                    : item.endDate || "Present"}
+                    : formatMonthYear(item.endDate) || "Present"}
                 </p>
               </div>
             </div>

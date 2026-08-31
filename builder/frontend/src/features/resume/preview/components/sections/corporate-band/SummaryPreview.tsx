@@ -2,7 +2,8 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 
 export default function SummaryPreview() {
   const resume = useResumeStore((state) => state.resume);
-  if (!resume) return null;
+  if (!resume || !resume.summary?.trim()) return null;
+
   const summarySection = resume.sections.find(
     (section) => section.id === "summary",
   );
@@ -14,9 +15,7 @@ export default function SummaryPreview() {
           "Professional Summary"}
       </h2>
       <p className="mt-3 text-[11px] leading-4 text-slate-700 text-justify">
-        {resume.summary?.trim()
-          ? resume.summary
-          : "Write a concise professional summary highlighting your experience, technical expertise, and career goals."}
+        {resume.summary}
       </p>
     </section>
   );

@@ -2,7 +2,8 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 
 export default function CertificationsPreview() {
   const resume = useResumeStore((state) => state.resume);
-  if (!resume) return null;
+  if (!resume || resume.certifications.length === 0) return null;
+
   const certificationsSection = resume.sections.find(
     (section) => section.id === "certifications",
   );
@@ -15,17 +16,11 @@ export default function CertificationsPreview() {
           "Certifications"}
       </h2>
 
-      {resume.certifications.length > 0 ? (
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] text-slate-700">
-          {resume.certifications.map((c) => (
-            <li key={c}>{c}</li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-3 text-[11px] text-slate-500">
-          No certifications added.
-        </p>
-      )}
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] text-slate-700">
+        {resume.certifications.map((c) => (
+          <li key={c}>{c}</li>
+        ))}
+      </ul>
     </section>
   );
 }

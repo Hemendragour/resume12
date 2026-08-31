@@ -13,25 +13,25 @@ export default function CorporateBandTemplate() {
 
   return (
     <div className="min-h-[1120px] bg-white text-[13px] text-black">
-      <div className="bg-black px-10 py-6 text-center text-white">
+      <div className="px-10 py-6 text-center ">
         <h1 className="text-2xl font-bold uppercase tracking-wide">
-          {personalInfo.fullName || "YOUR NAME"}
+          {personalInfo.fullName}
         </h1>
 
         {personalInfo.title && (
-          <p className="mt-1 text-[12px] text-slate-200">{personalInfo.title}</p>
+          <p className="mt-1 text-[12px] ">{personalInfo.title}</p>
         )}
 
-        <div className="mt-2 text-[11px] text-slate-100">
+        <div className="mt-2 text-[11px] ">
           <ContactLinks />
         </div>
       </div>
 
       <div className="p-10">
         <DynamicSectionRenderer
-  registry={CorporateBandSectionRegistry}
-  customSectionComponent={CorporateBandCustomSection}
-/>
+          registry={CorporateBandSectionRegistry}
+          customSectionComponent={CorporateBandCustomSection}
+        />
       </div>
     </div>
   );

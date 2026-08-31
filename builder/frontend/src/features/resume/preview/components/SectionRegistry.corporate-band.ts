@@ -8,6 +8,8 @@ import CertificationsPreview from "./sections/corporate-band/CertificationsPrevi
 import AwardsPreview from "./sections/corporate-band/AwardsPreview";
 import InterestsPreview from "./sections/corporate-band/InterestsPreview";
 import InternshipPreview from "./sections/corporate-band/InternshipPreview";
+import AchievementsPreview from "./sections/corporate-band/AchievementsPreview";
+import StrengthsPreview from "./sections/corporate-band/StrengthsPreview";
 
 export const CorporateBandSectionRegistry = {
   summary: SummaryPreview,
@@ -19,5 +21,7 @@ export const CorporateBandSectionRegistry = {
   certifications: CertificationsPreview,
   awards: AwardsPreview,
   interests: InterestsPreview,
-    internships: InternshipPreview,
+  internships: InternshipPreview,
+  achievements: AchievementsPreview,
+  strengths: StrengthsPreview,
 };

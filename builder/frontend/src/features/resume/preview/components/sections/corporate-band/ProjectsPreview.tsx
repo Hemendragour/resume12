@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function ProjectsPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -29,8 +30,10 @@ export default function ProjectsPreview() {
                 </h3>
                 <div className="flex flex-col items-end shrink-0">
                   <span className="text-[11px] text-slate-600">
-                    {project.startDate} –{" "}
-                    {project.currentlyWorking ? "Present" : project.endDate}
+                    {formatMonthYear(project.startDate)} –{" "}
+                    {project.currentlyWorking
+                      ? "Present"
+                      : formatMonthYear(project.endDate)}
                   </span>
                   {(project.link || project.github) && (
                     <div className="mt-1 flex gap-3 text-[11px]">

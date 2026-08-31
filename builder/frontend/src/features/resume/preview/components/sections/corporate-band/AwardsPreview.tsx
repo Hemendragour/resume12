@@ -2,7 +2,7 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 
 export default function AwardsPreview() {
   const resume = useResumeStore((state) => state.resume);
-  if (!resume) return null;
+  if (!resume || resume.awards.length === 0) return null;
 
   return (
     <section className="mt-5">
@@ -10,15 +10,11 @@ export default function AwardsPreview() {
         Awards
       </h2>
 
-      {resume.awards.length > 0 ? (
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] text-slate-700">
-          {resume.awards.map((a) => (
-            <li key={a}>{a}</li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-3 text-[11px] text-slate-500">No awards added.</p>
-      )}
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-[11px] text-slate-700">
+        {resume.awards.map((a) => (
+          <li key={a}>{a}</li>
+        ))}
+      </ul>
     </section>
   );
 }

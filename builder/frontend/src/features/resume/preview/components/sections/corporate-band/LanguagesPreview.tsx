@@ -2,7 +2,7 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 
 export default function LanguagesPreview() {
   const resume = useResumeStore((state) => state.resume);
-  if (!resume) return null;
+  if (!resume || resume.languages.length === 0) return null;
 
   return (
     <section className="mt-5">
@@ -10,20 +10,16 @@ export default function LanguagesPreview() {
         Languages
       </h2>
 
-      {resume.languages.length > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {resume.languages.map((l) => (
-            <span
-              key={l.name}
-              className="rounded border border-slate-400 px-2 py-0.5 text-[11px] text-slate-700"
-            >
-              {l.name}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-3 text-[11px] text-slate-500">No languages added.</p>
-      )}
+      <div className="mt-2 flex flex-wrap gap-2">
+        {resume.languages.map((l) => (
+          <span
+            key={l.name}
+            className="rounded border border-slate-400 px-2 py-0.5 text-[11px] text-slate-700"
+          >
+            {l.name}
+          </span>
+        ))}
+      </div>
     </section>
   );
 }

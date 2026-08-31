@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -50,8 +51,10 @@ export default function ExperiencePreview() {
 
             <div className="whitespace-nowrap text-right text-[11px] text-slate-600">
               <p>
-                {exp.startDate} –{" "}
-                {exp.currentlyWorking ? "Present" : exp.endDate}
+                {formatMonthYear(exp.startDate)} –{" "}
+                {exp.currentlyWorking
+                  ? "Present"
+                  : formatMonthYear(exp.endDate)}
               </p>
               {exp.location && <p>{exp.location}</p>}
             </div>

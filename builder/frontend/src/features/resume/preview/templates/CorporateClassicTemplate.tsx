@@ -15,7 +15,7 @@ export default function CorporateClassicTemplate() {
     <div className="min-h-[1120px] bg-white px-12 py-10 text-[13px] text-slate-900">
       <div className="text-center">
         <h1 className="font-serif text-[26px] font-bold text-slate-900">
-          {personalInfo.fullName || "Your Name"}
+          {personalInfo.fullName}
         </h1>
 
         {personalInfo.title && (
@@ -41,9 +41,19 @@ export default function CorporateClassicTemplate() {
             </span>
           )}
           {personalInfo.linkedIn && (
-            <span className="flex items-center gap-1">
-              <FaLinkedin size={12} /> {personalInfo.linkedIn}
-            </span>
+            <a
+              href={
+                personalInfo.linkedIn.startsWith("http")
+                  ? personalInfo.linkedIn
+                  : `https://${personalInfo.linkedIn}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 hover:underline"
+            >
+              <FaLinkedin size={12} />
+              LinkedIn
+            </a>
           )}
         </div>
       </div>

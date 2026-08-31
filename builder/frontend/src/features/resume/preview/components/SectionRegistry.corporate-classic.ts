@@ -3,12 +3,13 @@ import ExperiencePreview from "./sections/corporate-classic/ExperiencePreview";
 import InternshipPreview from "./sections/corporate-classic/InternshipPreview";
 import EducationPreview from "./sections/corporate-classic/EducationPreview";
 import SkillsPreview from "./sections/corporate-classic/SkillsPreview";
-// import ProjectsPreview from "./sections/corporate-classic/ProjectsPreview";
 import LanguagesPreview from "./sections/corporate-classic/LanguagesPreview";
 import CertificationsPreview from "./sections/corporate-classic/CertificationsPreview";
-// import AwardsPreview from "./sections/corporate-classic/AwardsPreview";
-// import InterestsPreview from "./sections/corporate-classic/InterestsPreview";
-// import SummaryPreview from "../../editor/sections/corporate-classic/SummaryPreview";
+import AwardsPreview from "./sections/corporate-classic/AwardsPreview";
+import InterestsPreview from "./sections/corporate-classic/InterestsPreview";
+import AchievementsPreview from "./sections/corporate-classic/AchievementsPreview";
+import StrengthsPreview from "./sections/corporate-classic/StrengthsPreview";
+import ProjectsPreview from "./sections/corporate-classic/ProjectsPreview";
 
 export const CorporateClassicSectionRegistry = {
   summary: SummaryPreview,
@@ -16,9 +17,11 @@ export const CorporateClassicSectionRegistry = {
   internships: InternshipPreview,
   education: EducationPreview,
   skills: SkillsPreview,
-//   projects: ProjectsPreview,
+  projects: ProjectsPreview,
   languages: LanguagesPreview,
   certifications: CertificationsPreview,
-//   awards: AwardsPreview,
-//   interests: InterestsPreview,
+  awards: AwardsPreview,
+  interests: InterestsPreview,
+  achievements: AchievementsPreview,
+  strengths: StrengthsPreview,
 };

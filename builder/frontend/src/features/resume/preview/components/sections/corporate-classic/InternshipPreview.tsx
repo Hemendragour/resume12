@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function InternshipPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -45,7 +46,12 @@ export default function InternshipPreview() {
             </div>
 
             <div className="whitespace-nowrap text-right text-[11px] text-slate-600">
-              <p>{intern.startDate} – {intern.currentlyInterning ? "Present" : intern.endDate}</p>
+              <p>
+                {formatMonthYear(intern.startDate)} –{" "}
+                {intern.currentlyInterning
+                  ? "Present"
+                  : formatMonthYear(intern.endDate)}
+              </p>
             </div>
           </div>
         ))}

@@ -26,7 +26,7 @@ function DotIndicator({ level }: { level: string }) {
 
 export default function LanguagesPreview() {
   const resume = useResumeStore((state) => state.resume);
-  if (!resume) return null;
+  if (!resume || resume.languages.length === 0) return null;
 
   return (
     <section className="mt-6">
@@ -34,21 +34,17 @@ export default function LanguagesPreview() {
         Languages
       </h2>
 
-      {resume.languages.length === 0 ? (
-        <p className="mt-3 text-[11px] text-slate-400">No languages added.</p>
-      ) : (
-        <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-2">
-          {resume.languages.map((lang) => (
-            <div
-              key={lang.name}
-              className="flex items-center justify-between text-[11.5px] text-slate-700"
-            >
-              <span>{lang.name}</span>
-              <DotIndicator level={lang.level} />
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-2">
+        {resume.languages.map((lang) => (
+          <div
+            key={lang.name}
+            className="flex items-center justify-between text-[11.5px] text-slate-700"
+          >
+            <span>{lang.name}</span>
+            <DotIndicator level={lang.level} />
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

@@ -27,7 +27,7 @@ export default function InternshipPreview() {
         }
       />
 
-      <div className="space-y-5">
+      <div className={`${T.spacing.itemHeader} space-y-5`}>
         {internships.map((item, index) => (
           <div key={index}>
             {/* Header */}

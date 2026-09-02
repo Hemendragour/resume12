@@ -12,9 +12,7 @@ export default function AwardsPreview() {
 
   if (!awards.length) return null;
 
-  const section = resume.sections.find(
-    (section) => section.type === "awards"
-  );
+  const section = resume.sections.find((section) => section.type === "awards");
 
   return (
     <section className={T.spacing.section}>
@@ -28,12 +26,13 @@ export default function AwardsPreview() {
 
       <ul
         className={`
-          ${T.list.bullet}
-          ${T.spacing.bullet}
-          ${T.fontSize.body}
-          ${T.lineHeight.body}
-          ${T.colors.body}
-        `}
+    ${T.list.bullet}
+    ${T.spacing.itemHeader}
+    ${T.spacing.bullet}
+    ${T.fontSize.body}
+    ${T.lineHeight.body}
+    ${T.colors.body}
+  `}
       >
         {awards.map((award, index) => (
           <li key={index}>{award}</li>

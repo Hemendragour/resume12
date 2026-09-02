@@ -27,7 +27,7 @@ export default function ProjectsPreview() {
         }
       />
 
-      <div className={T.project.container}>
+      <div className={`${T.spacing.itemHeader} ${T.project.container}`}>
         {projects.map((project, index) => (
           <div key={index}>
             {/* Header */}
@@ -137,11 +137,12 @@ export default function ProjectsPreview() {
             {project.description && (
               <ul
                 className={`
+      ${T.list.bullet}
       ${T.spacing.itemHeader}
+      ${T.spacing.bullet}
       ${T.fontSize.body}
       ${T.lineHeight.body}
       ${T.colors.body}
-      list-disc pl-5
     `}
               >
                 {project.description

@@ -16,7 +16,7 @@ export default function ExperiencePreview() {
           "Experience"}
       </h2>
 
-      <div className="mt-0.5 space-y-2">
+      <div className="mt-2 space-y-2">
         {resume.experience.map((exp, index) => (
           <div key={index}>
             <div className="flex items-start justify-between">

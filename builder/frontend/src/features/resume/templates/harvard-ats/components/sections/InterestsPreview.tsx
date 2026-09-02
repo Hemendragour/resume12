@@ -13,7 +13,7 @@ export default function InterestsPreview() {
   if (!interests.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "interests"
+    (section) => section.type === "interests",
   );
 
   return (
@@ -30,6 +30,7 @@ export default function InterestsPreview() {
         className={`
           ${T.list.bullet}
           ${T.spacing.bullet}
+          ${T.spacing.itemHeader}
           ${T.fontSize.body}
           ${T.lineHeight.body}
           ${T.colors.body}

@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 import { splitLabelTheme as theme } from "../../../themes/split-label.theme";
 
 interface Props {
@@ -61,9 +62,9 @@ export default function CustomSectionPreview({ sectionId }: Props) {
                   className="text-[11px]"
                   style={{ color: theme.colors.muted }}
                 >
-                  {item.startDate}
-                  {item.startDate && item.endDate ? " – " : ""}
-                  {item.endDate}
+                  {formatMonthYear(item.startDate)}
+                  {item.startDate && item.endDate ? " - " : ""}
+                  {formatMonthYear(item.endDate)}
                 </span>
               )}
             </div>

@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 import { ExecutiveBlueTheme as T } from "../../theme.executive-blue";
 
 interface Props {
@@ -47,7 +48,8 @@ export default function ExecutiveBlueCustomSection({ sectionId }: Props) {
               <span
                 className={`whitespace-nowrap ${T.fontSize.date} ${T.colors.muted}`}
               >
-                {item.startDate} {item.endDate && `– ${item.endDate}`}
+                {formatMonthYear(item.startDate)}{" "}
+                {item.endDate && `– ${formatMonthYear(item.endDate)}`}
               </span>
             )}
           </div>

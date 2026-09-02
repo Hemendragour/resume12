@@ -16,7 +16,7 @@ export default function EducationPreview() {
           "Education"}
       </h2>
 
-      <div className="mt-0.5 space-y-5">
+      <div className="mt-2 space-y-5">
         {resume.education.map((edu, index) => (
           <div key={index}>
             <div className="flex justify-between">

@@ -13,7 +13,7 @@ export default function CertificationsPreview() {
   if (!certifications.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "certifications"
+    (section) => section.type === "certifications",
   );
 
   return (
@@ -30,6 +30,7 @@ export default function CertificationsPreview() {
         className={`
           ${T.list.bullet}
           ${T.spacing.bullet}
+          ${T.spacing.itemHeader}
           ${T.fontSize.body}
           ${T.lineHeight.body}
           ${T.colors.body}

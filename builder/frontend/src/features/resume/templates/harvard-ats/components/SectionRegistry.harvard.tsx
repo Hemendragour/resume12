@@ -1,5 +1,3 @@
-// import type { ResumeSection } from "../../../../../types/resume.types";
-
 import SummaryPreview from "./sections/SummaryPreview";
 import SkillsPreview from "./sections/SkillsPreview";
 import ExperiencePreview from "./sections/ExperiencePreview";
@@ -11,12 +9,10 @@ import AwardsPreview from "./sections/AwardsPreview";
 import StrengthsPreview from "./sections/StrengthsPreview";
 import LanguagesPreview from "./sections/LanguagesPreview";
 import InterestsPreview from "./sections/InterestsPreview";
-import CustomSectionPreview from "./sections/CustomSectionPreview";
 import type { ResumeSection } from "../../../types/resume.types";
 import AchievementsPreview from "./sections/AchievementsPreview";
-// import AchievementsPreview from "../../modern-professional/components/sections/AchievementsPreview";
 
-type SectionType = Exclude<ResumeSection["type"], "personalInfo">;
+type SectionType = Exclude<ResumeSection["type"], "personalInfo" | "custom">;
 
 type SectionComponent = () => React.ReactElement | null;
 export const sectionComponentMap: Record<SectionType, SectionComponent> = {
@@ -31,6 +27,5 @@ export const sectionComponentMap: Record<SectionType, SectionComponent> = {
   strengths: StrengthsPreview,
   languages: LanguagesPreview,
   interests: InterestsPreview,
-  custom: CustomSectionPreview,
   achievements: AchievementsPreview,
 };

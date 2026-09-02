@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../store/resume.store";
+import { formatMonthYear } from "../../../editor/utils/formatDate";
 import ResumeSection from "../shared/ResumeSection";
 import SectionTitle from "../shared/SectionTitle";
 
@@ -31,9 +32,9 @@ export default function CustomSectionPreview({ sectionId }: Props) {
 
               {(item.startDate || item.endDate) && (
                 <span className="text-sm text-gray-500">
-                  {item.startDate}
+                  {formatMonthYear(item.startDate)}
                   {item.startDate && item.endDate ? " - " : ""}
-                  {item.endDate}
+                  {formatMonthYear(item.endDate)}
                 </span>
               )}
             </div>

@@ -13,7 +13,7 @@ export default function StrengthsPreview() {
   if (!strengths.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "strengths"
+    (section) => section.type === "strengths",
   );
 
   return (
@@ -26,7 +26,7 @@ export default function StrengthsPreview() {
         }
       />
 
-      <div className={T.spacing.item}>
+      <div className={T.spacing.itemHeader}>
         {strengths.map((strength, index) => (
           <div key={index}>
             <h3

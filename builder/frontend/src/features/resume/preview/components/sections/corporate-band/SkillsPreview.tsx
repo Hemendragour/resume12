@@ -18,7 +18,7 @@ export default function SkillsPreview() {
           "Skills"}
       </h2>
 
-      <div className="mt-3 space-y-1">
+      <div className="mt-2 space-y-1">
         {categories.map((category, index) => (
           <p key={index} className="text-[11px] leading-4 text-slate-700">
             <span className="font-semibold">{category.title}:</span>{" "}

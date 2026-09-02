@@ -13,7 +13,7 @@ export default function EducationPreview() {
   if (!education.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "education"
+    (section) => section.type === "education",
   );
 
   return (
@@ -26,7 +26,7 @@ export default function EducationPreview() {
         }
       />
 
-      <div className="space-y-5">
+      <div className={`${T.spacing.itemHeader} space-y-5`}>
         {education.map((item, index) => (
           <div key={index}>
             <div className={T.layout.between}>
@@ -102,9 +102,7 @@ export default function EducationPreview() {
                   ${T.colors.body}
                 `}
               >
-                <span className={T.fontWeight.bold}>
-                  Relevant Coursework:
-                </span>{" "}
+                <span className={T.fontWeight.bold}>Relevant Coursework:</span>{" "}
                 {item.coursework}
               </p>
             )}

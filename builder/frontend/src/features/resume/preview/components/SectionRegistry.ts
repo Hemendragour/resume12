@@ -7,6 +7,8 @@ import LanguagesPreview from "./sections/LanguagesPreview";
 import CertificationsPreview from "./sections/CertificationsPreview";
 import AwardsPreview from "./sections/AwardsPreview";
 import InterestsPreview from "./sections/InterestsPreview";
+import InternshipsPreview from "./sections/InternshipsPreview";
+import AchievementsPreview from "./sections/AchievementsPreview";
 
 export const SectionRegistry = {
   summary: SummaryPreview,
@@ -18,4 +20,6 @@ export const SectionRegistry = {
   certifications: CertificationsPreview,
   awards: AwardsPreview,
   interests: InterestsPreview,
+  internships: InternshipsPreview,
+  achievements: AchievementsPreview,
 };

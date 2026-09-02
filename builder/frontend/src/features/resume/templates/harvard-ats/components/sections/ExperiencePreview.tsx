@@ -3,6 +3,7 @@ import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { HarvardATSTheme as T } from "../theme.harvard-ats";
+import RichText from "../../../../components/RichText";
 
 export default function ExperiencePreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -27,7 +28,7 @@ export default function ExperiencePreview() {
         }
       />
 
-      <div className={T.experience.container}>
+      <div className={`${T.spacing.itemHeader} ${T.experience.container}`}>
         {experience.map((item, index) => (
           <div key={index}>
             {/* Company + Date */}
@@ -92,8 +93,14 @@ export default function ExperiencePreview() {
                   ${T.colors.body}
                 `}
               >
-                {item.responsibilities.map((point, i) => (
+                {/* {item.responsibilities.map((point, i) => (
                   <li key={i}>{point}</li>
+                ))} */}
+
+                {item.responsibilities.map((point, i) => (
+                  <li key={i}>
+                    <RichText text={point} />
+                  </li>
                 ))}
               </ul>
             )}

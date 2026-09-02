@@ -26,7 +26,7 @@ export default function LanguagesPreview() {
         }
       />
 
-      <div className="space-y-1">
+      <div className={`${T.spacing.itemHeader} space-y-1`}>
         {languages.map((language, index) => (
           <div
             key={index}

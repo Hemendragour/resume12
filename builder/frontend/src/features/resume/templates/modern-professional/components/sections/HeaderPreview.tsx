@@ -18,7 +18,7 @@ function ensureProtocol(url: string) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
 }
 
-const PHOTO_SIZE = 176; // px, matches h-44 w-44
+const PHOTO_SIZE = 160;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 2.5;
 

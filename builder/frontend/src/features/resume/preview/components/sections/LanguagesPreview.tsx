@@ -6,7 +6,13 @@ export default function LanguagesPreview() {
   const theme = useTheme();
 
   if (!resume) return null;
-  if (!resume.languages.length) return null;
+
+  const languages = (resume.languages ?? []).filter((lang) =>
+    lang.name?.trim(),
+  );
+  console.log("languagse length", languages.length);
+  if (!languages.length) return null;
+
   return (
     <section style={{ marginTop: theme.section.spacing }}>
       <h2
@@ -19,9 +25,9 @@ export default function LanguagesPreview() {
       </h2>
 
       <div className="col-span-3 flex mt-3 flex-wrap gap-2">
-        {resume.languages.map((lang) => (
+        {languages.map((lang, index) => (
           <span
-            key={lang.name}
+            key={`${lang.name}-${index}`}
             className="rounded border px-2 py-0.5 text-[11px]"
             style={{
               borderColor: theme.colors.muted,

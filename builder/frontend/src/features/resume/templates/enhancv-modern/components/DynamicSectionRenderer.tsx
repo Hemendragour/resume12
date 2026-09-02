@@ -1,5 +1,3 @@
-// import { useResumeStore } from "../../../../store/resume.store";
-
 import { useResumeStore } from "../../../../../store/resume.store";
 
 interface Props {

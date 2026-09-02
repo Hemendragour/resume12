@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
 import { EnhancvModernTheme as T } from "../theme.enhancv-modern";
@@ -22,7 +23,7 @@ export default function CustomSectionPreview({ sectionId }: Props) {
 
       <div className="mt-4 space-y-6">
         {section.items.map((item) => (
-          <div key={item.id} className="border-l-2 border-slate-300 pl-4">
+          <div key={item.id} className="">
             <div className="flex justify-between items-start gap-4 flex-wrap">
               <div>
                 <h3
@@ -55,7 +56,8 @@ export default function CustomSectionPreview({ sectionId }: Props) {
                     ${T.colors.muted}
                   `}
                 >
-                  {item.startDate} - {item.endDate}
+                  {formatMonthYear(item.startDate)} -{" "}
+                  {formatMonthYear(item.endDate)}
                 </span>
               )}
             </div>

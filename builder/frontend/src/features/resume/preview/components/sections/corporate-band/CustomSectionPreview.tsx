@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 interface Props {
   sectionId: string;
@@ -22,21 +23,27 @@ export default function CustomSectionPreview({ sectionId }: Props) {
           <div key={item.id}>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-[12px] font-bold text-slate-900">{item.title}</h3>
+                <h3 className="text-[12px] font-bold text-slate-900">
+                  {item.title}
+                </h3>
                 {item.subtitle && (
-                  <p className="text-[11px] italic text-slate-600">{item.subtitle}</p>
+                  <p className="text-[11px] italic text-slate-600">
+                    {item.subtitle}
+                  </p>
                 )}
               </div>
               {(item.startDate || item.endDate) && (
                 <span className="text-[11px] text-slate-600">
-                  {item.startDate}
+                  {formatMonthYear(item.startDate)}
                   {item.startDate && item.endDate ? " - " : ""}
-                  {item.endDate}
+                  {formatMonthYear(item.endDate)}
                 </span>
               )}
             </div>
             {item.description && (
-              <p className="mt-1 text-[11px] leading-4 text-slate-700">{item.description}</p>
+              <p className="mt-1 text-[11px] leading-4 text-slate-700">
+                {item.description}
+              </p>
             )}
           </div>
         ))}

@@ -6,6 +6,7 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 
 import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function InternshipPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -39,10 +40,10 @@ export default function InternshipPreview() {
               <p
                 className={`whitespace-nowrap ${T.fontSize.date} ${T.colors.muted}`}
               >
-                {item.startDate} -{" "}
+                {formatMonthYear(item.startDate)} -{" "}
                 {item.currentlyInterning
                   ? "Present"
-                  : item.endDate || "Present"}
+                  : formatMonthYear(item.endDate) || "Present"}
               </p>
             </div>
 

@@ -1,4 +1,5 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 interface Props {
   sectionId: string;
@@ -27,7 +28,8 @@ export default function ClassicSerifCustomSection({ sectionId }: Props) {
               </p>
               {(item.startDate || item.endDate) && (
                 <span className="text-[11.5px] text-slate-600">
-                  {item.startDate} {item.endDate && `– ${item.endDate}`}
+                  {formatMonthYear(item.startDate)}{" "}
+                  {item.endDate && `– ${formatMonthYear(item.endDate)}`}
                 </span>
               )}
             </div>

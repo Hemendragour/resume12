@@ -3,6 +3,7 @@ import { FolderKanban } from "lucide-react";
 import { useResumeStore } from "../../../../../../store/resume.store";
 import SectionHeader from "../../shared/professional-modern/SectionHeader";
 import { ProfessionalModernTheme as T } from "../../theme.professional-modern";
+import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 export default function ProjectsPreview() {
   const resume = useResumeStore((state) => state.resume);
@@ -65,8 +66,10 @@ export default function ProjectsPreview() {
               <span
                 className={`shrink-0 whitespace-nowrap ${T.fontSize.date} ${T.colors.muted}`}
               >
-                {project.startDate} -{" "}
-                {project.currentlyWorking ? "Present" : project.endDate}
+                {formatMonthYear(project.startDate)} -{" "}
+                {project.currentlyWorking
+                  ? "Present"
+                  : formatMonthYear(project.endDate)}
               </span>
             </div>
 

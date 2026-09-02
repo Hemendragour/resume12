@@ -1,5 +1,3 @@
-import { Trophy } from "lucide-react";
-
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";
@@ -33,11 +31,21 @@ export default function AwardsPreview() {
       <div className="mt-4 space-y-3">
         {awards.map((award, index) => (
           <div key={index} className="">
-            <p
+            {/* <p
               className={`
                 ${T.fontSize.body}
                 ${T.colors.body}
               `}
+            >
+              {award}
+            </p> */}
+
+            <p
+              className={`
+    ${T.fontSize.body}
+    ${T.lineHeight.body}
+    ${T.colors.body}
+  `}
             >
               {award}
             </p>

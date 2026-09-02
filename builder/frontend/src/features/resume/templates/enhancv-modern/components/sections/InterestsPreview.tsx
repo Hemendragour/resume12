@@ -1,4 +1,4 @@
-import { Heart } from "lucide-react";
+// import { Heart } from "lucide-react";
 
 import { useResumeStore } from "../../../../../../store/resume.store";
 
@@ -14,7 +14,7 @@ export default function InterestsPreview() {
   const interests = resume.interests ?? [];
 
   const interestsSection = resume.sections.find(
-    (section) => section.id === "interests"
+    (section) => section.id === "interests",
   );
 
   if (interests.length === 0) return null;
@@ -34,16 +34,27 @@ export default function InterestsPreview() {
         {interests.map((interest, index) => (
           <span
             key={index}
-            className="
-              rounded-full
-              border
-              border-slate-300
-              px-3
-              py-1
-              text-sm
-              bg-slate-100
-              text-slate-700
-            "
+            // className="
+            //   rounded-full
+            //   border
+            //   border-slate-300
+            //   px-3
+            //   py-1
+            //   text-sm
+            //   bg-slate-100
+            //   text-slate-700
+            // "
+
+            className={`
+  rounded-full
+  border
+  border-slate-300
+  px-3
+  py-1
+  bg-slate-100
+  ${T.fontSize.body}
+  ${T.colors.body}
+`}
           >
             {interest}
           </span>

@@ -173,14 +173,12 @@ export default function TechnicalPdfTemplate({ resume }: Props) {
       </View>
 
       {/* LANGUAGES */}
-      <View style={styles.section}>
-        <Text style={styles.heading}>LANGUAGES</Text>
-        <Text>
-          {resume.languages?.length
-            ? resume.languages.join(", ")
-            : "No languages added."}
-        </Text>
-      </View>
+      {resume.languages?.length ? (
+        <View style={styles.section}>
+          <Text style={styles.heading}>LANGUAGES</Text>
+          <Text>{resume.languages.map((l) => l.name).join(", ")}</Text>
+        </View>
+      ) : null}
 
       {/* CERTIFICATIONS */}
       <View style={styles.section}>

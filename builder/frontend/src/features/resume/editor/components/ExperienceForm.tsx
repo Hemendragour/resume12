@@ -9,6 +9,7 @@ import { useRewriteExperience } from "../../../ai/services/rewriteExperience.ser
 import { useState } from "react";
 import { useGenerateExperience } from "../../../ai/hooks/useGenerateExperience";
 import AIQuickContextModal from "../../../ai/components/AIQuickContextModal";
+import BoldableInput from "./BoldableInput";
 
 interface Props {
   onClose: () => void;
@@ -340,11 +341,24 @@ export default function ExperienceForm({
         <div className="space-y-3 mt-3">
           {responsibilityFields.map((field, index) => (
             <div key={field.id} className="flex gap-3">
-              <input
+              {/* <input
                 {...register(`responsibilities.${index}.value`)}
                 placeholder="Built Resume Builder used by 5000+ students"
                 className="flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              /> */}
+
+              <Controller
+                control={control}
+                name={`responsibilities.${index}.value`}
+                render={({ field: { value, onChange } }) => (
+                  <BoldableInput
+                    value={value}
+                    onChange={onChange}
+                    placeholder="Built Resume Builder used by 5000+ students"
+                  />
+                )}
               />
+
               <Button
                 type="button"
                 variant="outline"

@@ -14,7 +14,7 @@ export default function InterestsPreview() {
         Interests
       </h2>
 
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {resume.interests.map((interest, i) => (
           <span
             key={i}

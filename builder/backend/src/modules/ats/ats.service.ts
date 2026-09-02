@@ -1,24 +1,12 @@
-// builder/backend/src/modules/ats/ats.service.ts   
-
-
-
-
 import { ResumeAnalysis } from "../../models/resume-analysis.model";
 import { Resume } from "../../models/resume.model";
 import { ApiError } from "../../utils/ApiError";
 
-import {
-  generateJSON,
-} from "../../providers/gemini.provider";
+import { generateJSON } from "../../providers/gemini.provider";
 
-import {
-  buildATSAnalysisPrompt,
-} from "../../prompts/ats-analysis.prompt";
+import { buildATSAnalysisPrompt } from "../../prompts/ats-analysis.prompt";
 
-import {
-  analyzeResumeATS,
-   analyzeJobDescriptionMatch,
-} from "./ats.scorer";
+import { analyzeResumeATS, analyzeJobDescriptionMatch } from "./ats.scorer";
 
 import type {
   ATSAnalyzeRequest,
@@ -27,9 +15,8 @@ import type {
   ATSAIAnalysis,
   ATSResult,
   ATSAnalysisMode,
-ATSModeAnalysis,
-ATSJobDescriptionAnalysis,
- 
+  ATSModeAnalysis,
+  ATSJobDescriptionAnalysis,
 } from "./ats.types";
 
 // ============================================================
@@ -54,13 +41,8 @@ interface ATSServiceContext {
  *
  * This keeps the ATS engine independent from Mongoose internals.
  */
-const getResumeObject = (
-  resume: any
-): Record<string, unknown> => {
-  if (
-    resume &&
-    typeof resume.toObject === "function"
-  ) {
+const getResumeObject = (resume: any): Record<string, unknown> => {
+  if (resume && typeof resume.toObject === "function") {
     return resume.toObject();
   }
 
@@ -78,9 +60,7 @@ const getResumeObject = (
  * We still normalize the response defensively because AI output
  * should never be trusted blindly.
  */
-const normalizeAIAnalysis = (
-  result: any
-): ATSAIAnalysis => {
+const normalizeAIAnalysis = (result: any): ATSAIAnalysis => {
   const allowedCategories = [
     "contact",
     "sections",
@@ -92,59 +72,36 @@ const normalizeAIAnalysis = (
     "formatting",
   ] as const;
 
-  type AllowedCategory =
-    (typeof allowedCategories)[number];
+  type AllowedCategory = (typeof allowedCategories)[number];
 
-  const normalizeCategory = (
-    category: unknown
-  ): AllowedCategory => {
-    if (
-      typeof category !== "string"
-    ) {
+  const normalizeCategory = (category: unknown): AllowedCategory => {
+    if (typeof category !== "string") {
       return "keywords";
     }
 
-    const normalized =
-      category.trim();
+    const normalized = category.trim();
 
-    if (
-      allowedCategories.includes(
-        normalized as AllowedCategory
-      )
-    ) {
+    if (allowedCategories.includes(normalized as AllowedCategory)) {
       return normalized as AllowedCategory;
     }
 
     return "keywords";
   };
 
-  const normalizePriority = (
-    priority: unknown
-  ) => {
-    if (
-      priority === "critical" ||
-      priority === "high" ||
-      priority === "low"
-    ) {
+  const normalizePriority = (priority: unknown) => {
+    if (priority === "critical" || priority === "high" || priority === "low") {
       return priority;
     }
 
     return "medium" as const;
   };
 
-  const normalizeRecommendation = (
-    item: any
-  ) => {
-    if (
-      !item ||
-      typeof item.description !==
-        "string"
-    ) {
+  const normalizeRecommendation = (item: any) => {
+    if (!item || typeof item.description !== "string") {
       return null;
     }
 
-    const description =
-      item.description.trim();
+    const description = item.description.trim();
 
     if (!description) {
       return null;
@@ -152,56 +109,27 @@ const normalizeAIAnalysis = (
 
     return {
       title:
-        typeof item.title ===
-        "string" &&
-        item.title.trim()
+        typeof item.title === "string" && item.title.trim()
           ? item.title.trim()
           : "ATS Recommendation",
 
       description,
 
-      priority:
-        normalizePriority(
-          item.priority
-        ),
+      priority: normalizePriority(item.priority),
 
-      category:
-        normalizeCategory(
-          item.category
-        ),
+      category: normalizeCategory(item.category),
 
       impact:
-        typeof item.impact ===
-          "number" &&
-        Number.isFinite(
-          item.impact
-        )
-          ? Number(
-              Math.max(
-                0,
-                Math.min(
-                  100,
-                  item.impact
-                )
-              ).toFixed(2)
-            )
+        typeof item.impact === "number" && Number.isFinite(item.impact)
+          ? Number(Math.max(0, Math.min(100, item.impact)).toFixed(2))
           : 0,
 
-      actionable:
-        item.actionable !==
-        false,
+      actionable: item.actionable !== false,
 
-      evidence:
-        typeof item.evidence ===
-        "string"
-          ? item.evidence.trim()
-          : "",
+      evidence: typeof item.evidence === "string" ? item.evidence.trim() : "",
 
       suggestedFix:
-        typeof item.suggestedFix ===
-        "string"
-          ? item.suggestedFix.trim()
-          : "",
+        typeof item.suggestedFix === "string" ? item.suggestedFix.trim() : "",
     };
   };
 
@@ -211,88 +139,57 @@ const normalizeAIAnalysis = (
 
   let recommendations: any[] = [];
 
-  if (
-    Array.isArray(
-      result?.suggestions
-    )
-  ) {
-    recommendations =
-      result.suggestions
-        .map(
-          (item: any) => {
-            // New format:
-            // Gemini returns recommendation objects.
-            if (
-              item &&
-              typeof item === "object"
-            ) {
-              return normalizeRecommendation(
-                item
-              );
-            }
+  if (Array.isArray(result?.suggestions)) {
+    recommendations = result.suggestions
+      .map((item: any) => {
+        // New format:
+        // Gemini returns recommendation objects.
+        if (item && typeof item === "object") {
+          return normalizeRecommendation(item);
+        }
 
-            // Backward compatibility:
-            // Older Gemini responses may
-            // still return suggestion strings.
-            if (
-              typeof item ===
-              "string"
-            ) {
-              const description =
-                item.trim();
+        // Backward compatibility:
+        // Older Gemini responses may
+        // still return suggestion strings.
+        if (typeof item === "string") {
+          const description = item.trim();
 
-              if (!description) {
-                return null;
-              }
-
-              return {
-                title:
-                  "ATS Recommendation",
-
-                description,
-
-                priority:
-                  "medium" as const,
-
-                category:
-                  "keywords" as const,
-
-                impact: 0,
-
-                actionable: true,
-
-                evidence: "",
-
-                suggestedFix:
-                  description,
-              };
-            }
-
+          if (!description) {
             return null;
           }
-        )
-        .filter(Boolean);
+
+          return {
+            title: "ATS Recommendation",
+
+            description,
+
+            priority: "medium" as const,
+
+            category: "keywords" as const,
+
+            impact: 0,
+
+            actionable: true,
+
+            evidence: "",
+
+            suggestedFix: description,
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
   }
 
   // ------------------------------------------------------------
   // BACKWARD COMPATIBILITY
   // ------------------------------------------------------------
 
-  if (
-    recommendations.length === 0 &&
-    Array.isArray(
-      result?.recommendations
-    )
-  ) {
-    recommendations =
-      result.recommendations
-        .map(
-          (item: any) =>
-            normalizeRecommendation(
-              item
-            )
-        )
-        .filter(Boolean);
+  if (recommendations.length === 0 && Array.isArray(result?.recommendations)) {
+    recommendations = result.recommendations
+      .map((item: any) => normalizeRecommendation(item))
+      .filter(Boolean);
   }
 
   // ------------------------------------------------------------
@@ -300,100 +197,50 @@ const normalizeAIAnalysis = (
   // ------------------------------------------------------------
 
   return {
-    strengths:
-      Array.isArray(
-        result?.strengths
-      )
-        ? result.strengths
-            .filter(
-              (item: unknown) =>
-                typeof item ===
-                "string"
-            )
-            .map(
-              (item: string) =>
-                item.trim()
-            )
-            .filter(Boolean)
-        : [],
+    strengths: Array.isArray(result?.strengths)
+      ? result.strengths
+          .filter((item: unknown) => typeof item === "string")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [],
 
-    weaknesses:
-      Array.isArray(
-        result?.weaknesses
-      )
-        ? result.weaknesses
-            .filter(
-              (item: unknown) =>
-                typeof item ===
-                "string"
-            )
-            .map(
-              (item: string) =>
-                item.trim()
-            )
-            .filter(Boolean)
-        : [],
+    weaknesses: Array.isArray(result?.weaknesses)
+      ? result.weaknesses
+          .filter((item: unknown) => typeof item === "string")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [],
 
-    matchedKeywords:
-      Array.isArray(
-        result?.matchedKeywords
-      )
-        ? result.matchedKeywords
-            .filter(
-              (item: unknown) =>
-                typeof item ===
-                "string"
-            )
-            .map(
-              (item: string) =>
-                item.trim()
-            )
-            .filter(Boolean)
-        : [],
+    matchedKeywords: Array.isArray(result?.matchedKeywords)
+      ? result.matchedKeywords
+          .filter((item: unknown) => typeof item === "string")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [],
 
-    missingKeywords:
-      Array.isArray(
-        result?.missingKeywords
-      )
-        ? result.missingKeywords
-            .filter(
-              (item: unknown) =>
-                typeof item ===
-                "string"
-            )
-            .map(
-              (item: string) =>
-                item.trim()
-            )
-            .filter(Boolean)
-        : [],
+    missingKeywords: Array.isArray(result?.missingKeywords)
+      ? result.missingKeywords
+          .filter((item: unknown) => typeof item === "string")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [],
 
     recommendations,
 
     optimizedSummary:
-      typeof result?.optimizedSummary ===
-      "string"
+      typeof result?.optimizedSummary === "string"
         ? result.optimizedSummary.trim()
         : "",
 
-    improvedExperience:
-      Array.isArray(
-        result?.improvedExperience
-      )
-        ? result.improvedExperience
-            .filter(
-              (item: unknown) =>
-                typeof item ===
-                "string"
-            )
-            .map(
-              (item: string) =>
-                item.trim()
-            )
-            .filter(Boolean)
-        : [],
+    improvedExperience: Array.isArray(result?.improvedExperience)
+      ? result.improvedExperience
+          .filter((item: unknown) => typeof item === "string")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [],
   };
 };
+
 // ============================================================
 // AI ANALYSIS
 // ============================================================
@@ -415,23 +262,13 @@ const normalizeAIAnalysis = (
 const runAIAnalysis = async (
   resume: Record<string, unknown>,
   targetRole: string,
-  jobDescription: string
+  jobDescription: string,
 ): Promise<ATSAIAnalysis> => {
-  const prompt =
-    buildATSAnalysisPrompt(
-      resume,
-      targetRole,
-      jobDescription
-    );
+  const prompt = buildATSAnalysisPrompt(resume, targetRole, jobDescription);
 
-  const result =
-    await generateJSON<any>(
-      prompt
-    );
+  const result = await generateJSON<any>(prompt);
 
-  return normalizeAIAnalysis(
-    result
-  );
+  return normalizeAIAnalysis(result);
 };
 
 // ============================================================
@@ -440,26 +277,21 @@ const runAIAnalysis = async (
 
 const mergeRecommendations = (
   ruleAnalysis: ATSRuleAnalysis,
-  aiAnalysis: ATSAIAnalysis
+  aiAnalysis: ATSAIAnalysis,
 ) => {
-  const ruleRecommendations =
-    ruleAnalysis.recommendations.map(
-      (recommendation) => ({
-        ...recommendation,
-      })
-    );
+  const ruleRecommendations = ruleAnalysis.recommendations.map(
+    (recommendation) => ({
+      ...recommendation,
+    }),
+  );
 
-  const aiRecommendations =
-    aiAnalysis.recommendations.map(
-      (recommendation) => ({
-        ...recommendation,
-      })
-    );
+  const aiRecommendations = aiAnalysis.recommendations.map(
+    (recommendation) => ({
+      ...recommendation,
+    }),
+  );
 
-  return [
-    ...ruleRecommendations,
-    ...aiRecommendations,
-  ].slice(0, 15);
+  return [...ruleRecommendations, ...aiRecommendations].slice(0, 15);
 };
 
 // ============================================================
@@ -471,72 +303,43 @@ const buildATSResult = (
   targetRole: string,
   jobDescription: string | undefined,
   aiAnalysis: ATSAIAnalysis | undefined,
-  finalATSScore: number
+  finalATSScore: number,
 ): ATSResult => {
-  const ai =
-    aiAnalysis ?? {
-      strengths: [],
-      weaknesses: [],
-      matchedKeywords: [],
-      missingKeywords: [],
-      recommendations: [],
-      optimizedSummary: "",
-      improvedExperience: [],
-    };
+  const ai = aiAnalysis ?? {
+    strengths: [],
+    weaknesses: [],
+    matchedKeywords: [],
+    missingKeywords: [],
+    recommendations: [],
+    optimizedSummary: "",
+    improvedExperience: [],
+  };
 
   const hasJobDescription =
-    typeof jobDescription === "string" &&
-    jobDescription.trim().length > 0;
+    typeof jobDescription === "string" && jobDescription.trim().length > 0;
 
-  const mode: ATSAnalysisMode =
-    hasJobDescription
-      ? "job-description"
-      : "role";
+  const mode: ATSAnalysisMode = hasJobDescription ? "job-description" : "role";
 
-  const matchedKeywords =
-  ruleAnalysis.keywords.matchedKeywords;
+  const matchedKeywords = ruleAnalysis.keywords.matchedKeywords;
 
-const missingKeywords =
-  ruleAnalysis.keywords.missingKeywords;
-  const uniqueMatchedKeywords =
-    Array.from(
-      new Set(
-        matchedKeywords
-          .map((keyword) => keyword.trim())
-          .filter(Boolean)
-      )
-    );
+  const missingKeywords = ruleAnalysis.keywords.missingKeywords;
+  const uniqueMatchedKeywords = Array.from(
+    new Set(matchedKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
+  );
 
-  const uniqueMissingKeywords =
-    Array.from(
-      new Set(
-        missingKeywords
-          .map((keyword) => keyword.trim())
-          .filter(Boolean)
-      )
-    );
+  const uniqueMissingKeywords = Array.from(
+    new Set(missingKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
+  );
 
-  const strengths =
-    Array.from(
-      new Set([
-        ...ruleAnalysis.strengths,
-        ...ai.strengths,
-      ])
-    ).slice(0, 10);
+  const strengths = Array.from(
+    new Set([...ruleAnalysis.strengths, ...ai.strengths]),
+  ).slice(0, 10);
 
-  const weaknesses =
-    Array.from(
-      new Set([
-        ...ruleAnalysis.weaknesses,
-        ...ai.weaknesses,
-      ])
-    ).slice(0, 10);
+  const weaknesses = Array.from(
+    new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
+  ).slice(0, 10);
 
-  const recommendations =
-    mergeRecommendations(
-      ruleAnalysis,
-      ai
-    );
+  const recommendations = mergeRecommendations(ruleAnalysis, ai);
 
   /*
    * IMPORTANT:
@@ -548,40 +351,32 @@ const missingKeywords =
    * in the next layer.
    */
   const modeAnalysis: ATSModeAnalysis = {
-  mode,
+    mode,
 
-  targetRole:
-    targetRole.trim(),
+    targetRole: targetRole.trim(),
 
-  hasJobDescription,
+    hasJobDescription,
 
-  skillEvidence: [],
+    skillEvidence: [],
 
-  scoreDimensions: [],
+    scoreDimensions: [],
 
-  scoreExplanation: {
-    positiveFactors:
-      ruleAnalysis.strengths.slice(0, 5),
+    scoreExplanation: {
+      positiveFactors: ruleAnalysis.strengths.slice(0, 5),
 
-    negativeFactors:
-      ruleAnalysis.weaknesses.slice(0, 5),
+      negativeFactors: ruleAnalysis.weaknesses.slice(0, 5),
 
-    criticalFactors:
-      ruleAnalysis.weaknesses.slice(0, 3),
+      criticalFactors: ruleAnalysis.weaknesses.slice(0, 3),
 
-    scoreCalculation:
-      hasJobDescription
+      scoreCalculation: hasJobDescription
         ? `JD-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`
         : `Role-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`,
 
-    confidence:
-      hasJobDescription
-        ? 90
-        : 80,
-  },
+      confidence: hasJobDescription ? 90 : 80,
+    },
 
-  quickWins: [],
-};
+    quickWins: [],
+  };
   return {
     resumeId,
 
@@ -591,8 +386,7 @@ const missingKeywords =
 
     mode,
 
-    targetRole:
-      targetRole.trim(),
+    targetRole: targetRole.trim(),
 
     hasJobDescription,
 
@@ -600,23 +394,17 @@ const missingKeywords =
     // FINAL SCORE
     // ==========================================================
 
-   atsScore:
-  finalATSScore,
+    atsScore: finalATSScore,
 
-    grade:
-     getGradeFromScore(
-  finalATSScore,
-),
+    grade: getGradeFromScore(finalATSScore),
 
     // ==========================================================
     // RULE BASED ANALYSIS
     // ==========================================================
 
-    breakdown:
-      ruleAnalysis.breakdown,
+    breakdown: ruleAnalysis.breakdown,
 
-    categories:
-      ruleAnalysis.categories,
+    categories: ruleAnalysis.categories,
 
     // ==========================================================
     // MODE ANALYSIS
@@ -628,18 +416,15 @@ const missingKeywords =
     // KEYWORDS
     // ==========================================================
 
-    matchedKeywords:
-      uniqueMatchedKeywords,
+    matchedKeywords: uniqueMatchedKeywords,
 
-    missingKeywords:
-      uniqueMissingKeywords,
+    missingKeywords: uniqueMissingKeywords,
 
     // ==========================================================
     // DATE
     // ==========================================================
 
-    dateConsistency:
-      ruleAnalysis.dateConsistency,
+    dateConsistency: ruleAnalysis.dateConsistency,
 
     // ==========================================================
     // AI
@@ -651,27 +436,22 @@ const missingKeywords =
 
     recommendations,
 
-    optimizedSummary:
-      ai.optimizedSummary,
+    optimizedSummary: ai.optimizedSummary,
 
-    improvedExperience:
-      ai.improvedExperience,
+    improvedExperience: ai.improvedExperience,
 
     // ==========================================================
     // META
     // ==========================================================
 
-    analyzedAt:
-      new Date().toISOString(),
+    analyzedAt: new Date().toISOString(),
   };
 };
 // ============================================================
 // GRADE
 // ============================================================
 
-const getGradeFromScore = (
-  score: number
-) => {
+const getGradeFromScore = (score: number) => {
   if (score >= 90) {
     return "A" as const;
   }
@@ -697,63 +477,45 @@ const getGradeFromScore = (
 
 const saveATSAnalysis = async (
   context: ATSServiceContext,
-  result: ATSResult
+  result: ATSResult,
 ) => {
-  const {
+  const { userId, resumeId, jobDescription } = context;
+
+  const analysis = await ResumeAnalysis.create({
     userId,
+
     resumeId,
-    jobDescription,
-  } = context;
 
-  const analysis =
-    await ResumeAnalysis.create({
-      userId,
+    jobDescription: jobDescription ?? "",
 
-      resumeId,
+    atsScore: result.atsScore,
 
-      jobDescription:
-        jobDescription ?? "",
+    grade: result.grade,
 
-      atsScore:
-        result.atsScore,
+    breakdown: result.breakdown,
 
-      grade:
-        result.grade,
+    matchedKeywords: result.matchedKeywords,
 
-     breakdown: result.breakdown,
+    missingKeywords: result.missingKeywords,
 
-      matchedKeywords:
-        result.matchedKeywords,
+    recommendations: result.recommendations,
 
-      missingKeywords:
-        result.missingKeywords,
+    strengths: result.strengths,
 
-      recommendations:
-        result.recommendations,
+    weaknesses: result.weaknesses,
 
-      strengths:
-        result.strengths,
+    optimizedSummary: result.optimizedSummary,
 
-      weaknesses:
-        result.weaknesses,
-
-      optimizedSummary:
-        result.optimizedSummary,
-
-      improvedExperience:
-        result.improvedExperience,
-        dateConsistency:
-  result.dateConsistency,
-    });
+    improvedExperience: result.improvedExperience,
+    dateConsistency: result.dateConsistency,
+  });
 
   return analysis;
 };
 
-
-
 const extractJDRequirements = async (
   jobDescription: string,
-  targetRole: string
+  targetRole: string,
 ): Promise<ATSJobDescriptionAnalysis> => {
   const prompt = `
 You are an expert ATS job-description parser.
@@ -817,7 +579,7 @@ Rules:
   const addRequirements = (
     values: unknown,
     category: string,
-    defaultPriority: "required" | "preferred"
+    defaultPriority: "required" | "preferred",
   ) => {
     if (!Array.isArray(values)) return;
 
@@ -827,152 +589,87 @@ Rules:
       const name = value.trim();
       if (!name) continue;
 
-      const normalizedName = name
-        .toLowerCase()
-        .replace(/\s+/g, " ")
-        .trim();
+      const normalizedName = name.toLowerCase().replace(/\s+/g, " ").trim();
 
       const exists = requirements.some(
-        (item) =>
-          item.normalizedName === normalizedName
+        (item) => item.normalizedName === normalizedName,
       );
 
       if (exists) continue;
 
       requirements.push({
-        id: normalizedName
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, ""),
+        id: normalizedName.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
         name,
         normalizedName,
         category,
         priority: defaultPriority,
-        requiredByJD:
-          defaultPriority === "required",
+        requiredByJD: defaultPriority === "required",
         sourceText: name,
       });
     }
   };
 
-  addRequirements(
-    result.requiredSkills,
-    "skill",
-    "required"
-  );
+  addRequirements(result.requiredSkills, "skill", "required");
 
-  addRequirements(
-    result.technologies,
-    "technology",
-    "required"
-  );
+  addRequirements(result.technologies, "technology", "required");
 
-  addRequirements(
-    result.tools,
-    "tool",
-    "required"
-  );
+  addRequirements(result.tools, "tool", "required");
 
-  addRequirements(
-    result.responsibilities,
-    "responsibility",
-    "required"
-  );
+  addRequirements(result.responsibilities, "responsibility", "required");
 
-  addRequirements(
-    result.softSkills,
-    "soft-skill",
-    "required"
-  );
+  addRequirements(result.softSkills, "soft-skill", "required");
 
-  addRequirements(
-    result.preferredSkills,
-    "skill",
-    "preferred"
-  );
+  addRequirements(result.preferredSkills, "skill", "preferred");
 
   // Redis/basic-plus type items should remain preferred
   // if Gemini classified them as preferred.
   const preferredSet = new Set(
     (result.preferredSkills ?? [])
-      .filter(
-        (item: unknown): item is string =>
-          typeof item === "string"
-      )
-      .map((item: string) =>
-        item.toLowerCase().trim()
-      )
+      .filter((item: unknown): item is string => typeof item === "string")
+      .map((item: string) => item.toLowerCase().trim()),
   );
 
   for (const requirement of requirements) {
-    if (
-      preferredSet.has(
-        requirement.name.toLowerCase().trim()
-      )
-    ) {
+    if (preferredSet.has(requirement.name.toLowerCase().trim())) {
       requirement.priority = "preferred";
       requirement.requiredByJD = false;
     }
   }
 
   return {
-    jobTitle:
-      result.jobTitle ?? targetRole,
+    jobTitle: result.jobTitle ?? targetRole,
 
-    seniority:
-      result.seniority ?? "",
+    seniority: result.seniority ?? "",
 
-    experienceRequirement:
-      result.experienceRequirement ?? "",
+    experienceRequirement: result.experienceRequirement ?? "",
 
-    educationRequirements:
-      Array.isArray(
-        result.educationRequirements
-      )
-        ? result.educationRequirements
-        : [],
+    educationRequirements: Array.isArray(result.educationRequirements)
+      ? result.educationRequirements
+      : [],
 
-    certificationRequirements:
-      Array.isArray(
-        result.certificationRequirements
-      )
-        ? result.certificationRequirements
-        : [],
+    certificationRequirements: Array.isArray(result.certificationRequirements)
+      ? result.certificationRequirements
+      : [],
 
-    requiredSkills:
-      Array.isArray(result.requiredSkills)
-        ? result.requiredSkills
-        : [],
+    requiredSkills: Array.isArray(result.requiredSkills)
+      ? result.requiredSkills
+      : [],
 
-    preferredSkills:
-      Array.isArray(result.preferredSkills)
-        ? result.preferredSkills
-        : [],
+    preferredSkills: Array.isArray(result.preferredSkills)
+      ? result.preferredSkills
+      : [],
 
-    responsibilities:
-  requirements.filter(
-    (requirement) =>
-      requirement.category === "responsibility"
-  ),
+    responsibilities: requirements.filter(
+      (requirement) => requirement.category === "responsibility",
+    ),
 
-    softSkills:
-      Array.isArray(result.softSkills)
-        ? result.softSkills
-        : [],
+    softSkills: Array.isArray(result.softSkills) ? result.softSkills : [],
 
-    tools:
-      Array.isArray(result.tools)
-        ? result.tools
-        : [],
+    tools: Array.isArray(result.tools) ? result.tools : [],
 
-    technologies:
-      Array.isArray(result.technologies)
-        ? result.technologies
-        : [],
+    technologies: Array.isArray(result.technologies) ? result.technologies : [],
 
-    domains:
-      Array.isArray(result.domains)
-        ? result.domains
-        : [],
+    domains: Array.isArray(result.domains) ? result.domains : [],
 
     // Deterministic fields
     requirements,
@@ -994,307 +691,215 @@ Rules:
 // MAIN SERVICE
 // ============================================================
 
-export const analyzeResumeService =
-  async (
-    context: ATSServiceContext
-  ) => {
-    const {
-      userId,
-      resumeId,
-      jobDescription,
-        targetRole,
-      options,
-    } = context;
+export const analyzeResumeService = async (context: ATSServiceContext) => {
+  const { userId, resumeId, jobDescription, targetRole, options } = context;
 
-    // --------------------------------------------------------
-    // 1. Fetch resume
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+  // 1. Fetch resume
+  // --------------------------------------------------------
 
-    const resume =
-      await Resume.findOne({
-        _id: resumeId,
-        userId,
-      });
+  const resume = await Resume.findOne({
+    _id: resumeId,
+    userId,
+  });
 
-    if (!resume) {
-  throw new ApiError(
-    404,
-    "Resume not found"
-  );
-}
-    // --------------------------------------------------------
-    // 2. Convert Mongoose document
-    // --------------------------------------------------------
+  if (!resume) {
+    throw new ApiError(404, "Resume not found");
+  }
+  // --------------------------------------------------------
+  // 2. Convert Mongoose document
+  // --------------------------------------------------------
 
-    const resumeObject =
-      getResumeObject(
-        resume
-      );
+  const resumeObject = getResumeObject(resume);
 
-      
+  const atsResume = {
+    ...resumeObject,
+    targetRole: targetRole.trim(),
+  };
 
-      const atsResume = {
-  ...resumeObject,
-  targetRole: targetRole.trim(),
-};
+  // --------------------------------------------------------
+  // 3. Deterministic ATS analysis
+  // --------------------------------------------------------
 
-    // --------------------------------------------------------
-    // 3. Deterministic ATS analysis
-    // --------------------------------------------------------
+  const ruleAnalysis = analyzeResumeATS(atsResume as any, jobDescription);
 
- const ruleAnalysis =
-  analyzeResumeATS(
-    atsResume as any,
-    jobDescription
-  );
+  let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
 
+  if (jobDescription?.trim()) {
+    const extractedJD = await extractJDRequirements(jobDescription, targetRole);
 
-  let jdAnalysis:
-  | ATSJobDescriptionAnalysis
-  | undefined;
-
-if (
-  jobDescription?.trim()
-) {
-  const extractedJD =
-    await extractJDRequirements(
-      jobDescription,
-      targetRole
-    );
-
-  jdAnalysis =
-    analyzeJobDescriptionMatch(
-      atsResume as any,
-      extractedJD
-    );
-
+    jdAnalysis = analyzeJobDescriptionMatch(atsResume as any, extractedJD);
 
     console.log("========== JD MATCH DEBUG ==========");
 
-console.log(
-  "JD overallMatchPercentage:",
-  jdAnalysis?.overallMatchPercentage
-);
-
-console.log(
-  "Required match:",
-  jdAnalysis?.requiredMatchPercentage
-);
-
-console.log(
-  "Preferred match:",
-  jdAnalysis?.preferredMatchPercentage
-);
-
-console.log(
-  "Responsibility match:",
-  jdAnalysis?.responsibilityMatchPercentage
-);
-
-console.log(
-  "Matched requirements:",
-  jdAnalysis?.matchedRequirements
-);
-
-console.log(
-  "Critical missing:",
-  jdAnalysis?.criticalMissingRequirements
-);
-
-console.log("====================================");
-
-}
-
-
-let finalATSScore =
-  ruleAnalysis.overallScore;
-
-if (jdAnalysis) {
-  finalATSScore =
-    Math.round(
-      ruleAnalysis.overallScore * 0.60 +
-      jdAnalysis.overallMatchPercentage * 0.40
+    console.log(
+      "JD overallMatchPercentage:",
+      jdAnalysis?.overallMatchPercentage,
     );
-}
-    // --------------------------------------------------------
-    // 4. AI analysis
-    // --------------------------------------------------------
 
-    let aiAnalysis:
-      | ATSAIAnalysis
-      | undefined;
+    console.log("Required match:", jdAnalysis?.requiredMatchPercentage);
 
-    /**
-     * AI analysis is enabled by default.
-     *
-     * If explicitly disabled, only deterministic ATS
-     * analysis is returned.
-     */
-    const shouldRunAI =
-      options?.includeAIAnalysis !==
-      false;
+    console.log("Preferred match:", jdAnalysis?.preferredMatchPercentage);
 
-    if (
-      shouldRunAI
-    ) {
-      aiAnalysis =
-  await runAIAnalysis(
-    atsResume,
-    targetRole,
-    jobDescription ?? ""
-  );
-    }
+    console.log(
+      "Responsibility match:",
+      jdAnalysis?.responsibilityMatchPercentage,
+    );
 
-    // --------------------------------------------------------
-    // 5. Merge
-    // --------------------------------------------------------
+    console.log("Matched requirements:", jdAnalysis?.matchedRequirements);
 
-const result =
-  buildATSResult(
+    console.log("Critical missing:", jdAnalysis?.criticalMissingRequirements);
+
+    console.log("====================================");
+  }
+
+  let finalATSScore = ruleAnalysis.overallScore;
+
+  if (jdAnalysis) {
+    finalATSScore = Math.round(
+      ruleAnalysis.overallScore * 0.6 + jdAnalysis.overallMatchPercentage * 0.4,
+    );
+  }
+  // --------------------------------------------------------
+  // 4. AI analysis
+  // --------------------------------------------------------
+
+  let aiAnalysis: ATSAIAnalysis | undefined;
+
+  /**
+   * AI analysis is enabled by default.
+   *
+   * If explicitly disabled, only deterministic ATS
+   * analysis is returned.
+   */
+  const shouldRunAI = options?.includeAIAnalysis !== false;
+
+  if (shouldRunAI) {
+    aiAnalysis = await runAIAnalysis(
+      atsResume,
+      targetRole,
+      jobDescription ?? "",
+    );
+  }
+
+  // --------------------------------------------------------
+  // 5. Merge
+  // --------------------------------------------------------
+
+  const result = buildATSResult(
     resumeId,
     ruleAnalysis,
     targetRole,
     jobDescription,
     aiAnalysis,
-    finalATSScore
+    finalATSScore,
   );
-    // --------------------------------------------------------
-    // 6. Save
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+  // 6. Save
+  // --------------------------------------------------------
 
-    const savedAnalysis =
-      await saveATSAnalysis(
-        context,
-        result
-      );
+  const savedAnalysis = await saveATSAnalysis(context, result);
 
-    // --------------------------------------------------------
-    // 7. Return
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+  // 7. Return
+  // --------------------------------------------------------
 
-    return {
-      result,
+  return {
+    result,
 
-      analysis:
-        savedAnalysis,
+    analysis: savedAnalysis,
 
-      ruleAnalysis,
+    ruleAnalysis,
 
-      aiAnalysis:
-        aiAnalysis ?? null,
-    };
+    aiAnalysis: aiAnalysis ?? null,
   };
+};
 
 // ============================================================
 // GET LATEST ANALYSIS
 // ============================================================
 
-export const getLatestATSAnalysis =
-  async (
-    userId: string,
-    resumeId: string
-  ) => {
-    const analysis =
-      await ResumeAnalysis.findOne({
-        userId,
-        resumeId,
-      })
-        .sort({
-          createdAt: -1,
-        })
-        .lean();
+export const getLatestATSAnalysis = async (
+  userId: string,
+  resumeId: string,
+) => {
+  const analysis = await ResumeAnalysis.findOne({
+    userId,
+    resumeId,
+  })
+    .sort({
+      createdAt: -1,
+    })
+    .lean();
 
-    return analysis;
-  };
+  return analysis;
+};
 
 // ============================================================
 // GET ANALYSIS HISTORY
 // ============================================================
 
-export const getATSAnalysisHistory =
-  async (
-    userId: string,
-    resumeId: string
-  ) => {
-    return ResumeAnalysis.find({
-      userId,
-      resumeId,
+export const getATSAnalysisHistory = async (
+  userId: string,
+  resumeId: string,
+) => {
+  return ResumeAnalysis.find({
+    userId,
+    resumeId,
+  })
+    .sort({
+      createdAt: -1,
     })
-      .sort({
-        createdAt: -1,
-      })
-      .lean();
-  };
+    .lean();
+};
 
 // ============================================================
 // REQUEST VALIDATION
 // ============================================================
 
-export const validateATSRequest =
-  (
-    request: ATSAnalyzeRequest
-  ) => {
-    // --------------------------------------------------------
-    // Resume ID
-    // --------------------------------------------------------
+export const validateATSRequest = (request: ATSAnalyzeRequest) => {
+  // --------------------------------------------------------
+  // Resume ID
+  // --------------------------------------------------------
 
-    if (
-      !request.resumeId ||
-      typeof request.resumeId !==
-        "string"
-    ) {
-      const error =
-        new Error(
-          "resumeId is required"
-        );
+  if (!request.resumeId || typeof request.resumeId !== "string") {
+    const error = new Error("resumeId is required");
 
-      (error as any).statusCode =
-        400;
+    (error as any).statusCode = 400;
 
-      throw error;
-    }
+    throw error;
+  }
 
-    // --------------------------------------------------------
-    // Target Role
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+  // Target Role
+  // --------------------------------------------------------
 
-    if (
-      !request.targetRole ||
-      typeof request.targetRole !==
-        "string" ||
-      !request.targetRole.trim()
-    ) {
-      const error =
-        new Error(
-          "targetRole is required"
-        );
+  if (
+    !request.targetRole ||
+    typeof request.targetRole !== "string" ||
+    !request.targetRole.trim()
+  ) {
+    const error = new Error("targetRole is required");
 
-      (error as any).statusCode =
-        400;
+    (error as any).statusCode = 400;
 
-      throw error;
-    }
+    throw error;
+  }
 
-    // --------------------------------------------------------
-    // Job Description
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+  // Job Description
+  // --------------------------------------------------------
 
-    if (
-      request.jobDescription !==
-        undefined &&
-      typeof request.jobDescription !==
-        "string"
-    ) {
-      const error =
-        new Error(
-          "jobDescription must be a string"
-        );
+  if (
+    request.jobDescription !== undefined &&
+    typeof request.jobDescription !== "string"
+  ) {
+    const error = new Error("jobDescription must be a string");
 
-      (error as any).statusCode =
-        400;
+    (error as any).statusCode = 400;
 
-      throw error;
-    }
+    throw error;
+  }
 
-    return true;
-  };
+  return true;
+};

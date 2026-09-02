@@ -1,10 +1,3 @@
- 
-
- 
-
-
-
-
 import {
   ATS_ACTION_VERBS,
   ATS_SCORE_CATEGORIES,
@@ -12,7 +5,6 @@ import {
   ATS_WEAK_BULLET_PATTERNS,
   ATS_METRIC_PATTERNS,
   ATS_YEAR_PATTERN,
-
   ATSBreakdown,
   ATSCategoryResult,
   ATSContactAnalysis,
@@ -30,15 +22,12 @@ import {
   ATSRecommendation,
   ATSCategoryStatus,
   ATSScoreCategory,
-
   ATSDateConsistencyAnalysis,
   ATSMatchStatus,
   ATSEvidenceStrength,
-
   ATSJobRequirement,
   ATSRequirementMatch,
   ATSJobDescriptionAnalysis,
-
   clampATSScore,
   calculateATSPercentage,
   getATSCategoryStatus,
@@ -188,23 +177,18 @@ const normalizeText = (value: unknown): string => {
     .trim();
 };
 
-const containsNormalizedPhrase = (
-  text: string,
-  phrase: string
-): boolean => {
-  const normalizedText =
-    normalizeRequirementForMatch(text)
-      .toLowerCase()
-      .replace(/[./+#-]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+const containsNormalizedPhrase = (text: string, phrase: string): boolean => {
+  const normalizedText = normalizeRequirementForMatch(text)
+    .toLowerCase()
+    .replace(/[./+#-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  const normalizedPhrase =
-    normalizeRequirementForMatch(phrase)
-      .toLowerCase()
-      .replace(/[./+#-]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+  const normalizedPhrase = normalizeRequirementForMatch(phrase)
+    .toLowerCase()
+    .replace(/[./+#-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
   if (!normalizedText || !normalizedPhrase) {
     return false;
@@ -216,12 +200,9 @@ const containsNormalizedPhrase = (
   }
 
   // Token-based matching
-  const textTokens = new Set(
-    normalizedText.split(/\s+/)
-  );
+  const textTokens = new Set(normalizedText.split(/\s+/));
 
-  const phraseTokens =
-    normalizedPhrase.split(/\s+/);
+  const phraseTokens = normalizedPhrase.split(/\s+/);
 
   // Single-word requirement
   if (phraseTokens.length === 1) {
@@ -230,28 +211,22 @@ const containsNormalizedPhrase = (
 
   // Multi-word requirement:
   // all important words must exist
-  return phraseTokens.every((token) =>
-    textTokens.has(token)
-  );
+  return phraseTokens.every((token) => textTokens.has(token));
 };
 const countMatchingSignals = (
   textValues: string[],
-  signals: string[]
+  signals: string[],
 ): number => {
   if (!textValues.length || !signals.length) {
     return 0;
   }
 
   return signals.filter((signal) =>
-    textValues.some((text) =>
-      containsNormalizedPhrase(text, signal)
-    )
+    textValues.some((text) => containsNormalizedPhrase(text, signal)),
   ).length;
 };
 
-const uniqueStrings = (
-  values: string[]
-): string[] => {
+const uniqueStrings = (values: string[]): string[] => {
   const seen = new Set<string>();
   const result: string[] = [];
 
@@ -273,9 +248,7 @@ const uniqueStrings = (
   return result;
 };
 
-const flattenStrings = (
-  values: unknown[]
-): string[] => {
+const flattenStrings = (values: unknown[]): string[] => {
   return values
     .flatMap((value) => {
       if (Array.isArray(value)) {
@@ -291,17 +264,11 @@ const flattenStrings = (
     .filter(Boolean);
 };
 
-const getCategory = (
-  id: string
-) => {
-  return ATS_SCORE_CATEGORIES.find(
-    (category) => category.id === id
-  );
+const getCategory = (id: string) => {
+  return ATS_SCORE_CATEGORIES.find((category) => category.id === id);
 };
 
-const getCategoryMaxScore = (
-  id: string
-): number => {
+const getCategoryMaxScore = (id: string): number => {
   return getCategory(id)?.maxScore ?? 0;
 };
 
@@ -310,32 +277,22 @@ const makeCategoryResult = (
   score: number,
   summary: string,
   issues: string[],
-  suggestions: string[]
+  suggestions: string[],
 ): ATSCategoryResult => {
   const category = getCategory(categoryId);
 
   const maxScore = category?.maxScore ?? 0;
 
-  const safeScore = clampATSScore(
-    score,
-    0,
-    maxScore
-  );
+  const safeScore = clampATSScore(score, 0, maxScore);
 
-  const percentage =
-    calculateATSPercentage(
-      safeScore,
-      maxScore
-    );
+  const percentage = calculateATSPercentage(safeScore, maxScore);
 
-  const status: ATSCategoryStatus =
-    getATSCategoryStatus(percentage);
+  const status: ATSCategoryStatus = getATSCategoryStatus(percentage);
 
   return {
     category: categoryId as ATSScoreCategory,
 
-    title:
-      category?.title ?? categoryId,
+    title: category?.title ?? categoryId,
 
     score: safeScore,
 
@@ -349,9 +306,7 @@ const makeCategoryResult = (
 
     issues: uniqueStrings(issues),
 
-    suggestions: uniqueStrings(
-      suggestions
-    ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -359,41 +314,20 @@ const makeCategoryResult = (
 // CONTACT ANALYSIS
 // ============================================================
 
-export const analyzeContact = (
-  resume: ATSResume
-): ATSContactAnalysis => {
-  const personalInfo =
-    resume.personalInfo ?? {};
+export const analyzeContact = (resume: ATSResume): ATSContactAnalysis => {
+  const personalInfo = resume.personalInfo ?? {};
 
-  const fullName =
-    cleanText(
-      personalInfo.fullName
-    ).length > 0;
+  const fullName = cleanText(personalInfo.fullName).length > 0;
 
-  const email =
-    cleanText(
-      personalInfo.email
-    ).length > 0;
+  const email = cleanText(personalInfo.email).length > 0;
 
-  const phone =
-    cleanText(
-      personalInfo.phone
-    ).length > 0;
+  const phone = cleanText(personalInfo.phone).length > 0;
 
-  const linkedIn =
-    cleanText(
-      personalInfo.linkedIn
-    ).length > 0;
+  const linkedIn = cleanText(personalInfo.linkedIn).length > 0;
 
-  const github =
-    cleanText(
-      personalInfo.github
-    ).length > 0;
+  const github = cleanText(personalInfo.github).length > 0;
 
-  const portfolio =
-    cleanText(
-      personalInfo.portfolio
-    ).length > 0;
+  const portfolio = cleanText(personalInfo.portfolio).length > 0;
 
   /**
    * Contact scoring:
@@ -420,51 +354,33 @@ export const analyzeContact = (
   const suggestions: string[] = [];
 
   if (!fullName) {
-    issues.push(
-      "Full name is missing."
-    );
+    issues.push("Full name is missing.");
 
-    suggestions.push(
-      "Add your full professional name."
-    );
+    suggestions.push("Add your full professional name.");
   }
 
   if (!email) {
-    issues.push(
-      "Email address is missing."
-    );
+    issues.push("Email address is missing.");
 
-    suggestions.push(
-      "Add a professional email address."
-    );
+    suggestions.push("Add a professional email address.");
   }
 
   if (!phone) {
-    issues.push(
-      "Phone number is missing."
-    );
+    issues.push("Phone number is missing.");
 
-    suggestions.push(
-      "Add a reachable phone number."
-    );
+    suggestions.push("Add a reachable phone number.");
   }
 
   if (!linkedIn) {
-    suggestions.push(
-      "Add a LinkedIn profile if available."
-    );
+    suggestions.push("Add a LinkedIn profile if available.");
   }
 
   if (!github) {
-    suggestions.push(
-      "Add GitHub when applying for technical roles."
-    );
+    suggestions.push("Add GitHub when applying for technical roles.");
   }
 
   if (!portfolio) {
-    suggestions.push(
-      "Add a portfolio when it strengthens your application."
-    );
+    suggestions.push("Add a portfolio when it strengthens your application.");
   }
 
   return {
@@ -476,9 +392,7 @@ export const analyzeContact = (
     portfolio,
     score,
     issues: uniqueStrings(issues),
-    suggestions: uniqueStrings(
-      suggestions
-    ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -486,65 +400,40 @@ export const analyzeContact = (
 // SECTION ANALYSIS
 // ============================================================
 
-export const analyzeSections = (
-  resume: ATSResume
-): ATSSectionAnalysis => {
-  const sections =
-    resume.sections ?? [];
+export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
+  const sections = resume.sections ?? [];
 
-  const enabledSections =
-    sections.filter(
-      (section) =>
-        section.enabled !== false
-    );
+  const enabledSections = sections.filter(
+    (section) => section.enabled !== false,
+  );
 
   const present = uniqueStrings(
-    enabledSections.map(
-      (section) =>
-        section.type ||
-        section.id ||
-        ""
-    )
+    enabledSections.map((section) => section.type || section.id || ""),
   );
 
   const disabled = uniqueStrings(
     sections
-      .filter(
-        (section) =>
-          section.enabled === false
-      )
-      .map(
-        (section) =>
-          section.type ||
-          section.id ||
-          ""
-      )
+      .filter((section) => section.enabled === false)
+      .map((section) => section.type || section.id || ""),
   );
 
-  const missing =
-    ATS_STANDARD_SECTIONS.filter(
-      (section) =>
-        !present.some(
-          (existing) =>
-            normalizeText(existing) ===
-            normalizeText(section)
-        )
-    );
+  const missing = ATS_STANDARD_SECTIONS.filter(
+    (section) =>
+      !present.some(
+        (existing) => normalizeText(existing) === normalizeText(section),
+      ),
+  );
 
   const empty: string[] = [];
 
-  if (
-    present.includes("summary") &&
-    !cleanText(resume.summary)
-  ) {
+  if (present.includes("summary") && !cleanText(resume.summary)) {
     empty.push("summary");
   }
 
   if (
     present.includes("skills") &&
     !(resume.skills ?? []).some(
-      (category) =>
-        (category.skills ?? []).length > 0
+      (category) => (category.skills ?? []).length > 0,
     )
   ) {
     empty.push("skills");
@@ -557,86 +446,54 @@ export const analyzeSections = (
     empty.push("experience");
   }
 
-  if (
-    present.includes("projects") &&
-    (resume.projects ?? []).length === 0
-  ) {
+  if (present.includes("projects") && (resume.projects ?? []).length === 0) {
     empty.push("projects");
   }
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
+  const targetRole = cleanText(resume.targetRole);
 
-  const preferredRoleSections =
-    targetRole
-      ? getPreferredRoleSections(
-          targetRole
-        )
-      : [];
+  const preferredRoleSections = targetRole
+    ? getPreferredRoleSections(targetRole)
+    : [];
 
-  const missingPreferredRoleSections =
-    preferredRoleSections.filter(
-      (section) =>
-        !present.some(
-          (existing) =>
-            normalizeText(existing) ===
-            normalizeText(section)
-        )
-    );
+  const missingPreferredRoleSections = preferredRoleSections.filter(
+    (section) =>
+      !present.some(
+        (existing) => normalizeText(existing) === normalizeText(section),
+      ),
+  );
 
-  if (
-    hasRoleBenchmark(targetRole) &&
-    missingPreferredRoleSections.length > 0
-  ) {
+  if (hasRoleBenchmark(targetRole) && missingPreferredRoleSections.length > 0) {
     suggestions.push(
-      `Consider adding role-relevant sections: ${missingPreferredRoleSections.slice(0, 3).join(", ")}.`
+      `Consider adding role-relevant sections: ${missingPreferredRoleSections.slice(0, 3).join(", ")}.`,
     );
   }
 
   if (missing.includes("summary")) {
-    issues.push(
-      "Professional summary section is missing."
-    );
+    issues.push("Professional summary section is missing.");
   }
 
   if (empty.length > 0) {
-    issues.push(
-      `Empty sections detected: ${empty.join(", ")}.`
-    );
+    issues.push(`Empty sections detected: ${empty.join(", ")}.`);
 
-    suggestions.push(
-      "Remove empty sections or add meaningful content."
-    );
+    suggestions.push("Remove empty sections or add meaningful content.");
   }
 
-  if (
-    !present.includes("experience") &&
-    !present.includes("internships")
-  ) {
-    suggestions.push(
-      "Add relevant professional or internship experience."
-    );
+  if (!present.includes("experience") && !present.includes("internships")) {
+    suggestions.push("Add relevant professional or internship experience.");
   }
 
   if (!present.includes("skills")) {
-    issues.push(
-      "Skills section is missing."
-    );
+    issues.push("Skills section is missing.");
 
-    suggestions.push(
-      "Add a dedicated skills section."
-    );
+    suggestions.push("Add a dedicated skills section.");
   }
 
   if (!present.includes("education")) {
-    suggestions.push(
-      "Include education when relevant to the target role."
-    );
+    suggestions.push("Include education when relevant to the target role.");
   }
 
   /**
@@ -653,33 +510,21 @@ export const analyzeSections = (
     "projects",
   ];
 
-  const availableImportantSections =
-    importantSections.filter(
-      (section) =>
-        present.includes(section) &&
-        !empty.includes(section)
-    ).length;
+  const availableImportantSections = importantSections.filter(
+    (section) => present.includes(section) && !empty.includes(section),
+  ).length;
 
-  let score =
-    (availableImportantSections /
-      importantSections.length) *
-    10;
+  let score = (availableImportantSections / importantSections.length) * 10;
 
   if (present.length >= 5) {
     score += 2;
   }
 
-  if (
-    present.includes("certifications") ||
-    present.includes("achievements")
-  ) {
+  if (present.includes("certifications") || present.includes("achievements")) {
     score += 1;
   }
 
-  if (
-    present.includes("languages") ||
-    present.includes("awards")
-  ) {
+  if (present.includes("languages") || present.includes("awards")) {
     score += 1;
   }
 
@@ -693,15 +538,9 @@ export const analyzeSections = (
     disabled,
     empty,
     duplicate: [],
-    score: clampATSScore(
-      score,
-      0,
-      getCategoryMaxScore("sections")
-    ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("sections")),
     issues: uniqueStrings(issues),
-    suggestions: uniqueStrings(
-      suggestions
-    ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -709,58 +548,38 @@ export const analyzeSections = (
 // SKILLS ANALYSIS
 // ============================================================
 
-export const analyzeSkills = (
-  resume: ATSResume
-): ATSSkillsAnalysis => {
-  const categories =
-    resume.skills ?? [];
+export const analyzeSkills = (resume: ATSResume): ATSSkillsAnalysis => {
+  const categories = resume.skills ?? [];
 
   const allSkills = flattenStrings(
-    categories.map(
-      (category) =>
-        category.skills ?? []
-    )
+    categories.map((category) => category.skills ?? []),
   );
 
-  const normalizedMap =
-    new Map<string, string>();
+  const normalizedMap = new Map<string, string>();
 
   const duplicateSkills: string[] = [];
 
   for (const skill of allSkills) {
-    const normalized =
-      normalizeText(skill);
+    const normalized = normalizeText(skill);
 
     if (!normalized) {
       continue;
     }
 
-    if (
-      normalizedMap.has(normalized)
-    ) {
-      duplicateSkills.push(
-        skill
-      );
+    if (normalizedMap.has(normalized)) {
+      duplicateSkills.push(skill);
     } else {
-      normalizedMap.set(
-        normalized,
-        skill
-      );
+      normalizedMap.set(normalized, skill);
     }
   }
 
-  const skills = uniqueStrings(
-    allSkills
-  );
+  const skills = uniqueStrings(allSkills);
 
   // ------------------------------------------------------------
   // TARGET ROLE
   // ------------------------------------------------------------
 
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
+  const targetRole = cleanText(resume.targetRole);
 
   // Resolve the user's target role to the
   // official Role Intelligence profile name.
@@ -769,70 +588,35 @@ export const analyzeSkills = (
   // "react" -> "Frontend Developer"
   // "node js" -> "Backend Developer"
   // "full stack java developer" -> matched role profile
-  const roleMatchInfo =
-  targetRole
-    ? getRoleMatchInfo(targetRole)
-    : null;
+  const roleMatchInfo = targetRole ? getRoleMatchInfo(targetRole) : null;
 
-const displayRole =
-  roleMatchInfo?.matchedProfile ??
-  targetRole;
+  const displayRole = roleMatchInfo?.matchedProfile ?? targetRole;
 
   // ------------------------------------------------------------
   // ROLE SKILL BENCHMARK
   // ------------------------------------------------------------
 
-  const roleSkillPool =
-    targetRole
-      ? getRoleSkillPool(
-          targetRole
-        )
-      : [];
+  const roleSkillPool = targetRole ? getRoleSkillPool(targetRole) : [];
 
-  const roleCoreSkillPool =
-    targetRole
-      ? getRoleCoreSkillPool(
-          targetRole
-        )
-      : [];
+  const roleCoreSkillPool = targetRole ? getRoleCoreSkillPool(targetRole) : [];
 
-  const roleMatchedSkills =
-    roleSkillPool.filter(
-      (roleSkill) =>
-        skills.some((skill) =>
-          containsNormalizedPhrase(
-            skill,
-            roleSkill
-          )
-        )
-    );
+  const roleMatchedSkills = roleSkillPool.filter((roleSkill) =>
+    skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+  );
 
-  const roleCoreMatchedSkills =
-    roleCoreSkillPool.filter(
-      (roleSkill) =>
-        skills.some((skill) =>
-          containsNormalizedPhrase(
-            skill,
-            roleSkill
-          )
-        )
-    );
+  const roleCoreMatchedSkills = roleCoreSkillPool.filter((roleSkill) =>
+    skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+  );
 
   const roleCoverage =
     roleSkillPool.length === 0
       ? 0
-      : (
-          roleMatchedSkills.length /
-          roleSkillPool.length
-        ) * 100;
+      : (roleMatchedSkills.length / roleSkillPool.length) * 100;
 
   const coreCoverage =
     roleCoreSkillPool.length === 0
       ? 0
-      : (
-          roleCoreMatchedSkills.length /
-          roleCoreSkillPool.length
-        ) * 100;
+      : (roleCoreMatchedSkills.length / roleCoreSkillPool.length) * 100;
 
   const issues: string[] = [];
   const suggestions: string[] = [];
@@ -842,39 +626,25 @@ const displayRole =
   // ------------------------------------------------------------
 
   if (skills.length === 0) {
-    issues.push(
-      "No skills were detected."
-    );
+    issues.push("No skills were detected.");
 
-    suggestions.push(
-      "Add relevant technical or professional skills."
-    );
+    suggestions.push("Add relevant technical or professional skills.");
   }
 
   if (skills.length < 5) {
-    issues.push(
-      "Very few skills are listed."
-    );
+    issues.push("Very few skills are listed.");
 
-    suggestions.push(
-      "Add the most relevant skills for your target role."
-    );
+    suggestions.push("Add the most relevant skills for your target role.");
   }
 
   if (duplicateSkills.length > 0) {
-    issues.push(
-      "Duplicate skills were detected."
-    );
+    issues.push("Duplicate skills were detected.");
 
-    suggestions.push(
-      "Remove duplicate skills and keep one clean occurrence."
-    );
+    suggestions.push("Remove duplicate skills and keep one clean occurrence.");
   }
 
   if (categories.length === 0) {
-    suggestions.push(
-      "Organize skills into clear categories."
-    );
+    suggestions.push("Organize skills into clear categories.");
   }
 
   // ------------------------------------------------------------
@@ -882,31 +652,27 @@ const displayRole =
   // ------------------------------------------------------------
 
   if (
-  
-  hasRoleBenchmark(targetRole) &&
-  roleSkillPool.length > 0 &&
-  roleCoverage < 40
-) {
+    hasRoleBenchmark(targetRole) &&
+    roleSkillPool.length > 0 &&
+    roleCoverage < 40
+  ) {
     issues.push(
       `Low alignment with the ${displayRole} role benchmark (${Number(
-        roleCoverage.toFixed(1)
-      )}% skill coverage).`
+        roleCoverage.toFixed(1),
+      )}% skill coverage).`,
     );
 
     suggestions.push(
-      `Add relevant ${displayRole} skills only when you genuinely have those skills.`
+      `Add relevant ${displayRole} skills only when you genuinely have those skills.`,
     );
   }
 
- if (
-  
-  hasRoleBenchmark(targetRole) &&
-  roleCoreSkillPool.length > 0 &&
-  coreCoverage < 50
-) {
-    suggestions.push(
-      "Prioritize core skills expected for the target role."
-    );
+  if (
+    hasRoleBenchmark(targetRole) &&
+    roleCoreSkillPool.length > 0 &&
+    coreCoverage < 50
+  ) {
+    suggestions.push("Prioritize core skills expected for the target role.");
   }
 
   // ------------------------------------------------------------
@@ -929,26 +695,17 @@ const displayRole =
 
   // Category bonuses only apply when
   // the resume actually contains skills.
-  if (
-    skills.length > 0 &&
-    categories.length >= 2
-  ) {
+  if (skills.length > 0 && categories.length >= 2) {
     score += 2;
   }
 
-  if (
-    skills.length > 0 &&
-    categories.length >= 4
-  ) {
+  if (skills.length > 0 && categories.length >= 4) {
     score += 2;
   }
 
   // Do not reward duplicate-free structure
   // when there are no skills.
-  if (
-    skills.length > 0 &&
-    duplicateSkills.length === 0
-  ) {
+  if (skills.length > 0 && duplicateSkills.length === 0) {
     score += 1;
   }
 
@@ -964,16 +721,11 @@ const displayRole =
   // Role alignment only contributes when
   // actual skills exist.
   if (
-  skills.length > 0 &&
- 
-  hasRoleBenchmark(targetRole) &&
-  roleSkillPool.length > 0
-) {
-    score +=
-      (Math.min(
-        roleCoverage,
-        100
-      ) / 100) * 3;
+    skills.length > 0 &&
+    hasRoleBenchmark(targetRole) &&
+    roleSkillPool.length > 0
+  ) {
+    score += (Math.min(roleCoverage, 100) / 100) * 3;
   }
 
   // ------------------------------------------------------------
@@ -981,210 +733,114 @@ const displayRole =
   // ------------------------------------------------------------
 
   return {
-    totalSkills:
-      skills.length,
+    totalSkills: skills.length,
 
-    categories:
-      categories.length,
+    categories: categories.length,
 
     skills,
 
-    duplicateSkills:
-      uniqueStrings(
-        duplicateSkills
-      ),
+    duplicateSkills: uniqueStrings(duplicateSkills),
 
     suspiciousSkills: [],
 
-    score:
-      clampATSScore(
-        score,
-        0,
-        getCategoryMaxScore(
-          "skills"
-        )
-      ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("skills")),
 
-    issues:
-      uniqueStrings(
-        issues
-      ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
-
 
 // ============================================================
 // EXPERIENCE ANALYSIS
 // ============================================================
 
-const getExperienceBullets = (
-  resume: ATSResume
-): string[] => {
-  const experienceBullets =
-    (resume.experience ?? []).flatMap(
-      (experience) => [
-        ...(experience.responsibilities ??
-          []),
-        ...(experience.achievements ??
-          []),
-      ]
-    );
+const getExperienceBullets = (resume: ATSResume): string[] => {
+  const experienceBullets = (resume.experience ?? []).flatMap((experience) => [
+    ...(experience.responsibilities ?? []),
+    ...(experience.achievements ?? []),
+  ]);
 
-  const internshipBullets =
-    (resume.internships ?? []).flatMap(
-      (internship) => [
-        ...(internship.responsibilities ??
-          []),
-        ...(internship.achievements ??
-          []),
-      ]
-    );
+  const internshipBullets = (resume.internships ?? []).flatMap((internship) => [
+    ...(internship.responsibilities ?? []),
+    ...(internship.achievements ?? []),
+  ]);
 
-  return [
-    ...experienceBullets,
-    ...internshipBullets,
-  ].filter(
-    (bullet) =>
-      cleanText(bullet).length > 0
+  return [...experienceBullets, ...internshipBullets].filter(
+    (bullet) => cleanText(bullet).length > 0,
   );
 };
 
-const isWeakBullet = (
-  bullet: string
-): boolean => {
-  const text =
-    cleanText(bullet);
+const isWeakBullet = (bullet: string): boolean => {
+  const text = cleanText(bullet);
 
-  return ATS_WEAK_BULLET_PATTERNS.some(
-    (pattern) =>
-      pattern.test(text)
-  );
+  return ATS_WEAK_BULLET_PATTERNS.some((pattern) => pattern.test(text));
 };
 
-const containsMetric = (
-  bullet: string
-): boolean => {
+const containsMetric = (bullet: string): boolean => {
   return (
-    bullet.match(
-      ATS_METRIC_PATTERNS.percentage
-    ) !== null ||
-    bullet.match(
-      ATS_METRIC_PATTERNS.currency
-    ) !== null ||
-    bullet.match(
-      ATS_METRIC_PATTERNS.time
-    ) !== null ||
-    bullet.match(
-      ATS_METRIC_PATTERNS.impactNumber
-    ) !== null
+    bullet.match(ATS_METRIC_PATTERNS.percentage) !== null ||
+    bullet.match(ATS_METRIC_PATTERNS.currency) !== null ||
+    bullet.match(ATS_METRIC_PATTERNS.time) !== null ||
+    bullet.match(ATS_METRIC_PATTERNS.impactNumber) !== null
   );
 };
-const containsActionVerb = (
-  bullet: string
-): boolean => {
-  const normalized =
-    normalizeText(bullet);
+const containsActionVerb = (bullet: string): boolean => {
+  const normalized = normalizeText(bullet);
 
   if (!normalized) {
     return false;
   }
 
-  const firstWord =
-    normalized.split(" ")[0];
+  const firstWord = normalized.split(" ")[0];
 
-  return ATS_ACTION_VERBS.some(
-    (verb) =>
-      verb === firstWord
-  );
+  return ATS_ACTION_VERBS.some((verb) => verb === firstWord);
 };
 
-export const analyzeExperience = (
-  resume: ATSResume
-): ATSExperienceAnalysis => {
-  const experience =
-    resume.experience ?? [];
+export const analyzeExperience = (resume: ATSResume): ATSExperienceAnalysis => {
+  const experience = resume.experience ?? [];
 
-  const internships =
-    resume.internships ?? [];
+  const internships = resume.internships ?? [];
 
-  const bullets =
-    getExperienceBullets(
-      resume
-    );
+  const bullets = getExperienceBullets(resume);
 
   const responsibilityBullets =
     experience.reduce(
-      (count, item) =>
-        count +
-        (item.responsibilities
-          ?.length ?? 0),
-      0
+      (count, item) => count + (item.responsibilities?.length ?? 0),
+      0,
     ) +
     internships.reduce(
-      (count, item) =>
-        count +
-        (item.responsibilities
-          ?.length ?? 0),
-      0
+      (count, item) => count + (item.responsibilities?.length ?? 0),
+      0,
     );
 
   const achievementBullets =
     experience.reduce(
-      (count, item) =>
-        count +
-        (item.achievements
-          ?.length ?? 0),
-      0
+      (count, item) => count + (item.achievements?.length ?? 0),
+      0,
     ) +
     internships.reduce(
-      (count, item) =>
-        count +
-        (item.achievements
-          ?.length ?? 0),
-      0
+      (count, item) => count + (item.achievements?.length ?? 0),
+      0,
     );
 
-  const quantifiedBullets =
-    bullets.filter(
-      containsMetric
-    ).length;
+  const quantifiedBullets = bullets.filter(containsMetric).length;
 
-  const weakBullets =
-    bullets.filter(
-      isWeakBullet
-    );
+  const weakBullets = bullets.filter(isWeakBullet);
 
-  const strongBullets =
-    bullets.filter(
-      (bullet) =>
-        containsActionVerb(
-          bullet
-        ) &&
-        containsMetric(
-          bullet
-        )
-    );
+  const strongBullets = bullets.filter(
+    (bullet) => containsActionVerb(bullet) && containsMetric(bullet),
+  );
 
-  const repetitiveBullets: string[] =
-    [];
+  const repetitiveBullets: string[] = [];
 
   const seen = new Set<string>();
 
   for (const bullet of bullets) {
-    const normalized =
-      normalizeText(bullet);
+    const normalized = normalizeText(bullet);
 
-    if (
-      seen.has(normalized)
-    ) {
-      repetitiveBullets.push(
-        bullet
-      );
+    if (seen.has(normalized)) {
+      repetitiveBullets.push(bullet);
     }
 
     seen.add(normalized);
@@ -1193,157 +849,100 @@ export const analyzeExperience = (
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    experience.length === 0 &&
-    internships.length === 0
-  ) {
-    issues.push(
-      "No professional experience or internships were detected."
-    );
+  if (experience.length === 0 && internships.length === 0) {
+    issues.push("No professional experience or internships were detected.");
 
     suggestions.push(
-      "Add relevant internships, projects or experience where appropriate."
+      "Add relevant internships, projects or experience where appropriate.",
     );
   }
 
-  if (
-    bullets.length > 0 &&
-    achievementBullets === 0
-  ) {
+  if (bullets.length > 0 && achievementBullets === 0) {
     issues.push(
-      "Experience contains responsibilities but no explicit achievements."
+      "Experience contains responsibilities but no explicit achievements.",
     );
 
     suggestions.push(
-      "Convert important responsibilities into measurable achievements."
+      "Convert important responsibilities into measurable achievements.",
     );
   }
 
-  if (
-    quantifiedBullets === 0 &&
-    bullets.length > 0
-  ) {
-    issues.push(
-      "No measurable results were detected in experience bullets."
-    );
+  if (quantifiedBullets === 0 && bullets.length > 0) {
+    issues.push("No measurable results were detected in experience bullets.");
 
-    suggestions.push(
-      "Add numbers, percentages, scale or measurable outcomes."
-    );
+    suggestions.push("Add numbers, percentages, scale or measurable outcomes.");
   }
 
   if (weakBullets.length > 0) {
-    issues.push(
-      `${weakBullets.length} weakly phrased bullet(s) detected.`
-    );
+    issues.push(`${weakBullets.length} weakly phrased bullet(s) detected.`);
 
-    suggestions.push(
-      "Replace weak openings with strong action verbs."
-    );
+    suggestions.push("Replace weak openings with strong action verbs.");
   }
 
-  if (
-    repetitiveBullets.length > 0
-  ) {
-    issues.push(
-      "Repeated experience bullets were detected."
-    );
+  if (repetitiveBullets.length > 0) {
+    issues.push("Repeated experience bullets were detected.");
 
-    suggestions.push(
-      "Remove duplicate or highly repetitive statements."
-    );
+    suggestions.push("Remove duplicate or highly repetitive statements.");
   }
 
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
+  const targetRole = cleanText(resume.targetRole);
 
-    const displayRole =
-  cleanText(
-    getRoleMatchInfo(
-      targetRole
-    ).matchedProfile
-  ) ||
-  targetRole ||
-  "target role";
+  const displayRole =
+    cleanText(getRoleMatchInfo(targetRole).matchedProfile) ||
+    targetRole ||
+    "target role";
 
-  const roleResponsibilities =
-    targetRole
-      ? getRoleResponsibilityPool(
-          targetRole
-        )
-      : [];
+  const roleResponsibilities = targetRole
+    ? getRoleResponsibilityPool(targetRole)
+    : [];
 
-  const roleSenioritySignals =
-    targetRole
-      ? getRoleSenioritySignals(
-          targetRole
-        )
-      : {
-          entry: [],
-          mid: [],
-          senior: [],
-          lead: [],
-        };
+  const roleSenioritySignals = targetRole
+    ? getRoleSenioritySignals(targetRole)
+    : {
+        entry: [],
+        mid: [],
+        senior: [],
+        lead: [],
+      };
 
   const roleRelevantBullets =
     roleResponsibilities.length > 0
       ? bullets.filter((bullet) =>
-          roleResponsibilities.some(
-            (signal) =>
-              containsNormalizedPhrase(
-                bullet,
-                signal
-              )
-          )
+          roleResponsibilities.some((signal) =>
+            containsNormalizedPhrase(bullet, signal),
+          ),
         )
       : [];
 
-  const senioritySignalBullets =
-    bullets.filter((bullet) =>
-      [
-        ...roleSenioritySignals.entry,
-        ...roleSenioritySignals.mid,
-        ...roleSenioritySignals.senior,
-        ...roleSenioritySignals.lead,
-      ].some((signal) =>
-        containsNormalizedPhrase(
-          bullet,
-          signal
-        )
-      )
-    );
+  const senioritySignalBullets = bullets.filter((bullet) =>
+    [
+      ...roleSenioritySignals.entry,
+      ...roleSenioritySignals.mid,
+      ...roleSenioritySignals.senior,
+      ...roleSenioritySignals.lead,
+    ].some((signal) => containsNormalizedPhrase(bullet, signal)),
+  );
 
   const roleRelevanceCoverage =
-    roleResponsibilities.length === 0 ||
-    bullets.length === 0
+    roleResponsibilities.length === 0 || bullets.length === 0
       ? 0
-      : (
-          roleRelevantBullets.length /
-          bullets.length
-        ) * 100;
+      : (roleRelevantBullets.length / bullets.length) * 100;
 
- const resolvedRoleInfo =
-  targetRole
-    ? getRoleMatchInfo(targetRole)
-    : null;
+  const resolvedRoleInfo = targetRole ? getRoleMatchInfo(targetRole) : null;
 
- 
+  if (
+    hasRoleBenchmark(targetRole) &&
+    bullets.length > 0 &&
+    roleResponsibilities.length > 0 &&
+    roleRelevantBullets.length === 0
+  ) {
+    issues.push(
+      `Experience bullets show weak alignment with the ${displayRole} role benchmark.`,
+    );
 
-if (
-  hasRoleBenchmark(targetRole) &&
-  bullets.length > 0 &&
-  roleResponsibilities.length > 0 &&
-  roleRelevantBullets.length === 0
-) {
-  issues.push(
-  `Experience bullets show weak alignment with the ${displayRole} role benchmark.`
-);
-
- suggestions.push(
-  `Rewrite experience bullets to emphasize responsibilities that genuinely match the ${displayRole} role.`
-);
+    suggestions.push(
+      `Rewrite experience bullets to emphasize responsibilities that genuinely match the ${displayRole} role.`,
+    );
   }
 
   if (
@@ -1352,7 +951,7 @@ if (
     senioritySignalBullets.length === 0
   ) {
     suggestions.push(
-      "Use role-appropriate ownership and impact language that accurately reflects your seniority."
+      "Use role-appropriate ownership and impact language that accurately reflects your seniority.",
     );
   }
 
@@ -1360,9 +959,7 @@ if (
 
   if (experience.length > 0) {
     score += 4;
-  } else if (
-    internships.length > 0
-  ) {
+  } else if (internships.length > 0) {
     score += 3;
   }
 
@@ -1388,35 +985,23 @@ if (
     roleResponsibilities.length > 0 &&
     bullets.length > 0
   ) {
-    score +=
-      (Math.min(
-        roleRelevanceCoverage,
-        100
-      ) / 100) * 2;
+    score += (Math.min(roleRelevanceCoverage, 100) / 100) * 2;
   }
 
-  if (
-    weakBullets.length === 0 &&
-    bullets.length > 0
-  ) {
+  if (weakBullets.length === 0 && bullets.length > 0) {
     score += 1;
   }
 
-  if (
-    repetitiveBullets.length > 0
-  ) {
+  if (repetitiveBullets.length > 0) {
     score -= 1;
   }
 
   return {
-    experienceCount:
-      experience.length,
+    experienceCount: experience.length,
 
-    internshipCount:
-      internships.length,
+    internshipCount: internships.length,
 
-    totalBullets:
-      bullets.length,
+    totalBullets: bullets.length,
 
     responsibilityBullets,
 
@@ -1424,39 +1009,19 @@ if (
 
     quantifiedBullets,
 
-    weakBullets:
-      uniqueStrings(
-        weakBullets
-      ),
+    weakBullets: uniqueStrings(weakBullets),
 
-    strongBullets:
-      uniqueStrings(
-        strongBullets
-      ),
+    strongBullets: uniqueStrings(strongBullets),
 
-    repetitiveBullets:
-      uniqueStrings(
-        repetitiveBullets
-      ),
+    repetitiveBullets: uniqueStrings(repetitiveBullets),
 
     relevanceIssues: [],
 
-    score: clampATSScore(
-      score,
-      0,
-      getCategoryMaxScore(
-        "experience"
-      )
-    ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("experience")),
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -1465,147 +1030,76 @@ if (
 // ============================================================
 
 export const analyzeActionVerbs = (
-  resume: ATSResume
+  resume: ATSResume,
 ): ATSActionVerbAnalysis => {
-  const bullets =
-    getExperienceBullets(
-      resume
-    );
+  const bullets = getExperienceBullets(resume);
 
-  const bulletsWithActionVerbs =
-    bullets.filter(
-      containsActionVerb
-    );
+  const bulletsWithActionVerbs = bullets.filter(containsActionVerb);
 
-  const detectedVerbs =
-    bulletsWithActionVerbs.map(
-      (bullet) =>
-        normalizeText(
-          bullet
-        ).split(" ")[0]
-    );
+  const detectedVerbs = bulletsWithActionVerbs.map(
+    (bullet) => normalizeText(bullet).split(" ")[0],
+  );
 
-  const verbFrequency =
-    new Map<string, number>();
+  const verbFrequency = new Map<string, number>();
 
   for (const verb of detectedVerbs) {
-    verbFrequency.set(
-      verb,
-      (verbFrequency.get(verb) ??
-        0) + 1
-    );
+    verbFrequency.set(verb, (verbFrequency.get(verb) ?? 0) + 1);
   }
 
-  const repeatedVerbs =
-    Array.from(
-      verbFrequency.entries()
-    )
-      .filter(
-        ([, count]) =>
-          count >= 3
-      )
-      .map(
-        ([verb]) => verb
-      );
+  const repeatedVerbs = Array.from(verbFrequency.entries())
+    .filter(([, count]) => count >= 3)
+    .map(([verb]) => verb);
 
-  const weakOpenings =
-    bullets.filter(
-      (bullet) =>
-        !containsActionVerb(
-          bullet
-        )
-    );
+  const weakOpenings = bullets.filter((bullet) => !containsActionVerb(bullet));
 
   const coverage =
     bullets.length === 0
       ? 0
-      : (bulletsWithActionVerbs.length /
-          bullets.length) *
-        100;
+      : (bulletsWithActionVerbs.length / bullets.length) * 100;
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    bullets.length > 0 &&
-    coverage < 50
-  ) {
-    issues.push(
-      "Many bullets do not begin with strong action verbs."
-    );
+  if (bullets.length > 0 && coverage < 50) {
+    issues.push("Many bullets do not begin with strong action verbs.");
 
     suggestions.push(
-      "Start achievement and responsibility bullets with precise action verbs."
+      "Start achievement and responsibility bullets with precise action verbs.",
     );
   }
 
-  if (
-    repeatedVerbs.length > 0
-  ) {
-    issues.push(
-      `Repeated action verbs detected: ${repeatedVerbs.join(", ")}.`
-    );
+  if (repeatedVerbs.length > 0) {
+    issues.push(`Repeated action verbs detected: ${repeatedVerbs.join(", ")}.`);
 
     suggestions.push(
-      "Use varied action verbs where they accurately describe the work."
+      "Use varied action verbs where they accurately describe the work.",
     );
   }
 
-  let score =
-    (coverage / 100) *
-    getCategoryMaxScore(
-      "actionVerbs"
-    );
+  let score = (coverage / 100) * getCategoryMaxScore("actionVerbs");
 
-  if (
-    repeatedVerbs.length > 0
-  ) {
+  if (repeatedVerbs.length > 0) {
     score -= 1;
   }
 
   return {
-    totalBullets:
-      bullets.length,
+    totalBullets: bullets.length,
 
-    bulletsWithActionVerbs:
-      bulletsWithActionVerbs.length,
+    bulletsWithActionVerbs: bulletsWithActionVerbs.length,
 
-    actionVerbCoverage:
-      Number(
-        coverage.toFixed(2)
-      ),
+    actionVerbCoverage: Number(coverage.toFixed(2)),
 
-    detectedVerbs:
-      uniqueStrings(
-        detectedVerbs
-      ),
+    detectedVerbs: uniqueStrings(detectedVerbs),
 
-    weakOpenings:
-      uniqueStrings(
-        weakOpenings
-      ),
+    weakOpenings: uniqueStrings(weakOpenings),
 
-    repeatedVerbs:
-      uniqueStrings(
-        repeatedVerbs
-      ),
+    repeatedVerbs: uniqueStrings(repeatedVerbs),
 
-    score: clampATSScore(
-      score,
-      0,
-      getCategoryMaxScore(
-        "actionVerbs"
-      )
-    ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("actionVerbs")),
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -1613,10 +1107,7 @@ export const analyzeActionVerbs = (
 // QUANTIFIED RESULT ANALYSIS
 // ============================================================
 
-const extractMatches = (
-  regex: RegExp,
-  text: string
-): string[] => {
+const extractMatches = (regex: RegExp, text: string): string[] => {
   /**
    * String.match() avoids manually managing lastIndex
    * for global regexes.
@@ -1625,149 +1116,69 @@ const extractMatches = (
 };
 
 export const analyzeQuantifiedResults = (
-  resume: ATSResume
+  resume: ATSResume,
 ): ATSQuantifiedResultAnalysis => {
-  const bullets =
-    getExperienceBullets(
-      resume
-    );
+  const bullets = getExperienceBullets(resume);
 
-  const allText =
-    bullets.join(" ");
+  const allText = bullets.join(" ");
 
-  const percentages =
-    extractMatches(
-      ATS_METRIC_PATTERNS.percentage,
-      allText
-    );
+  const percentages = extractMatches(ATS_METRIC_PATTERNS.percentage, allText);
 
-  const currencies =
-    extractMatches(
-      ATS_METRIC_PATTERNS.currency,
-      allText
-    );
+  const currencies = extractMatches(ATS_METRIC_PATTERNS.currency, allText);
 
-  const timeMetrics =
-    extractMatches(
-      ATS_METRIC_PATTERNS.time,
-      allText
-    );
+  const timeMetrics = extractMatches(ATS_METRIC_PATTERNS.time, allText);
 
-  const numbers =
-    extractMatches(
-      ATS_METRIC_PATTERNS.impactNumber,
-      allText
-    );
+  const numbers = extractMatches(ATS_METRIC_PATTERNS.impactNumber, allText);
 
-  const quantifiedBullets =
-    bullets.filter(
-      (bullet) =>
-        extractMatches(
-          ATS_METRIC_PATTERNS.percentage,
-          bullet
-        ).length > 0 ||
-        extractMatches(
-          ATS_METRIC_PATTERNS.currency,
-          bullet
-        ).length > 0 ||
-        extractMatches(
-          ATS_METRIC_PATTERNS.time,
-          bullet
-        ).length > 0 ||
-        extractMatches(
-          ATS_METRIC_PATTERNS.impactNumber,
-          bullet
-        ).length > 0
-    ).length;
+  const quantifiedBullets = bullets.filter(
+    (bullet) =>
+      extractMatches(ATS_METRIC_PATTERNS.percentage, bullet).length > 0 ||
+      extractMatches(ATS_METRIC_PATTERNS.currency, bullet).length > 0 ||
+      extractMatches(ATS_METRIC_PATTERNS.time, bullet).length > 0 ||
+      extractMatches(ATS_METRIC_PATTERNS.impactNumber, bullet).length > 0,
+  ).length;
 
   const metricCoverage =
-    bullets.length === 0
-      ? 0
-      : (quantifiedBullets /
-          bullets.length) *
-        100;
+    bullets.length === 0 ? 0 : (quantifiedBullets / bullets.length) * 100;
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    bullets.length > 0 &&
-    quantifiedBullets === 0
-  ) {
-    issues.push(
-      "No measurable impact was detected."
-    );
+  if (bullets.length > 0 && quantifiedBullets === 0) {
+    issues.push("No measurable impact was detected.");
 
     suggestions.push(
-      "Add measurable outcomes such as growth, speed, scale, users, revenue or efficiency."
+      "Add measurable outcomes such as growth, speed, scale, users, revenue or efficiency.",
     );
-  } else if (
-    metricCoverage < 30
-  ) {
-    suggestions.push(
-      "Add measurable outcomes to more experience bullets."
-    );
+  } else if (metricCoverage < 30) {
+    suggestions.push("Add measurable outcomes to more experience bullets.");
   }
 
   const score =
-    (metricCoverage / 100) *
-    getCategoryMaxScore(
-      "quantifiedResults"
-    );
+    (metricCoverage / 100) * getCategoryMaxScore("quantifiedResults");
 
   return {
-    totalBullets:
-      bullets.length,
+    totalBullets: bullets.length,
 
     quantifiedBullets,
 
-    percentages:
-      uniqueStrings(
-        percentages
-      ),
+    percentages: uniqueStrings(percentages),
 
-    numbers:
-      uniqueStrings(
-        numbers
-      ),
+    numbers: uniqueStrings(numbers),
 
-    currencies:
-      uniqueStrings(
-        currencies
-      ),
+    currencies: uniqueStrings(currencies),
 
-    timeMetrics:
-      uniqueStrings(
-        timeMetrics
-      ),
+    timeMetrics: uniqueStrings(timeMetrics),
 
-    performanceMetrics:
-      uniqueStrings([
-        ...percentages,
-        ...numbers,
-      ]),
+    performanceMetrics: uniqueStrings([...percentages, ...numbers]),
 
-    metricCoverage:
-      Number(
-        metricCoverage.toFixed(2)
-      ),
+    metricCoverage: Number(metricCoverage.toFixed(2)),
 
-    score: clampATSScore(
-      score,
-      0,
-      getCategoryMaxScore(
-        "quantifiedResults"
-      )
-    ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("quantifiedResults")),
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -1776,95 +1187,55 @@ export const analyzeQuantifiedResults = (
 // ============================================================
 
 export const analyzeAchievements = (
-  resume: ATSResume
+  resume: ATSResume,
 ): ATSAchievementAnalysis => {
   const achievements = [
     ...(resume.achievements ?? []),
-    ...(resume.experience ?? []).flatMap(
-      (item) =>
-        item.achievements ?? []
-    ),
-    ...(resume.internships ?? []).flatMap(
-      (item) =>
-        item.achievements ?? []
-    ),
+    ...(resume.experience ?? []).flatMap((item) => item.achievements ?? []),
+    ...(resume.internships ?? []).flatMap((item) => item.achievements ?? []),
   ].filter(Boolean);
 
-  const quantifiedAchievements =
-    achievements.filter(
-      containsMetric
-    );
+  const quantifiedAchievements = achievements.filter(containsMetric);
 
-  const impactStatements =
-    achievements.filter(
-      (achievement) =>
-        containsActionVerb(
-          achievement
-        ) ||
-        containsMetric(
-          achievement
-        )
-    );
+  const impactStatements = achievements.filter(
+    (achievement) =>
+      containsActionVerb(achievement) || containsMetric(achievement),
+  );
 
-  const weakAchievements =
-    achievements.filter(
-      isWeakBullet
-    );
+  const weakAchievements = achievements.filter(isWeakBullet);
 
-  const strongAchievements =
-    achievements.filter(
-      (achievement) =>
-        containsActionVerb(
-          achievement
-        ) &&
-        containsMetric(
-          achievement
-        )
-    );
+  const strongAchievements = achievements.filter(
+    (achievement) =>
+      containsActionVerb(achievement) && containsMetric(achievement),
+  );
 
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
+  const targetRole = cleanText(resume.targetRole);
 
-  const roleAchievementSignals =
-    targetRole
-      ? getRoleAchievementSignals(
-          targetRole
-        )
-      : [];
+  const roleAchievementSignals = targetRole
+    ? getRoleAchievementSignals(targetRole)
+    : [];
 
   const roleRelevantAchievements =
     roleAchievementSignals.length > 0
-      ? achievements.filter(
-          (achievement) =>
-            roleAchievementSignals.some(
-              (signal) =>
-                containsNormalizedPhrase(
-                  achievement,
-                  signal
-                )
-            )
+      ? achievements.filter((achievement) =>
+          roleAchievementSignals.some((signal) =>
+            containsNormalizedPhrase(achievement, signal),
+          ),
         )
       : [];
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    achievements.length === 0
-  ) {
+  if (achievements.length === 0) {
     suggestions.push(
-      "Add meaningful achievements where you have measurable results."
+      "Add meaningful achievements where you have measurable results.",
     );
   }
 
-  if (
-    achievements.length > 0 &&
-    quantifiedAchievements.length === 0
-  ) {
+  if (achievements.length > 0 && quantifiedAchievements.length === 0) {
     suggestions.push(
-      "Quantify important achievements with measurable outcomes."
+      "Quantify important achievements with measurable outcomes.",
     );
   }
 
@@ -1875,40 +1246,26 @@ export const analyzeAchievements = (
     roleRelevantAchievements.length === 0
   ) {
     suggestions.push(
-      `Emphasize measurable achievements relevant to ${targetRole}, such as ${roleAchievementSignals.slice(0, 3).join(", ")}.`
+      `Emphasize measurable achievements relevant to ${targetRole}, such as ${roleAchievementSignals.slice(0, 3).join(", ")}.`,
     );
   }
 
   return {
-    totalAchievements:
-      achievements.length,
+    totalAchievements: achievements.length,
 
-    quantifiedAchievements:
-      quantifiedAchievements.length,
+    quantifiedAchievements: quantifiedAchievements.length,
 
-    impactStatements:
-      impactStatements.length,
+    impactStatements: impactStatements.length,
 
-    weakAchievements:
-      uniqueStrings(
-        weakAchievements
-      ),
+    weakAchievements: uniqueStrings(weakAchievements),
 
-    strongAchievements:
-      uniqueStrings(
-        strongAchievements
-      ),
+    strongAchievements: uniqueStrings(strongAchievements),
 
     score: 0,
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -1916,154 +1273,80 @@ export const analyzeAchievements = (
 // PROJECT ANALYSIS
 // ============================================================
 
-export const analyzeProjects = (
-  resume: ATSResume
-): ATSProjectAnalysis => {
-  const projects =
-    resume.projects ?? [];
+export const analyzeProjects = (resume: ATSResume): ATSProjectAnalysis => {
+  const projects = resume.projects ?? [];
 
-  const projectsWithTechnologies =
-    projects.filter(
+  const projectsWithTechnologies = projects.filter(
+    (project) => (project.technologies ?? []).length > 0,
+  ).length;
+
+  const projectsWithDescription = projects.filter(
+    (project) => cleanText(project.description).length > 0,
+  ).length;
+
+  const projectsWithLinks = projects.filter(
+    (project) =>
+      Boolean(cleanText(project.github)) || Boolean(cleanText(project.link)),
+  ).length;
+
+  const projectsWithImpact = projects.filter((project) =>
+    containsMetric(cleanText(project.description)),
+  ).length;
+
+  const projectsWithMetrics = projectsWithImpact;
+
+  const weakProjects = projects
+    .filter((project) => !cleanText(project.description))
+    .map((project) => cleanText(project.title));
+
+  const strongProjects = projects
+    .filter(
       (project) =>
-        (project.technologies ??
-          []).length > 0
-    ).length;
+        cleanText(project.description) &&
+        (project.technologies ?? []).length > 0 &&
+        containsMetric(cleanText(project.description)),
+    )
+    .map((project) => cleanText(project.title));
 
-  const projectsWithDescription =
-    projects.filter(
-      (project) =>
-        cleanText(
-          project.description
-        ).length > 0
-    ).length;
+  const targetRole = cleanText(resume.targetRole);
 
-  const projectsWithLinks =
-    projects.filter(
-      (project) =>
-        Boolean(
-          cleanText(
-            project.github
-          )
-        ) ||
-        Boolean(
-          cleanText(
-            project.link
-          )
-        )
-    ).length;
-
-  const projectsWithImpact =
-    projects.filter(
-      (project) =>
-        containsMetric(
-          cleanText(
-            project.description
-          )
-        )
-    ).length;
-
-  const projectsWithMetrics =
-    projectsWithImpact;
-
-  const weakProjects =
-    projects
-      .filter(
-        (project) =>
-          !cleanText(
-            project.description
-          )
-      )
-      .map(
-        (project) =>
-          cleanText(
-            project.title
-          )
-      );
-
-  const strongProjects =
-    projects
-      .filter(
-        (project) =>
-          cleanText(
-            project.description
-          ) &&
-          (project.technologies ??
-            []).length > 0 &&
-          containsMetric(
-            cleanText(
-              project.description
-            )
-          )
-      )
-      .map(
-        (project) =>
-          cleanText(
-            project.title
-          )
-      );
-
-  const targetRole =
-    cleanText(
-      resume.targetRole
-    );
-
-  const roleProjectSignals =
-    targetRole
-      ? getRoleProjectSignals(
-          targetRole
-        )
-      : [];
+  const roleProjectSignals = targetRole
+    ? getRoleProjectSignals(targetRole)
+    : [];
 
   const roleRelevantProjects =
     roleProjectSignals.length > 0
-      ? projects.filter(
-          (project) =>
-            roleProjectSignals.some(
-              (signal) =>
-                containsNormalizedPhrase(
-                  [
-                    project.title,
-                    project.role,
-                    project.description,
-                    ...(project.technologies ?? []),
-                  ]
-                    .filter(Boolean)
-                    .join(" "),
-                  signal
-                )
-            )
+      ? projects.filter((project) =>
+          roleProjectSignals.some((signal) =>
+            containsNormalizedPhrase(
+              [
+                project.title,
+                project.role,
+                project.description,
+                ...(project.technologies ?? []),
+              ]
+                .filter(Boolean)
+                .join(" "),
+              signal,
+            ),
+          ),
         )
       : [];
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    projects.length > 0 &&
-    projectsWithDescription <
-      projects.length
-  ) {
-    issues.push(
-      "Some projects do not have descriptions."
-    );
+  if (projects.length > 0 && projectsWithDescription < projects.length) {
+    issues.push("Some projects do not have descriptions.");
   }
 
-  if (
-    projects.length > 0 &&
-    projectsWithTechnologies <
-      projects.length
-  ) {
-    suggestions.push(
-      "Add relevant technologies to projects."
-    );
+  if (projects.length > 0 && projectsWithTechnologies < projects.length) {
+    suggestions.push("Add relevant technologies to projects.");
   }
 
-  if (
-    projects.length > 0 &&
-    projectsWithImpact === 0
-  ) {
+  if (projects.length > 0 && projectsWithImpact === 0) {
     suggestions.push(
-      "Describe project outcomes or measurable impact where possible."
+      "Describe project outcomes or measurable impact where possible.",
     );
   }
 
@@ -2074,13 +1357,12 @@ export const analyzeProjects = (
     roleRelevantProjects.length === 0
   ) {
     suggestions.push(
-      `Highlight projects that genuinely demonstrate ${targetRole}-relevant work such as ${roleProjectSignals.slice(0, 3).join(", ")}.`
+      `Highlight projects that genuinely demonstrate ${targetRole}-relevant work such as ${roleProjectSignals.slice(0, 3).join(", ")}.`,
     );
   }
 
   return {
-    projectCount:
-      projects.length,
+    projectCount: projects.length,
 
     projectsWithTechnologies,
 
@@ -2092,26 +1374,15 @@ export const analyzeProjects = (
 
     projectsWithMetrics,
 
-    weakProjects:
-      uniqueStrings(
-        weakProjects
-      ),
+    weakProjects: uniqueStrings(weakProjects),
 
-    strongProjects:
-      uniqueStrings(
-        strongProjects
-      ),
+    strongProjects: uniqueStrings(strongProjects),
 
     score: 0,
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -2119,95 +1390,45 @@ export const analyzeProjects = (
 // EDUCATION ANALYSIS
 // ============================================================
 
-export const analyzeEducation = (
-  resume: ATSResume
-): ATSEducationAnalysis => {
-  const education =
-    resume.education ?? [];
+export const analyzeEducation = (resume: ATSResume): ATSEducationAnalysis => {
+  const education = resume.education ?? [];
 
-  const completeEntries =
-    education.filter(
-      (entry) =>
-        Boolean(
-          cleanText(
-            entry.institution
-          )
-        ) &&
-        Boolean(
-          cleanText(
-            entry.degree
-          )
-        ) &&
-        Boolean(
-          cleanText(
-            entry.fieldOfStudy
-          )
-        )
-    ).length;
+  const completeEntries = education.filter(
+    (entry) =>
+      Boolean(cleanText(entry.institution)) &&
+      Boolean(cleanText(entry.degree)) &&
+      Boolean(cleanText(entry.fieldOfStudy)),
+  ).length;
 
-  const incompleteEntries =
-    education.length -
-    completeEntries;
+  const incompleteEntries = education.length - completeEntries;
 
-  const hasDegree =
-    education.some(
-      (entry) =>
-        Boolean(
-          cleanText(
-            entry.degree
-          )
-        )
-    );
+  const hasDegree = education.some((entry) => Boolean(cleanText(entry.degree)));
 
-  const hasInstitution =
-    education.some(
-      (entry) =>
-        Boolean(
-          cleanText(
-            entry.institution
-          )
-        )
-    );
+  const hasInstitution = education.some((entry) =>
+    Boolean(cleanText(entry.institution)),
+  );
 
-  const hasFieldOfStudy =
-    education.some(
-      (entry) =>
-        Boolean(
-          cleanText(
-            entry.fieldOfStudy
-          )
-        )
-    );
+  const hasFieldOfStudy = education.some((entry) =>
+    Boolean(cleanText(entry.fieldOfStudy)),
+  );
 
-  const hasDates =
-    education.some(
-      (entry) =>
-        Boolean(
-          entry.startYear
-        ) ||
-        Boolean(
-          entry.endYear
-        )
-    );
+  const hasDates = education.some(
+    (entry) => Boolean(entry.startYear) || Boolean(entry.endYear),
+  );
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
   if (education.length === 0) {
-    suggestions.push(
-      "Add education details when relevant to the role."
-    );
+    suggestions.push("Add education details when relevant to the role.");
   }
 
   if (incompleteEntries > 0) {
-    issues.push(
-      "Some education entries are incomplete."
-    );
+    issues.push("Some education entries are incomplete.");
   }
 
   return {
-    educationCount:
-      education.length,
+    educationCount: education.length,
 
     completeEntries,
 
@@ -2223,23 +1444,14 @@ export const analyzeEducation = (
 
     score: 0,
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
-
-
-
-
 export const analyzeDateConsistency = (
-  resume: ATSResume
+  resume: ATSResume,
 ): ATSDateConsistencyAnalysis => {
   const invalidDates: string[] = [];
   const overlappingDates: string[] = [];
@@ -2263,243 +1475,134 @@ export const analyzeDateConsistency = (
   // EXPERIENCE
   // ------------------------------------------------------------
 
-  (resume.experience ?? []).forEach(
-    (entry, index) => {
-      const label =
-        cleanText(
-          entry.position
-        ) ||
-        cleanText(
-          entry.company
-        ) ||
-        `Experience ${index + 1}`;
+  (resume.experience ?? []).forEach((entry, index) => {
+    const label =
+      cleanText(entry.position) ||
+      cleanText(entry.company) ||
+      `Experience ${index + 1}`;
 
-      entries.push({
-        label,
-        startDate:
-          cleanText(
-            entry.startDate
-          ),
-        endDate:
-          cleanText(
-            entry.endDate
-          ),
-        currentlyActive:
-          entry.currentlyWorking === true,
-      });
-    }
-  );
+    entries.push({
+      label,
+      startDate: cleanText(entry.startDate),
+      endDate: cleanText(entry.endDate),
+      currentlyActive: entry.currentlyWorking === true,
+    });
+  });
 
   // ------------------------------------------------------------
   // INTERNSHIPS
   // ------------------------------------------------------------
 
   // ------------------------------------------------------------
-// INTERNSHIPS
-// ------------------------------------------------------------
+  // INTERNSHIPS
+  // ------------------------------------------------------------
 
-(resume.internships ?? []).forEach(
-  (entry, index) => {
+  (resume.internships ?? []).forEach((entry, index) => {
     const label =
-      cleanText(
-        entry.role
-      ) ||
-      cleanText(
-        entry.company
-      ) ||
+      cleanText(entry.role) ||
+      cleanText(entry.company) ||
       `Internship ${index + 1}`;
 
     entries.push({
       label,
-      startDate:
-        cleanText(
-          entry.startDate
-        ),
-      endDate:
-        cleanText(
-          entry.endDate
-        ),
-      currentlyActive:
-        entry.currentlyInterning === true,
+      startDate: cleanText(entry.startDate),
+      endDate: cleanText(entry.endDate),
+      currentlyActive: entry.currentlyInterning === true,
     });
-  }
-);
+  });
 
-// ------------------------------------------------------------
-// EDUCATION
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
+  // EDUCATION
+  // ------------------------------------------------------------
 
-(resume.education ?? []).forEach(
-  (entry, index) => {
+  (resume.education ?? []).forEach((entry, index) => {
     const label =
-      cleanText(
-        entry.degree
-      ) ||
-      cleanText(
-        entry.institution
-      ) ||
+      cleanText(entry.degree) ||
+      cleanText(entry.institution) ||
       `Education ${index + 1}`;
 
     entries.push({
       label,
 
-      startDate:
-        entry.startYear
-          ? String(
-              entry.startYear
-            )
-          : undefined,
+      startDate: entry.startYear ? String(entry.startYear) : undefined,
 
-      endDate:
-        entry.endYear
-          ? String(
-              entry.endYear
-            )
-          : undefined,
+      endDate: entry.endYear ? String(entry.endYear) : undefined,
 
-      currentlyActive:
-        false,
+      currentlyActive: false,
     });
-  }
-);
-
-// ------------------------------------------------------------
-// DATE PARSER
-// ------------------------------------------------------------
-
- 
+  });
 
   // ------------------------------------------------------------
   // DATE PARSER
   // ------------------------------------------------------------
 
-  const parseDate = (
-    value?: string
-  ): Date | null => {
+  // ------------------------------------------------------------
+  // DATE PARSER
+  // ------------------------------------------------------------
+
+  const parseDate = (value?: string): Date | null => {
     if (!value) {
       return null;
     }
 
-    const normalized =
-      value
-        .trim()
-        .toLowerCase();
+    const normalized = value.trim().toLowerCase();
 
     if (
-      normalized ===
-        "present" ||
-      normalized ===
-        "current" ||
-      normalized ===
-        "now"
+      normalized === "present" ||
+      normalized === "current" ||
+      normalized === "now"
     ) {
       return new Date();
     }
 
     // YYYY
-    if (
-      /^\d{4}$/.test(
-        normalized
-      )
-    ) {
-      const year =
-        Number(normalized);
+    if (/^\d{4}$/.test(normalized)) {
+      const year = Number(normalized);
 
-      if (
-        year >= 1900 &&
-        year <= 2100
-      ) {
-        return new Date(
-          year,
-          0,
-          1
-        );
+      if (year >= 1900 && year <= 2100) {
+        return new Date(year, 0, 1);
       }
 
       return null;
     }
 
     // YYYY-MM
-    if (
-      /^\d{4}-\d{1,2}$/.test(
-        normalized
-      )
-    ) {
-      const [
-        yearString,
-        monthString,
-      ] = normalized.split(
-        "-"
-      );
+    if (/^\d{4}-\d{1,2}$/.test(normalized)) {
+      const [yearString, monthString] = normalized.split("-");
 
-      const year =
-        Number(yearString);
+      const year = Number(yearString);
 
-      const month =
-        Number(monthString);
+      const month = Number(monthString);
 
-      if (
-        year >= 1900 &&
-        year <= 2100 &&
-        month >= 1 &&
-        month <= 12
-      ) {
-        return new Date(
-          year,
-          month - 1,
-          1
-        );
+      if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, 1);
       }
 
       return null;
     }
 
     // MM/YYYY
-    if (
-      /^\d{1,2}\/\d{4}$/.test(
-        normalized
-      )
-    ) {
-      const [
-        monthString,
-        yearString,
-      ] = normalized.split(
-        "/"
-      );
+    if (/^\d{1,2}\/\d{4}$/.test(normalized)) {
+      const [monthString, yearString] = normalized.split("/");
 
-      const month =
-        Number(monthString);
+      const month = Number(monthString);
 
-      const year =
-        Number(yearString);
+      const year = Number(yearString);
 
-      if (
-        year >= 1900 &&
-        year <= 2100 &&
-        month >= 1 &&
-        month <= 12
-      ) {
-        return new Date(
-          year,
-          month - 1,
-          1
-        );
+      if (year >= 1900 && year <= 2100 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, 1);
       }
 
       return null;
     }
 
     // Month YYYY
-    const monthYearMatch =
-      normalized.match(
-        /^(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})$/
-      );
+    const monthYearMatch = normalized.match(
+      /^(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})$/,
+    );
 
     if (monthYearMatch) {
-      const months: Record<
-        string,
-        number
-      > = {
+      const months: Record<string, number> = {
         january: 0,
         february: 1,
         march: 2,
@@ -2514,31 +1617,16 @@ export const analyzeDateConsistency = (
         december: 11,
       };
 
-      const month =
-        months[
-          monthYearMatch[1]
-        ];
+      const month = months[monthYearMatch[1]];
 
-      const year =
-        Number(
-          monthYearMatch[2]
-        );
+      const year = Number(monthYearMatch[2]);
 
-      return new Date(
-        year,
-        month,
-        1
-      );
+      return new Date(year, month, 1);
     }
 
-    const parsed =
-      new Date(value);
+    const parsed = new Date(value);
 
-    if (
-      Number.isNaN(
-        parsed.getTime()
-      )
-    ) {
+    if (Number.isNaN(parsed.getTime())) {
       return null;
     }
 
@@ -2549,53 +1637,29 @@ export const analyzeDateConsistency = (
   // DATE FORMAT DETECTION
   // ------------------------------------------------------------
 
-  const getDateFormat = (
-    value: string
-  ): string => {
-    const normalized =
-      value
-        .trim()
-        .toLowerCase();
+  const getDateFormat = (value: string): string => {
+    const normalized = value.trim().toLowerCase();
 
-    if (
-      /^\d{4}$/.test(
-        normalized
-      )
-    ) {
+    if (/^\d{4}$/.test(normalized)) {
       return "YYYY";
     }
 
-    if (
-      /^\d{4}-\d{1,2}$/.test(
-        normalized
-      )
-    ) {
+    if (/^\d{4}-\d{1,2}$/.test(normalized)) {
       return "YYYY-MM";
     }
 
-    if (
-      /^\d{1,2}\/\d{4}$/.test(
-        normalized
-      )
-    ) {
+    if (/^\d{1,2}\/\d{4}$/.test(normalized)) {
       return "MM/YYYY";
     }
 
-    if (
-      /^[a-z]+\s+\d{4}$/i.test(
-        normalized
-      )
-    ) {
+    if (/^[a-z]+\s+\d{4}$/i.test(normalized)) {
       return "Month YYYY";
     }
 
     if (
-      normalized ===
-        "present" ||
-      normalized ===
-        "current" ||
-      normalized ===
-        "now"
+      normalized === "present" ||
+      normalized === "current" ||
+      normalized === "now"
     ) {
       return "CURRENT";
     }
@@ -2608,82 +1672,41 @@ export const analyzeDateConsistency = (
   // ------------------------------------------------------------
 
   for (const entry of entries) {
-    const {
-      label,
-      startDate,
-      endDate,
-      currentlyActive,
-    } = entry;
+    const { label, startDate, endDate, currentlyActive } = entry;
 
-    if (
-      !startDate &&
-      !endDate
-    ) {
-      missingDates.push(
-        `${label}: missing start and end dates.`
-      );
+    if (!startDate && !endDate) {
+      missingDates.push(`${label}: missing start and end dates.`);
 
       continue;
     }
 
     if (!startDate) {
-      missingDates.push(
-        `${label}: missing start date.`
-      );
+      missingDates.push(`${label}: missing start date.`);
     }
 
-    if (
-      !endDate &&
-      !currentlyActive
-    ) {
-      missingDates.push(
-        `${label}: missing end date.`
-      );
+    if (!endDate && !currentlyActive) {
+      missingDates.push(`${label}: missing end date.`);
     }
 
     if (startDate) {
-      const parsedStart =
-        parseDate(
-          startDate
-        );
+      const parsedStart = parseDate(startDate);
 
       if (!parsedStart) {
+        invalidDates.push(`${label}: invalid start date "${startDate}".`);
+      } else if (parsedStart > new Date()) {
         invalidDates.push(
-          `${label}: invalid start date "${startDate}".`
-        );
-      } else if (
-        parsedStart >
-        new Date()
-      ) {
-        invalidDates.push(
-          `${label}: start date "${startDate}" is in the future.`
+          `${label}: start date "${startDate}" is in the future.`,
         );
       }
     }
 
-    if (
-      endDate &&
-      endDate
-        .trim()
-        .toLowerCase() !==
-        "present"
-    ) {
-      const parsedEnd =
-        parseDate(
-          endDate
-        );
+    if (endDate && endDate.trim().toLowerCase() !== "present") {
+      const parsedEnd = parseDate(endDate);
 
       if (!parsedEnd) {
-        invalidDates.push(
-          `${label}: invalid end date "${endDate}".`
-        );
-      } else if (
-        parsedEnd >
-        new Date()
-      ) {
-        invalidDates.push(
-          `${label}: end date "${endDate}" is in the future.`
-        );
+        invalidDates.push(`${label}: invalid end date "${endDate}".`);
+      } else if (parsedEnd > new Date()) {
+        invalidDates.push(`${label}: end date "${endDate}" is in the future.`);
       }
     }
 
@@ -2691,35 +1714,21 @@ export const analyzeDateConsistency = (
     // REVERSED DATE RANGE
     // ----------------------------------------------------------
 
-    if (
-      startDate &&
-      endDate
-    ) {
-      const parsedStart =
-        parseDate(
-          startDate
-        );
+    if (startDate && endDate) {
+      const parsedStart = parseDate(startDate);
 
-      const parsedEnd =
-        parseDate(
-          endDate
-        );
+      const parsedEnd = parseDate(endDate);
 
-      const normalizedEnd =
-        endDate
-          .trim()
-          .toLowerCase();
+      const normalizedEnd = endDate.trim().toLowerCase();
 
       if (
         parsedStart &&
         parsedEnd &&
-        normalizedEnd !==
-          "present" &&
-        parsedEnd <
-          parsedStart
+        normalizedEnd !== "present" &&
+        parsedEnd < parsedStart
       ) {
         reversedDateRanges.push(
-          `${label}: end date "${endDate}" is before start date "${startDate}".`
+          `${label}: end date "${endDate}" is before start date "${startDate}".`,
         );
       }
     }
@@ -2728,41 +1737,19 @@ export const analyzeDateConsistency = (
     // DATE FORMAT
     // ----------------------------------------------------------
 
-    const formats = [
-      startDate,
-      endDate,
-    ]
-      .filter(
-        (
-          value
-        ): value is string =>
-          Boolean(value)
-      )
-      .map(
-        getDateFormat
-      )
-      .filter(
-        (format) =>
-          format !==
-          "CURRENT"
-      );
+    const formats = [startDate, endDate]
+      .filter((value): value is string => Boolean(value))
+      .map(getDateFormat)
+      .filter((format) => format !== "CURRENT");
 
-    if (
-      formats.length > 1
-    ) {
-      const uniqueFormats =
-        uniqueStrings(
-          formats
-        );
+    if (formats.length > 1) {
+      const uniqueFormats = uniqueStrings(formats);
 
-      if (
-        uniqueFormats.length >
-        1
-      ) {
+      if (uniqueFormats.length > 1) {
         inconsistentDateFormats.push(
           `${label}: inconsistent date formats used (${uniqueFormats.join(
-            ", "
-          )}).`
+            ", ",
+          )}).`,
         );
       }
     }
@@ -2772,71 +1759,39 @@ export const analyzeDateConsistency = (
   // OVERLAPPING ACTIVE/PERIODS
   // ------------------------------------------------------------
 
-  const datedEntries =
-    entries
-      .map(
-        (entry) => {
-          const start =
-            entry.startDate
-              ? parseDate(
-                  entry.startDate
-                )
-              : null;
+  const datedEntries = entries
+    .map((entry) => {
+      const start = entry.startDate ? parseDate(entry.startDate) : null;
 
-          const end =
-            entry.endDate
-              ? parseDate(
-                  entry.endDate
-                )
-              : entry.currentlyActive
-              ? new Date()
-              : null;
+      const end = entry.endDate
+        ? parseDate(entry.endDate)
+        : entry.currentlyActive
+          ? new Date()
+          : null;
 
-          return {
-            ...entry,
-            start,
-            end,
-          };
-        }
-      )
-      .filter(
-        (
-          entry
-        ): entry is typeof entry & {
-          start: Date;
-          end: Date;
-        } =>
-          Boolean(
-            entry.start &&
-              entry.end
-          )
-      );
+      return {
+        ...entry,
+        start,
+        end,
+      };
+    })
+    .filter(
+      (
+        entry,
+      ): entry is typeof entry & {
+        start: Date;
+        end: Date;
+      } => Boolean(entry.start && entry.end),
+    );
 
-  for (
-    let i = 0;
-    i < datedEntries.length;
-    i++
-  ) {
-    for (
-      let j = i + 1;
-      j < datedEntries.length;
-      j++
-    ) {
-      const first =
-        datedEntries[i];
+  for (let i = 0; i < datedEntries.length; i++) {
+    for (let j = i + 1; j < datedEntries.length; j++) {
+      const first = datedEntries[i];
 
-      const second =
-        datedEntries[j];
+      const second = datedEntries[j];
 
-      if (
-        first.start <=
-          second.end &&
-        second.start <=
-          first.end
-      ) {
-        overlappingDates.push(
-          `${first.label} overlaps with ${second.label}.`
-        );
+      if (first.start <= second.end && second.start <= first.end) {
+        overlappingDates.push(`${first.label} overlaps with ${second.label}.`);
       }
     }
   }
@@ -2845,77 +1800,45 @@ export const analyzeDateConsistency = (
   // ISSUES
   // ------------------------------------------------------------
 
-  if (
-    invalidDates.length >
-    0
-  ) {
-    issues.push(
-      "Invalid or future dates were detected."
-    );
+  if (invalidDates.length > 0) {
+    issues.push("Invalid or future dates were detected.");
 
     suggestions.push(
-      "Correct invalid or future dates before submitting the resume."
+      "Correct invalid or future dates before submitting the resume.",
     );
   }
 
-  if (
-    reversedDateRanges.length >
-    0
-  ) {
-    issues.push(
-      "Some date ranges are reversed."
-    );
+  if (reversedDateRanges.length > 0) {
+    issues.push("Some date ranges are reversed.");
+
+    suggestions.push("Ensure every end date is on or after its start date.");
+  }
+
+  if (overlappingDates.length > 0) {
+    issues.push("Overlapping experience or internship dates were detected.");
 
     suggestions.push(
-      "Ensure every end date is on or after its start date."
+      "Review overlapping roles and make the timeline clear and accurate.",
     );
   }
 
-  if (
-    overlappingDates.length >
-    0
-  ) {
-    issues.push(
-      "Overlapping experience or internship dates were detected."
-    );
+  if (inconsistentDateFormats.length > 0) {
+    issues.push("Inconsistent date formats were detected.");
 
-    suggestions.push(
-      "Review overlapping roles and make the timeline clear and accurate."
-    );
+    suggestions.push("Use one consistent date format throughout the resume.");
   }
 
-  if (
-    inconsistentDateFormats.length >
-    0
-  ) {
-    issues.push(
-      "Inconsistent date formats were detected."
-    );
+  if (missingDates.length > 0) {
+    issues.push("Some experience or internship entries have incomplete dates.");
 
-    suggestions.push(
-      "Use one consistent date format throughout the resume."
-    );
-  }
-
-  if (
-    missingDates.length >
-    0
-  ) {
-    issues.push(
-      "Some experience or internship entries have incomplete dates."
-    );
-
-    suggestions.push(
-      "Add accurate start and end dates where available."
-    );
+    suggestions.push("Add accurate start and end dates where available.");
   }
 
   // ------------------------------------------------------------
   // SCORE
   // ------------------------------------------------------------
 
-  const totalChecks =
-    entries.length * 3;
+  const totalChecks = entries.length * 3;
 
   const issueCount =
     invalidDates.length +
@@ -2925,67 +1848,28 @@ export const analyzeDateConsistency = (
 
   let score = 10;
 
-  if (
-    totalChecks > 0
-  ) {
-    const penalty =
-      Math.min(
-        10,
-        (
-          issueCount /
-          totalChecks
-        ) * 10
-      );
+  if (totalChecks > 0) {
+    const penalty = Math.min(10, (issueCount / totalChecks) * 10);
 
-    score =
-      10 - penalty;
+    score = 10 - penalty;
   }
 
   return {
-    invalidDates:
-      uniqueStrings(
-        invalidDates
-      ),
+    invalidDates: uniqueStrings(invalidDates),
 
-    overlappingDates:
-      uniqueStrings(
-        overlappingDates
-      ),
+    overlappingDates: uniqueStrings(overlappingDates),
 
-    reversedDateRanges:
-      uniqueStrings(
-        reversedDateRanges
-      ),
+    reversedDateRanges: uniqueStrings(reversedDateRanges),
 
-    inconsistentDateFormats:
-      uniqueStrings(
-        inconsistentDateFormats
-      ),
+    inconsistentDateFormats: uniqueStrings(inconsistentDateFormats),
 
-    missingDates:
-      uniqueStrings(
-        missingDates
-      ),
+    missingDates: uniqueStrings(missingDates),
 
-    score: Number(
-      Math.max(
-        0,
-        Math.min(
-          10,
-          score
-        )
-      ).toFixed(2)
-    ),
+    score: Number(Math.max(0, Math.min(10, score)).toFixed(2)),
 
-    issues:
-      uniqueStrings(
-        issues
-      ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -2993,149 +1877,88 @@ export const analyzeDateConsistency = (
 // FORMATTING ANALYSIS
 // ============================================================
 
-export const analyzeFormatting = (
-  resume: ATSResume
-): ATSFormattingAnalysis => {
-  const sections =
-    resume.sections ?? [];
+export const analyzeFormatting = (resume: ATSResume): ATSFormattingAnalysis => {
+  const sections = resume.sections ?? [];
 
-  const hasContactInfo =
-    Boolean(
-      resume.personalInfo
-    );
+  const hasContactInfo = Boolean(resume.personalInfo);
 
-  const hasStandardSections =
-  sections.some((section) => {
-    const sectionName =
-      normalizeText(
-        section.type ??
-          section.id ??
-          ""
-      );
+  const hasStandardSections = sections.some((section) => {
+    const sectionName = normalizeText(section.type ?? section.id ?? "");
 
     return ATS_STANDARD_SECTIONS.some(
-      (standardSection) =>
-        normalizeText(
-          standardSection
-        ) === sectionName
+      (standardSection) => normalizeText(standardSection) === sectionName,
     );
   });
 
-  const hasUnusualSectionNames =
-    sections.some(
-      (section) => {
-        const type =
-          normalizeText(
-            section.type ??
-              section.id ??
-              ""
-          );
+  const hasUnusualSectionNames = sections.some((section) => {
+    const type = normalizeText(section.type ?? section.id ?? "");
 
-        return (
-          Boolean(type) &&
-          !ATS_STANDARD_SECTIONS.some(
-            (standard) =>
-              normalizeText(
-                standard
-              ) === type
-          ) &&
-          type !== "personalinfo" &&
-          type !== "custom"
-        );
-      }
+    return (
+      Boolean(type) &&
+      !ATS_STANDARD_SECTIONS.some(
+        (standard) => normalizeText(standard) === type,
+      ) &&
+      type !== "personalinfo" &&
+      type !== "custom"
     );
+  });
 
-  const hasEmptySections =
-    sections.some(
-      (section) =>
-        section.enabled !== false &&
-        (
-          !section.type &&
-          !section.id
-        )
-    );
+  const hasEmptySections = sections.some(
+    (section) => section.enabled !== false && !section.type && !section.id,
+  );
 
   const hasExcessiveLinks =
     [
       resume.personalInfo?.linkedIn,
       resume.personalInfo?.github,
       resume.personalInfo?.portfolio,
-      ...(resume.projects ?? []).flatMap(
-        (project) => [
-          project.github,
-          project.link,
-        ]
-      ),
-    ].filter(Boolean).length >
-    10;
+      ...(resume.projects ?? []).flatMap((project) => [
+        project.github,
+        project.link,
+      ]),
+    ].filter(Boolean).length > 10;
 
-  const allText =
-    JSON.stringify(resume);
+  const allText = JSON.stringify(resume);
 
-  const suspiciousCharacters =
-    /[�]/.test(allText);
+  const suspiciousCharacters = /[�]/.test(allText);
 
   const hasPotentialParserIssues =
-    suspiciousCharacters ||
-    hasUnusualSectionNames;
+    suspiciousCharacters || hasUnusualSectionNames;
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    hasUnusualSectionNames
-  ) {
+  if (hasUnusualSectionNames) {
     issues.push(
-      "Some non-standard section names may reduce parser consistency."
+      "Some non-standard section names may reduce parser consistency.",
     );
 
-    suggestions.push(
-      "Prefer conventional section headings where possible."
-    );
+    suggestions.push("Prefer conventional section headings where possible.");
   }
 
-  if (
-    hasExcessiveLinks
-  ) {
-    issues.push(
-      "An unusually high number of links was detected."
-    );
+  if (hasExcessiveLinks) {
+    issues.push("An unusually high number of links was detected.");
 
-    suggestions.push(
-      "Keep only relevant professional links."
-    );
+    suggestions.push("Keep only relevant professional links.");
   }
 
   if (suspiciousCharacters) {
-    issues.push(
-      "Suspicious replacement characters were detected."
-    );
+    issues.push("Suspicious replacement characters were detected.");
 
-    suggestions.push(
-      "Remove corrupted or unsupported characters."
-    );
+    suggestions.push("Remove corrupted or unsupported characters.");
   }
 
-  let score =
-    getCategoryMaxScore(
-      "formatting"
-    );
+  let score = getCategoryMaxScore("formatting");
 
-  if (
-    hasUnusualSectionNames
-  ) {
+  if (hasUnusualSectionNames) {
     score -= 3;
   }
 
-  if (
-    hasExcessiveLinks
-  ) {
+  if (hasExcessiveLinks) {
     score -= 2;
   }
 
-  if (
-    suspiciousCharacters
-  ) {
+  if (suspiciousCharacters) {
     score -= 3;
   }
 
@@ -3150,8 +1973,7 @@ export const analyzeFormatting = (
 
     hasExcessiveLinks,
 
-hasSuspiciousCharacters:
-  suspiciousCharacters,
+    hasSuspiciousCharacters: suspiciousCharacters,
 
     hasPotentialParserIssues,
 
@@ -3159,22 +1981,11 @@ hasSuspiciousCharacters:
 
     hasPotentialTableRisk: false,
 
-    score: clampATSScore(
-      score,
-      0,
-      getCategoryMaxScore(
-        "formatting"
-      )
-    ),
+    score: clampATSScore(score, 0, getCategoryMaxScore("formatting")),
 
-    issues: uniqueStrings(
-      issues
-    ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };
 
@@ -3182,25 +1993,23 @@ hasSuspiciousCharacters:
 // CATEGORY RESULT BUILDING
 // ============================================================
 
-const buildCategoryResults = (
-  analysis: {
-    contact: ATSContactAnalysis;
-    sections: ATSSectionAnalysis;
-    skills: ATSSkillsAnalysis;
-    keywords: ATSKeywordAnalysis;
-    experience: ATSExperienceAnalysis;
-    actionVerbs: ATSActionVerbAnalysis;
-    quantifiedResults: ATSQuantifiedResultAnalysis;
-    formatting: ATSFormattingAnalysis;
-  }
-): ATSCategoryResult[] => {
+const buildCategoryResults = (analysis: {
+  contact: ATSContactAnalysis;
+  sections: ATSSectionAnalysis;
+  skills: ATSSkillsAnalysis;
+  keywords: ATSKeywordAnalysis;
+  experience: ATSExperienceAnalysis;
+  actionVerbs: ATSActionVerbAnalysis;
+  quantifiedResults: ATSQuantifiedResultAnalysis;
+  formatting: ATSFormattingAnalysis;
+}): ATSCategoryResult[] => {
   return [
     makeCategoryResult(
       "contact",
       analysis.contact.score,
       "Evaluates essential professional contact information.",
       analysis.contact.issues,
-      analysis.contact.suggestions
+      analysis.contact.suggestions,
     ),
 
     makeCategoryResult(
@@ -3208,7 +2017,7 @@ const buildCategoryResults = (
       analysis.sections.score,
       "Evaluates the completeness and organization of important resume sections.",
       analysis.sections.issues,
-      analysis.sections.suggestions
+      analysis.sections.suggestions,
     ),
 
     makeCategoryResult(
@@ -3216,7 +2025,7 @@ const buildCategoryResults = (
       analysis.skills.score,
       "Evaluates the breadth and organization of listed skills.",
       analysis.skills.issues,
-      analysis.skills.suggestions
+      analysis.skills.suggestions,
     ),
 
     makeCategoryResult(
@@ -3224,7 +2033,7 @@ const buildCategoryResults = (
       analysis.keywords.score,
       "Evaluates keyword coverage and relevance.",
       analysis.keywords.issues,
-      analysis.keywords.suggestions
+      analysis.keywords.suggestions,
     ),
 
     makeCategoryResult(
@@ -3232,7 +2041,7 @@ const buildCategoryResults = (
       analysis.experience.score,
       "Evaluates experience content and achievement quality.",
       analysis.experience.issues,
-      analysis.experience.suggestions
+      analysis.experience.suggestions,
     ),
 
     makeCategoryResult(
@@ -3240,7 +2049,7 @@ const buildCategoryResults = (
       analysis.actionVerbs.score,
       "Evaluates strong and varied action verbs.",
       analysis.actionVerbs.issues,
-      analysis.actionVerbs.suggestions
+      analysis.actionVerbs.suggestions,
     ),
 
     makeCategoryResult(
@@ -3248,7 +2057,7 @@ const buildCategoryResults = (
       analysis.quantifiedResults.score,
       "Evaluates measurable professional impact.",
       analysis.quantifiedResults.issues,
-      analysis.quantifiedResults.suggestions
+      analysis.quantifiedResults.suggestions,
     ),
 
     makeCategoryResult(
@@ -3256,17 +2065,12 @@ const buildCategoryResults = (
       analysis.formatting.score,
       "Evaluates potential ATS parsing and formatting risks.",
       analysis.formatting.issues,
-      analysis.formatting.suggestions
+      analysis.formatting.suggestions,
     ),
   ].filter((result) => {
-    const category =
-      getCategory(
-        result.category
-      );
+    const category = getCategory(result.category);
 
-    return (
-      category?.enabled === true
-    );
+    return category?.enabled === true;
   });
 };
 
@@ -3274,33 +2078,22 @@ const buildCategoryResults = (
 // GENERIC SCORE CALCULATION
 // ============================================================
 
-const calculateOverallScore = (
-  categories: ATSCategoryResult[]
-): number => {
-  const totalMax =
-    categories.reduce(
-      (sum, category) =>
-        sum + category.maxScore,
-      0
-    );
+const calculateOverallScore = (categories: ATSCategoryResult[]): number => {
+  const totalMax = categories.reduce(
+    (sum, category) => sum + category.maxScore,
+    0,
+  );
 
-  const totalScore =
-    categories.reduce(
-      (sum, category) =>
-        sum + category.score,
-      0
-    );
+  const totalScore = categories.reduce(
+    (sum, category) => sum + category.score,
+    0,
+  );
 
   if (totalMax <= 0) {
     return 0;
   }
 
-  return Number(
-    (
-      (totalScore / totalMax) *
-      100
-    ).toFixed(2)
-  );
+  return Number(((totalScore / totalMax) * 100).toFixed(2));
 };
 
 // ============================================================
@@ -3308,16 +2101,12 @@ const calculateOverallScore = (
 // ============================================================
 
 const buildRecommendations = (
-  categories: ATSCategoryResult[]
+  categories: ATSCategoryResult[],
 ): ATSRecommendation[] => {
-  const recommendations: ATSRecommendation[] =
-    [];
+  const recommendations: ATSRecommendation[] = [];
 
   for (const category of categories) {
-    if (
-      category.status ===
-      "excellent"
-    ) {
+    if (category.status === "excellent") {
       continue;
     }
 
@@ -3330,56 +2119,39 @@ const buildRecommendations = (
 
     for (const issue of category.issues) {
       recommendations.push({
-        title:
-          `${category.title} needs improvement`,
+        title: `${category.title} needs improvement`,
 
-        description:
-          issue,
+        description: issue,
 
         priority,
 
-        category:
-          category.category,
+        category: category.category,
 
         impact: Number(
-  Math.max(
-    0,
-    category.maxScore -
-      category.score
-  ).toFixed(2)
-),
+          Math.max(0, category.maxScore - category.score).toFixed(2),
+        ),
 
         actionable: true,
 
-        suggestedFix:
-          category.suggestions[0],
+        suggestedFix: category.suggestions[0],
       });
     }
   }
 
-  return recommendations
-    .slice(0, 10);
+  return recommendations.slice(0, 10);
 };
 
 // ============================================================
 // STRENGTHS
 // ============================================================
 
-const buildStrengths = (
-  categories: ATSCategoryResult[]
-): string[] => {
+const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
   return categories
     .filter(
       (category) =>
-        category.status ===
-          "excellent" ||
-        category.status ===
-          "good"
+        category.status === "excellent" || category.status === "good",
     )
-    .map(
-      (category) =>
-        `${category.title}: ${category.summary}`
-    )
+    .map((category) => `${category.title}: ${category.summary}`)
     .slice(0, 8);
 };
 
@@ -3387,23 +2159,14 @@ const buildStrengths = (
 // WEAKNESSES
 // ============================================================
 
-const buildWeaknesses = (
-  categories: ATSCategoryResult[]
-): string[] => {
+const buildWeaknesses = (categories: ATSCategoryResult[]): string[] => {
   return categories
     .filter(
       (category) =>
-        category.status ===
-          "poor" ||
-        category.status ===
-          "needs-improvement"
+        category.status === "poor" || category.status === "needs-improvement",
     )
-    .flatMap(
-      (category) =>
-        category.issues.map(
-          (issue) =>
-            `${category.title}: ${issue}`
-        )
+    .flatMap((category) =>
+      category.issues.map((issue) => `${category.title}: ${issue}`),
     )
     .slice(0, 10);
 };
@@ -3425,22 +2188,13 @@ const buildWeaknesses = (
  */
 export const analyzeResumeATS = (
   resume: ATSResume,
-  jobDescription?: string
+  jobDescription?: string,
 ): ATSRuleAnalysis => {
-  const contact =
-    analyzeContact(
-      resume
-    );
+  const contact = analyzeContact(resume);
 
-  const sections =
-    analyzeSections(
-      resume
-    );
+  const sections = analyzeSections(resume);
 
-  const skills =
-    analyzeSkills(
-      resume
-    );
+  const skills = analyzeSkills(resume);
 
   /**
    * General ATS v1 does not have a JD yet.
@@ -3451,51 +2205,23 @@ export const analyzeResumeATS = (
    * JD-specific keyword matching will be implemented
    * separately in the Job Matcher layer.
    */
- const keywordAnalysis =
-  analyzeResumeKeywords(
-    resume,
-    jobDescription
-  );
+  const keywordAnalysis = analyzeResumeKeywords(resume, jobDescription);
 
-  const experience =
-    analyzeExperience(
-      resume
-    );
+  const experience = analyzeExperience(resume);
 
-  const actionVerbs =
-    analyzeActionVerbs(
-      resume
-    );
+  const actionVerbs = analyzeActionVerbs(resume);
 
-  const quantifiedResults =
-    analyzeQuantifiedResults(
-      resume
-    );
+  const quantifiedResults = analyzeQuantifiedResults(resume);
 
-  const achievements =
-    analyzeAchievements(
-      resume
-    );
+  const achievements = analyzeAchievements(resume);
 
-  const projects =
-    analyzeProjects(
-      resume
-    );
+  const projects = analyzeProjects(resume);
 
-  const education =
-  analyzeEducation(
-    resume
-  );
+  const education = analyzeEducation(resume);
 
-const dateConsistency =
-  analyzeDateConsistency(
-    resume
-  );
+  const dateConsistency = analyzeDateConsistency(resume);
 
-const formatting =
-  analyzeFormatting(
-    resume
-  );
+  const formatting = analyzeFormatting(resume);
 
   /**
    * Optional detailed analyses are calculated here,
@@ -3505,96 +2231,76 @@ const formatting =
    * we intentionally expand the scoring model.
    */
 
-  const categories =
-    buildCategoryResults({
-      contact,
-      sections,
-      skills,
-      keywords:
-        keywordAnalysis,
-      experience,
-      actionVerbs,
-      quantifiedResults,
-      formatting,
-    });
+  const categories = buildCategoryResults({
+    contact,
+    sections,
+    skills,
+    keywords: keywordAnalysis,
+    experience,
+    actionVerbs,
+    quantifiedResults,
+    formatting,
+  });
 
-  const overallScore =
-    calculateOverallScore(
-      categories
-    );
+  const overallScore = calculateOverallScore(categories);
 
-  const recommendations =
-    buildRecommendations(
-      categories
-    );
+  const recommendations = buildRecommendations(categories);
 
-  const strengths =
-    buildStrengths(
-      categories
-    );
+  const strengths = buildStrengths(categories);
 
-  const weaknesses =
-    buildWeaknesses(
-      categories
-    );
+  const weaknesses = buildWeaknesses(categories);
 
-  const breakdown: ATSBreakdown =
-    {};
+  const breakdown: ATSBreakdown = {};
 
   for (const category of categories) {
-    breakdown[
-      category.category
-    ] = category.score;
+    breakdown[category.category] = category.score;
   }
 
   return {
-  overallScore,
+    overallScore,
 
-  breakdown,
+    breakdown,
 
-  categories,
+    categories,
 
-  contact,
+    contact,
 
-  sections,
+    sections,
 
-  skills,
+    skills,
 
-  keywords:
-    keywordAnalysis,
+    keywords: keywordAnalysis,
 
-  experience,
+    experience,
 
-  actionVerbs,
+    actionVerbs,
 
-  quantifiedResults,
+    quantifiedResults,
 
-  achievements,
+    achievements,
 
-  projects,
+    projects,
 
-  education,
+    education,
 
-  dateConsistency,
+    dateConsistency,
 
-  formatting,
+    formatting,
 
-  strengths,
+    strengths,
 
-  weaknesses,
+    weaknesses,
 
-  recommendations,
+    recommendations,
+  };
 };
-};
-
-
 
 // ============================================================
 // JD REQUIREMENT MATCHING ENGINE
 // ============================================================
 
 const getResumeEvidenceSources = (
-  resume: ATSResume
+  resume: ATSResume,
 ): Array<{
   section: string;
   text: string;
@@ -3663,9 +2369,7 @@ const getResumeEvidenceSources = (
   return sources;
 };
 
-const normalizeRequirementForMatch = (
-  value: string
-): string => {
+const normalizeRequirementForMatch = (value: string): string => {
   return normalizeText(value)
     .replace(/\bnode\s*\.\s*js\b/g, "node.js")
     .replace(/\bnodejs\b/g, "node.js")
@@ -3686,17 +2390,13 @@ const normalizeRequirementForMatch = (
     .trim();
 };
 
-const getRequirementAliases = (
-  requirement: string
-): string[] => {
-  const normalized =
-    normalizeRequirementForMatch(requirement);
+const getRequirementAliases = (requirement: string): string[] => {
+  const normalized = normalizeRequirementForMatch(requirement);
 
   const aliases = new Set<string>();
 
   const add = (value: string) => {
-    const normalizedValue =
-      normalizeRequirementForMatch(value);
+    const normalizedValue = normalizeRequirementForMatch(value);
 
     if (normalizedValue) {
       aliases.add(normalizedValue);
@@ -3707,29 +2407,13 @@ const getRequirementAliases = (
   add(requirement);
 
   const aliasMap: Record<string, string[]> = {
-    javascript: [
-      "javascript",
-      "js",
-      "ecmascript",
-    ],
+    javascript: ["javascript", "js", "ecmascript"],
 
-    typescript: [
-      "typescript",
-      "ts",
-    ],
+    typescript: ["typescript", "ts"],
 
-    "node.js": [
-      "node.js",
-      "nodejs",
-      "node js",
-      "node",
-    ],
+    "node.js": ["node.js", "nodejs", "node js", "node"],
 
-    express: [
-      "express",
-      "express.js",
-      "expressjs",
-    ],
+    express: ["express", "express.js", "expressjs"],
 
     "rest api": [
       "rest api",
@@ -3755,21 +2439,11 @@ const getRequirementAliases = (
       "build rest apis",
     ],
 
-    mongodb: [
-      "mongodb",
-      "mongo",
-      "mongo db",
-    ],
+    mongodb: ["mongodb", "mongo", "mongo db"],
 
-    mongoose: [
-      "mongoose",
-    ],
+    mongoose: ["mongoose"],
 
-    postgresql: [
-      "postgresql",
-      "postgres",
-      "postgres db",
-    ],
+    postgresql: ["postgresql", "postgres", "postgres db"],
 
     authentication: [
       "authentication",
@@ -3789,33 +2463,15 @@ const getRequirementAliases = (
       "role-based access control",
     ],
 
-    jwt: [
-      "jwt",
-      "json web token",
-      "json web tokens",
-    ],
+    jwt: ["jwt", "json web token", "json web tokens"],
 
-    redis: [
-      "redis",
-      "redis cache",
-      "redis caching",
-    ],
+    redis: ["redis", "redis cache", "redis caching"],
 
-    git: [
-      "git",
-      "version control",
-    ],
+    git: ["git", "version control"],
 
-    github: [
-      "github",
-      "git hub",
-    ],
+    github: ["github", "git hub"],
 
-    postman: [
-      "postman",
-      "api testing with postman",
-      "api testing",
-    ],
+    postman: ["postman", "api testing with postman", "api testing"],
 
     "api testing": [
       "api testing",
@@ -3866,12 +2522,7 @@ const getRequirementAliases = (
       "handled errors",
     ],
 
-    logging: [
-      "logging",
-      "application logging",
-      "error logging",
-      "logger",
-    ],
+    logging: ["logging", "application logging", "error logging", "logger"],
 
     security: [
       "security",
@@ -3889,12 +2540,7 @@ const getRequirementAliases = (
       "scalable rest apis",
     ],
 
-    caching: [
-      "caching",
-      "cache",
-      "redis caching",
-      "redis cache",
-    ],
+    caching: ["caching", "cache", "redis caching", "redis cache"],
 
     "problem-solving": [
       "problem solving",
@@ -3903,12 +2549,7 @@ const getRequirementAliases = (
       "problem-solving skills",
     ],
 
-    debugging: [
-      "debugging",
-      "debug",
-      "debugging skills",
-      "debug backend",
-    ],
+    debugging: ["debugging", "debug", "debugging skills", "debug backend"],
 
     "ci/cd": [
       "ci/cd",
@@ -3920,16 +2561,11 @@ const getRequirementAliases = (
 
   // Find aliases by exact normalized key
   for (const [key, values] of Object.entries(aliasMap)) {
-    const normalizedKey =
-      normalizeRequirementForMatch(key);
+    const normalizedKey = normalizeRequirementForMatch(key);
 
     if (
       normalized === normalizedKey ||
-      values.some(
-        (value) =>
-          normalizeRequirementForMatch(value) ===
-          normalized
-      )
+      values.some((value) => normalizeRequirementForMatch(value) === normalized)
     ) {
       values.forEach(add);
       add(key);
@@ -3940,10 +2576,7 @@ const getRequirementAliases = (
   // GENERIC COMPOSITE REQUIREMENT EXPANSION
   // ----------------------------------------------------------
 
-  if (
-    normalized.includes("rest api") ||
-    normalized.includes("restful api")
-  ) {
+  if (normalized.includes("rest api") || normalized.includes("restful api")) {
     add("rest api");
     add("rest apis");
     add("restful api");
@@ -3960,33 +2593,24 @@ const getRequirementAliases = (
     add("database design");
   }
 
-  if (
-    normalized.includes("authentication")
-  ) {
+  if (normalized.includes("authentication")) {
     add("authentication");
     add("auth");
     add("jwt authentication");
   }
 
-  if (
-    normalized.includes("authorization") ||
-    normalized.includes("rbac")
-  ) {
+  if (normalized.includes("authorization") || normalized.includes("rbac")) {
     add("authorization");
     add("rbac");
     add("role based access control");
   }
 
-  if (
-    normalized.includes("api testing")
-  ) {
+  if (normalized.includes("api testing")) {
     add("api testing");
     add("postman");
   }
 
-  if (
-    normalized.includes("security")
-  ) {
+  if (normalized.includes("security")) {
     add("security");
     add("api security");
     add("backend security");
@@ -3995,13 +2619,10 @@ const getRequirementAliases = (
   return Array.from(aliases);
 };
 
-//  
+//
 
-const getResponsibilityAliases = (
-  requirement: string
-): string[] => {
-  const normalized =
-    normalizeRequirementForMatch(requirement);
+const getResponsibilityAliases = (requirement: string): string[] => {
+  const normalized = normalizeRequirementForMatch(requirement);
 
   const aliases: Record<string, string[]> = {
     "develop and maintain backend apis": [
@@ -4086,14 +2707,11 @@ const getResponsibilityAliases = (
     ],
   };
 
-  return [
-    normalized,
-    ...(aliases[normalized] ?? []),
-  ];
+  return [normalized, ...(aliases[normalized] ?? [])];
 };
 const findRequirementEvidence = (
   requirement: string,
-  resume: ATSResume
+  resume: ATSResume,
 ): {
   status: ATSMatchStatus;
   evidenceStrength: ATSEvidenceStrength;
@@ -4102,17 +2720,13 @@ const findRequirementEvidence = (
   confidence: number;
   explanation: string;
 } => {
-  const sources =
-    getResumeEvidenceSources(resume);
+  const sources = getResumeEvidenceSources(resume);
 
-  const aliases =
-    getRequirementAliases(requirement);
+  const aliases = getRequirementAliases(requirement);
 
   // ----------------------------------------------------------
   // DEBUG
   // ----------------------------------------------------------
-
-   
 
   // ----------------------------------------------------------
   // MATCHED SOURCES
@@ -4128,42 +2742,30 @@ const findRequirementEvidence = (
   // ----------------------------------------------------------
 
   for (const source of sources) {
-    const sourceText =
-      normalizeRequirementForMatch(
-        source.text
-      );
+    const sourceText = normalizeRequirementForMatch(source.text);
 
     if (!sourceText) {
       continue;
     }
 
-    const matched =
-      aliases.some((alias) => {
-        const result =
-          containsNormalizedPhrase(
-            sourceText,
-            alias
-          );
+    const matched = aliases.some((alias) => {
+      const result = containsNormalizedPhrase(sourceText, alias);
 
-        // Keep debug only for important requirements.
-        if (
-          ["Node.js", "Express.js", "TypeScript"].includes(
-            requirement
-          )
-        ) {
-          // console.log(
-          //   "MATCH CHECK:",
-          //   {
-          //     requirement,
-          //     sourceText,
-          //     alias,
-          //     result,
-          //   }
-          // );
-        }
+      // Keep debug only for important requirements.
+      if (["Node.js", "Express.js", "TypeScript"].includes(requirement)) {
+        // console.log(
+        //   "MATCH CHECK:",
+        //   {
+        //     requirement,
+        //     sourceText,
+        //     alias,
+        //     result,
+        //   }
+        // );
+      }
 
-        return result;
-      });
+      return result;
+    });
 
     if (matched) {
       matchedSources.push(source);
@@ -4186,8 +2788,7 @@ const findRequirementEvidence = (
 
       confidence: 95,
 
-      explanation:
-        `"${requirement}" is not demonstrated anywhere in the resume.`,
+      explanation: `"${requirement}" is not demonstrated anywhere in the resume.`,
     };
   }
 
@@ -4195,19 +2796,12 @@ const findRequirementEvidence = (
   // BUILD EVIDENCE
   // ----------------------------------------------------------
 
-  const sections =
-    uniqueStrings(
-      matchedSources.map(
-        (item) => item.section
-      )
-    );
+  const sections = uniqueStrings(matchedSources.map((item) => item.section));
 
-  const evidence =
-    uniqueStrings(
-      matchedSources.map(
-        (item) => item.text
-      )
-    ).slice(0, 5);
+  const evidence = uniqueStrings(matchedSources.map((item) => item.text)).slice(
+    0,
+    5,
+  );
 
   // ----------------------------------------------------------
   // EVIDENCE LEVEL
@@ -4221,27 +2815,20 @@ const findRequirementEvidence = (
   // Other
   // ----------------------------------------------------------
 
-  const hasExperience =
-    sections.includes("experience");
+  const hasExperience = sections.includes("experience");
 
   const hasInternship =
-    sections.includes("internship") ||
-    sections.includes("internships");
+    sections.includes("internship") || sections.includes("internships");
 
-  const hasProject =
-    sections.includes("projects");
+  const hasProject = sections.includes("projects");
 
-  const hasSkills =
-    sections.includes("skills");
+  const hasSkills = sections.includes("skills");
 
   // ----------------------------------------------------------
   // STRONG EVIDENCE: EXPERIENCE / INTERNSHIP
   // ----------------------------------------------------------
 
-  if (
-    hasExperience ||
-    hasInternship
-  ) {
+  if (hasExperience || hasInternship) {
     return {
       status: "matched",
 
@@ -4253,8 +2840,7 @@ const findRequirementEvidence = (
 
       confidence: 95,
 
-      explanation:
-        `"${requirement}" is directly demonstrated through practical experience.`,
+      explanation: `"${requirement}" is directly demonstrated through practical experience.`,
     };
   }
 
@@ -4274,8 +2860,7 @@ const findRequirementEvidence = (
 
       confidence: 90,
 
-      explanation:
-        `"${requirement}" is demonstrated through project work.`,
+      explanation: `"${requirement}" is demonstrated through project work.`,
     };
   }
 
@@ -4295,8 +2880,7 @@ const findRequirementEvidence = (
 
       confidence: 80,
 
-      explanation:
-        `"${requirement}" is listed in the skills section but lacks supporting evidence in experience or projects.`,
+      explanation: `"${requirement}" is listed in the skills section but lacks supporting evidence in experience or projects.`,
     };
   }
 
@@ -4315,8 +2899,7 @@ const findRequirementEvidence = (
 
     confidence: 70,
 
-    explanation:
-      `"${requirement}" appears in the resume but has limited supporting evidence.`,
+    explanation: `"${requirement}" appears in the resume but has limited supporting evidence.`,
   };
 };
 
@@ -4326,9 +2909,9 @@ const findRequirementEvidence = (
 
 const analyzeJDRequirements = (
   resume: ATSResume,
-  jd: ATSJobDescriptionAnalysis
+  jd: ATSJobDescriptionAnalysis,
 ): ATSJobDescriptionAnalysis => {
-   console.log("🔥 NEW analyzeJDRequirements RUNNING 🔥");
+  console.log("🔥 NEW analyzeJDRequirements RUNNING 🔥");
   const requirements = [
     ...jd.requiredSkills,
     ...jd.preferredSkills,
@@ -4345,73 +2928,55 @@ const analyzeJDRequirements = (
       requirements.map((item) => [
         normalizeRequirementForMatch(item.name),
         item,
-      ])
-    ).values()
+      ]),
+    ).values(),
   );
 
- 
-  
-
-  const matches: ATSRequirementMatch[] =
-    uniqueRequirements.map((requirement) => {
-      const evidence = findRequirementEvidence(
-        requirement.name,
-        resume
-      );
+  const matches: ATSRequirementMatch[] = uniqueRequirements.map(
+    (requirement) => {
+      const evidence = findRequirementEvidence(requirement.name, resume);
 
       return {
         requirementId: requirement.id,
 
-      requirement: requirement.name,
+        requirement: requirement.name,
 
-        normalizedRequirement:
-          normalizeRequirementForMatch(
-            requirement.name
-          ),
+        normalizedRequirement: normalizeRequirementForMatch(requirement.name),
 
-        priority:
-          requirement.priority,
+        priority: requirement.priority,
 
-        status:
-          evidence.status,
+        status: evidence.status,
 
-        evidenceStrength:
-          evidence.evidenceStrength,
+        evidenceStrength: evidence.evidenceStrength,
 
-        matchedResumeEvidence:
-          evidence.evidence,
+        matchedResumeEvidence: evidence.evidence,
 
-        matchedResumeSections:
-          evidence.sections,
+        matchedResumeSections: evidence.sections,
 
-        confidence:
-          evidence.confidence,
+        confidence: evidence.confidence,
 
-        explanation:
-          evidence.explanation,
+        explanation: evidence.explanation,
       };
-    });
+    },
+  );
 
+  //     console.log(
+  //   "========== JD REQUIREMENT CLASSIFICATION =========="
+  // );
 
-//     console.log(
-//   "========== JD REQUIREMENT CLASSIFICATION =========="
-// );
+  // matches.forEach((match) => {
+  //   console.log({
+  //     requirement: match.requirement,
+  //     priority: match.priority,
+  //     status: match.status,
+  //   });
+  // });
 
-// matches.forEach((match) => {
-//   console.log({
-//     requirement: match.requirement,
-//     priority: match.priority,
-//     status: match.status,
-//   });
-// });
+  // console.log(
+  //   "=================================================="
+  // );
 
-// console.log(
-//   "=================================================="
-// );
-
-  const calculatePercentage = (
-    items: ATSRequirementMatch[]
-  ): number => {
+  const calculatePercentage = (items: ATSRequirementMatch[]): number => {
     if (items.length === 0) {
       return 0;
     }
@@ -4426,27 +2991,20 @@ const analyzeJDRequirements = (
       }
     }
 
-    return Number(
-      ((points / items.length) * 100).toFixed(1)
-    );
+    return Number(((points / items.length) * 100).toFixed(1));
   };
 
   const requiredMatches = matches.filter(
-    (match) => match.priority === "required"
+    (match) => match.priority === "required",
   );
 
   const preferredMatches = matches.filter(
-    (match) => match.priority === "preferred"
+    (match) => match.priority === "preferred",
   );
 
-const responsibilityMatches =
-  (jd.responsibilities ?? [])
+  const responsibilityMatches = (jd.responsibilities ?? [])
     .map((responsibility) => {
-      const evidence =
-        findRequirementEvidence(
-          responsibility.name,
-          resume
-        );
+      const evidence = findRequirementEvidence(responsibility.name, resume);
 
       return {
         responsibility,
@@ -4455,78 +3013,51 @@ const responsibilityMatches =
     })
     .filter(
       ({ evidence }) =>
-        evidence.status === "matched" ||
-        evidence.status === "partial"
+        evidence.status === "matched" || evidence.status === "partial",
     );
 
-const responsibilityMatchPercentage =
-  jd.responsibilities?.length
+  const responsibilityMatchPercentage = jd.responsibilities?.length
     ? Number(
         (
-          (responsibilityMatches.length /
-            jd.responsibilities.length) *
+          (responsibilityMatches.length / jd.responsibilities.length) *
           100
-        ).toFixed(1)
+        ).toFixed(1),
       )
     : 0;
 
-  const requiredMatchPercentage =
-    calculatePercentage(requiredMatches);
+  const requiredMatchPercentage = calculatePercentage(requiredMatches);
 
-  const preferredMatchPercentage =
-    calculatePercentage(preferredMatches);
+  const preferredMatchPercentage = calculatePercentage(preferredMatches);
 
-
-
-const otherMatches =
-  matches.filter(
+  const otherMatches = matches.filter(
     (match) =>
-      !requiredMatches.includes(match) &&
-      !preferredMatches.includes(match)
+      !requiredMatches.includes(match) && !preferredMatches.includes(match),
   );
 
-const otherMatchPercentage =
-  calculatePercentage(otherMatches);
+  const otherMatchPercentage = calculatePercentage(otherMatches);
 
-const overallMatchPercentage = Number(
-  (
-    requiredMatchPercentage * 0.6 +
-    responsibilityMatchPercentage * 0.2 +
-    preferredMatchPercentage * 0.1 +
-    otherMatchPercentage * 0.1
-  ).toFixed(1)
-);
+  const overallMatchPercentage = Number(
+    (
+      requiredMatchPercentage * 0.6 +
+      responsibilityMatchPercentage * 0.2 +
+      preferredMatchPercentage * 0.1 +
+      otherMatchPercentage * 0.1
+    ).toFixed(1),
+  );
 
-  const criticalMissingRequirements =
-    matches
-      .filter(
-        (match) =>
-          match.priority === "required" &&
-          match.status === "missing"
-      )
-      .map(
-        (match) => match.requirement
-      );
+  const criticalMissingRequirements = matches
+    .filter(
+      (match) => match.priority === "required" && match.status === "missing",
+    )
+    .map((match) => match.requirement);
 
-  const partialRequirements =
-    matches
-      .filter(
-        (match) =>
-          match.status === "partial"
-      )
-      .map(
-        (match) => match.requirement
-      );
+  const partialRequirements = matches
+    .filter((match) => match.status === "partial")
+    .map((match) => match.requirement);
 
-  const matchedRequirements =
-    matches
-      .filter(
-        (match) =>
-          match.status === "matched"
-      )
-      .map(
-        (match) => match.requirement
-      );
+  const matchedRequirements = matches
+    .filter((match) => match.status === "matched")
+    .map((match) => match.requirement);
 
   return {
     ...jd,
@@ -4547,16 +3078,11 @@ const overallMatchPercentage = Number(
 
     matchedRequirements,
 
-    issues: [
-      ...(jd.issues ?? []),
-    ],
+    issues: [...(jd.issues ?? [])],
 
-    suggestions: [
-      ...(jd.suggestions ?? []),
-    ],
+    suggestions: [...(jd.suggestions ?? [])],
   };
 };
-
 
 // ============================================================
 // JD ANALYSIS + REQUIREMENT MATCHING
@@ -4564,132 +3090,94 @@ const overallMatchPercentage = Number(
 
 export const analyzeJobDescriptionMatch = (
   resume: ATSResume,
-  jd: ATSJobDescriptionAnalysis
+  jd: ATSJobDescriptionAnalysis,
 ): ATSJobDescriptionAnalysis => {
-  const allRequirements: ATSJobRequirement[] =
-  Array.isArray(jd.requirements)
+  const allRequirements: ATSJobRequirement[] = Array.isArray(jd.requirements)
     ? jd.requirements
     : [];
 
-const uniqueRequirements =
-  Array.from(
+  const uniqueRequirements = Array.from(
     new Map(
       allRequirements.map((item) => [
-        normalizeRequirementForMatch(
-          item.name
-        ),
+        normalizeRequirementForMatch(item.name),
         item,
-      ])
-    ).values()
+      ]),
+    ).values(),
   );
 
+  console.log("========== LIVE JD REQUIREMENTS ==========");
 
   console.log(
-  "========== LIVE JD REQUIREMENTS =========="
-);
+    allRequirements.map((item) => ({
+      name: item.name,
+      priority: item.priority,
+    })),
+  );
 
-console.log(
-  allRequirements.map((item) => ({
-    name: item.name,
-    priority: item.priority,
-  }))
-);
+  console.log("========== LIVE JD RESPONSIBILITIES ==========");
 
-console.log(
-  "========== LIVE JD RESPONSIBILITIES =========="
-);
+  console.log(
+    jd.responsibilities.map((item) => ({
+      name: item.name,
+      priority: item.priority,
+    })),
+  );
 
-console.log(
-  jd.responsibilities.map((item) => ({
-    name: item.name,
-    priority: item.priority,
-  }))
-);
+  console.log("=============================================");
 
-console.log(
-  "============================================="
-);
-
-  const matches: ATSRequirementMatch[] =
-    uniqueRequirements.map((requirement) => {
-      const evidence = findRequirementEvidence(
-        requirement.name,
-        resume
-      );
-
-
-      
+  const matches: ATSRequirementMatch[] = uniqueRequirements.map(
+    (requirement) => {
+      const evidence = findRequirementEvidence(requirement.name, resume);
 
       return {
         requirementId: requirement.id,
 
         requirement: requirement.name,
 
-        normalizedRequirement:
-          normalizeRequirementForMatch(
-            requirement.name
-          ),
+        normalizedRequirement: normalizeRequirementForMatch(requirement.name),
 
-        priority:
-          requirement.priority,
+        priority: requirement.priority,
 
-        status:
-          evidence.status,
+        status: evidence.status,
 
-        evidenceStrength:
-          evidence.evidenceStrength,
+        evidenceStrength: evidence.evidenceStrength,
 
-        matchedResumeEvidence:
-          evidence.evidence,
+        matchedResumeEvidence: evidence.evidence,
 
-        matchedResumeSections:
-          evidence.sections,
+        matchedResumeSections: evidence.sections,
 
-        confidence:
-          evidence.confidence,
+        confidence: evidence.confidence,
 
-        explanation:
-          evidence.explanation,
+        explanation: evidence.explanation,
       };
-    });
-
-    
-  const requiredMatches =
-    matches.filter(
-      (match) =>
-        match.priority === "required"
-    );
-
-  const preferredMatches =
-    matches.filter(
-      (match) =>
-        match.priority === "preferred"
-    );
-
-  const responsibilityMatches =
-  matches.filter((match) =>
-    jd.responsibilities?.some(
-      (responsibility) => {
-        const responsibilityText =
-          normalizeRequirementForMatch(
-            responsibility.name
-          );
-
-        const matchText =
-          match.normalizedRequirement;
-
-        return (
-          responsibilityText === matchText ||
-          responsibilityText.includes(matchText) ||
-          matchText.includes(responsibilityText)
-        );
-      }
-    )
+    },
   );
 
-  const calculateMatchPercentage = (
-    items: ATSRequirementMatch[]
-  ): number => {
+  const requiredMatches = matches.filter(
+    (match) => match.priority === "required",
+  );
+
+  const preferredMatches = matches.filter(
+    (match) => match.priority === "preferred",
+  );
+
+  const responsibilityMatches = matches.filter((match) =>
+    jd.responsibilities?.some((responsibility) => {
+      const responsibilityText = normalizeRequirementForMatch(
+        responsibility.name,
+      );
+
+      const matchText = match.normalizedRequirement;
+
+      return (
+        responsibilityText === matchText ||
+        responsibilityText.includes(matchText) ||
+        matchText.includes(responsibilityText)
+      );
+    }),
+  );
+
+  const calculateMatchPercentage = (items: ATSRequirementMatch[]): number => {
     if (items.length === 0) {
       return 0;
     }
@@ -4699,75 +3187,60 @@ console.log(
     for (const item of items) {
       if (item.status === "matched") {
         score += 1;
-      } else if (
-        item.status === "partial"
-      ) {
+      } else if (item.status === "partial") {
         score += 0.5;
       }
     }
 
-    return Number(
-      (
-        (score / items.length) *
-        100
-      ).toFixed(1)
-    );
+    return Number(((score / items.length) * 100).toFixed(1));
   };
 
-  const requiredMatchPercentage =
-    calculateMatchPercentage(
-      requiredMatches
-    );
+  const requiredMatchPercentage = calculateMatchPercentage(requiredMatches);
 
-  const preferredMatchPercentage =
-    calculateMatchPercentage(
-      preferredMatches
-    );
+  const preferredMatchPercentage = calculateMatchPercentage(preferredMatches);
 
-  const responsibilityMatchPercentage =
-    calculateMatchPercentage(
-      responsibilityMatches
-    );
+  const responsibilityMatchPercentage = calculateMatchPercentage(
+    responsibilityMatches,
+  );
 
+  //     console.log(
+  //   "========== RESPONSIBILITY MATCH DEBUG =========="
+  // );
 
-//     console.log(
-//   "========== RESPONSIBILITY MATCH DEBUG =========="
-// );
+  // console.log(
+  //   "JD responsibilities:",
+  //   jd.responsibilities?.map((r) => ({
+  //     name: r.name,
+  //     normalized: normalizeRequirementForMatch(r.name),
+  //   }))
+  // );
 
-// console.log(
-//   "JD responsibilities:",
-//   jd.responsibilities?.map((r) => ({
-//     name: r.name,
-//     normalized: normalizeRequirementForMatch(r.name),
-//   }))
-// );
+  // console.log(
+  //   "Requirement matches:",
+  //   matches.map((m) => ({
+  //     requirement: m.requirement,
+  //     normalized: m.normalizedRequirement,
+  //     priority: m.priority,
+  //     status: m.status,
+  //   }))
+  // );
 
-// console.log(
-//   "Requirement matches:",
-//   matches.map((m) => ({
-//     requirement: m.requirement,
-//     normalized: m.normalizedRequirement,
-//     priority: m.priority,
-//     status: m.status,
-//   }))
-// );
+  // console.log(
+  //   "Responsibility matches:",
+  //   responsibilityMatches.map((m) => ({
+  //     requirement: m.requirement,
+  //     status: m.status,
+  //   }))
+  // );
 
-// console.log(
-//   "Responsibility matches:",
-//   responsibilityMatches.map((m) => ({
-//     requirement: m.requirement,
-//     status: m.status,
-//   }))
-// );
+  // console.log(
+  //   "Responsibility percentage:",
+  //   responsibilityMatchPercentage
+  // );
 
-// console.log(
-//   "Responsibility percentage:",
-//   responsibilityMatchPercentage
-// );
-
-// console.log(
-//   "==============================================="
-// );
+  // console.log(
+  //   "==============================================="
+  // );
 
   /*
    * Required requirements get the highest weight.
@@ -4778,120 +3251,84 @@ console.log(
    * 10% Other JD requirements
    */
 
-  const otherMatches =
-    matches.filter(
-      (match) =>
-        !requiredMatches.includes(match) &&
-        !preferredMatches.includes(match) &&
-        !responsibilityMatches.includes(match)
-    );
+  const otherMatches = matches.filter(
+    (match) =>
+      !requiredMatches.includes(match) &&
+      !preferredMatches.includes(match) &&
+      !responsibilityMatches.includes(match),
+  );
 
-  const otherMatchPercentage =
-    calculateMatchPercentage(
-      otherMatches
-    );
-    console.log("========== JD SCORE BREAKDOWN ==========");
-console.log("Required:", requiredMatchPercentage);
-console.log("Responsibilities:", responsibilityMatchPercentage);
-console.log("Preferred:", preferredMatchPercentage);
-console.log("Other:", otherMatchPercentage);
-console.log(
-  "Calculated Overall:",
-  (
-    requiredMatchPercentage * 0.60 +
-    responsibilityMatchPercentage * 0.20 +
-    preferredMatchPercentage * 0.10 +
-    otherMatchPercentage * 0.10
-  ).toFixed(1)
-);
-console.log("========================================");
+  const otherMatchPercentage = calculateMatchPercentage(otherMatches);
+  console.log("========== JD SCORE BREAKDOWN ==========");
+  console.log("Required:", requiredMatchPercentage);
+  console.log("Responsibilities:", responsibilityMatchPercentage);
+  console.log("Preferred:", preferredMatchPercentage);
+  console.log("Other:", otherMatchPercentage);
+  console.log(
+    "Calculated Overall:",
+    (
+      requiredMatchPercentage * 0.6 +
+      responsibilityMatchPercentage * 0.2 +
+      preferredMatchPercentage * 0.1 +
+      otherMatchPercentage * 0.1
+    ).toFixed(1),
+  );
+  console.log("========================================");
 
-  const overallMatchPercentage =
-    Number(
-      (
-        requiredMatchPercentage * 0.60 +
-        responsibilityMatchPercentage * 0.20 +
-        preferredMatchPercentage * 0.10 +
-        otherMatchPercentage * 0.10
-      ).toFixed(1)
-    );
+  const overallMatchPercentage = Number(
+    (
+      requiredMatchPercentage * 0.6 +
+      responsibilityMatchPercentage * 0.2 +
+      preferredMatchPercentage * 0.1 +
+      otherMatchPercentage * 0.1
+    ).toFixed(1),
+  );
 
-  const criticalMissingRequirements =
-    requiredMatches
-      .filter(
-        (match) =>
-          match.status === "missing"
-      )
-      .map(
-        (match) =>
-          match.requirement
-      );
+  const criticalMissingRequirements = requiredMatches
+    .filter((match) => match.status === "missing")
+    .map((match) => match.requirement);
 
-  const partialRequirements =
-    matches
-      .filter(
-        (match) =>
-          match.status === "partial"
-      )
-      .map(
-        (match) =>
-          match.requirement
-      );
+  const partialRequirements = matches
+    .filter((match) => match.status === "partial")
+    .map((match) => match.requirement);
 
-  const matchedRequirements =
-    matches
-      .filter(
-        (match) =>
-          match.status === "matched"
-      )
-      .map(
-        (match) =>
-          match.requirement
-      );
+  const matchedRequirements = matches
+    .filter((match) => match.status === "matched")
+    .map((match) => match.requirement);
 
   const issues: string[] = [];
 
   const suggestions: string[] = [];
 
-  if (
-    criticalMissingRequirements.length > 0
-  ) {
+  if (criticalMissingRequirements.length > 0) {
     issues.push(
-      `${criticalMissingRequirements.length} required JD requirement(s) are missing from the resume.`
+      `${criticalMissingRequirements.length} required JD requirement(s) are missing from the resume.`,
     );
 
     suggestions.push(
       `Address required requirements such as ${criticalMissingRequirements
         .slice(0, 5)
-        .join(", ")} if you genuinely have experience with them.`
+        .join(", ")} if you genuinely have experience with them.`,
     );
   }
 
-  if (
-    responsibilityMatchPercentage < 60
-  ) {
+  if (responsibilityMatchPercentage < 60) {
     issues.push(
-      "Resume experience does not sufficiently demonstrate the responsibilities described in the JD."
+      "Resume experience does not sufficiently demonstrate the responsibilities described in the JD.",
     );
 
     suggestions.push(
-      "Rewrite relevant experience and project bullets to demonstrate the JD responsibilities using truthful evidence."
+      "Rewrite relevant experience and project bullets to demonstrate the JD responsibilities using truthful evidence.",
     );
   }
 
-  if (
-    requiredMatchPercentage < 70
-  ) {
-    issues.push(
-      `Required-skill match is only ${requiredMatchPercentage}%.`
-    );
+  if (requiredMatchPercentage < 70) {
+    issues.push(`Required-skill match is only ${requiredMatchPercentage}%.`);
   }
 
-  if (
-    overallMatchPercentage < 70
-  ) {
+  if (overallMatchPercentage < 70) {
     suggestions.push(
-      "Prioritize high-impact missing requirements before optimizing secondary keywords."
+      "Prioritize high-impact missing requirements before optimizing secondary keywords.",
     );
   }
 
@@ -4914,57 +3351,35 @@ console.log("========================================");
 
     matchedRequirements,
 
-    issues: Array.from(
-      new Set([
-        ...(jd.issues ?? []),
-        ...issues,
-      ])
-    ),
+    issues: Array.from(new Set([...(jd.issues ?? []), ...issues])),
 
     suggestions: Array.from(
-      new Set([
-        ...(jd.suggestions ?? []),
-        ...suggestions,
-      ])
+      new Set([...(jd.suggestions ?? []), ...suggestions]),
     ),
   };
 };
 
-
-
-
 const analyzeResumeKeywords = (
   resume: ATSResume,
-  jobDescription?: string
+  jobDescription?: string,
 ): ATSKeywordAnalysis => {
-  const targetRole = cleanText(
-    resume.targetRole
-  );
+  const targetRole = cleanText(resume.targetRole);
 
-  const roleMatchInfo = targetRole
-    ? getRoleMatchInfo(targetRole)
-    : null;
+  const roleMatchInfo = targetRole ? getRoleMatchInfo(targetRole) : null;
 
   const skillNames = flattenStrings(
-    (resume.skills ?? []).map(
-      (category) => category.skills ?? []
-    )
+    (resume.skills ?? []).map((category) => category.skills ?? []),
   );
 
-  const technologies =
-    (resume.projects ?? []).flatMap(
-      (project) =>
-        project.technologies ?? []
-    );
+  const technologies = (resume.projects ?? []).flatMap(
+    (project) => project.technologies ?? [],
+  );
 
-  const experienceText =
-    getExperienceBullets(resume);
+  const experienceText = getExperienceBullets(resume);
 
-  const projectDescriptions =
-    (resume.projects ?? []).map(
-      (project) =>
-        project.description ?? ""
-    );
+  const projectDescriptions = (resume.projects ?? []).map(
+    (project) => project.description ?? "",
+  );
 
   const textSources = [
     targetRole,
@@ -4975,29 +3390,22 @@ const analyzeResumeKeywords = (
     ...projectDescriptions,
   ];
 
-  const combinedText =
-    textSources.join(" ");
+  const combinedText = textSources.join(" ");
 
-  const normalized =
-    normalizeText(combinedText);
+  const normalized = normalizeText(combinedText);
 
   // ============================================================
   // MODE DETECTION
   // ============================================================
 
-  const jdText =
-    cleanText(jobDescription);
+  const jdText = cleanText(jobDescription);
 
-  const hasJD =
-    jdText.length > 0;
+  const hasJD = jdText.length > 0;
 
-  const roleBenchmarkAvailable =
-    hasRoleBenchmark(targetRole);
+  const roleBenchmarkAvailable = hasRoleBenchmark(targetRole);
 
   const roleKeywordPool =
-    !hasJD && roleBenchmarkAvailable
-      ? getRoleKeywordPool(targetRole)
-      : [];
+    !hasJD && roleBenchmarkAvailable ? getRoleKeywordPool(targetRole) : [];
 
   // ============================================================
   // JD KEYWORD DEFINITIONS
@@ -5009,80 +3417,47 @@ const analyzeResumeKeywords = (
   }> = [
     {
       keyword: "Node.js",
-      aliases: [
-        "node.js",
-        "nodejs",
-        "node js",
-      ],
+      aliases: ["node.js", "nodejs", "node js"],
     },
 
     {
       keyword: "Express.js",
-      aliases: [
-        "express.js",
-        "expressjs",
-        "express",
-      ],
+      aliases: ["express.js", "expressjs", "express"],
     },
 
     {
       keyword: "JavaScript",
-      aliases: [
-        "javascript",
-        "js",
-      ],
+      aliases: ["javascript", "js"],
     },
 
     {
       keyword: "TypeScript",
-      aliases: [
-        "typescript",
-        "ts",
-      ],
+      aliases: ["typescript", "ts"],
     },
 
     {
       keyword: "MongoDB",
-      aliases: [
-        "mongodb",
-        "mongo db",
-        "mongo",
-      ],
+      aliases: ["mongodb", "mongo db", "mongo"],
     },
 
     {
       keyword: "Mongoose",
-      aliases: [
-        "mongoose",
-      ],
+      aliases: ["mongoose"],
     },
 
     {
       keyword: "REST APIs",
-      aliases: [
-        "rest api",
-        "rest apis",
-        "restful api",
-        "restful apis",
-      ],
+      aliases: ["rest api", "rest apis", "restful api", "restful apis"],
     },
 
     {
       keyword: "JWT",
-      aliases: [
-        "jwt",
-        "json web token",
-        "json web tokens",
-      ],
+      aliases: ["jwt", "json web token", "json web tokens"],
     },
 
     {
       keyword: "Authentication",
-      aliases: [
-        "authentication",
-        "authenticate",
-        "authenticated",
-      ],
+      aliases: ["authentication", "authenticate", "authenticated"],
     },
 
     {
@@ -5097,33 +3472,22 @@ const analyzeResumeKeywords = (
 
     {
       keyword: "Git",
-      aliases: [
-        "git",
-      ],
+      aliases: ["git"],
     },
 
     {
       keyword: "GitHub",
-      aliases: [
-        "github",
-        "git hub",
-      ],
+      aliases: ["github", "git hub"],
     },
 
     {
       keyword: "Postman",
-      aliases: [
-        "postman",
-      ],
+      aliases: ["postman"],
     },
 
     {
       keyword: "Redis",
-      aliases: [
-        "redis",
-        "redis cache",
-        "redis caching",
-      ],
+      aliases: ["redis", "redis cache", "redis caching"],
     },
   ];
 
@@ -5134,22 +3498,13 @@ const analyzeResumeKeywords = (
   let jdKeywordCandidates: string[] = [];
 
   if (hasJD) {
-    jdKeywordCandidates =
-      uniqueStrings(
-        jdKeywordPatterns
-          .filter((item) =>
-            item.aliases.some(
-              (alias) =>
-                containsNormalizedPhrase(
-                  jdText,
-                  alias
-                )
-            )
-          )
-          .map(
-            (item) => item.keyword
-          )
-      );
+    jdKeywordCandidates = uniqueStrings(
+      jdKeywordPatterns
+        .filter((item) =>
+          item.aliases.some((alias) => containsNormalizedPhrase(jdText, alias)),
+        )
+        .map((item) => item.keyword),
+    );
   }
 
   // ============================================================
@@ -5162,21 +3517,15 @@ const analyzeResumeKeywords = (
   //   Resume skills + technologies + role benchmark
   // ============================================================
 
-  const keywordCandidates =
-    hasJD
-      ? jdKeywordCandidates
-      : uniqueStrings([
-          ...skillNames,
-          ...technologies,
-          ...roleKeywordPool,
-        ]);
+  const keywordCandidates = hasJD
+    ? jdKeywordCandidates
+    : uniqueStrings([...skillNames, ...technologies, ...roleKeywordPool]);
 
   // ============================================================
   // KEYWORD FREQUENCY
   // ============================================================
 
-  const keywordFrequency:
-    Record<string, number> = {};
+  const keywordFrequency: Record<string, number> = {};
 
   const matchedKeywords: string[] = [];
 
@@ -5188,38 +3537,24 @@ const analyzeResumeKeywords = (
 
   if (!hasJD) {
     for (const keyword of keywordCandidates) {
-      const normalizedKeyword =
-        normalizeText(keyword);
+      const normalizedKeyword = normalizeText(keyword);
 
       if (!normalizedKeyword) {
         continue;
       }
 
-      const escaped =
-        normalizedKeyword.replace(
-          /[.*+?^${}()|[\]\\]/g,
-          "\\$&"
-        );
+      const escaped = normalizedKeyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-      const regex =
-        new RegExp(
-          `\\b${escaped}\\b`,
-          "gi"
-        );
+      const regex = new RegExp(`\\b${escaped}\\b`, "gi");
 
-      const matches =
-        normalized.match(regex) ?? [];
+      const matches = normalized.match(regex) ?? [];
 
-      const frequency =
-        matches.length;
+      const frequency = matches.length;
 
-      keywordFrequency[keyword] =
-        frequency;
+      keywordFrequency[keyword] = frequency;
 
       if (frequency > 0) {
-        matchedKeywords.push(
-          keyword
-        );
+        matchedKeywords.push(keyword);
       }
     }
   }
@@ -5234,36 +3569,22 @@ const analyzeResumeKeywords = (
 
   if (hasJD) {
     for (const item of jdKeywordPatterns) {
-      const appearsInJD =
-        item.aliases.some(
-          (alias) =>
-            containsNormalizedPhrase(
-              jdText,
-              alias
-            )
-        );
+      const appearsInJD = item.aliases.some((alias) =>
+        containsNormalizedPhrase(jdText, alias),
+      );
 
       if (!appearsInJD) {
         continue;
       }
 
-      const appearsInResume =
-        item.aliases.some(
-          (alias) =>
-            containsNormalizedPhrase(
-              combinedText,
-              alias
-            )
-        );
+      const appearsInResume = item.aliases.some((alias) =>
+        containsNormalizedPhrase(combinedText, alias),
+      );
 
       if (appearsInResume) {
-        matchedKeywords.push(
-          item.keyword
-        );
+        matchedKeywords.push(item.keyword);
       } else {
-        missingKeywords.push(
-          item.keyword
-        );
+        missingKeywords.push(item.keyword);
       }
     }
   }
@@ -5276,16 +3597,10 @@ const analyzeResumeKeywords = (
 
   if (!hasJD) {
     for (const keyword of roleKeywordPool) {
-      const appearsInResume =
-        containsNormalizedPhrase(
-          combinedText,
-          keyword
-        );
+      const appearsInResume = containsNormalizedPhrase(combinedText, keyword);
 
       if (!appearsInResume) {
-        missingKeywords.push(
-          keyword
-        );
+        missingKeywords.push(keyword);
       }
     }
   }
@@ -5294,38 +3609,24 @@ const analyzeResumeKeywords = (
   // ROLE MATCHED KEYWORDS
   // ============================================================
 
-  const roleMatchedKeywords =
-    !hasJD
-      ? roleKeywordPool.filter(
-          (keyword) =>
-            containsNormalizedPhrase(
-              combinedText,
-              keyword
-            )
-        )
-      : [];
+  const roleMatchedKeywords = !hasJD
+    ? roleKeywordPool.filter((keyword) =>
+        containsNormalizedPhrase(combinedText, keyword),
+      )
+    : [];
 
   // ============================================================
   // COVERAGE
   // ============================================================
 
   const roleCoverage =
-    !hasJD &&
-    roleKeywordPool.length > 0
-      ? (
-          roleMatchedKeywords.length /
-          roleKeywordPool.length
-        ) * 100
+    !hasJD && roleKeywordPool.length > 0
+      ? (roleMatchedKeywords.length / roleKeywordPool.length) * 100
       : 0;
 
   const keywordCoverage =
     keywordCandidates.length > 0
-      ? (
-          uniqueStrings(
-            matchedKeywords
-          ).length /
-          keywordCandidates.length
-        ) * 100
+      ? (uniqueStrings(matchedKeywords).length / keywordCandidates.length) * 100
       : 0;
 
   // ============================================================
@@ -5335,37 +3636,31 @@ const analyzeResumeKeywords = (
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (
-    keywordCandidates.length === 0
-  ) {
+  if (keywordCandidates.length === 0) {
     issues.push(
       hasJD
         ? "No recognizable job-specific keywords were detected in the job description."
-        : "Very few role-related keywords were detected."
+        : "Very few role-related keywords were detected.",
     );
   }
 
-  if (
-    hasJD &&
-    missingKeywords.length > 0
-  ) {
+  if (hasJD && missingKeywords.length > 0) {
     suggestions.push(
       `Prioritize relevant missing JD requirements such as: ${uniqueStrings(
-        missingKeywords
+        missingKeywords,
       )
         .slice(0, 5)
-        .join(", ")}.`
+        .join(", ")}.`,
     );
   }
 
   if (
     !hasJD &&
     roleKeywordPool.length > 0 &&
-    roleMatchedKeywords.length <
-      roleKeywordPool.length
+    roleMatchedKeywords.length < roleKeywordPool.length
   ) {
     suggestions.push(
-      `Strengthen role alignment by adding relevant ${targetRole} skills and technologies.`
+      `Strengthen role alignment by adding relevant ${targetRole} skills and technologies.`,
     );
   }
 
@@ -5373,49 +3668,23 @@ const analyzeResumeKeywords = (
   // BASE SCORE
   // ============================================================
 
-  const baseMaxScore =
-    getCategoryMaxScore(
-      "keywords"
-    );
+  const baseMaxScore = getCategoryMaxScore("keywords");
 
   let score = 0;
 
-  if (
-    !hasJD &&
-    roleBenchmarkAvailable &&
-    roleKeywordPool.length > 0
-  ) {
+  if (!hasJD && roleBenchmarkAvailable && roleKeywordPool.length > 0) {
     // ROLE MODE
     score = Number(
       (
-        (
-          (Math.min(
-            roleCoverage,
-            100
-          ) /
-            100) *
-            0.7 +
-          (Math.min(
-            keywordCoverage,
-            100
-          ) /
-            100) *
-            0.3
-        ) *
+        ((Math.min(roleCoverage, 100) / 100) * 0.7 +
+          (Math.min(keywordCoverage, 100) / 100) * 0.3) *
         baseMaxScore
-      ).toFixed(2)
+      ).toFixed(2),
     );
   } else {
     // JD MODE
     score = Number(
-      (
-        (Math.min(
-          keywordCoverage,
-          100
-        ) /
-          100) *
-        baseMaxScore
-      ).toFixed(2)
+      ((Math.min(keywordCoverage, 100) / 100) * baseMaxScore).toFixed(2),
     );
   }
 
@@ -5423,71 +3692,38 @@ const analyzeResumeKeywords = (
   // FINAL CLEANUP
   // ============================================================
 
-  const finalMatchedKeywords =
-    uniqueStrings(
-      matchedKeywords
-    );
+  const finalMatchedKeywords = uniqueStrings(matchedKeywords);
 
-  const finalMissingKeywords =
-    uniqueStrings(
-      missingKeywords
-    ).filter(
-      (keyword) =>
-        !finalMatchedKeywords.some(
-          (matched) =>
-            normalizeText(
-              matched
-            ) ===
-            normalizeText(
-              keyword
-            )
-        )
-    );
+  const finalMissingKeywords = uniqueStrings(missingKeywords).filter(
+    (keyword) =>
+      !finalMatchedKeywords.some(
+        (matched) => normalizeText(matched) === normalizeText(keyword),
+      ),
+  );
 
   // ============================================================
   // RETURN
   // ============================================================
 
   return {
-    keywords:
-      uniqueStrings(
-        keywordCandidates
-      ),
+    keywords: uniqueStrings(keywordCandidates),
 
-    matchedKeywords:
-      finalMatchedKeywords,
+    matchedKeywords: finalMatchedKeywords,
 
-    missingKeywords:
-      finalMissingKeywords,
+    missingKeywords: finalMissingKeywords,
 
     keywordFrequency,
 
-    keywordCoverage:
-      Number(
-        keywordCoverage.toFixed(2)
-      ),
+    keywordCoverage: Number(keywordCoverage.toFixed(2)),
 
-    keywordDensity:
-      undefined,
+    keywordDensity: undefined,
 
-    stuffingDetected:
-      false,
+    stuffingDetected: false,
 
-    score:
-      clampATSScore(
-        score,
-        0,
-        baseMaxScore
-      ),
+    score: clampATSScore(score, 0, baseMaxScore),
 
-    issues:
-      uniqueStrings(
-        issues
-      ),
+    issues: uniqueStrings(issues),
 
-    suggestions:
-      uniqueStrings(
-        suggestions
-      ),
+    suggestions: uniqueStrings(suggestions),
   };
 };

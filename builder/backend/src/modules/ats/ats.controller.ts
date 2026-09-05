@@ -17,32 +17,21 @@ import {
 // ============================================================
 
 export const analyzeATS = asyncHandler(
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
-    const {
-      resumeId,
-      targetRole,
-      jobDescription,
-      options,
-    } = req.body;
+  async (req: AuthRequest, res: Response) => {
+    const { resumeId, targetRole, jobDescription, options } = req.body;
 
     // --------------------------------------------------------
     // Auth must fail fast
     // --------------------------------------------------------
 
     if (!req.userId) {
-      throw new ApiError(
-        401,
-        "Authentication required"
-      );
+      throw new ApiError(401, "Authentication required");
     }
 
     // --------------------------------------------------------
     // Validate request
     // --------------------------------------------------------
-
+    // validating if all these fields and their types are present or not
     validateATSRequest({
       resumeId,
       targetRole,
@@ -54,19 +43,17 @@ export const analyzeATS = asyncHandler(
     // Run ATS analysis
     // --------------------------------------------------------
 
-    const result =
-      await analyzeResumeService({
-        userId: req.userId,
+    const result = await analyzeResumeService({
+      userId: req.userId,
 
-        resumeId,
+      resumeId,
 
-        targetRole,
+      targetRole,
 
-        jobDescription:
-          jobDescription ?? "",
+      jobDescription: jobDescription ?? "",
 
-        options,
-      });
+      options,
+    });
 
     // --------------------------------------------------------
     // Response
@@ -75,150 +62,103 @@ export const analyzeATS = asyncHandler(
     res.status(200).json({
       success: true,
 
-      message:
-        "Resume ATS analysis completed",
+      message: "Resume ATS analysis completed",
 
       data: {
-        result:
-          result.result,
+        result: result.result,
 
-        analysis:
-          result.analysis,
+        analysis: result.analysis,
       },
     });
-  }
+  },
 );
 
 // ============================================================
 // GET LATEST ATS ANALYSIS
 // ============================================================
 
-export const getLatestATS =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const {
-        resumeId,
-      } = req.params;
+export const getLatestATS = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { resumeId } = req.params;
 
-      // ------------------------------------------------------
-      // Auth check
-      // ------------------------------------------------------
+    // ------------------------------------------------------
+    // Auth check
+    // ------------------------------------------------------
 
-      if (!req.userId) {
-        throw new ApiError(
-          401,
-          "Authentication required"
-        );
-      }
-
-      // ------------------------------------------------------
-      // Validate resumeId
-      // ------------------------------------------------------
-
-      if (
-        !resumeId ||
-        typeof resumeId !==
-          "string"
-      ) {
-        throw new ApiError(
-          400,
-          "resumeId is required"
-        );
-      }
-
-      // ------------------------------------------------------
-      // Fetch latest analysis
-      // ------------------------------------------------------
-
-      const analysis =
-        await getLatestATSAnalysis(
-          req.userId,
-          resumeId
-        );
-
-      if (!analysis) {
-        throw new ApiError(
-          404,
-          "ATS analysis not found"
-        );
-      }
-
-      // ------------------------------------------------------
-      // Response
-      // ------------------------------------------------------
-
-      res.status(200).json({
-        success: true,
-
-        data: analysis,
-      });
+    if (!req.userId) {
+      throw new ApiError(401, "Authentication required");
     }
-  );
+
+    // ------------------------------------------------------
+    // Validate resumeId
+    // ------------------------------------------------------
+
+    if (!resumeId || typeof resumeId !== "string") {
+      throw new ApiError(400, "resumeId is required");
+    }
+
+    // ------------------------------------------------------
+    // Fetch latest analysis
+    // ------------------------------------------------------
+
+    const analysis = await getLatestATSAnalysis(req.userId, resumeId);
+
+    if (!analysis) {
+      throw new ApiError(404, "ATS analysis not found");
+    }
+
+    // ------------------------------------------------------
+    // Response
+    // ------------------------------------------------------
+
+    res.status(200).json({
+      success: true,
+
+      data: analysis,
+    });
+  },
+);
 
 // ============================================================
 // GET ATS ANALYSIS HISTORY
 // ============================================================
 
-export const getATSHistory =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const {
-        resumeId,
-      } = req.params;
+export const getATSHistory = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { resumeId } = req.params;
 
-      // ------------------------------------------------------
-      // Auth check
-      // ------------------------------------------------------
+    // ------------------------------------------------------
+    // Auth check
+    // ------------------------------------------------------
 
-      if (!req.userId) {
-        throw new ApiError(
-          401,
-          "Authentication required"
-        );
-      }
-
-      // ------------------------------------------------------
-      // Validate resumeId
-      // ------------------------------------------------------
-
-      if (
-        !resumeId ||
-        typeof resumeId !==
-          "string"
-      ) {
-        throw new ApiError(
-          400,
-          "resumeId is required"
-        );
-      }
-
-      // ------------------------------------------------------
-      // Fetch history
-      // ------------------------------------------------------
-
-      const history =
-        await getATSAnalysisHistory(
-          req.userId,
-          resumeId
-        );
-
-      // ------------------------------------------------------
-      // Response
-      // ------------------------------------------------------
-
-      res.status(200).json({
-        success: true,
-
-        count:
-          history.length,
-
-        data: history,
-      });
+    if (!req.userId) {
+      throw new ApiError(401, "Authentication required");
     }
-  );
+
+    // ------------------------------------------------------
+    // Validate resumeId
+    // ------------------------------------------------------
+
+    if (!resumeId || typeof resumeId !== "string") {
+      throw new ApiError(400, "resumeId is required");
+    }
+
+    // ------------------------------------------------------
+    // Fetch history
+    // ------------------------------------------------------
+
+    const history = await getATSAnalysisHistory(req.userId, resumeId);
+
+    // ------------------------------------------------------
+    // Response
+    // ------------------------------------------------------
+
+    res.status(200).json({
+      success: true,
+
+      count: history.length,
+
+      data: history,
+    });
+  },
+);

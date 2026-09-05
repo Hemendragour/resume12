@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { KeyboardEvent } from "react";
-import { X, Sparkles, Pencil, Trash2, Check } from "lucide-react";
+import {
+  X,
+  Sparkles,
+  Pencil,
+  Trash2,
+  Check,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { useResumeStore } from "../../../../store/resume.store";
 import {
   skillSuggestions,
@@ -216,6 +224,25 @@ export default function SkillsSection() {
   };
   const currentCategory = skills.find((c) => c.title === selectedCategory);
 
+  // ///////////////////////////////////////////////////
+
+  const moveCategory = (title: string, direction: "up" | "down") => {
+    const index = skills.findIndex((c) => c.title === title);
+    if (index === -1) return;
+
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= skills.length) return;
+
+    const reordered = [...skills];
+    [reordered[index], reordered[targetIndex]] = [
+      reordered[targetIndex],
+      reordered[index],
+    ];
+    updateSkills(reordered);
+  };
+
+  // ///////////////////////////////////////////////////
+
   return (
     <div className="space-y-8">
       <div>
@@ -299,8 +326,10 @@ export default function SkillsSection() {
           <label className="block text-sm font-medium text-gray-700">
             Your categories
           </label>
+
+          {/* //////////// */}
           <div className="flex flex-wrap gap-2">
-            {skills.map((category) => (
+            {skills.map((category, index) => (
               <div
                 key={category.title}
                 className={`flex items-center gap-1 rounded-lg border px-3 py-2 ${
@@ -309,6 +338,22 @@ export default function SkillsSection() {
                     : "border-gray-200"
                 }`}
               >
+                <div className="flex flex-col overflow-hidden rounded-md border border-gray-200 bg-white">
+                  <button
+                    type="button"
+                    onClick={() => moveCategory(category.title, "up")}
+                    disabled={index === 0}
+                  >
+                    <ChevronUp size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveCategory(category.title, "down")}
+                    disabled={index === skills.length - 1}
+                  >
+                    <ChevronDown size={12} />
+                  </button>
+                </div>
                 {editingCategory === category.title ? (
                   <input
                     ref={renameInputRef}

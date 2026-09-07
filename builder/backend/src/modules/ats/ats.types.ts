@@ -188,8 +188,7 @@ export const ATS_SCORE_CATEGORIES = [
  * Future custom category strings are still allowed through
  * ATSScoreCategory below.
  */
-export type KnownATSCategory =
-  (typeof ATS_SCORE_CATEGORIES)[number]["id"];
+export type KnownATSCategory = (typeof ATS_SCORE_CATEGORIES)[number]["id"];
 
 /**
  * Extensible category type.
@@ -197,9 +196,7 @@ export type KnownATSCategory =
  * Known categories receive autocomplete while arbitrary future
  * category IDs remain technically valid.
  */
-export type ATSScoreCategory =
-  | KnownATSCategory
-  | (string & {});
+export type ATSScoreCategory = KnownATSCategory | (string & {});
 
 // ============================================================
 // ATS BREAKDOWN
@@ -383,21 +380,13 @@ export interface ATSSemanticRelevanceAnalysis {
   suggestions: string[];
 }
 
-
-
 // ============================================================
 // JD / ROLE INTELLIGENCE
 // ============================================================
 
-export type ATSRequirementPriority =
-  | "required"
-  | "preferred";
+export type ATSRequirementPriority = "required" | "preferred";
 
-export type ATSEvidenceStrength =
-  | "strong"
-  | "moderate"
-  | "weak"
-  | "missing";
+export type ATSEvidenceStrength = "strong" | "moderate" | "weak" | "missing";
 
 export type ATSMatchStatus =
   | "matched"
@@ -1047,6 +1036,144 @@ export interface ATSRecommendation {
 }
 
 // ============================================================
+// ATS FINDING
+//
+// One "finding" per evaluated item — an experience/project
+// bullet, or a missing skill. Used to power the section-by-
+// section deep dive on the frontend.
+//
+// When verdict is "excellent", problems/whyItMatters/
+// suggestedFix are left empty — the UI shows a short
+// "✓ Excellent" line instead of a full feedback card. Detailed
+// feedback is only ever generated for items that actually need
+// it, to avoid wasted AI output and UI clutter.
+// ============================================================
+
+export type ATSFindingVerdict = "excellent" | "needs-improvement";
+
+export interface ATSFinding {
+  /**
+   * Stable id for this finding (e.g. the bullet's own id, or a
+   * generated id for a missing-skill finding).
+   */
+  id: string;
+
+  /**
+   * The actual bullet text or skill name being evaluated.
+   */
+  targetText: string;
+
+  verdict: ATSFindingVerdict;
+
+  /**
+   * Short problem tags, e.g. ["Weak action verb", "No measurable
+   * impact", "Too generic"]. Empty when verdict is "excellent".
+   */
+  problems: string[];
+
+  /**
+   * One short paragraph explaining, in plain language, why the
+   * problems above matter. Empty when verdict is "excellent".
+   */
+  whyItMatters: string;
+
+  /**
+   * A rewritten version of targetText addressing the problems.
+   * Empty when verdict is "excellent" or when the only problem
+   * is missing quantification (see quantificationExamples
+   * instead, which is illustrative rather than a drop-in
+   * rewrite).
+   */
+  suggestedFix: string;
+
+  /**
+   * True when the bullet's content is otherwise fine but lacks
+   * a measurable result. When true, quantificationExamples
+   * holds illustrative (NOT invented-for-this-resume) example
+   * phrasings the user can pattern-match against using their
+   * own real numbers.
+   */
+  needsQuantification: boolean;
+
+  quantificationExamples: string[];
+}
+
+// ============================================================
+// ATS SECTION DEEP DIVE
+//
+// One per resume section (experience, projects, skills, ...).
+// Sections are ordered by priority (critical -> high -> medium
+// -> low) when returned to the frontend, not by the resume's
+// own section order.
+// ============================================================
+
+export type ATSSectionDeepDivePriority = "critical" | "high" | "medium" | "low";
+
+export interface ATSSectionDeepDive {
+  sectionId: ATSScoreCategory;
+
+  title: string;
+
+  /**
+   * Mirrors this section's ATSCategoryResult.percentage, so the
+   * UI doesn't need to cross-reference two arrays.
+   */
+  percentage: number;
+
+  /**
+   * Derived from this section's ATSCategoryResult.status. Drives
+   * both the priority badge shown in the UI and the sort order
+   * of the deep-dive list itself.
+   */
+  priority: ATSSectionDeepDivePriority;
+
+  /**
+   * True only when every finding in this section is
+   * "excellent" — lets the UI render a single compact summary
+   * line instead of a list.
+   */
+  isFullyOptimized: boolean;
+
+  /**
+   * Used by every section except "skills" — one finding per
+   * bullet/item, or a single finding representing the section
+   * as a whole for sections that aren't itemized (contact,
+   * formatting, education, summary, achievements).
+   */
+  findings: ATSFinding[];
+
+  /**
+   * Only present when sectionId === "skills". Skills are grouped
+   * rather than itemized as individual findings, because a flat
+   * list of 8+ "needs improvement" cards per missing skill is
+   * noisy — a recruiter-style grouping (present / missing-and-
+   * required / good-to-have) is far more scannable.
+   */
+  skillsBreakdown?: {
+    /**
+     * Required JD skills the resume already demonstrates. Plain
+     * names only — these don't need a finding card, they're a
+     * quick confirmation list.
+     */
+    requiredPresent: string[];
+
+    /**
+     * Required JD skills that are missing or only weakly
+     * demonstrated. Each includes why it matters and a fix
+     * suggestion, but the suggestion always defers to whether
+     * the candidate genuinely has the skill.
+     */
+    requiredMissing: ATSFinding[];
+
+    /**
+     * Preferred (optional) JD skills that are missing. Framed as
+     * "nice to have", never as something the candidate must add.
+     */
+    goodToHave: ATSFinding[];
+  };
+}
+
+// ============================================================
 // RULE-BASED ATS ANALYSIS
 // ============================================================
 
@@ -1180,6 +1307,86 @@ export interface ATSAIAnalysis {
 // FINAL ATS RESULT
 // ============================================================
 
+// export interface ATSResult {
+//   resumeId: string;
+
+//   // ==========================================================
+//   // ANALYSIS MODE
+//   // ==========================================================
+
+//   mode: ATSAnalysisMode;
+
+//   targetRole: string;
+
+//   hasJobDescription: boolean;
+
+//   // ==========================================================
+//   // FINAL SCORE
+//   // ==========================================================
+
+//   atsScore: number;
+
+//   grade: ATSGrade;
+
+//   // ==========================================================
+//   // RULE-BASED BREAKDOWN
+//   // ==========================================================
+
+//   breakdown: ATSBreakdown;
+
+//   categories: ATSCategoryResult[];
+
+//   // ==========================================================
+//   // MODE-SPECIFIC INTELLIGENCE
+//   // ==========================================================
+
+//   modeAnalysis: ATSModeAnalysis;
+
+//   // ==========================================================
+//   // KEYWORDS
+//   // ==========================================================
+
+//   matchedKeywords: string[];
+
+//   missingKeywords: string[];
+
+//   // ==========================================================
+//   // SECTION DEEP DIVE
+//   //
+//   // Ordered critical -> high -> medium -> low. Sections that are
+//   // fully optimized still appear here (isFullyOptimized: true),
+//   // just with no detailed findings to show.
+//   // ==========================================================
+
+//   sectionDeepDive: ATSSectionDeepDive[];
+
+//   // ==========================================================
+//   // DATE ANALYSIS
+//   // ==========================================================
+
+//   dateConsistency?: ATSDateConsistencyAnalysis;
+
+//   // ==========================================================
+//   // AI / INTELLIGENCE
+//   // ==========================================================
+
+//   strengths: string[];
+
+//   weaknesses: string[];
+
+//   recommendations: ATSRecommendation[];
+
+//   optimizedSummary: string;
+
+//   improvedExperience: string[];
+
+//   // ==========================================================
+//   // META
+//   // ==========================================================
+
+//   analyzedAt: string;
+// }
+
 export interface ATSResult {
   resumeId: string;
 
@@ -1210,12 +1417,6 @@ export interface ATSResult {
   categories: ATSCategoryResult[];
 
   // ==========================================================
-  // MODE-SPECIFIC INTELLIGENCE
-  // ==========================================================
-
-  modeAnalysis: ATSModeAnalysis;
-
-  // ==========================================================
   // KEYWORDS
   // ==========================================================
 
@@ -1224,7 +1425,25 @@ export interface ATSResult {
   missingKeywords: string[];
 
   // ==========================================================
+  // SECTION DEEP DIVE
+  //
+  // The main feedback surface. Ordered critical -> high ->
+  // medium -> low. Every resume section gets an entry here
+  // (summary, contact, skills, experience, projects, education,
+  // formatting, achievements) — sections with nothing to fix are
+  // still included with isFullyOptimized: true and an empty
+  // findings array, rather than being silently omitted.
+  // ==========================================================
+
+  sectionDeepDive: ATSSectionDeepDive[];
+
+  // ==========================================================
   // DATE ANALYSIS
+  //
+  // Fully deterministic (parses actual startDate/endDate values,
+  // no AI involved) — kept as its own top-level field since it
+  // spans multiple sections (experience/internships/education)
+  // rather than belonging to just one.
   // ==========================================================
 
   dateConsistency?: ATSDateConsistencyAnalysis;
@@ -1236,12 +1455,6 @@ export interface ATSResult {
   strengths: string[];
 
   weaknesses: string[];
-
-  recommendations: ATSRecommendation[];
-
-  optimizedSummary: string;
-
-  improvedExperience: string[];
 
   // ==========================================================
   // META
@@ -1256,14 +1469,11 @@ export interface ATSResult {
 
 export type ATSGrade = "A" | "B" | "C" | "D" | "F";
 
-
- // ============================================================
+// ============================================================
 // ATS ANALYSIS MODE
 // ============================================================
 
-export type ATSAnalysisMode =
-  | "role"
-  | "job-description";
+export type ATSAnalysisMode = "role" | "job-description";
 
 // ============================================================
 // ATS ANALYSIS REQUEST
@@ -1309,11 +1519,9 @@ export interface ATSAnalysisOptions {
  */
 export const ATS_TOTAL_SCORE = ATS_SCORE_CATEGORIES.reduce(
   (total, category) => {
-    return category.enabled
-      ? total + category.maxScore
-      : total;
+    return category.enabled ? total + category.maxScore : total;
   },
-  0
+  0,
 );
 
 // ============================================================
@@ -1326,11 +1534,9 @@ export const ATS_TOTAL_SCORE = ATS_SCORE_CATEGORIES.reduce(
  * The scorer should use this instead of hard-coding max scores.
  */
 export const getATSCategory = (
-  categoryId: string
+  categoryId: string,
 ): ATSScoreCategoryDefinition | undefined => {
-  return ATS_SCORE_CATEGORIES.find(
-    (category) => category.id === categoryId
-  );
+  return ATS_SCORE_CATEGORIES.find((category) => category.id === categoryId);
 };
 
 // ============================================================
@@ -1340,21 +1546,15 @@ export const getATSCategory = (
 /**
  * Returns the configured maximum score for a category.
  */
-export const getATSCategoryMaxScore = (
-  categoryId: string
-): number => {
+export const getATSCategoryMaxScore = (categoryId: string): number => {
   return getATSCategory(categoryId)?.maxScore ?? 0;
 };
 
 /**
  * Checks whether a category is currently enabled.
  */
-export const isATSCategoryEnabled = (
-  categoryId: string
-): boolean => {
-  return (
-    getATSCategory(categoryId)?.enabled ?? false
-  );
+export const isATSCategoryEnabled = (categoryId: string): boolean => {
+  return getATSCategory(categoryId)?.enabled ?? false;
 };
 
 // ============================================================
@@ -1458,14 +1658,11 @@ export const ATS_WEAK_BULLET_PATTERNS = [
  * regex when necessary.
  */
 export const ATS_METRIC_PATTERNS = {
-  percentage:
-    /\b\d+(?:\.\d+)?\s?%/gi,
+  percentage: /\b\d+(?:\.\d+)?\s?%/gi,
 
-  currency:
-    /(?:₹|rs\.?|inr|\$|usd|€|eur|£|gbp)\s?\d+(?:[,.]\d+)?/gi,
+  currency: /(?:₹|rs\.?|inr|\$|usd|€|eur|£|gbp)\s?\d+(?:[,.]\d+)?/gi,
 
-  time:
-    /\b\d+(?:\.\d+)?\s?(?:days?|weeks?|months?|years?|hours?|mins?|minutes?)\b/gi,
+  time: /\b\d+(?:\.\d+)?\s?(?:days?|weeks?|months?|years?|hours?|mins?|minutes?)\b/gi,
 
   /**
    * Numbers associated with measurable impact.
@@ -1486,29 +1683,25 @@ export const ATS_METRIC_PATTERNS = {
 // COMMON DATE / YEAR PATTERN
 // ============================================================
 
-export const ATS_YEAR_PATTERN =
-  /\b(?:19|20)\d{2}\b/g;
+export const ATS_YEAR_PATTERN = /\b(?:19|20)\d{2}\b/g;
 
 // ============================================================
 // URL PATTERN
 // ============================================================
 
-export const ATS_URL_PATTERN =
-  /https?:\/\/[^\s]+/gi;
+export const ATS_URL_PATTERN = /https?:\/\/[^\s]+/gi;
 
 // ============================================================
 // EMAIL PATTERN
 // ============================================================
 
-export const ATS_EMAIL_PATTERN =
-  /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
+export const ATS_EMAIL_PATTERN = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
 
 // ============================================================
 // PHONE PATTERN
 // ============================================================
 
-export const ATS_PHONE_PATTERN =
-  /(?:\+?\d[\d\s().-]{7,}\d)/g;
+export const ATS_PHONE_PATTERN = /(?:\+?\d[\d\s().-]{7,}\d)/g;
 
 // ============================================================
 // SCORE NORMALIZATION
@@ -1517,19 +1710,12 @@ export const ATS_PHONE_PATTERN =
 /**
  * Converts any raw score into a valid range.
  */
-export const clampATSScore = (
-  score: number,
-  min = 0,
-  max = 100
-): number => {
+export const clampATSScore = (score: number, min = 0, max = 100): number => {
   if (!Number.isFinite(score)) {
     return min;
   }
 
-  return Math.min(
-    Math.max(score, min),
-    max
-  );
+  return Math.min(Math.max(score, min), max);
 };
 
 // ============================================================
@@ -1538,28 +1724,20 @@ export const clampATSScore = (
 
 export const calculateATSPercentage = (
   score: number,
-  maxScore: number
+  maxScore: number,
 ): number => {
-  if (
-    !Number.isFinite(score) ||
-    !Number.isFinite(maxScore) ||
-    maxScore <= 0
-  ) {
+  if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0) {
     return 0;
   }
 
-  return Number(
-    ((score / maxScore) * 100).toFixed(2)
-  );
+  return Number(((score / maxScore) * 100).toFixed(2));
 };
 
 // ============================================================
 // ATS STATUS
 // ============================================================
 
-export const getATSCategoryStatus = (
-  percentage: number
-): ATSCategoryStatus => {
+export const getATSCategoryStatus = (percentage: number): ATSCategoryStatus => {
   if (percentage >= 90) {
     return "excellent";
   }
@@ -1576,17 +1754,41 @@ export const getATSCategoryStatus = (
 };
 
 // ============================================================
+// SECTION DEEP DIVE PRIORITY
+//
+// Maps an already-computed category status/percentage into the
+// priority used to order and badge the section deep dive. Reuses
+// the exact thresholds getATSCategoryStatus already applies, so
+// the deep dive stays consistent with the score breakdown shown
+// elsewhere in the UI.
+// ============================================================
+
+export const getATSSectionDeepDivePriority = (
+  status: ATSCategoryStatus,
+  percentage: number,
+): ATSSectionDeepDivePriority => {
+  if (status === "excellent") {
+    return "low";
+  }
+
+  if (status === "good") {
+    return "low";
+  }
+
+  if (status === "needs-improvement") {
+    return percentage < 60 ? "high" : "medium";
+  }
+
+  // status === "poor"
+  return "critical";
+};
+
+// ============================================================
 // ATS GRADE
 // ============================================================
 
-export const getATSGrade = (
-  score: number
-): ATSGrade => {
-  const normalizedScore = clampATSScore(
-    score,
-    0,
-    100
-  );
+export const getATSGrade = (score: number): ATSGrade => {
+  const normalizedScore = clampATSScore(score, 0, 100);
 
   if (normalizedScore >= 90) {
     return "A";

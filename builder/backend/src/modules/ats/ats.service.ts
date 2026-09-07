@@ -6,8 +6,14 @@ import { generateJSON } from "../../providers/gemini.provider";
 
 import { buildATSAnalysisPrompt } from "../../prompts/ats-analysis.prompt";
 
-import { analyzeResumeATS, analyzeJobDescriptionMatch } from "./ats.scorer";
-
+// import { analyzeResumeATS, analyzeJobDescriptionMatch } from "./ats.scorer";
+import {
+  analyzeResumeATS,
+  analyzeJobDescriptionMatch,
+  refineJDMatchesWithAI,
+  buildDeterministicSectionDeepDive,
+  enrichSectionDeepDiveWithAI,
+} from "./ats.scorer";
 import type {
   ATSAnalyzeRequest,
   ATSAnalysisOptions,
@@ -17,6 +23,7 @@ import type {
   ATSAnalysisMode,
   ATSModeAnalysis,
   ATSJobDescriptionAnalysis,
+  ATSSectionDeepDive,
 } from "./ats.types";
 
 // ============================================================
@@ -304,6 +311,8 @@ const buildATSResult = (
   jobDescription: string | undefined,
   aiAnalysis: ATSAIAnalysis | undefined,
   finalATSScore: number,
+  jdAnalysis?: ATSJobDescriptionAnalysis,
+  sectionDeepDive: ATSSectionDeepDive[] = [],
 ): ATSResult => {
   const ai = aiAnalysis ?? {
     strengths: [],
@@ -320,9 +329,35 @@ const buildATSResult = (
 
   const mode: ATSAnalysisMode = hasJobDescription ? "job-description" : "role";
 
-  const matchedKeywords = ruleAnalysis.keywords.matchedKeywords;
+  // const matchedKeywords = ruleAnalysis.keywords.matchedKeywords;
 
-  const missingKeywords = ruleAnalysis.keywords.missingKeywords;
+  // const missingKeywords = ruleAnalysis.keywords.missingKeywords;
+  // const uniqueMatchedKeywords = Array.from(
+  //   new Set(matchedKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
+  // );
+
+  // const uniqueMissingKeywords = Array.from(
+  //   new Set(missingKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
+  // );
+
+  const matchedKeywords =
+    hasJobDescription && jdAnalysis
+      ? jdAnalysis.matchedRequirements
+      : ruleAnalysis.keywords.matchedKeywords;
+
+  const missingKeywords =
+    hasJobDescription && jdAnalysis
+      ? Array.from(
+          new Set([
+            ...jdAnalysis.criticalMissingRequirements,
+            ...jdAnalysis.matches
+              .filter((match) => match.status === "missing")
+              .map((match) => match.requirement),
+            ...jdAnalysis.partialRequirements,
+          ]),
+        )
+      : ruleAnalysis.keywords.missingKeywords;
+
   const uniqueMatchedKeywords = Array.from(
     new Set(matchedKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
   );
@@ -331,15 +366,15 @@ const buildATSResult = (
     new Set(missingKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
   );
 
-  const strengths = Array.from(
-    new Set([...ruleAnalysis.strengths, ...ai.strengths]),
-  ).slice(0, 10);
+  // const strengths = Array.from(
+  //   new Set([...ruleAnalysis.strengths, ...ai.strengths]),
+  // ).slice(0, 10);
 
-  const weaknesses = Array.from(
-    new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
-  ).slice(0, 10);
+  // const weaknesses = Array.from(
+  //   new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
+  // ).slice(0, 10);
 
-  const recommendations = mergeRecommendations(ruleAnalysis, ai);
+  // const recommendations = mergeRecommendations(ruleAnalysis, ai);
 
   /*
    * IMPORTANT:
@@ -350,33 +385,119 @@ const buildATSResult = (
    * JD-specific intelligence will be expanded
    * in the next layer.
    */
-  const modeAnalysis: ATSModeAnalysis = {
-    mode,
+  // const modeAnalysis: ATSModeAnalysis = {
+  //   mode,
 
-    targetRole: targetRole.trim(),
+  //   targetRole: targetRole.trim(),
 
-    hasJobDescription,
+  //   hasJobDescription,
+  //   jdAnalysis,
+  //   skillEvidence: [],
 
-    skillEvidence: [],
+  //   scoreDimensions: [],
 
-    scoreDimensions: [],
+  //   scoreExplanation: {
+  //     positiveFactors: ruleAnalysis.strengths.slice(0, 5),
 
-    scoreExplanation: {
-      positiveFactors: ruleAnalysis.strengths.slice(0, 5),
+  //     negativeFactors: ruleAnalysis.weaknesses.slice(0, 5),
 
-      negativeFactors: ruleAnalysis.weaknesses.slice(0, 5),
+  //     criticalFactors: ruleAnalysis.weaknesses.slice(0, 3),
 
-      criticalFactors: ruleAnalysis.weaknesses.slice(0, 3),
+  //     scoreCalculation: hasJobDescription
+  //       ? `JD-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`
+  //       : `Role-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`,
 
-      scoreCalculation: hasJobDescription
-        ? `JD-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`
-        : `Role-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`,
+  //     confidence: hasJobDescription ? 90 : 80,
+  //   },
 
-      confidence: hasJobDescription ? 90 : 80,
-    },
+  //   quickWins: [],
+  // };
+  // return {
+  //   resumeId,
 
-    quickWins: [],
-  };
+  //   // ==========================================================
+  //   // ANALYSIS MODE
+  //   // ==========================================================
+
+  //   mode,
+
+  //   targetRole: targetRole.trim(),
+
+  //   hasJobDescription,
+
+  //   // ==========================================================
+  //   // FINAL SCORE
+  //   // ==========================================================
+
+  //   atsScore: finalATSScore,
+
+  //   grade: getGradeFromScore(finalATSScore),
+
+  //   // ==========================================================
+  //   // RULE BASED ANALYSIS
+  //   // ==========================================================
+
+  //   breakdown: ruleAnalysis.breakdown,
+
+  //   categories: ruleAnalysis.categories,
+
+  //   // ==========================================================
+  //   // MODE ANALYSIS
+  //   // ==========================================================
+
+  //   modeAnalysis,
+
+  //   // ==========================================================
+  //   // KEYWORDS
+  //   // ==========================================================
+
+  //   matchedKeywords: uniqueMatchedKeywords,
+
+  //   missingKeywords: uniqueMissingKeywords,
+
+  //   // ==========================================================
+  //   // SECTION DEEP DIVE
+  //   //
+  //   // Placeholder for now — populated in the next build step
+  //   // (deterministic bullet tagging + per-section AI pass).
+  //   // ==========================================================
+
+  //   sectionDeepDive,
+  //   // ==========================================================
+  //   // DATE
+  //   // ==========================================================
+
+  //   dateConsistency: ruleAnalysis.dateConsistency,
+
+  //   // ==========================================================
+  //   // AI
+  //   // ==========================================================
+
+  //   strengths,
+
+  //   weaknesses,
+
+  //   recommendations,
+
+  //   optimizedSummary: ai.optimizedSummary,
+
+  //   improvedExperience: ai.improvedExperience,
+
+  //   // ==========================================================
+  //   // META
+  //   // ==========================================================
+
+  //   analyzedAt: new Date().toISOString(),
+  // };
+
+  const strengths = Array.from(
+    new Set([...ruleAnalysis.strengths, ...ai.strengths]),
+  ).slice(0, 10);
+
+  const weaknesses = Array.from(
+    new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
+  ).slice(0, 10);
+
   return {
     resumeId,
 
@@ -407,12 +528,6 @@ const buildATSResult = (
     categories: ruleAnalysis.categories,
 
     // ==========================================================
-    // MODE ANALYSIS
-    // ==========================================================
-
-    modeAnalysis,
-
-    // ==========================================================
     // KEYWORDS
     // ==========================================================
 
@@ -421,7 +536,19 @@ const buildATSResult = (
     missingKeywords: uniqueMissingKeywords,
 
     // ==========================================================
+    // SECTION DEEP DIVE
+    //
+    // The main feedback surface — deterministic tagging plus
+    // AI-written explanations/rewrites for flagged bullets only.
+    // ==========================================================
+
+    sectionDeepDive,
+
+    // ==========================================================
     // DATE
+    //
+    // Fully deterministic — real overlap/reversed-range checks
+    // against actual startDate/endDate values, no AI involved.
     // ==========================================================
 
     dateConsistency: ruleAnalysis.dateConsistency,
@@ -433,12 +560,6 @@ const buildATSResult = (
     strengths,
 
     weaknesses,
-
-    recommendations,
-
-    optimizedSummary: ai.optimizedSummary,
-
-    improvedExperience: ai.improvedExperience,
 
     // ==========================================================
     // META
@@ -494,19 +615,16 @@ const saveATSAnalysis = async (
 
     breakdown: result.breakdown,
 
+    categories: result.categories,
+
     matchedKeywords: result.matchedKeywords,
 
     missingKeywords: result.missingKeywords,
-
-    recommendations: result.recommendations,
 
     strengths: result.strengths,
 
     weaknesses: result.weaknesses,
 
-    optimizedSummary: result.optimizedSummary,
-
-    improvedExperience: result.improvedExperience,
     dateConsistency: result.dateConsistency,
   });
 
@@ -723,12 +841,27 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
 
   const ruleAnalysis = analyzeResumeATS(atsResume as any, jobDescription);
 
+  // let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
+
+  // if (jobDescription?.trim()) {
+  //   const extractedJD = await extractJDRequirements(jobDescription, targetRole);
+
+  //   jdAnalysis = analyzeJobDescriptionMatch(atsResume as any, extractedJD);
+
+  //   console.log("========== JD MATCH DEBUG ==========");
+
   let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
 
   if (jobDescription?.trim()) {
     const extractedJD = await extractJDRequirements(jobDescription, targetRole);
 
+    // Fast lexical/alias pass first.
     jdAnalysis = analyzeJobDescriptionMatch(atsResume as any, extractedJD);
+
+    // Semantic AI pass, only for requirements the lexical pass
+    // couldn't confidently confirm. Cheap: skips the call entirely
+    // when everything already matched lexically.
+    jdAnalysis = await refineJDMatchesWithAI(atsResume as any, jdAnalysis);
 
     console.log("========== JD MATCH DEBUG ==========");
 
@@ -760,6 +893,43 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
       ruleAnalysis.overallScore * 0.6 + jdAnalysis.overallMatchPercentage * 0.4,
     );
   }
+  // // --------------------------------------------------------
+  // // 4. AI analysis
+  // // --------------------------------------------------------
+
+  // let aiAnalysis: ATSAIAnalysis | undefined;
+
+  // /**
+  //  * AI analysis is enabled by default.
+  //  *
+  //  * If explicitly disabled, only deterministic ATS
+  //  * analysis is returned.
+  //  */
+  // const shouldRunAI = options?.includeAIAnalysis !== false;
+
+  // if (shouldRunAI) {
+  //   aiAnalysis = await runAIAnalysis(
+  //     atsResume,
+  //     targetRole,
+  //     jobDescription ?? "",
+  //   );
+  // }
+
+  // // --------------------------------------------------------
+  // // 5. Merge
+  // // --------------------------------------------------------
+
+  // const result = buildATSResult(
+  //   resumeId,
+  //   ruleAnalysis,
+  //   targetRole,
+  //   jobDescription,
+  //   aiAnalysis,
+  //   finalATSScore,
+  //   jdAnalysis,
+  //   atsResume,
+  // );
+
   // --------------------------------------------------------
   // 4. AI analysis
   // --------------------------------------------------------
@@ -783,6 +953,25 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
   }
 
   // --------------------------------------------------------
+  // 4.5. Section deep dive (bullet-level findings)
+  //
+  // Deterministic tagging first (free, instant), then one AI
+  // call per section that actually has flagged bullets —
+  // sections that are already fully optimized never trigger an
+  // AI call at all.
+  // --------------------------------------------------------
+
+  const deterministicSectionDeepDive = buildDeterministicSectionDeepDive(
+    atsResume as any,
+    ruleAnalysis,
+    jdAnalysis,
+  );
+
+  const sectionDeepDive = shouldRunAI
+    ? await enrichSectionDeepDiveWithAI(deterministicSectionDeepDive)
+    : deterministicSectionDeepDive;
+
+  // --------------------------------------------------------
   // 5. Merge
   // --------------------------------------------------------
 
@@ -793,7 +982,10 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
     jobDescription,
     aiAnalysis,
     finalATSScore,
+    jdAnalysis,
+    sectionDeepDive,
   );
+
   // --------------------------------------------------------
   // 6. Save
   // --------------------------------------------------------

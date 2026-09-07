@@ -66,8 +66,6 @@ export const analyzeATS = asyncHandler(
 
       data: {
         result: result.result,
-
-        analysis: result.analysis,
       },
     });
   },

@@ -32,8 +32,12 @@ import {
   calculateATSPercentage,
   getATSCategoryStatus,
   ATSRequirementPriority,
+  ATSFinding,
+  ATSSectionDeepDive,
+  ATSSectionDeepDivePriority,
+  getATSSectionDeepDivePriority,
 } from "./ats.types";
-
+import { generateJSON } from "../../providers/gemini.provider";
 import {
   getRoleMatchInfo,
   getRoleSkillPool,
@@ -116,10 +120,19 @@ interface ATSResume {
     cgpa?: string;
   }>;
 
+  // projects?: Array<{
+  //   title?: string;
+  //   role?: string;
+  //   description?: string;
+  //   technologies?: string[];
+  //   github?: string;
+  //   link?: string;
+  // }>;
+
   projects?: Array<{
     title?: string;
     role?: string;
-    description?: string;
+    description?: string | string[];
     technologies?: string[];
     github?: string;
     link?: string;
@@ -755,6 +768,34 @@ export const analyzeSkills = (resume: ATSResume): ATSSkillsAnalysis => {
 // EXPERIENCE ANALYSIS
 // ============================================================
 
+/**
+ * project.description is stored as string[] (one entry per
+ * bullet) in the real resume schema, but has historically been
+ * treated as a single string by cleanText() — which silently
+ * returns "" for any non-string input. That bug caused every
+ * project to look content-less to both analyzeProjects and the
+ * section deep dive. These two helpers are the single source of
+ * truth for reading project bullets from here on.
+ */
+const getProjectDescriptionLines = (project: {
+  description?: string | string[];
+}): string[] => {
+  const raw = project.description;
+
+  if (Array.isArray(raw)) {
+    return raw.map((line) => cleanText(line)).filter(Boolean);
+  }
+
+  return cleanText(raw)
+    .split("\n")
+    .map((line) => cleanText(line))
+    .filter(Boolean);
+};
+
+const getProjectDescriptionText = (project: {
+  description?: string | string[];
+}): string => getProjectDescriptionLines(project).join(" ");
+
 const getExperienceBullets = (resume: ATSResume): string[] => {
   const experienceBullets = (resume.experience ?? []).flatMap((experience) => [
     ...(experience.responsibilities ?? []),
@@ -1281,7 +1322,7 @@ export const analyzeProjects = (resume: ATSResume): ATSProjectAnalysis => {
   ).length;
 
   const projectsWithDescription = projects.filter(
-    (project) => cleanText(project.description).length > 0,
+    (project) => getProjectDescriptionText(project).length > 0,
   ).length;
 
   const projectsWithLinks = projects.filter(
@@ -1290,24 +1331,23 @@ export const analyzeProjects = (resume: ATSResume): ATSProjectAnalysis => {
   ).length;
 
   const projectsWithImpact = projects.filter((project) =>
-    containsMetric(cleanText(project.description)),
+    containsMetric(getProjectDescriptionText(project)),
   ).length;
 
   const projectsWithMetrics = projectsWithImpact;
 
   const weakProjects = projects
-    .filter((project) => !cleanText(project.description))
+    .filter((project) => !getProjectDescriptionText(project))
     .map((project) => cleanText(project.title));
 
   const strongProjects = projects
     .filter(
       (project) =>
-        cleanText(project.description) &&
+        getProjectDescriptionText(project) &&
         (project.technologies ?? []).length > 0 &&
-        containsMetric(cleanText(project.description)),
+        containsMetric(getProjectDescriptionText(project)),
     )
     .map((project) => cleanText(project.title));
-
   const targetRole = cleanText(resume.targetRole);
 
   const roleProjectSignals = targetRole
@@ -1384,6 +1424,953 @@ export const analyzeProjects = (resume: ATSResume): ATSProjectAnalysis => {
 
     suggestions: uniqueStrings(suggestions),
   };
+};
+
+// ============================================================
+// SECTION DEEP DIVE — DETERMINISTIC BULLET TAGGING
+//
+// No AI involved here. Every experience/internship bullet and
+// every project description gets tagged with plain rule-based
+// problems, reusing the exact same helpers the scoring
+// categories already rely on (isWeakBullet, containsActionVerb,
+// containsMetric) so the deep dive stays consistent with the
+// score breakdown shown elsewhere.
+//
+// whyItMatters / suggestedFix / quantificationExamples are left
+// empty here — those are filled in the next build step (a
+// batched AI pass over just the flagged bullets).
+// ============================================================
+
+const TOO_GENERIC_MIN_WORDS = 5;
+
+const isTooGeneric = (bullet: string): boolean => {
+  const wordCount = cleanText(bullet).split(/\s+/).filter(Boolean).length;
+
+  return wordCount > 0 && wordCount < TOO_GENERIC_MIN_WORDS;
+};
+
+/**
+ * Tags a single bullet against the same rules the scorer already
+ * uses elsewhere. `repeatedVerbs` is the set of first-words that
+ * appear 3+ times across the whole section (see
+ * analyzeActionVerbs) — passed in so every bullet in the section
+ * is checked against the same shared set.
+ */
+const tagBullet = (
+  bullet: string,
+  repeatedVerbs: Set<string>,
+): {
+  problems: string[];
+  needsQuantification: boolean;
+} => {
+  const problems: string[] = [];
+
+  const weakOpening = isWeakBullet(bullet) || !containsActionVerb(bullet);
+
+  if (weakOpening) {
+    problems.push("Weak action verb");
+  }
+
+  const firstWord = normalizeText(bullet).split(" ")[0];
+
+  if (!weakOpening && firstWord && repeatedVerbs.has(firstWord)) {
+    problems.push("Repeated action verb");
+  }
+
+  if (isTooGeneric(bullet)) {
+    problems.push("Too generic");
+  }
+
+  const hasMetric = containsMetric(bullet);
+
+  if (!hasMetric) {
+    problems.push("No measurable impact");
+  }
+
+  return {
+    problems,
+    needsQuantification: !hasMetric,
+  };
+};
+
+const buildFinding = (id: string, targetText: string): ATSFinding => {
+  const emptyFinding: ATSFinding = {
+    id,
+
+    targetText,
+
+    verdict: "excellent",
+
+    problems: [],
+
+    whyItMatters: "",
+
+    suggestedFix: "",
+
+    needsQuantification: false,
+
+    quantificationExamples: [],
+  };
+
+  const text = cleanText(targetText);
+
+  if (!text) {
+    return emptyFinding;
+  }
+
+  return emptyFinding;
+};
+
+export const buildExperienceFindings = (resume: ATSResume): ATSFinding[] => {
+  const bullets = getExperienceBullets(resume);
+
+  if (bullets.length === 0) {
+    return [];
+  }
+
+  // Reuse the exact same repeated-verb detection analyzeActionVerbs uses.
+  const detectedVerbs = bullets
+    .filter(containsActionVerb)
+    .map((bullet) => normalizeText(bullet).split(" ")[0]);
+
+  const verbFrequency = new Map<string, number>();
+
+  for (const verb of detectedVerbs) {
+    verbFrequency.set(verb, (verbFrequency.get(verb) ?? 0) + 1);
+  }
+
+  const repeatedVerbs = new Set(
+    Array.from(verbFrequency.entries())
+      .filter(([, count]) => count >= 3)
+      .map(([verb]) => verb),
+  );
+
+  return bullets.map((bullet, index) => {
+    const finding = buildFinding(`experience-${index}`, bullet);
+
+    const { problems, needsQuantification } = tagBullet(bullet, repeatedVerbs);
+
+    if (problems.length === 0) {
+      return finding;
+    }
+
+    return {
+      ...finding,
+
+      verdict: "needs-improvement",
+
+      problems,
+
+      needsQuantification,
+    };
+  });
+};
+
+export const buildProjectFindings = (resume: ATSResume): ATSFinding[] => {
+  const projects = resume.projects ?? [];
+
+  const findings: ATSFinding[] = [];
+
+  projects.forEach((project, projectIndex) => {
+    const bullets = getProjectDescriptionLines(project);
+
+    if (bullets.length === 0) {
+      return;
+    }
+
+    const detectedVerbs = bullets
+      .filter(containsActionVerb)
+      .map((bullet) => normalizeText(bullet).split(" ")[0]);
+
+    const verbFrequency = new Map<string, number>();
+
+    for (const verb of detectedVerbs) {
+      verbFrequency.set(verb, (verbFrequency.get(verb) ?? 0) + 1);
+    }
+
+    const repeatedVerbs = new Set(
+      Array.from(verbFrequency.entries())
+        .filter(([, count]) => count >= 3)
+        .map(([verb]) => verb),
+    );
+
+    bullets.forEach((bullet, bulletIndex) => {
+      const finding = buildFinding(
+        `project-${projectIndex}-${bulletIndex}`,
+        bullet,
+      );
+
+      const { problems, needsQuantification } = tagBullet(
+        bullet,
+        repeatedVerbs,
+      );
+
+      if (problems.length === 0) {
+        findings.push(finding);
+
+        return;
+      }
+
+      findings.push({
+        ...finding,
+
+        verdict: "needs-improvement",
+
+        problems,
+
+        needsQuantification,
+      });
+    });
+  });
+
+  return findings;
+};
+
+// export const buildDeterministicSectionDeepDive = (
+//   resume: ATSResume,
+//   categories: ATSCategoryResult[],
+// ): ATSSectionDeepDive[] => {
+//   const sections: ATSSectionDeepDive[] = [];
+
+//   const buildFromFindings = (
+//     sectionId: ATSScoreCategory,
+//     title: string,
+//     findings: ATSFinding[],
+//     categoryOverride?: ATSCategoryResult,
+//   ): ATSSectionDeepDive | null => {
+//     if (findings.length === 0) {
+//       return null;
+//     }
+
+//     const excellentCount = findings.filter(
+//       (finding) => finding.verdict === "excellent",
+//     ).length;
+
+//     const percentage =
+//       categoryOverride?.percentage ??
+//       Number(((excellentCount / findings.length) * 100).toFixed(1));
+
+//     const status: ATSCategoryStatus =
+//       categoryOverride?.status ?? getATSCategoryStatus(percentage);
+
+//     return {
+//       sectionId,
+
+//       title,
+
+//       percentage,
+
+//       priority: getATSSectionDeepDivePriority(status, percentage),
+
+//       isFullyOptimized: excellentCount === findings.length,
+
+//       findings,
+//     };
+//   };
+
+//   const experienceCategory = categories.find(
+//     (category) => category.category === "experience",
+//   );
+
+//   const experienceSection = buildFromFindings(
+//     "experience",
+//     "Experience",
+//     buildExperienceFindings(resume),
+//     experienceCategory,
+//   );
+
+//   if (experienceSection) {
+//     sections.push(experienceSection);
+//   }
+
+//   // Projects has its own sectionId even though it isn't one of
+//   // the 8 scored categories in ATS_SCORE_CATEGORIES — sectionId
+//   // is intentionally a string & {} union so this is safe, and
+//   // it lets the frontend key off it distinctly from "experience".
+//   const projectsSection = buildFromFindings(
+//     "projects",
+//     "Projects",
+//     buildProjectFindings(resume),
+//   );
+
+//   if (projectsSection) {
+//     sections.push(projectsSection);
+//   }
+
+//   return sections;
+// };
+
+// ============================================================
+// SKILLS DEEP DIVE — FROM EXISTING JD MATCH DATA
+//
+// No new AI call here — reuses jdAnalysis.matches, which is
+// already computed (lexically, then semantically) earlier in the
+// pipeline. Only missing/partial technical requirements become
+// findings; matched skills are already visible in the top-level
+// matchedKeywords list, so repeating them here would be noise.
+//
+// "Required by JD" vs "Preferred by JD" comes straight from the
+// JD's own stated priority — this is a more reliable signal of
+// urgency than guessing whether a missing skill "matches the
+// candidate's stack", and needs no extra AI call to produce.
+// ============================================================
+
+export const buildSkillsDeepDiveFromJD = (
+  jdAnalysis: ATSJobDescriptionAnalysis | undefined,
+): ATSSectionDeepDive | null => {
+  if (!jdAnalysis || jdAnalysis.matches.length === 0) {
+    return null;
+  }
+
+  const requirementById = new Map(
+    (jdAnalysis.requirements ?? []).map((requirement) => [
+      requirement.id,
+      requirement,
+    ]),
+  );
+
+  const technicalCategories = new Set([
+    "skill",
+    "technology",
+    "framework",
+    "database",
+    "cloud",
+    "devops",
+    "testing",
+    "tool",
+    "api",
+    "architecture",
+    "other",
+  ]);
+
+  const skillMatches = jdAnalysis.matches.filter((match) => {
+    const requirement = requirementById.get(match.requirementId);
+
+    return requirement ? technicalCategories.has(requirement.category) : false;
+  });
+
+  if (skillMatches.length === 0) {
+    return null;
+  }
+
+  const buildSkillFinding = (match: ATSRequirementMatch): ATSFinding => {
+    const isRequired = match.priority === "required";
+
+    const problems = [isRequired ? "Required by JD" : "Preferred by JD"];
+
+    if (match.status === "partial") {
+      problems.push("Only weakly demonstrated");
+    }
+
+    const suggestedFix = isRequired
+      ? `Add "${match.requirement}" to your skills section if you genuinely have experience with it — the JD lists it as required.`
+      : `Consider adding "${match.requirement}" if you have real experience with it — the JD lists it as a preferred (optional) skill.`;
+
+    return {
+      id: `skill-${match.requirementId}`,
+
+      targetText: match.requirement,
+
+      verdict: "needs-improvement",
+
+      problems,
+
+      whyItMatters:
+        match.explanation ||
+        `This ${isRequired ? "required" : "preferred"} skill from the job description isn't clearly demonstrated in your resume.`,
+
+      suggestedFix,
+
+      needsQuantification: false,
+
+      quantificationExamples: [],
+    };
+  };
+
+  const requiredPresent = skillMatches
+    .filter(
+      (match) => match.priority === "required" && match.status === "matched",
+    )
+    .map((match) => match.requirement);
+
+  const requiredMissing = skillMatches
+    .filter(
+      (match) => match.priority === "required" && match.status !== "matched",
+    )
+    .map(buildSkillFinding);
+
+  const goodToHave = skillMatches
+    .filter(
+      (match) => match.priority === "preferred" && match.status !== "matched",
+    )
+    .map(buildSkillFinding);
+
+  const isFullyOptimized =
+    requiredMissing.length === 0 && goodToHave.length === 0;
+
+  const percentage = Number(
+    (
+      ((skillMatches.length - (requiredMissing.length + goodToHave.length)) /
+        skillMatches.length) *
+      100
+    ).toFixed(1),
+  );
+
+  const status = getATSCategoryStatus(percentage);
+
+  return {
+    sectionId: "skills",
+
+    title: "Skills",
+
+    percentage,
+
+    priority: getATSSectionDeepDivePriority(status, percentage),
+
+    isFullyOptimized,
+
+    findings: [],
+
+    skillsBreakdown: {
+      requiredPresent,
+
+      requiredMissing,
+
+      goodToHave,
+    },
+  };
+};
+
+/**
+ * Assembles the deterministic (pre-AI) section deep dive. Returns
+ * one ATSSectionDeepDive per section that actually has content —
+ * a section with zero bullets/projects is omitted entirely rather
+ * than shown as an empty block.
+ *
+ * Priority/percentage for "experience" comes straight from the
+ * already-computed scoring category, so the deep dive stays
+ * consistent with the score breakdown shown elsewhere. Projects
+ * has no dedicated scoring category today, so its percentage is
+ * derived from the ratio of excellent findings instead. Skills
+ * (only populated when a JD was provided) reuses jdAnalysis
+ * directly.
+ *
+ * The returned array is always sorted critical -> high -> medium
+ * -> low, so the frontend can render it as-is.
+ */
+/**
+ * Generic builder for sections that aren't itemized bullet-by-
+ * bullet — Education, Achievements. Reuses whatever ruleAnalysis
+ * already computed for that section (issues[] / suggestions[])
+ * rather than re-deriving anything or making a new AI call. A
+ * section with zero issues still gets an entry here
+ * (isFullyOptimized: true, empty findings) rather than being
+ * silently omitted.
+ */
+const buildSectionFromIssues = (
+  sectionId: ATSScoreCategory,
+  title: string,
+  analysis: { issues?: string[]; suggestions?: string[] } | undefined,
+  categoryOverride?: ATSCategoryResult,
+): ATSSectionDeepDive => {
+  const issues = analysis?.issues ?? [];
+  const suggestions = analysis?.suggestions ?? [];
+
+  if (issues.length === 0) {
+    const percentage = categoryOverride?.percentage ?? 100;
+
+    return {
+      sectionId,
+      title,
+      percentage,
+      priority: getATSSectionDeepDivePriority(
+        categoryOverride?.status ?? "excellent",
+        percentage,
+      ),
+      isFullyOptimized: true,
+      findings: [],
+    };
+  }
+
+  const findings: ATSFinding[] = issues.map((issue, index) => ({
+    id: `${sectionId}-${index}`,
+    targetText: issue,
+    verdict: "needs-improvement",
+    problems: [issue],
+    whyItMatters: issue,
+    suggestedFix: suggestions[index] ?? suggestions[0] ?? "",
+    needsQuantification: false,
+    quantificationExamples: [],
+  }));
+
+  // No dedicated scoring category for education/achievements —
+  // fall back to a simple deterministic estimate from issue count.
+  const percentage =
+    categoryOverride?.percentage ?? Math.max(40, 100 - issues.length * 20);
+
+  const status = categoryOverride?.status ?? getATSCategoryStatus(percentage);
+
+  return {
+    sectionId,
+    title,
+    percentage,
+    priority: getATSSectionDeepDivePriority(status, percentage),
+    isFullyOptimized: false,
+    findings,
+  };
+};
+
+/**
+ * Summary gets its own small deterministic check — no AI call.
+ * Flags a missing summary, an unusually short/long one, or one
+ * that never mentions the target role.
+ */
+const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
+  const summary = cleanText(resume.summary);
+
+  if (!summary) {
+    return {
+      sectionId: "summary",
+      title: "Summary",
+      percentage: 0,
+      priority: "critical",
+      isFullyOptimized: false,
+      findings: [
+        {
+          id: "summary-missing",
+          targetText: "",
+          verdict: "needs-improvement",
+          problems: ["Missing summary"],
+          whyItMatters:
+            "A summary gives recruiters a fast overview of who you are — without one, they have to piece it together from the rest of the resume.",
+          suggestedFix:
+            "Add a 2-3 sentence summary highlighting your role, core skills, and biggest strength.",
+          needsQuantification: false,
+          quantificationExamples: [],
+        },
+      ],
+    };
+  }
+
+  const wordCount = summary.split(/\s+/).filter(Boolean).length;
+
+  const problems: string[] = [];
+
+  if (wordCount < 15) {
+    problems.push("Too short");
+  }
+
+  if (wordCount > 80) {
+    problems.push("Too long");
+  }
+
+  const targetRole = cleanText(resume.targetRole);
+
+  if (
+    targetRole &&
+    !normalizeText(summary).includes(normalizeText(targetRole))
+  ) {
+    problems.push("Doesn't mention target role");
+  }
+
+  if (problems.length === 0) {
+    return {
+      sectionId: "summary",
+      title: "Summary",
+      percentage: 100,
+      priority: "low",
+      isFullyOptimized: true,
+      findings: [],
+    };
+  }
+
+  const percentage = Math.max(40, 100 - problems.length * 20);
+
+  return {
+    sectionId: "summary",
+    title: "Summary",
+    percentage,
+    priority: getATSSectionDeepDivePriority(
+      getATSCategoryStatus(percentage),
+      percentage,
+    ),
+    isFullyOptimized: false,
+    findings: [
+      {
+        id: "summary-0",
+        targetText: summary,
+        verdict: "needs-improvement",
+        problems,
+        whyItMatters:
+          "Your summary is often the first thing a recruiter reads — it should clearly position you for the role you're targeting.",
+        suggestedFix: "",
+        needsQuantification: false,
+        quantificationExamples: [],
+      },
+    ],
+  };
+};
+
+/**
+ * Builds a deep-dive entry directly from an already-scored
+ * ATSCategoryResult (contact, formatting, ...) — these already
+ * carry percentage/status/issues/suggestions, so no new
+ * computation is needed, just reshaping into ATSFinding form.
+ */
+const buildSectionFromCategory = (
+  category: ATSCategoryResult | undefined,
+  sectionId: ATSScoreCategory,
+  title: string,
+): ATSSectionDeepDive => {
+  if (!category || category.issues.length === 0) {
+    const percentage = category?.percentage ?? 100;
+
+    return {
+      sectionId,
+      title,
+      percentage,
+      priority: getATSSectionDeepDivePriority(
+        category?.status ?? "excellent",
+        percentage,
+      ),
+      isFullyOptimized: true,
+      findings: [],
+    };
+  }
+
+  const findings: ATSFinding[] = category.issues.map((issue, index) => ({
+    id: `${sectionId}-${index}`,
+    targetText: issue,
+    verdict: "needs-improvement",
+    problems: [issue],
+    whyItMatters: issue,
+    suggestedFix: category.suggestions[index] ?? category.suggestions[0] ?? "",
+    needsQuantification: false,
+    quantificationExamples: [],
+  }));
+
+  return {
+    sectionId,
+    title,
+    percentage: category.percentage,
+    priority: getATSSectionDeepDivePriority(
+      category.status,
+      category.percentage,
+    ),
+    isFullyOptimized: false,
+    findings,
+  };
+};
+
+/**
+ * Assembles the deterministic (pre-AI) section deep dive. Every
+ * resume section gets an entry — summary, contact, skills,
+ * experience, projects, education, formatting, achievements —
+ * with isFullyOptimized: true and empty findings when there's
+ * nothing to flag, rather than being silently omitted.
+ *
+ * Priority/percentage for the 8 scored categories (contact,
+ * experience, formatting, ...) come straight from
+ * ATS_SCORE_CATEGORIES, so the deep dive stays consistent with
+ * the score breakdown shown elsewhere. Sections with no dedicated
+ * score (projects, education, achievements) derive a simple
+ * estimate instead. Skills (only populated when a JD was
+ * provided) reuses jdAnalysis directly.
+ *
+ * The returned array is always sorted critical -> high -> medium
+ * -> low, so the frontend can render it as-is.
+ */
+export const buildDeterministicSectionDeepDive = (
+  resume: ATSResume,
+  ruleAnalysis: ATSRuleAnalysis,
+  jdAnalysis?: ATSJobDescriptionAnalysis,
+): ATSSectionDeepDive[] => {
+  const { categories } = ruleAnalysis;
+
+  const findCategory = (id: string) =>
+    categories.find((category) => category.category === id);
+
+  const sections: ATSSectionDeepDive[] = [];
+
+  // --- Summary: small deterministic check, no scored category ---
+  sections.push(buildSummaryDeepDive(resume));
+
+  // --- Contact & Formatting: already-scored categories ---
+  sections.push(
+    buildSectionFromCategory(findCategory("contact"), "contact", "Contact"),
+  );
+
+  sections.push(
+    buildSectionFromCategory(
+      findCategory("formatting"),
+      "formatting",
+      "Formatting",
+    ),
+  );
+
+  // --- Education & Achievements: no scored category today ---
+  sections.push(
+    buildSectionFromIssues("education", "Education", ruleAnalysis.education),
+  );
+
+  sections.push(
+    buildSectionFromIssues(
+      "achievements",
+      "Achievements",
+      ruleAnalysis.achievements,
+    ),
+  );
+
+  // --- Experience: itemized, per-bullet findings ---
+  const buildFromFindings = (
+    sectionId: ATSScoreCategory,
+    title: string,
+    findings: ATSFinding[],
+    categoryOverride?: ATSCategoryResult,
+  ): ATSSectionDeepDive => {
+    if (findings.length === 0) {
+      const percentage = categoryOverride?.percentage ?? 100;
+
+      return {
+        sectionId,
+        title,
+        percentage,
+        priority: getATSSectionDeepDivePriority(
+          categoryOverride?.status ?? "excellent",
+          percentage,
+        ),
+        isFullyOptimized: true,
+        findings: [],
+      };
+    }
+
+    const excellentCount = findings.filter(
+      (finding) => finding.verdict === "excellent",
+    ).length;
+
+    const percentage =
+      categoryOverride?.percentage ??
+      Number(((excellentCount / findings.length) * 100).toFixed(1));
+
+    const status: ATSCategoryStatus =
+      categoryOverride?.status ?? getATSCategoryStatus(percentage);
+
+    return {
+      sectionId,
+      title,
+      percentage,
+      priority: getATSSectionDeepDivePriority(status, percentage),
+      isFullyOptimized: excellentCount === findings.length,
+      findings,
+    };
+  };
+
+  sections.push(
+    buildFromFindings(
+      "experience",
+      "Experience",
+      buildExperienceFindings(resume),
+      findCategory("experience"),
+    ),
+  );
+
+  // Projects has its own sectionId even though it isn't one of
+  // the 8 scored categories in ATS_SCORE_CATEGORIES — sectionId
+  // is intentionally a string & {} union so this is safe, and
+  // it lets the frontend key off it distinctly from "experience".
+  sections.push(
+    buildFromFindings("projects", "Projects", buildProjectFindings(resume)),
+  );
+
+  // --- Skills: bucketed, only populated with a JD ---
+  const skillsSection = buildSkillsDeepDiveFromJD(jdAnalysis);
+
+  sections.push(
+    skillsSection ?? {
+      sectionId: "skills",
+      title: "Skills",
+      percentage: 100,
+      priority: "low",
+      isFullyOptimized: true,
+      findings: [],
+    },
+  );
+
+  const priorityOrder: Record<ATSSectionDeepDivePriority, number> = {
+    critical: 0,
+    high: 1,
+    medium: 2,
+    low: 3,
+  };
+
+  return [...sections].sort(
+    (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
+  );
+};
+
+// ============================================================
+// SECTION DEEP DIVE — AI ENRICHMENT PASS
+//
+// Runs only on the findings the deterministic pass flagged as
+// "needs-improvement" — sections that are fully optimized never
+// trigger an AI call at all. One batched call per section (not
+// per bullet), asking only for the human-readable explanation,
+// a wording rewrite, and (when relevant) illustrative
+// quantification examples.
+//
+// The prompt explicitly forbids inventing facts/numbers that
+// aren't already in the bullet — quantificationExamples are
+// always generic templates, never claims about this resume.
+// ============================================================
+
+const enrichSectionFindingsWithAI = async (
+  title: string,
+  findings: ATSFinding[],
+): Promise<ATSFinding[]> => {
+  const flagged = findings.filter(
+    (finding) => finding.verdict === "needs-improvement",
+  );
+
+  if (flagged.length === 0) {
+    return findings;
+  }
+
+  const bulletList = flagged
+    .map(
+      (finding) =>
+        `- id: ${finding.id}\n  text: "${finding.targetText}"\n  problems: ${finding.problems.join(", ")}`,
+    )
+    .join("\n");
+
+  const prompt = `
+You are helping a candidate improve the "${title}" section of their resume
+for ATS scanning and recruiter readability.
+
+Each bullet below already has problem tags detected by rule-based analysis.
+For every bullet, produce:
+
+1. "whyItMatters" — one short, plain-language sentence explaining why these
+   specific problems hurt the bullet, from a recruiter's point of view.
+
+2. "suggestedFix" — a rewritten version of the bullet that fixes wording
+   issues (weak action verb, repeated action verb, too generic) using ONLY
+   information already present in the original bullet. Do NOT add numbers,
+   tools, outcomes, or scope that are not already stated. If "No measurable
+   impact" is the ONLY problem listed for a bullet (no other problem tags),
+   leave "suggestedFix" as an empty string — the wording itself is fine and
+   only quantificationExamples should be filled in for that bullet.
+
+3. "quantificationExamples" — ONLY when "No measurable impact" is one of
+   the listed problems for that bullet: give 2-3 short, clearly generic
+   example phrasings showing the TYPE of metric that would strengthen a
+   bullet like this (e.g. users served, performance improvement, time
+   saved, team size, revenue, number of items shipped). These are
+   illustrative templates only — never present them as facts about this
+   candidate. If "No measurable impact" is not listed for a bullet, return
+   an empty array for it.
+
+BULLETS TO REVIEW:
+${bulletList}
+
+Return ONLY valid JSON. No markdown. No text outside the JSON. Use exactly
+this structure:
+
+{
+  "findings": [
+    {
+      "id": "",
+      "whyItMatters": "",
+      "suggestedFix": "",
+      "quantificationExamples": [""]
+    }
+  ]
+}
+
+Rules:
+- "id" must exactly match one of the ids given above.
+- Include every bullet from the list exactly once.
+- Never fabricate facts, numbers, tools, or outcomes not present in the
+  original bullet text.
+`;
+
+  let aiResult: {
+    findings?: Array<{
+      id: string;
+      whyItMatters?: string;
+      suggestedFix?: string;
+      quantificationExamples?: string[];
+    }>;
+  };
+
+  try {
+    aiResult = await generateJSON(prompt);
+  } catch (error) {
+    // Fail safe: keep the deterministic findings (problems still
+    // show, just without the AI-written explanation/rewrite).
+    return findings;
+  }
+
+  if (!aiResult || !Array.isArray(aiResult.findings)) {
+    return findings;
+  }
+
+  const aiById = new Map(aiResult.findings.map((item) => [item.id, item]));
+
+  return findings.map((finding) => {
+    if (finding.verdict !== "needs-improvement") {
+      return finding;
+    }
+
+    const aiFinding = aiById.get(finding.id);
+
+    if (!aiFinding) {
+      return finding;
+    }
+
+    return {
+      ...finding,
+
+      whyItMatters: aiFinding.whyItMatters || finding.whyItMatters,
+
+      suggestedFix: aiFinding.suggestedFix ?? finding.suggestedFix,
+
+      quantificationExamples: finding.needsQuantification
+        ? (aiFinding.quantificationExamples ?? finding.quantificationExamples)
+        : [],
+    };
+  });
+};
+
+/**
+ * Enriches every section's findings with AI-written explanations
+ * and rewrites. Sections that are already fully optimized are
+ * skipped entirely — no AI call is made for them.
+ */
+export const enrichSectionDeepDiveWithAI = async (
+  sections: ATSSectionDeepDive[],
+): Promise<ATSSectionDeepDive[]> => {
+  const enriched: ATSSectionDeepDive[] = [];
+
+  for (const section of sections) {
+    if (section.isFullyOptimized || section.sectionId === "skills") {
+      enriched.push(section);
+
+      continue;
+    }
+
+    const findings = await enrichSectionFindingsWithAI(
+      section.title,
+      section.findings,
+    );
+
+    enriched.push({
+      ...section,
+
+      findings,
+    });
+  }
+
+  return enriched;
 };
 
 // ============================================================
@@ -2351,10 +3338,12 @@ const getResumeEvidenceSources = (
   }
 
   for (const project of resume.projects ?? []) {
-    if (project.description) {
+    const projectDescriptionText = getProjectDescriptionText(project);
+
+    if (projectDescriptionText) {
       sources.push({
         section: "projects",
-        text: project.description,
+        text: projectDescriptionText,
       });
     }
 
@@ -3088,71 +4077,285 @@ const analyzeJDRequirements = (
 // JD ANALYSIS + REQUIREMENT MATCHING
 // ============================================================
 
-export const analyzeJobDescriptionMatch = (
-  resume: ATSResume,
+// export const analyzeJobDescriptionMatch = (
+//   resume: ATSResume,
+//   jd: ATSJobDescriptionAnalysis,
+// ): ATSJobDescriptionAnalysis => {
+//   const allRequirements: ATSJobRequirement[] = Array.isArray(jd.requirements)
+//     ? jd.requirements
+//     : [];
+
+//   const uniqueRequirements = Array.from(
+//     new Map(
+//       allRequirements.map((item) => [
+//         normalizeRequirementForMatch(item.name),
+//         item,
+//       ]),
+//     ).values(),
+//   );
+
+//   console.log("========== LIVE JD REQUIREMENTS ==========");
+
+//   console.log(
+//     allRequirements.map((item) => ({
+//       name: item.name,
+//       priority: item.priority,
+//     })),
+//   );
+
+//   console.log("========== LIVE JD RESPONSIBILITIES ==========");
+
+//   console.log(
+//     jd.responsibilities.map((item) => ({
+//       name: item.name,
+//       priority: item.priority,
+//     })),
+//   );
+
+//   console.log("=============================================");
+
+//   const matches: ATSRequirementMatch[] = uniqueRequirements.map(
+//     (requirement) => {
+//       const evidence = findRequirementEvidence(requirement.name, resume);
+
+//       return {
+//         requirementId: requirement.id,
+
+//         requirement: requirement.name,
+
+//         normalizedRequirement: normalizeRequirementForMatch(requirement.name),
+
+//         priority: requirement.priority,
+
+//         status: evidence.status,
+
+//         evidenceStrength: evidence.evidenceStrength,
+
+//         matchedResumeEvidence: evidence.evidence,
+
+//         matchedResumeSections: evidence.sections,
+
+//         confidence: evidence.confidence,
+
+//         explanation: evidence.explanation,
+//       };
+//     },
+//   );
+
+//   const requiredMatches = matches.filter(
+//     (match) => match.priority === "required",
+//   );
+
+//   const preferredMatches = matches.filter(
+//     (match) => match.priority === "preferred",
+//   );
+
+//   const responsibilityMatches = matches.filter((match) =>
+//     jd.responsibilities?.some((responsibility) => {
+//       const responsibilityText = normalizeRequirementForMatch(
+//         responsibility.name,
+//       );
+
+//       const matchText = match.normalizedRequirement;
+
+//       return (
+//         responsibilityText === matchText ||
+//         responsibilityText.includes(matchText) ||
+//         matchText.includes(responsibilityText)
+//       );
+//     }),
+//   );
+
+//   const calculateMatchPercentage = (items: ATSRequirementMatch[]): number => {
+//     if (items.length === 0) {
+//       return 0;
+//     }
+
+//     let score = 0;
+
+//     for (const item of items) {
+//       if (item.status === "matched") {
+//         score += 1;
+//       } else if (item.status === "partial") {
+//         score += 0.5;
+//       }
+//     }
+
+//     return Number(((score / items.length) * 100).toFixed(1));
+//   };
+
+//   const requiredMatchPercentage = calculateMatchPercentage(requiredMatches);
+
+//   const preferredMatchPercentage = calculateMatchPercentage(preferredMatches);
+
+//   const responsibilityMatchPercentage = calculateMatchPercentage(
+//     responsibilityMatches,
+//   );
+
+//   //     console.log(
+//   //   "========== RESPONSIBILITY MATCH DEBUG =========="
+//   // );
+
+//   // console.log(
+//   //   "JD responsibilities:",
+//   //   jd.responsibilities?.map((r) => ({
+//   //     name: r.name,
+//   //     normalized: normalizeRequirementForMatch(r.name),
+//   //   }))
+//   // );
+
+//   // console.log(
+//   //   "Requirement matches:",
+//   //   matches.map((m) => ({
+//   //     requirement: m.requirement,
+//   //     normalized: m.normalizedRequirement,
+//   //     priority: m.priority,
+//   //     status: m.status,
+//   //   }))
+//   // );
+
+//   // console.log(
+//   //   "Responsibility matches:",
+//   //   responsibilityMatches.map((m) => ({
+//   //     requirement: m.requirement,
+//   //     status: m.status,
+//   //   }))
+//   // );
+
+//   // console.log(
+//   //   "Responsibility percentage:",
+//   //   responsibilityMatchPercentage
+//   // );
+
+//   // console.log(
+//   //   "==============================================="
+//   // );
+
+//   /*
+//    * Required requirements get the highest weight.
+//    *
+//    * 60% Required
+//    * 20% Responsibilities
+//    * 10% Preferred
+//    * 10% Other JD requirements
+//    */
+
+//   const otherMatches = matches.filter(
+//     (match) =>
+//       !requiredMatches.includes(match) &&
+//       !preferredMatches.includes(match) &&
+//       !responsibilityMatches.includes(match),
+//   );
+
+//   const otherMatchPercentage = calculateMatchPercentage(otherMatches);
+//   console.log("========== JD SCORE BREAKDOWN ==========");
+//   console.log("Required:", requiredMatchPercentage);
+//   console.log("Responsibilities:", responsibilityMatchPercentage);
+//   console.log("Preferred:", preferredMatchPercentage);
+//   console.log("Other:", otherMatchPercentage);
+//   console.log(
+//     "Calculated Overall:",
+//     (
+//       requiredMatchPercentage * 0.6 +
+//       responsibilityMatchPercentage * 0.2 +
+//       preferredMatchPercentage * 0.1 +
+//       otherMatchPercentage * 0.1
+//     ).toFixed(1),
+//   );
+//   console.log("========================================");
+
+//   const overallMatchPercentage = Number(
+//     (
+//       requiredMatchPercentage * 0.6 +
+//       responsibilityMatchPercentage * 0.2 +
+//       preferredMatchPercentage * 0.1 +
+//       otherMatchPercentage * 0.1
+//     ).toFixed(1),
+//   );
+
+//   const criticalMissingRequirements = requiredMatches
+//     .filter((match) => match.status === "missing")
+//     .map((match) => match.requirement);
+
+//   const partialRequirements = matches
+//     .filter((match) => match.status === "partial")
+//     .map((match) => match.requirement);
+
+//   const matchedRequirements = matches
+//     .filter((match) => match.status === "matched")
+//     .map((match) => match.requirement);
+
+//   const issues: string[] = [];
+
+//   const suggestions: string[] = [];
+
+//   if (criticalMissingRequirements.length > 0) {
+//     issues.push(
+//       `${criticalMissingRequirements.length} required JD requirement(s) are missing from the resume.`,
+//     );
+
+//     suggestions.push(
+//       `Address required requirements such as ${criticalMissingRequirements
+//         .slice(0, 5)
+//         .join(", ")} if you genuinely have experience with them.`,
+//     );
+//   }
+
+//   if (responsibilityMatchPercentage < 60) {
+//     issues.push(
+//       "Resume experience does not sufficiently demonstrate the responsibilities described in the JD.",
+//     );
+
+//     suggestions.push(
+//       "Rewrite relevant experience and project bullets to demonstrate the JD responsibilities using truthful evidence.",
+//     );
+//   }
+
+//   if (requiredMatchPercentage < 70) {
+//     issues.push(`Required-skill match is only ${requiredMatchPercentage}%.`);
+//   }
+
+//   if (overallMatchPercentage < 70) {
+//     suggestions.push(
+//       "Prioritize high-impact missing requirements before optimizing secondary keywords.",
+//     );
+//   }
+
+//   return {
+//     ...jd,
+
+//     matches,
+
+//     requiredMatchPercentage,
+
+//     preferredMatchPercentage,
+
+//     responsibilityMatchPercentage,
+
+//     overallMatchPercentage,
+
+//     criticalMissingRequirements,
+
+//     partialRequirements,
+
+//     matchedRequirements,
+
+//     issues: Array.from(new Set([...(jd.issues ?? []), ...issues])),
+
+//     suggestions: Array.from(
+//       new Set([...(jd.suggestions ?? []), ...suggestions]),
+//     ),
+//   };
+// };
+
+// ============================================================
+// JD MATCH AGGREGATES (shared by lexical + AI-refined passes)
+// ============================================================
+
+const buildJDMatchAggregates = (
   jd: ATSJobDescriptionAnalysis,
+  matches: ATSRequirementMatch[],
 ): ATSJobDescriptionAnalysis => {
-  const allRequirements: ATSJobRequirement[] = Array.isArray(jd.requirements)
-    ? jd.requirements
-    : [];
-
-  const uniqueRequirements = Array.from(
-    new Map(
-      allRequirements.map((item) => [
-        normalizeRequirementForMatch(item.name),
-        item,
-      ]),
-    ).values(),
-  );
-
-  console.log("========== LIVE JD REQUIREMENTS ==========");
-
-  console.log(
-    allRequirements.map((item) => ({
-      name: item.name,
-      priority: item.priority,
-    })),
-  );
-
-  console.log("========== LIVE JD RESPONSIBILITIES ==========");
-
-  console.log(
-    jd.responsibilities.map((item) => ({
-      name: item.name,
-      priority: item.priority,
-    })),
-  );
-
-  console.log("=============================================");
-
-  const matches: ATSRequirementMatch[] = uniqueRequirements.map(
-    (requirement) => {
-      const evidence = findRequirementEvidence(requirement.name, resume);
-
-      return {
-        requirementId: requirement.id,
-
-        requirement: requirement.name,
-
-        normalizedRequirement: normalizeRequirementForMatch(requirement.name),
-
-        priority: requirement.priority,
-
-        status: evidence.status,
-
-        evidenceStrength: evidence.evidenceStrength,
-
-        matchedResumeEvidence: evidence.evidence,
-
-        matchedResumeSections: evidence.sections,
-
-        confidence: evidence.confidence,
-
-        explanation: evidence.explanation,
-      };
-    },
-  );
-
   const requiredMatches = matches.filter(
     (match) => match.priority === "required",
   );
@@ -3203,45 +4406,6 @@ export const analyzeJobDescriptionMatch = (
     responsibilityMatches,
   );
 
-  //     console.log(
-  //   "========== RESPONSIBILITY MATCH DEBUG =========="
-  // );
-
-  // console.log(
-  //   "JD responsibilities:",
-  //   jd.responsibilities?.map((r) => ({
-  //     name: r.name,
-  //     normalized: normalizeRequirementForMatch(r.name),
-  //   }))
-  // );
-
-  // console.log(
-  //   "Requirement matches:",
-  //   matches.map((m) => ({
-  //     requirement: m.requirement,
-  //     normalized: m.normalizedRequirement,
-  //     priority: m.priority,
-  //     status: m.status,
-  //   }))
-  // );
-
-  // console.log(
-  //   "Responsibility matches:",
-  //   responsibilityMatches.map((m) => ({
-  //     requirement: m.requirement,
-  //     status: m.status,
-  //   }))
-  // );
-
-  // console.log(
-  //   "Responsibility percentage:",
-  //   responsibilityMatchPercentage
-  // );
-
-  // console.log(
-  //   "==============================================="
-  // );
-
   /*
    * Required requirements get the highest weight.
    *
@@ -3259,21 +4423,6 @@ export const analyzeJobDescriptionMatch = (
   );
 
   const otherMatchPercentage = calculateMatchPercentage(otherMatches);
-  console.log("========== JD SCORE BREAKDOWN ==========");
-  console.log("Required:", requiredMatchPercentage);
-  console.log("Responsibilities:", responsibilityMatchPercentage);
-  console.log("Preferred:", preferredMatchPercentage);
-  console.log("Other:", otherMatchPercentage);
-  console.log(
-    "Calculated Overall:",
-    (
-      requiredMatchPercentage * 0.6 +
-      responsibilityMatchPercentage * 0.2 +
-      preferredMatchPercentage * 0.1 +
-      otherMatchPercentage * 0.1
-    ).toFixed(1),
-  );
-  console.log("========================================");
 
   const overallMatchPercentage = Number(
     (
@@ -3357,6 +4506,205 @@ export const analyzeJobDescriptionMatch = (
       new Set([...(jd.suggestions ?? []), ...suggestions]),
     ),
   };
+};
+
+// ============================================================
+// JD ANALYSIS + REQUIREMENT MATCHING (LEXICAL / FAST PASS)
+// ============================================================
+
+export const analyzeJobDescriptionMatch = (
+  resume: ATSResume,
+  jd: ATSJobDescriptionAnalysis,
+): ATSJobDescriptionAnalysis => {
+  const allRequirements: ATSJobRequirement[] = Array.isArray(jd.requirements)
+    ? jd.requirements
+    : [];
+
+  const uniqueRequirements = Array.from(
+    new Map(
+      allRequirements.map((item) => [
+        normalizeRequirementForMatch(item.name),
+        item,
+      ]),
+    ).values(),
+  );
+
+  const matches: ATSRequirementMatch[] = uniqueRequirements.map(
+    (requirement) => {
+      const evidence = findRequirementEvidence(requirement.name, resume);
+
+      return {
+        requirementId: requirement.id,
+
+        requirement: requirement.name,
+
+        normalizedRequirement: normalizeRequirementForMatch(requirement.name),
+
+        priority: requirement.priority,
+
+        status: evidence.status,
+
+        evidenceStrength: evidence.evidenceStrength,
+
+        matchedResumeEvidence: evidence.evidence,
+
+        matchedResumeSections: evidence.sections,
+
+        confidence: evidence.confidence,
+
+        explanation: evidence.explanation,
+      };
+    },
+  );
+
+  return buildJDMatchAggregates(jd, matches);
+};
+
+// ============================================================
+// JD REQUIREMENT MATCHING (SEMANTIC / AI-REFINED PASS)
+//
+// Runs only on requirements the lexical pass could NOT confirm
+// as "matched". Sends just those, plus condensed resume
+// evidence, to the AI for a semantic second opinion. This keeps
+// AI usage small (most obvious matches never need it) while
+// catching paraphrases and equivalent technologies the lexical
+// alias map doesn't know about.
+// ============================================================
+
+export const refineJDMatchesWithAI = async (
+  resume: ATSResume,
+  jd: ATSJobDescriptionAnalysis,
+): Promise<ATSJobDescriptionAnalysis> => {
+  const unresolved = jd.matches.filter((match) => match.status !== "matched");
+
+  if (unresolved.length === 0) {
+    return jd;
+  }
+
+  const evidenceSources = getResumeEvidenceSources(resume);
+
+  const resumeEvidenceText = evidenceSources
+    .map((source) => `[${source.section}] ${source.text}`)
+    .join("\n");
+
+  const requirementList = unresolved
+    .map((match) => `- ${match.requirement} (priority: ${match.priority})`)
+    .join("\n");
+
+  const prompt = `
+You are an expert technical recruiter performing SEMANTIC skill matching
+between a candidate resume and a list of job requirements.
+
+The requirements below were NOT confirmed by exact keyword matching. Check
+whether the resume demonstrates each one using different wording, an
+equivalent technology, or a closely related skill.
+
+Do NOT assume a requirement is met just because a related technology is
+present. Only mark "matched" when the resume genuinely demonstrates the
+requirement, even if phrased differently. Never invent evidence that is
+not present in the resume content below.
+
+REQUIREMENTS TO CHECK:
+${requirementList}
+
+RESUME CONTENT:
+${resumeEvidenceText}
+
+Return ONLY valid JSON. No markdown. No explanations outside the JSON.
+
+Use exactly this structure:
+
+{
+  "matches": [
+    {
+      "requirement": "",
+      "status": "matched" | "partial" | "missing",
+      "evidenceStrength": "strong" | "moderate" | "weak" | "missing",
+      "matchedResumeEvidence": [""],
+      "confidence": 0,
+      "explanation": ""
+    }
+  ]
+}
+
+Rules:
+- "requirement" must exactly match one of the requirement names given above.
+- "matched": the resume clearly demonstrates this requirement, possibly with
+  different wording or a closely equivalent technology.
+- "partial": the resume shows related or adjacent experience but not a
+  direct or confident demonstration.
+- "missing": no meaningful evidence exists anywhere in the resume.
+- "matchedResumeEvidence" must quote actual resume text relied on, or be an
+  empty array when missing.
+- "confidence" is an integer from 0 to 100.
+- Include every requirement from the list exactly once.
+`;
+
+  let aiResult: {
+    matches?: Array<{
+      requirement: string;
+      status: ATSMatchStatus;
+      evidenceStrength: ATSEvidenceStrength;
+      matchedResumeEvidence?: string[];
+      confidence?: number;
+      explanation?: string;
+    }>;
+  };
+
+  try {
+    aiResult = await generateJSON(prompt);
+  } catch (error) {
+    // Fail safe: keep the lexical results if the AI call errors out.
+    return jd;
+  }
+
+  if (!aiResult || !Array.isArray(aiResult.matches)) {
+    return jd;
+  }
+
+  const aiByRequirement = new Map(
+    aiResult.matches.map((match) => [
+      normalizeRequirementForMatch(match.requirement),
+      match,
+    ]),
+  );
+
+  const refinedMatches: ATSRequirementMatch[] = jd.matches.map((match) => {
+    // Trust confident lexical matches as-is; only overlay AI
+    // findings on requirements that weren't already confirmed.
+    if (match.status === "matched") {
+      return match;
+    }
+
+    const aiMatch = aiByRequirement.get(match.normalizedRequirement);
+
+    if (!aiMatch) {
+      return match;
+    }
+
+    return {
+      ...match,
+
+      status: aiMatch.status ?? match.status,
+
+      evidenceStrength: aiMatch.evidenceStrength ?? match.evidenceStrength,
+
+      matchedResumeEvidence:
+        aiMatch.matchedResumeEvidence &&
+        aiMatch.matchedResumeEvidence.length > 0
+          ? aiMatch.matchedResumeEvidence
+          : match.matchedResumeEvidence,
+
+      confidence:
+        typeof aiMatch.confidence === "number"
+          ? aiMatch.confidence
+          : match.confidence,
+
+      explanation: aiMatch.explanation || match.explanation,
+    };
+  });
+
+  return buildJDMatchAggregates(jd, refinedMatches);
 };
 
 const analyzeResumeKeywords = (

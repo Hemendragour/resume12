@@ -190,15 +190,54 @@ const normalizeText = (value: unknown): string => {
     .trim();
 };
 
+// const containsNormalizedPhrase = (text: string, phrase: string): boolean => {
+//   const normalizedText = normalizeRequirementForMatch(text)
+//     .toLowerCase()
+//     .replace(/[./+#-]+/g, " ")
+//     .replace(/\s+/g, " ")
+//     .trim();
+
+//   const normalizedPhrase = normalizeRequirementForMatch(phrase)
+//     .toLowerCase()
+//     .replace(/[./+#-]+/g, " ")
+//     .replace(/\s+/g, " ")
+//     .trim();
+
+//   if (!normalizedText || !normalizedPhrase) {
+//     return false;
+//   }
+
+//   // Exact phrase
+//   if (normalizedText.includes(normalizedPhrase)) {
+//     return true;
+//   }
+
+//   // Token-based matching
+//   const textTokens = new Set(normalizedText.split(/\s+/));
+
+//   const phraseTokens = normalizedPhrase.split(/\s+/);
+
+//   // Single-word requirement
+//   if (phraseTokens.length === 1) {
+//     return textTokens.has(phraseTokens[0]);
+//   }
+
+//   // Multi-word requirement:
+//   // all important words must exist
+//   return phraseTokens.every((token) => textTokens.has(token));
+// };
+
 const containsNormalizedPhrase = (text: string, phrase: string): boolean => {
   const normalizedText = normalizeRequirementForMatch(text)
     .toLowerCase()
+    .replace(/[/-]+/g, " ")
     .replace(/[./+#-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
   const normalizedPhrase = normalizeRequirementForMatch(phrase)
     .toLowerCase()
+    .replace(/[/-]+/g, " ")
     .replace(/[./+#-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -207,25 +246,29 @@ const containsNormalizedPhrase = (text: string, phrase: string): boolean => {
     return false;
   }
 
-  // Exact phrase
-  if (normalizedText.includes(normalizedPhrase)) {
-    return true;
-  }
-
-  // Token-based matching
-  const textTokens = new Set(normalizedText.split(/\s+/));
-
+  const textTokens = normalizedText.split(/\s+/);
+  const textTokenSet = new Set(textTokens);
   const phraseTokens = normalizedPhrase.split(/\s+/);
 
-  // Single-word requirement
+  // Single-word requirement: must match a WHOLE token.
+  // Never fall back to substring — that's what let "ts" match
+  // inside "posts" / "achievements".
   if (phraseTokens.length === 1) {
-    return textTokens.has(phraseTokens[0]);
+    return textTokenSet.has(phraseTokens[0]);
   }
 
-  // Multi-word requirement:
-  // all important words must exist
-  return phraseTokens.every((token) => textTokens.has(token));
+  // Multi-word requirement: match as a contiguous run of tokens,
+  // not just "all words appear somewhere in the text" (which can
+  // also false-positive when the words are unrelated to each other).
+  for (let i = 0; i <= textTokens.length - phraseTokens.length; i++) {
+    if (phraseTokens.every((token, j) => textTokens[i + j] === token)) {
+      return true;
+    }
+  }
+
+  return false;
 };
+
 const countMatchingSignals = (
   textValues: string[],
   signals: string[],
@@ -462,7 +505,27 @@ export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
   if (present.includes("projects") && (resume.projects ?? []).length === 0) {
     empty.push("projects");
   }
+  if (
+    present.includes("achievements") &&
+    (resume.achievements ?? []).length === 0
+  ) {
+    empty.push("achievements");
+  }
 
+  if (
+    present.includes("certifications") &&
+    (resume.certifications ?? []).length === 0
+  ) {
+    empty.push("certifications");
+  }
+
+  if (present.includes("languages") && (resume.languages ?? []).length === 0) {
+    empty.push("languages");
+  }
+
+  if (present.includes("awards") && (resume.awards ?? []).length === 0) {
+    empty.push("awards");
+  }
   const issues: string[] = [];
   const suggestions: string[] = [];
 
@@ -533,14 +596,19 @@ export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
     score += 2;
   }
 
-  if (present.includes("certifications") || present.includes("achievements")) {
+  if (
+    (present.includes("certifications") && !empty.includes("certifications")) ||
+    (present.includes("achievements") && !empty.includes("achievements"))
+  ) {
     score += 1;
   }
 
-  if (present.includes("languages") || present.includes("awards")) {
+  if (
+    (present.includes("languages") && !empty.includes("languages")) ||
+    (present.includes("awards") && !empty.includes("awards"))
+  ) {
     score += 1;
   }
-
   if (empty.length === 0) {
     score += 1;
   }
@@ -613,12 +681,28 @@ export const analyzeSkills = (resume: ATSResume): ATSSkillsAnalysis => {
 
   const roleCoreSkillPool = targetRole ? getRoleCoreSkillPool(targetRole) : [];
 
+  // const roleMatchedSkills = roleSkillPool.filter((roleSkill) =>
+  //   skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+  // );
+
+  // const roleCoreMatchedSkills = roleCoreSkillPool.filter((roleSkill) =>
+  //   skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+  // );
+
   const roleMatchedSkills = roleSkillPool.filter((roleSkill) =>
-    skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+    skills.some((skill) =>
+      getRequirementAliases(roleSkill).some((alias) =>
+        containsNormalizedPhrase(skill, alias),
+      ),
+    ),
   );
 
   const roleCoreMatchedSkills = roleCoreSkillPool.filter((roleSkill) =>
-    skills.some((skill) => containsNormalizedPhrase(skill, roleSkill)),
+    skills.some((skill) =>
+      getRequirementAliases(roleSkill).some((alias) =>
+        containsNormalizedPhrase(skill, alias),
+      ),
+    ),
   );
 
   const roleCoverage =
@@ -820,10 +904,16 @@ const isWeakBullet = (bullet: string): boolean => {
 
 const containsMetric = (bullet: string): boolean => {
   return (
+    // bullet.match(ATS_METRIC_PATTERNS.percentage) !== null ||
+    // bullet.match(ATS_METRIC_PATTERNS.currency) !== null ||
+    // bullet.match(ATS_METRIC_PATTERNS.time) !== null ||
+    // bullet.match(ATS_METRIC_PATTERNS.impactNumber) !== null
+
     bullet.match(ATS_METRIC_PATTERNS.percentage) !== null ||
     bullet.match(ATS_METRIC_PATTERNS.currency) !== null ||
     bullet.match(ATS_METRIC_PATTERNS.time) !== null ||
-    bullet.match(ATS_METRIC_PATTERNS.impactNumber) !== null
+    bullet.match(ATS_METRIC_PATTERNS.impactNumber) !== null ||
+    bullet.match(ATS_METRIC_PATTERNS.plusQuantifier) !== null
   );
 };
 const containsActionVerb = (bullet: string): boolean => {
@@ -1173,10 +1263,16 @@ export const analyzeQuantifiedResults = (
 
   const quantifiedBullets = bullets.filter(
     (bullet) =>
+      // extractMatches(ATS_METRIC_PATTERNS.percentage, bullet).length > 0 ||
+      // extractMatches(ATS_METRIC_PATTERNS.currency, bullet).length > 0 ||
+      // extractMatches(ATS_METRIC_PATTERNS.time, bullet).length > 0 ||
+      // extractMatches(ATS_METRIC_PATTERNS.impactNumber, bullet).length > 0,
+
       extractMatches(ATS_METRIC_PATTERNS.percentage, bullet).length > 0 ||
       extractMatches(ATS_METRIC_PATTERNS.currency, bullet).length > 0 ||
       extractMatches(ATS_METRIC_PATTERNS.time, bullet).length > 0 ||
-      extractMatches(ATS_METRIC_PATTERNS.impactNumber, bullet).length > 0,
+      extractMatches(ATS_METRIC_PATTERNS.impactNumber, bullet).length > 0 ||
+      extractMatches(ATS_METRIC_PATTERNS.plusQuantifier, bullet).length > 0,
   ).length;
 
   const metricCoverage =
@@ -1269,6 +1365,7 @@ export const analyzeAchievements = (
   const suggestions: string[] = [];
 
   if (achievements.length === 0) {
+    issues.push("No achievements were found.");
     suggestions.push(
       "Add meaningful achievements where you have measurable results.",
     );
@@ -1927,7 +2024,6 @@ const buildSectionFromIssues = (
  */
 const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
   const summary = cleanText(resume.summary);
-
   if (!summary) {
     return {
       sectionId: "summary",
@@ -1956,7 +2052,7 @@ const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
 
   const problems: string[] = [];
 
-  if (wordCount < 15) {
+  if (wordCount < 20) {
     problems.push("Too short");
   }
 
@@ -1973,6 +2069,18 @@ const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
     problems.push("Doesn't mention target role");
   }
 
+  // NEW: flag generic summaries with no concrete evidence —
+  // no metric/number AND no named skill/technology from the
+  // resume's own skills section.
+  const skillNamesInSummary = flattenStrings(
+    (resume.skills ?? []).map((category) => category.skills ?? []),
+  ).some((skill) => containsNormalizedPhrase(summary, skill));
+
+  if (!containsMetric(summary) && !skillNamesInSummary) {
+    problems.push(
+      "Generic — no concrete skills or measurable experience mentioned",
+    );
+  }
   if (problems.length === 0) {
     return {
       sectionId: "summary",
@@ -2080,6 +2188,165 @@ const buildSectionFromCategory = (
  * The returned array is always sorted critical -> high -> medium
  * -> low, so the frontend can render it as-is.
  */
+
+/**
+ * Checks whether a section type actually exists and is enabled
+ * on this resume — used to decide whether the section deep dive
+ * should show a card for it at all.
+ */
+const isSectionEnabled = (resume: ATSResume, type: string): boolean => {
+  const sections = resume.sections ?? [];
+
+  return sections.some(
+    (section) =>
+      section.enabled !== false &&
+      normalizeText(section.type || section.id || "") === normalizeText(type),
+  );
+};
+
+// export const buildDeterministicSectionDeepDive = (
+//   resume: ATSResume,
+//   ruleAnalysis: ATSRuleAnalysis,
+//   jdAnalysis?: ATSJobDescriptionAnalysis,
+// ): ATSSectionDeepDive[] => {
+//   const { categories } = ruleAnalysis;
+
+//   const findCategory = (id: string) =>
+//     categories.find((category) => category.category === id);
+
+//   const sections: ATSSectionDeepDive[] = [];
+
+//   // --- Summary: small deterministic check, no scored category ---
+//   sections.push(buildSummaryDeepDive(resume));
+
+//   // --- Contact & Formatting: already-scored categories ---
+//   sections.push(
+//     buildSectionFromCategory(findCategory("contact"), "contact", "Contact"),
+//   );
+
+//   sections.push(
+//     buildSectionFromCategory(
+//       findCategory("formatting"),
+//       "formatting",
+//       "Formatting",
+//     ),
+//   );
+
+//   // --- Education & Achievements: no scored category today ---
+//   sections.push(
+//     buildSectionFromIssues("education", "Education", ruleAnalysis.education),
+//   );
+
+//   sections.push(
+//     buildSectionFromIssues(
+//       "achievements",
+//       "Achievements",
+//       ruleAnalysis.achievements,
+//     ),
+//   );
+
+//   // --- Experience: itemized, per-bullet findings ---
+//   const buildFromFindings = (
+//     sectionId: ATSScoreCategory,
+//     title: string,
+//     findings: ATSFinding[],
+//     categoryOverride?: ATSCategoryResult,
+//   ): ATSSectionDeepDive => {
+//     if (findings.length === 0) {
+//       const percentage = categoryOverride?.percentage ?? 100;
+
+//       return {
+//         sectionId,
+//         title,
+//         percentage,
+//         priority: getATSSectionDeepDivePriority(
+//           categoryOverride?.status ?? "excellent",
+//           percentage,
+//         ),
+//         isFullyOptimized: true,
+//         findings: [],
+//       };
+//     }
+
+//     const excellentCount = findings.filter(
+//       (finding) => finding.verdict === "excellent",
+//     ).length;
+
+//     const percentage =
+//       categoryOverride?.percentage ??
+//       Number(((excellentCount / findings.length) * 100).toFixed(1));
+
+//     const status: ATSCategoryStatus =
+//       categoryOverride?.status ?? getATSCategoryStatus(percentage);
+
+//     return {
+//       sectionId,
+//       title,
+//       percentage,
+//       priority: getATSSectionDeepDivePriority(status, percentage),
+//       isFullyOptimized: excellentCount === findings.length,
+//       findings,
+//     };
+//   };
+
+//   sections.push(
+//     buildFromFindings(
+//       "experience",
+//       "Experience",
+//       buildExperienceFindings(resume),
+//       findCategory("experience"),
+//     ),
+//   );
+
+//   // Projects has its own sectionId even though it isn't one of
+//   // the 8 scored categories in ATS_SCORE_CATEGORIES — sectionId
+//   // is intentionally a string & {} union so this is safe, and
+//   // it lets the frontend key off it distinctly from "experience".
+//   sections.push(
+//     buildFromFindings("projects", "Projects", buildProjectFindings(resume)),
+//   );
+
+//   // --- Skills: bucketed, only populated with a JD ---
+//   const skillsSection = buildSkillsDeepDiveFromJD(jdAnalysis);
+
+//   sections.push(
+//     skillsSection ?? {
+//       sectionId: "skills",
+//       title: "Skills",
+//       percentage: 100,
+//       priority: "low",
+//       isFullyOptimized: true,
+//       findings: [],
+//     },
+//   );
+
+//   const priorityOrder: Record<ATSSectionDeepDivePriority, number> = {
+//     critical: 0,
+//     high: 1,
+//     medium: 2,
+//     low: 3,
+//   };
+
+//   return [...sections].sort(
+//     (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
+//   );
+// };
+
+// ============================================================
+// SECTION DEEP DIVE — AI ENRICHMENT PASS
+//
+// Runs only on the findings the deterministic pass flagged as
+// "needs-improvement" — sections that are fully optimized never
+// trigger an AI call at all. One batched call per section (not
+// per bullet), asking only for the human-readable explanation,
+// a wording rewrite, and (when relevant) illustrative
+// quantification examples.
+//
+// The prompt explicitly forbids inventing facts/numbers that
+// aren't already in the bullet — quantificationExamples are
+// always generic templates, never claims about this resume.
+// ============================================================
+
 export const buildDeterministicSectionDeepDive = (
   resume: ATSResume,
   ruleAnalysis: ATSRuleAnalysis,
@@ -2092,10 +2359,15 @@ export const buildDeterministicSectionDeepDive = (
 
   const sections: ATSSectionDeepDive[] = [];
 
-  // --- Summary: small deterministic check, no scored category ---
-  sections.push(buildSummaryDeepDive(resume));
+  // --- Summary: only if a summary section actually exists ---
+  if (
+    isSectionEnabled(resume, "summary") &&
+    Boolean(cleanText(resume.summary))
+  ) {
+    sections.push(buildSummaryDeepDive(resume));
+  }
 
-  // --- Contact & Formatting: already-scored categories ---
+  // --- Contact & Formatting: intrinsic to every resume, always shown ---
   sections.push(
     buildSectionFromCategory(findCategory("contact"), "contact", "Contact"),
   );
@@ -2108,19 +2380,29 @@ export const buildDeterministicSectionDeepDive = (
     ),
   );
 
-  // --- Education & Achievements: no scored category today ---
-  sections.push(
-    buildSectionFromIssues("education", "Education", ruleAnalysis.education),
-  );
+  // --- Education: only if an education section actually exists ---
+  if (
+    isSectionEnabled(resume, "education") &&
+    (resume.education ?? []).length > 0
+  ) {
+    sections.push(
+      buildSectionFromIssues("education", "Education", ruleAnalysis.education),
+    );
+  }
 
-  sections.push(
-    buildSectionFromIssues(
-      "achievements",
-      "Achievements",
-      ruleAnalysis.achievements,
-    ),
-  );
-
+  // --- Achievements: only if an achievements section actually exists ---
+  if (
+    isSectionEnabled(resume, "achievements") &&
+    (resume.achievements ?? []).length > 0
+  ) {
+    sections.push(
+      buildSectionFromIssues(
+        "achievements",
+        "Achievements",
+        ruleAnalysis.achievements,
+      ),
+    );
+  }
   // --- Experience: itemized, per-bullet findings ---
   const buildFromFindings = (
     sectionId: ATSScoreCategory,
@@ -2165,36 +2447,47 @@ export const buildDeterministicSectionDeepDive = (
     };
   };
 
-  sections.push(
-    buildFromFindings(
-      "experience",
-      "Experience",
-      buildExperienceFindings(resume),
-      findCategory("experience"),
-    ),
-  );
+  // --- Experience: only if an experience (or internship) section exists ---
+  if (
+    (isSectionEnabled(resume, "experience") ||
+      isSectionEnabled(resume, "internships")) &&
+    (resume.experience ?? []).length > 0
+  ) {
+    sections.push(
+      buildFromFindings(
+        "experience",
+        "Experience",
+        buildExperienceFindings(resume),
+        findCategory("experience"),
+      ),
+    );
+  }
 
-  // Projects has its own sectionId even though it isn't one of
-  // the 8 scored categories in ATS_SCORE_CATEGORIES — sectionId
-  // is intentionally a string & {} union so this is safe, and
-  // it lets the frontend key off it distinctly from "experience".
-  sections.push(
-    buildFromFindings("projects", "Projects", buildProjectFindings(resume)),
-  );
+  // --- Projects: only if a projects section actually exists ---
 
-  // --- Skills: bucketed, only populated with a JD ---
-  const skillsSection = buildSkillsDeepDiveFromJD(jdAnalysis);
+  if (
+    isSectionEnabled(resume, "projects") &&
+    (resume.projects ?? []).length > 0
+  ) {
+    sections.push(
+      buildFromFindings("projects", "Projects", buildProjectFindings(resume)),
+    );
+  }
 
-  sections.push(
-    skillsSection ?? {
-      sectionId: "skills",
-      title: "Skills",
-      percentage: 100,
-      priority: "low",
-      isFullyOptimized: true,
-      findings: [],
-    },
-  );
+  // --- Skills: only if a skills section actually exists ---
+  if (isSectionEnabled(resume, "skills")) {
+    const skillsSection = buildSkillsDeepDiveFromJD(jdAnalysis);
+    sections.push(
+      skillsSection ?? {
+        sectionId: "skills",
+        title: "Skills",
+        percentage: 100,
+        priority: "low",
+        isFullyOptimized: true,
+        findings: [],
+      },
+    );
+  }
 
   const priorityOrder: Record<ATSSectionDeepDivePriority, number> = {
     critical: 0,
@@ -2207,21 +2500,6 @@ export const buildDeterministicSectionDeepDive = (
     (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
   );
 };
-
-// ============================================================
-// SECTION DEEP DIVE — AI ENRICHMENT PASS
-//
-// Runs only on the findings the deterministic pass flagged as
-// "needs-improvement" — sections that are fully optimized never
-// trigger an AI call at all. One batched call per section (not
-// per bullet), asking only for the human-readable explanation,
-// a wording rewrite, and (when relevant) illustrative
-// quantification examples.
-//
-// The prompt explicitly forbids inventing facts/numbers that
-// aren't already in the bullet — quantificationExamples are
-// always generic templates, never claims about this resume.
-// ============================================================
 
 const enrichSectionFindingsWithAI = async (
   title: string,
@@ -2341,20 +2619,148 @@ Rules:
   });
 };
 
+const buildResumeContextForSummary = (resume: ATSResume): string => {
+  const skills = (resume.skills ?? [])
+    .flatMap((category) => category.skills ?? [])
+    .filter(Boolean)
+    .join(", ");
+
+  const experienceLines = (resume.experience ?? [])
+    .map((exp) => {
+      const bullets = [
+        ...(exp.responsibilities ?? []),
+        ...(exp.achievements ?? []),
+      ].join(" ");
+
+      return `${cleanText(exp.position)} at ${cleanText(exp.company)}: ${bullets}`;
+    })
+    .join("\n");
+
+  const projectLines = (resume.projects ?? [])
+    .map((proj) => {
+      const tech = (proj.technologies ?? []).join(", ");
+      return `${cleanText(proj.title)} (${tech}): ${cleanText(proj.description)}`;
+    })
+    .join("\n");
+
+  return `SKILLS: ${skills}\n\nEXPERIENCE:\n${experienceLines}\n\nPROJECTS:\n${projectLines}`;
+};
+
+const enrichSummaryWithAI = async (
+  resume: ATSResume,
+  targetRole: string,
+  jobDescription: string | undefined,
+  section: ATSSectionDeepDive,
+): Promise<ATSSectionDeepDive> => {
+  const finding = section.findings[0];
+
+  if (!finding) {
+    return section;
+  }
+
+  const resumeContext = buildResumeContextForSummary(resume);
+
+  const prompt = `
+You are a professional resume writer. Rewrite this candidate's resume
+summary so it is tailored to the target role and (if provided) the job
+description below.
+
+CURRENT SUMMARY:
+"${finding.targetText || "(missing)"}"
+
+TARGET ROLE: ${targetRole}
+
+${jobDescription ? `JOB DESCRIPTION:\n${jobDescription}` : ""}
+
+CANDIDATE'S ACTUAL BACKGROUND (use ONLY facts from here — never invent
+skills, technologies, years of experience, or achievements not present
+below):
+${resumeContext}
+
+Write a 2-3 sentence professional summary that:
+- Leads with the target role and years of experience, if stated in the background.
+- Highlights 2-4 of the candidate's most relevant skills/technologies that also
+  appear in the job description, ONLY if they are genuinely present in the
+  candidate's background above.
+- Mentions one concrete piece of real experience or project work from the
+  background, if available.
+- Uses natural, confident, non-generic language.
+- Does NOT fabricate any skill, number, or outcome not present above.
+
+Return ONLY valid JSON, no markdown, no extra text:
+{ "summary": "" }
+`;
+
+  try {
+    const result = await generateJSON<{ summary?: string }>(prompt);
+
+    if (result?.summary) {
+      return {
+        ...section,
+        findings: [{ ...finding, suggestedFix: result.summary }],
+      };
+    }
+  } catch (error) {
+    // Fail safe: keep the deterministic finding, no AI rewrite.
+  }
+
+  return section;
+};
+
 /**
  * Enriches every section's findings with AI-written explanations
  * and rewrites. Sections that are already fully optimized are
  * skipped entirely — no AI call is made for them.
  */
+// export const enrichSectionDeepDiveWithAI = async (
+//   sections: ATSSectionDeepDive[],
+// ): Promise<ATSSectionDeepDive[]> => {
+//   const enriched: ATSSectionDeepDive[] = [];
+
+//   for (const section of sections) {
+//     if (section.isFullyOptimized || section.sectionId === "skills") {
+//       enriched.push(section);
+
+//       continue;
+//     }
+
+//     const findings = await enrichSectionFindingsWithAI(
+//       section.title,
+//       section.findings,
+//     );
+
+//     enriched.push({
+//       ...section,
+
+//       findings,
+//     });
+//   }
+
+//   return enriched;
+// };
+
+// ============================================================
+// EDUCATION ANALYSIS
+// ============================================================
+
 export const enrichSectionDeepDiveWithAI = async (
   sections: ATSSectionDeepDive[],
+  resume: ATSResume,
+  targetRole: string,
+  jobDescription?: string,
 ): Promise<ATSSectionDeepDive[]> => {
   const enriched: ATSSectionDeepDive[] = [];
 
   for (const section of sections) {
     if (section.isFullyOptimized || section.sectionId === "skills") {
       enriched.push(section);
+      continue;
+    }
 
+    if (section.sectionId === "summary") {
+      enriched.push(
+        await enrichSummaryWithAI(resume, targetRole, jobDescription, section),
+      );
       continue;
     }
 
@@ -2363,19 +2769,11 @@ export const enrichSectionDeepDiveWithAI = async (
       section.findings,
     );
 
-    enriched.push({
-      ...section,
-
-      findings,
-    });
+    enriched.push({ ...section, findings });
   }
 
   return enriched;
 };
-
-// ============================================================
-// EDUCATION ANALYSIS
-// ============================================================
 
 export const analyzeEducation = (resume: ATSResume): ATSEducationAnalysis => {
   const education = resume.education ?? [];
@@ -2407,6 +2805,7 @@ export const analyzeEducation = (resume: ATSResume): ATSEducationAnalysis => {
   const suggestions: string[] = [];
 
   if (education.length === 0) {
+    issues.push("No education section was found.");
     suggestions.push("Add education details when relevant to the role.");
   }
 
@@ -2451,16 +2850,13 @@ export const analyzeDateConsistency = (
 
   type DateEntry = {
     label: string;
+    type: "experience" | "internship" | "education";
     startDate?: string;
     endDate?: string;
     currentlyActive: boolean;
   };
 
   const entries: DateEntry[] = [];
-
-  // ------------------------------------------------------------
-  // EXPERIENCE
-  // ------------------------------------------------------------
 
   (resume.experience ?? []).forEach((entry, index) => {
     const label =
@@ -2470,19 +2866,12 @@ export const analyzeDateConsistency = (
 
     entries.push({
       label,
+      type: "experience", // <-- ADD
       startDate: cleanText(entry.startDate),
       endDate: cleanText(entry.endDate),
       currentlyActive: entry.currentlyWorking === true,
     });
   });
-
-  // ------------------------------------------------------------
-  // INTERNSHIPS
-  // ------------------------------------------------------------
-
-  // ------------------------------------------------------------
-  // INTERNSHIPS
-  // ------------------------------------------------------------
 
   (resume.internships ?? []).forEach((entry, index) => {
     const label =
@@ -2492,15 +2881,12 @@ export const analyzeDateConsistency = (
 
     entries.push({
       label,
+      type: "internship", // <-- ADD
       startDate: cleanText(entry.startDate),
       endDate: cleanText(entry.endDate),
       currentlyActive: entry.currentlyInterning === true,
     });
   });
-
-  // ------------------------------------------------------------
-  // EDUCATION
-  // ------------------------------------------------------------
 
   (resume.education ?? []).forEach((entry, index) => {
     const label =
@@ -2510,18 +2896,12 @@ export const analyzeDateConsistency = (
 
     entries.push({
       label,
-
+      type: "education", // <-- ADD
       startDate: entry.startYear ? String(entry.startYear) : undefined,
-
       endDate: entry.endYear ? String(entry.endYear) : undefined,
-
       currentlyActive: false,
     });
   });
-
-  // ------------------------------------------------------------
-  // DATE PARSER
-  // ------------------------------------------------------------
 
   // ------------------------------------------------------------
   // DATE PARSER
@@ -2771,6 +3151,18 @@ export const analyzeDateConsistency = (
       } => Boolean(entry.start && entry.end),
     );
 
+  // for (let i = 0; i < datedEntries.length; i++) {
+  //   for (let j = i + 1; j < datedEntries.length; j++) {
+  //     const first = datedEntries[i];
+
+  //     const second = datedEntries[j];
+
+  //     if (first.start <= second.end && second.start <= first.end) {
+  //       overlappingDates.push(`${first.label} overlaps with ${second.label}.`);
+  //     }
+  //   }
+  // }
+
   for (let i = 0; i < datedEntries.length; i++) {
     for (let j = i + 1; j < datedEntries.length; j++) {
       const first = datedEntries[i];
@@ -2778,6 +3170,18 @@ export const analyzeDateConsistency = (
       const second = datedEntries[j];
 
       if (first.start <= second.end && second.start <= first.end) {
+        const isEducationPairedWithWork =
+          (first.type === "education" &&
+            (second.type === "experience" || second.type === "internship")) ||
+          (second.type === "education" &&
+            (first.type === "experience" || first.type === "internship"));
+
+        if (isEducationPairedWithWork) {
+          // Normal — working or interning during a degree is expected.
+          // Skip entirely; don't treat it as an issue.
+          continue;
+        }
+
         overlappingDates.push(`${first.label} overlaps with ${second.label}.`);
       }
     }
@@ -2877,7 +3281,22 @@ export const analyzeFormatting = (resume: ATSResume): ATSFormattingAnalysis => {
     );
   });
 
+  // const hasUnusualSectionNames = sections.some((section) => {
+  //   const type = normalizeText(section.type ?? section.id ?? "");
+
+  //   return (
+  //     Boolean(type) &&
+  //     !ATS_STANDARD_SECTIONS.some(
+  //       (standard) => normalizeText(standard) === type,
+  //     ) &&
+  //     type !== "personalinfo" &&
+  //     type !== "custom"
+  //   );
+  // });
+
   const hasUnusualSectionNames = sections.some((section) => {
+    if (section.enabled === false) return false; // <-- ADD this line
+
     const type = normalizeText(section.type ?? section.id ?? "");
 
     return (
@@ -3133,13 +3552,19 @@ const buildRecommendations = (
 // ============================================================
 
 const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
+  // return categories
+  //   .filter(
+  //     (category) =>
+  //       category.status === "excellent" || category.status === "good",
+  //   )
+  //   .map((category) => `${category.title}: ${category.summary}`)
+  //   .slice(0, 8);
+
   return categories
-    .filter(
-      (category) =>
-        category.status === "excellent" || category.status === "good",
-    )
-    .map((category) => `${category.title}: ${category.summary}`)
-    .slice(0, 8);
+    .filter((c) => c.status === "excellent" || c.status === "good")
+    .filter((c) => c.issues.length === 0) // only truly clean categories
+    .map((c) => `Strong ${c.title.toLowerCase()} (${c.percentage}%).`)
+    .slice(0, 5);
 };
 
 // ============================================================
@@ -3147,15 +3572,21 @@ const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
 // ============================================================
 
 const buildWeaknesses = (categories: ATSCategoryResult[]): string[] => {
+  // return categories
+  //   .filter(
+  //     (category) =>
+  //       category.status === "poor" || category.status === "needs-improvement",
+  //   )
+  //   .flatMap((category) =>
+  //     category.issues.map((issue) => `${category.title}: ${issue}`),
+  //   )
+  //   .slice(0, 10);
+
   return categories
-    .filter(
-      (category) =>
-        category.status === "poor" || category.status === "needs-improvement",
-    )
-    .flatMap((category) =>
-      category.issues.map((issue) => `${category.title}: ${issue}`),
-    )
-    .slice(0, 10);
+    .filter((c) => c.status === "poor" || c.status === "needs-improvement")
+    .filter((c) => c.issues.length > 0)
+    .map((c) => `${c.title}: ${c.issues.join("; ")}`)
+    .slice(0, 8);
 };
 
 // ============================================================
@@ -4704,8 +5135,73 @@ Rules:
     };
   });
 
-  return buildJDMatchAggregates(jd, refinedMatches);
+  ////////////////////////
+
+  // Build a lookup from requirementId -> original category, so we can
+  // tell "named technology/tool" requirements apart from "responsibility"
+  // or "soft-skill" requirements — this works for ANY job description,
+  // since extractJDRequirements already assigns categories dynamically.
+  const allRequirements: ATSJobRequirement[] = [
+    ...jd.requiredSkills,
+    ...jd.preferredSkills,
+    ...jd.responsibilities,
+    ...jd.softSkills,
+    ...jd.tools,
+  ];
+
+  const categoryByRequirementId = new Map(
+    allRequirements.map((req) => [req.id, req.category]),
+  );
+
+  // Concrete, name-able things (a specific language, framework, database,
+  // tool, or API) must be lexically verifiable. Responsibilities and
+  // soft skills are fine to accept via semantic/paraphrase matching.
+  const CONCRETE_CATEGORIES = new Set([
+    "skill",
+    "technology",
+    "framework",
+    "database",
+    "cloud",
+    "devops",
+    "testing",
+    "tool",
+    "api",
+    "architecture",
+  ]);
+
+  const guardedMatches = refinedMatches.map((match) => {
+    const category = categoryByRequirementId.get(match.requirementId);
+    const isConcreteNamedThing = category
+      ? CONCRETE_CATEGORIES.has(category)
+      : false;
+
+    if (match.status === "matched" && isConcreteNamedThing) {
+      const aliases = getRequirementAliases(match.requirement);
+      const literallyPresent = evidenceSources.some((source) =>
+        aliases.some((alias) => containsNormalizedPhrase(source.text, alias)),
+      );
+
+      if (!literallyPresent) {
+        return {
+          ...match,
+          status: "missing" as ATSMatchStatus,
+          evidenceStrength: "missing" as ATSEvidenceStrength,
+          confidence: 0,
+          matchedResumeEvidence: [],
+          explanation:
+            "Downgraded: named technology/tool not literally present in resume text (only inferred from a related technology).",
+        };
+      }
+    }
+
+    return match;
+  });
+
+  return buildJDMatchAggregates(jd, guardedMatches);
 };
+
+// return buildJDMatchAggregates(jd, refinedMatches);
+// };
 
 const analyzeResumeKeywords = (
   resume: ATSResume,

@@ -1307,86 +1307,6 @@ export interface ATSAIAnalysis {
 // FINAL ATS RESULT
 // ============================================================
 
-// export interface ATSResult {
-//   resumeId: string;
-
-//   // ==========================================================
-//   // ANALYSIS MODE
-//   // ==========================================================
-
-//   mode: ATSAnalysisMode;
-
-//   targetRole: string;
-
-//   hasJobDescription: boolean;
-
-//   // ==========================================================
-//   // FINAL SCORE
-//   // ==========================================================
-
-//   atsScore: number;
-
-//   grade: ATSGrade;
-
-//   // ==========================================================
-//   // RULE-BASED BREAKDOWN
-//   // ==========================================================
-
-//   breakdown: ATSBreakdown;
-
-//   categories: ATSCategoryResult[];
-
-//   // ==========================================================
-//   // MODE-SPECIFIC INTELLIGENCE
-//   // ==========================================================
-
-//   modeAnalysis: ATSModeAnalysis;
-
-//   // ==========================================================
-//   // KEYWORDS
-//   // ==========================================================
-
-//   matchedKeywords: string[];
-
-//   missingKeywords: string[];
-
-//   // ==========================================================
-//   // SECTION DEEP DIVE
-//   //
-//   // Ordered critical -> high -> medium -> low. Sections that are
-//   // fully optimized still appear here (isFullyOptimized: true),
-//   // just with no detailed findings to show.
-//   // ==========================================================
-
-//   sectionDeepDive: ATSSectionDeepDive[];
-
-//   // ==========================================================
-//   // DATE ANALYSIS
-//   // ==========================================================
-
-//   dateConsistency?: ATSDateConsistencyAnalysis;
-
-//   // ==========================================================
-//   // AI / INTELLIGENCE
-//   // ==========================================================
-
-//   strengths: string[];
-
-//   weaknesses: string[];
-
-//   recommendations: ATSRecommendation[];
-
-//   optimizedSummary: string;
-
-//   improvedExperience: string[];
-
-//   // ==========================================================
-//   // META
-//   // ==========================================================
-
-//   analyzedAt: string;
-// }
-
 export interface ATSResult {
   resumeId: string;
 
@@ -1584,6 +1504,8 @@ export const ATS_STANDARD_SECTIONS = [
   "languages",
   "awards",
   "achievements",
+  "interests",
+  "strengths",
 ] as const;
 
 // ============================================================
@@ -1657,6 +1579,33 @@ export const ATS_WEAK_BULLET_PATTERNS = [
  * Prefer String.match(), String.matchAll() or create a fresh
  * regex when necessary.
  */
+
+// export const ATS_METRIC_PATTERNS = {
+//   percentage: /\b\d+(?:\.\d+)?\s?%/gi,
+
+//   currency: /(?:₹|rs\.?|inr|\$|usd|€|eur|£|gbp)\s?\d+(?:[,.]\d+)?/gi,
+
+//   time: /\b\d+(?:\.\d+)?\s?(?:days?|weeks?|months?|years?|hours?|mins?|minutes?)\b/gi,
+
+//   /**
+//    * Numbers associated with measurable impact.
+//    *
+//    * Examples:
+//    * 500+ users
+//    * 30% faster
+//    * 20 requests/sec
+//    * 5 engineers
+//    *
+//    * Standalone years such as 2023 are intentionally excluded.
+//    */
+//   impactNumber:
+//     /\b\d+(?:\.\d+)?\+?\s?(?:users?|customers?|clients?|requests?|records?|items?|projects?|engineers?|developers?|members?|employees?|teams?|days?|weeks?|months?|years?|hours?|minutes?|seconds?|ms|x|times?)\b/gi,
+// } as const;
+
+// ============================================================
+// COMMON DATE / YEAR PATTERN
+// ============================================================
+
 export const ATS_METRIC_PATTERNS = {
   percentage: /\b\d+(?:\.\d+)?\s?%/gi,
 
@@ -1664,24 +1613,13 @@ export const ATS_METRIC_PATTERNS = {
 
   time: /\b\d+(?:\.\d+)?\s?(?:days?|weeks?|months?|years?|hours?|mins?|minutes?)\b/gi,
 
-  /**
-   * Numbers associated with measurable impact.
-   *
-   * Examples:
-   * 500+ users
-   * 30% faster
-   * 20 requests/sec
-   * 5 engineers
-   *
-   * Standalone years such as 2023 are intentionally excluded.
-   */
   impactNumber:
-    /\b\d+(?:\.\d+)?\+?\s?(?:users?|customers?|clients?|requests?|records?|items?|projects?|engineers?|developers?|members?|employees?|teams?|days?|weeks?|months?|years?|hours?|minutes?|seconds?|ms|x|times?)\b/gi,
-} as const;
+    /\b\d+(?:\.\d+)?\+?\s?(?:users?|customers?|clients?|requests?|records?|items?|projects?|engineers?|developers?|members?|employees?|teams?|days?|weeks?|months?|years?|hours?|minutes?|seconds?|ms|x|times?|reports?|issues?|bugs?|features?|apis?|endpoints?|components?|tickets?|tasks?|releases?|modules?|screens?|pages?|commits?|deployments?|tests?|leads?|transactions?|sessions?|downloads?)\b/gi,
 
-// ============================================================
-// COMMON DATE / YEAR PATTERN
-// ============================================================
+  // NEW: a number directly followed by "+" is inherently a quantifier
+  // ("500+", "10+", "15+") no matter what noun comes after it.
+  plusQuantifier: /\b\d+(?:\.\d+)?\+/g,
+} as const;
 
 export const ATS_YEAR_PATTERN = /\b(?:19|20)\d{2}\b/g;
 

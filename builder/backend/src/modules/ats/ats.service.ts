@@ -269,6 +269,7 @@ const normalizeAIAnalysis = (result: any): ATSAIAnalysis => {
 const runAIAnalysis = async (
   resume: Record<string, unknown>,
   targetRole: string,
+  ruleAnalysis: ATSRuleAnalysis,
   jobDescription: string,
 ): Promise<ATSAIAnalysis> => {
   const prompt = buildATSAnalysisPrompt(resume, targetRole, jobDescription);
@@ -948,6 +949,7 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
     aiAnalysis = await runAIAnalysis(
       atsResume,
       targetRole,
+      ruleAnalysis,
       jobDescription ?? "",
     );
   }
@@ -967,8 +969,17 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
     jdAnalysis,
   );
 
+  // const sectionDeepDive = shouldRunAI
+  //   ? await enrichSectionDeepDiveWithAI(deterministicSectionDeepDive)
+  //   : deterministicSectionDeepDive;
+
   const sectionDeepDive = shouldRunAI
-    ? await enrichSectionDeepDiveWithAI(deterministicSectionDeepDive)
+    ? await enrichSectionDeepDiveWithAI(
+        deterministicSectionDeepDive,
+        atsResume as any,
+        targetRole,
+        jobDescription,
+      )
     : deterministicSectionDeepDive;
 
   // --------------------------------------------------------

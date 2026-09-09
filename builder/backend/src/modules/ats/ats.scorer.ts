@@ -2017,12 +2017,37 @@ const buildSectionFromIssues = (
   };
 };
 
+const buildSummaryJDAlignmentTip = (
+  summary: string,
+  jdAnalysis?: ATSJobDescriptionAnalysis,
+): string | undefined => {
+  if (!jdAnalysis) return undefined;
+
+  const jdKeywords = uniqueStrings([
+    ...jdAnalysis.requiredSkills.map((requirement) => requirement.name),
+    ...jdAnalysis.technologies.map((requirement) => requirement.name),
+    ...jdAnalysis.domains.map((requirement) => requirement.name),
+  ]);
+
+  const missingFromSummary = jdKeywords.filter(
+    (keyword) => !containsNormalizedPhrase(summary, keyword),
+  );
+
+  if (missingFromSummary.length === 0) return undefined;
+
+  const highlighted = missingFromSummary.slice(0, 3).join(", ");
+  return `To match this job description more closely, consider mentioning: ${highlighted}. This is optional — only add it if it's true for you.`;
+};
+
 /**
  * Summary gets its own small deterministic check — no AI call.
  * Flags a missing summary, an unusually short/long one, or one
  * that never mentions the target role.
  */
-const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
+const buildSummaryDeepDive = (
+  resume: ATSResume,
+  jdAnalysis?: ATSJobDescriptionAnalysis,
+): ATSSectionDeepDive => {
   const summary = cleanText(resume.summary);
   if (!summary) {
     return {
@@ -2081,14 +2106,31 @@ const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
       "Generic — no concrete skills or measurable experience mentioned",
     );
   }
+  const jdAlignmentTip = buildSummaryJDAlignmentTip(summary, jdAnalysis);
+
   if (problems.length === 0) {
     return {
       sectionId: "summary",
       title: "Summary",
       percentage: 100,
       priority: "low",
+      // Still "fully optimized" — a JD tip is a nudge, not a flaw.
       isFullyOptimized: true,
-      findings: [],
+      findings: jdAlignmentTip
+        ? [
+            {
+              id: "summary-0",
+              targetText: summary,
+              verdict: "excellent",
+              problems: [],
+              whyItMatters: "",
+              suggestedFix: "",
+              needsQuantification: false,
+              quantificationExamples: [],
+              jdAlignmentTip,
+            },
+          ]
+        : [],
     };
   }
 
@@ -2109,6 +2151,7 @@ const buildSummaryDeepDive = (resume: ATSResume): ATSSectionDeepDive => {
         targetText: summary,
         verdict: "needs-improvement",
         problems,
+        jdAlignmentTip,
         whyItMatters:
           "Your summary is often the first thing a recruiter reads — it should clearly position you for the role you're targeting.",
         suggestedFix: "",
@@ -2204,149 +2247,6 @@ const isSectionEnabled = (resume: ATSResume, type: string): boolean => {
   );
 };
 
-// export const buildDeterministicSectionDeepDive = (
-//   resume: ATSResume,
-//   ruleAnalysis: ATSRuleAnalysis,
-//   jdAnalysis?: ATSJobDescriptionAnalysis,
-// ): ATSSectionDeepDive[] => {
-//   const { categories } = ruleAnalysis;
-
-//   const findCategory = (id: string) =>
-//     categories.find((category) => category.category === id);
-
-//   const sections: ATSSectionDeepDive[] = [];
-
-//   // --- Summary: small deterministic check, no scored category ---
-//   sections.push(buildSummaryDeepDive(resume));
-
-//   // --- Contact & Formatting: already-scored categories ---
-//   sections.push(
-//     buildSectionFromCategory(findCategory("contact"), "contact", "Contact"),
-//   );
-
-//   sections.push(
-//     buildSectionFromCategory(
-//       findCategory("formatting"),
-//       "formatting",
-//       "Formatting",
-//     ),
-//   );
-
-//   // --- Education & Achievements: no scored category today ---
-//   sections.push(
-//     buildSectionFromIssues("education", "Education", ruleAnalysis.education),
-//   );
-
-//   sections.push(
-//     buildSectionFromIssues(
-//       "achievements",
-//       "Achievements",
-//       ruleAnalysis.achievements,
-//     ),
-//   );
-
-//   // --- Experience: itemized, per-bullet findings ---
-//   const buildFromFindings = (
-//     sectionId: ATSScoreCategory,
-//     title: string,
-//     findings: ATSFinding[],
-//     categoryOverride?: ATSCategoryResult,
-//   ): ATSSectionDeepDive => {
-//     if (findings.length === 0) {
-//       const percentage = categoryOverride?.percentage ?? 100;
-
-//       return {
-//         sectionId,
-//         title,
-//         percentage,
-//         priority: getATSSectionDeepDivePriority(
-//           categoryOverride?.status ?? "excellent",
-//           percentage,
-//         ),
-//         isFullyOptimized: true,
-//         findings: [],
-//       };
-//     }
-
-//     const excellentCount = findings.filter(
-//       (finding) => finding.verdict === "excellent",
-//     ).length;
-
-//     const percentage =
-//       categoryOverride?.percentage ??
-//       Number(((excellentCount / findings.length) * 100).toFixed(1));
-
-//     const status: ATSCategoryStatus =
-//       categoryOverride?.status ?? getATSCategoryStatus(percentage);
-
-//     return {
-//       sectionId,
-//       title,
-//       percentage,
-//       priority: getATSSectionDeepDivePriority(status, percentage),
-//       isFullyOptimized: excellentCount === findings.length,
-//       findings,
-//     };
-//   };
-
-//   sections.push(
-//     buildFromFindings(
-//       "experience",
-//       "Experience",
-//       buildExperienceFindings(resume),
-//       findCategory("experience"),
-//     ),
-//   );
-
-//   // Projects has its own sectionId even though it isn't one of
-//   // the 8 scored categories in ATS_SCORE_CATEGORIES — sectionId
-//   // is intentionally a string & {} union so this is safe, and
-//   // it lets the frontend key off it distinctly from "experience".
-//   sections.push(
-//     buildFromFindings("projects", "Projects", buildProjectFindings(resume)),
-//   );
-
-//   // --- Skills: bucketed, only populated with a JD ---
-//   const skillsSection = buildSkillsDeepDiveFromJD(jdAnalysis);
-
-//   sections.push(
-//     skillsSection ?? {
-//       sectionId: "skills",
-//       title: "Skills",
-//       percentage: 100,
-//       priority: "low",
-//       isFullyOptimized: true,
-//       findings: [],
-//     },
-//   );
-
-//   const priorityOrder: Record<ATSSectionDeepDivePriority, number> = {
-//     critical: 0,
-//     high: 1,
-//     medium: 2,
-//     low: 3,
-//   };
-
-//   return [...sections].sort(
-//     (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
-//   );
-// };
-
-// ============================================================
-// SECTION DEEP DIVE — AI ENRICHMENT PASS
-//
-// Runs only on the findings the deterministic pass flagged as
-// "needs-improvement" — sections that are fully optimized never
-// trigger an AI call at all. One batched call per section (not
-// per bullet), asking only for the human-readable explanation,
-// a wording rewrite, and (when relevant) illustrative
-// quantification examples.
-//
-// The prompt explicitly forbids inventing facts/numbers that
-// aren't already in the bullet — quantificationExamples are
-// always generic templates, never claims about this resume.
-// ============================================================
-
 export const buildDeterministicSectionDeepDive = (
   resume: ATSResume,
   ruleAnalysis: ATSRuleAnalysis,
@@ -2364,7 +2264,7 @@ export const buildDeterministicSectionDeepDive = (
     isSectionEnabled(resume, "summary") &&
     Boolean(cleanText(resume.summary))
   ) {
-    sections.push(buildSummaryDeepDive(resume));
+    sections.push(buildSummaryDeepDive(resume, jdAnalysis));
   }
 
   // --- Contact & Formatting: intrinsic to every resume, always shown ---
@@ -2706,38 +2606,6 @@ Return ONLY valid JSON, no markdown, no extra text:
 
   return section;
 };
-
-/**
- * Enriches every section's findings with AI-written explanations
- * and rewrites. Sections that are already fully optimized are
- * skipped entirely — no AI call is made for them.
- */
-// export const enrichSectionDeepDiveWithAI = async (
-//   sections: ATSSectionDeepDive[],
-// ): Promise<ATSSectionDeepDive[]> => {
-//   const enriched: ATSSectionDeepDive[] = [];
-
-//   for (const section of sections) {
-//     if (section.isFullyOptimized || section.sectionId === "skills") {
-//       enriched.push(section);
-
-//       continue;
-//     }
-
-//     const findings = await enrichSectionFindingsWithAI(
-//       section.title,
-//       section.findings,
-//     );
-
-//     enriched.push({
-//       ...section,
-
-//       findings,
-//     });
-//   }
-
-//   return enriched;
-// };
 
 // ============================================================
 // EDUCATION ANALYSIS
@@ -3151,18 +3019,6 @@ export const analyzeDateConsistency = (
       } => Boolean(entry.start && entry.end),
     );
 
-  // for (let i = 0; i < datedEntries.length; i++) {
-  //   for (let j = i + 1; j < datedEntries.length; j++) {
-  //     const first = datedEntries[i];
-
-  //     const second = datedEntries[j];
-
-  //     if (first.start <= second.end && second.start <= first.end) {
-  //       overlappingDates.push(`${first.label} overlaps with ${second.label}.`);
-  //     }
-  //   }
-  // }
-
   for (let i = 0; i < datedEntries.length; i++) {
     for (let j = i + 1; j < datedEntries.length; j++) {
       const first = datedEntries[i];
@@ -3229,13 +3085,25 @@ export const analyzeDateConsistency = (
   // SCORE
   // ------------------------------------------------------------
 
-  const totalChecks = entries.length * 3;
+  // ------------------------------------------------------------
+  // SCORE
+  // ------------------------------------------------------------
+
+  // Overlaps are checked pairwise across entries (every entry
+  // compared against every other), not per-entry like the other
+  // four checks — so the denominator needs its own term for the
+  // number of possible pairs, or a resume with many entries would
+  // be penalized less per-overlap than one with few.
+  const possiblePairs = (entries.length * (entries.length - 1)) / 2;
+
+  const totalChecks = entries.length * 3 + possiblePairs;
 
   const issueCount =
     invalidDates.length +
     reversedDateRanges.length +
     inconsistentDateFormats.length +
-    missingDates.length;
+    missingDates.length +
+    overlappingDates.length;
 
   let score = 10;
 
@@ -3408,6 +3276,7 @@ const buildCategoryResults = (analysis: {
   actionVerbs: ATSActionVerbAnalysis;
   quantifiedResults: ATSQuantifiedResultAnalysis;
   formatting: ATSFormattingAnalysis;
+  dateConsistency: ATSDateConsistencyAnalysis;
 }): ATSCategoryResult[] => {
   return [
     makeCategoryResult(
@@ -3472,6 +3341,14 @@ const buildCategoryResults = (analysis: {
       "Evaluates potential ATS parsing and formatting risks.",
       analysis.formatting.issues,
       analysis.formatting.suggestions,
+    ),
+
+    makeCategoryResult(
+      "dateConsistency",
+      analysis.dateConsistency.score,
+      "Evaluates whether work, internship and education dates are valid, non-overlapping and consistently formatted.",
+      analysis.dateConsistency.issues,
+      analysis.dateConsistency.suggestions,
     ),
   ].filter((result) => {
     const category = getCategory(result.category);
@@ -3658,6 +3535,7 @@ export const analyzeResumeATS = (
     actionVerbs,
     quantifiedResults,
     formatting,
+    dateConsistency,
   });
 
   const overallScore = calculateOverallScore(categories);

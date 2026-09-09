@@ -175,6 +175,16 @@ export const ATS_SCORE_CATEGORIES = [
     enabled: true,
     order: 8,
   },
+
+  {
+    id: "dateConsistency",
+    title: "Date Consistency",
+    description:
+      "Evaluates whether work, internship and education dates are valid, non-overlapping and consistently formatted.",
+    maxScore: 10,
+    enabled: true,
+    order: 9,
+  },
 ] as const satisfies readonly ATSScoreCategoryDefinition[];
 
 // ============================================================
@@ -1096,6 +1106,15 @@ export interface ATSFinding {
   needsQuantification: boolean;
 
   quantificationExamples: string[];
+
+  /**
+   * Optional, purely advisory. Suggests aligning this text more
+   * closely with the job description. Never affects `problems`,
+   * `verdict`, or any score/percentage — it's a nudge, not a
+   * requirement, since not every resume is written against a
+   * specific JD.
+   */
+  jdAlignmentTip?: string;
 }
 
 // ============================================================

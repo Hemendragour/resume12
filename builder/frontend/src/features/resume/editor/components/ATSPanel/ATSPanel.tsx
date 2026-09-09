@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Sparkles } from "lucide-react";
 
 import { useLatestATS, useAnalyzeATS } from "../../../../ats/hooks/useATSScore";
-import ATSScoreCard from "../../../../ats/components/ATSScoreCard";
-import ATSSuggestions from "../../../../ats/components/ATSSuggestions";
+import ATSResultsView from "../../../../ats/components/ATSResultsView";
 import JobDescriptionInput from "./JobDescriptionInput";
 
 interface Props {
@@ -20,17 +19,19 @@ export default function ATSPanel({
   initialTargetRole = "",
 }: Props) {
   const [targetRole, setTargetRole] = useState(initialTargetRole);
-
   const [jobDescription, setJobDescription] = useState("");
 
-  //   useEffect(() => {
-  //     if (initialTargetRole) setTargetRole(initialTargetRole);
-  //   }, [initialTargetRole]);
+  useEffect(() => {
+    if (initialTargetRole && !targetRole) {
+      setTargetRole(initialTargetRole);
+    }
+  }, [initialTargetRole, targetRole]);
 
   const {
     data: atsResponse,
     isLoading: isATSLoading,
     isError: isATSError,
+    refetch: refetchATS,
   } = useLatestATS(resumeId);
 
   const {
@@ -75,81 +76,104 @@ export default function ATSPanel({
 
       {/* panel */}
       <aside
-        className={`fixed right-0 top-0 z-50 h-full w-full max-w-4xl overflow-y-auto bg-modal shadow-xl transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-50 h-full w-full max-w-4xl overflow-y-auto bg-modal shadow-2xl transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-card px-6 py-4">
-          <h2 className="text-lg font-bold text-dark">ATS Analysis</h2>
-          <button onClick={onClose} className="rounded-lg p-2 hover:bg-card">
-            <X className="h-5 w-5 text-dark/60" />
+        {/* Top sticky bar */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-primary/10 bg-modal/95 px-6 py-4 backdrop-blur-xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-accent" />
+            <h2 className="text-lg font-bold text-dark">ATS Scanner & Deep Dive</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-2 text-dark/60 hover:bg-card hover:text-dark transition"
+            aria-label="Close ATS Panel"
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         <div className="space-y-6 p-6">
-          <input
-            type="text"
-            value={targetRole}
-            onChange={(e) => setTargetRole(e.target.value)}
-            placeholder="Target role e.g. Backend Developer"
-            className="w-full rounded-xl border border-card bg-background px-4 py-2.5 text-sm text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-          />
-
-          <JobDescriptionInput
-            value={jobDescription}
-            onChange={setJobDescription}
-          />
-
-          <button
-            type="button"
-            onClick={handleAnalyze}
-            disabled={!resumeId || !targetRole.trim() || isAnalyzingATS}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isAnalyzingATS && (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-            )}
-            {isAnalyzingATS ? "Analyzing..." : "Analyze ATS"}
-          </button>
-
-          {isAnalyzeError && (
-            <p className="text-sm font-medium text-danger">
-              ATS analysis failed. Please try again.
-            </p>
-          )}
-          {isAnalyzeSuccess && (
-            <p className="text-sm font-medium text-success">
-              ATS analysis completed successfully.
-            </p>
-          )}
-
-          {isATSLoading && (
-            <p className="text-sm text-dark/60">Loading ATS...</p>
-          )}
-          {isATSError && (
-            <p className="text-sm font-medium text-danger">
-              Unable to load ATS analysis.
-            </p>
-          )}
-
-          {!isATSLoading && ats && (
-            <>
-              <ATSScoreCard score={ats.atsScore} grade={ats.grade} />
-              <ATSSuggestions
-                recommendations={ats.recommendations}
-                strengths={ats.strengths}
-                weaknesses={ats.weaknesses}
-                matchedKeywords={ats.matchedKeywords}
-                missingKeywords={ats.missingKeywords}
+          {/* Analysis Form Header Card */}
+          <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-sm space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-dark mb-1.5">
+                Target Role <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                value={targetRole}
+                onChange={(e) => setTargetRole(e.target.value)}
+                placeholder="e.g. Senior Frontend Engineer, Full Stack Developer..."
+                className="w-full rounded-xl border border-primary/10 bg-background px-4 py-2.5 text-sm text-dark placeholder:text-primary/40 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
               />
-            </>
-          )}
+            </div>
 
-          {!isATSLoading && !ats && !isATSError && (
-            <p className="text-sm text-dark/60">
-              Run an analysis to see your ATS score and suggestions here.
-            </p>
-          )}
+            <JobDescriptionInput
+              value={jobDescription}
+              onChange={setJobDescription}
+            />
+
+            <button
+              type="button"
+              onClick={handleAnalyze}
+              disabled={!resumeId || !targetRole.trim() || isAnalyzingATS}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+            >
+              {isAnalyzingATS ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span>Analyzing Resume against ATS Standards...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  <span>Run ATS Deep Scan</span>
+                </>
+              )}
+            </button>
+
+            {isAnalyzeError && (
+              <p className="text-xs font-semibold text-danger">
+                ATS analysis failed to complete. Please check the backend connection and try again.
+              </p>
+            )}
+            {isAnalyzeSuccess && (
+              <p className="text-xs font-semibold text-success">
+                ATS analysis generated and up to date!
+              </p>
+            )}
+          </div>
+
+          {/* Results Area */}
+          <div className="w-full">
+            {isATSLoading || isAnalyzingATS ? (
+              <ATSResultsView result={null} isLoading={true} />
+            ) : isATSError ? (
+              <ATSResultsView
+                result={null}
+                isError={true}
+                errorMessage="Unable to load previous ATS analysis."
+                onRetry={() => refetchATS()}
+              />
+            ) : ats ? (
+              <ATSResultsView result={ats} />
+            ) : (
+              <div className="rounded-2xl border border-dashed border-primary/20 bg-background/60 p-8 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <h3 className="mt-3 text-sm font-bold text-dark">
+                  Ready to scan your resume
+                </h3>
+                <p className="mt-1 text-xs text-primary/60 max-w-sm mx-auto">
+                  Provide your target role above and optionally paste a job description, then click "Run ATS Deep Scan" to receive scores, deep-dive line fixes, and keyword matching.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
     </>

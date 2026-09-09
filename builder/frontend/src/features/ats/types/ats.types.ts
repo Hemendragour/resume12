@@ -22,22 +22,15 @@ export type ATSBreakdown = Record<string, number>;
 
 export interface ATSCategoryResult {
   category: ATSScoreCategory;
-
   title: string;
-
   score: number;
-
   maxScore: number;
-
   percentage: number;
-
   status: ATSCategoryStatus;
-
   summary: string;
-
   issues: string[];
-
   suggestions: string[];
+  order?: number;
 }
 
 // ============================================================
@@ -46,20 +39,51 @@ export interface ATSCategoryResult {
 
 export interface ATSDateConsistencyAnalysis {
   invalidDates: string[];
-
   overlappingDates: string[];
-
   reversedDateRanges: string[];
-
   inconsistentDateFormats: string[];
-
   missingDates: string[];
-
   score: number;
-
   issues: string[];
-
   suggestions: string[];
+}
+
+// ============================================================
+// ATS FINDING & SECTION DEEP DIVE
+// ============================================================
+
+export type ATSFindingVerdict = "excellent" | "needs-improvement";
+
+export interface ATSFinding {
+  id: string;
+  targetText: string;
+  verdict: ATSFindingVerdict;
+  problems: string[];
+  whyItMatters: string;
+  suggestedFix: string;
+  needsQuantification: boolean;
+  quantificationExamples: string[];
+  jdAlignmentTip?: string;
+}
+
+export type ATSSectionDeepDivePriority =
+  | "critical"
+  | "high"
+  | "medium"
+  | "low";
+
+export interface ATSSectionDeepDive {
+  sectionId: ATSScoreCategory;
+  title: string;
+  percentage: number;
+  priority: ATSSectionDeepDivePriority;
+  isFullyOptimized: boolean;
+  findings: ATSFinding[];
+  skillsBreakdown?: {
+    requiredPresent: string[];
+    requiredMissing: ATSFinding[];
+    goodToHave: ATSFinding[];
+  };
 }
 
 // ============================================================
@@ -74,26 +98,18 @@ export type ATSRecommendationPriority =
 
 export interface ATSRecommendation {
   id?: string;
-
   title: string;
-
   description: string;
-
   priority: ATSRecommendationPriority;
-
   category: ATSScoreCategory;
-
   impact?: number;
-
   actionable?: boolean;
-
   evidence?: string;
-
   suggestedFix?: string;
 }
 
 // ============================================================
-// ATS GRADE
+// ATS GRADE & MODE
 // ============================================================
 
 export type ATSGrade =
@@ -103,37 +119,30 @@ export type ATSGrade =
   | "D"
   | "F";
 
+export type ATSAnalysisMode = "job-description" | "general";
+
 // ============================================================
 // FINAL ATS RESULT
 // ============================================================
 
 export interface ATSResult {
   resumeId: string;
-
+  mode: ATSAnalysisMode;
+  targetRole: string;
+  hasJobDescription: boolean;
   atsScore: number;
-
   grade: ATSGrade;
-
   breakdown: ATSBreakdown;
-
   categories: ATSCategoryResult[];
-
   matchedKeywords: string[];
-
   missingKeywords: string[];
-
+  sectionDeepDive: ATSSectionDeepDive[];
   dateConsistency?: ATSDateConsistencyAnalysis;
-
   strengths: string[];
-
   weaknesses: string[];
-
-  recommendations: ATSRecommendation[];
-
-  optimizedSummary: string;
-
-  improvedExperience: string[];
-
+  recommendations?: ATSRecommendation[];
+  optimizedSummary?: string;
+  improvedExperience?: string[];
   analyzedAt: string;
 }
 
@@ -143,21 +152,13 @@ export interface ATSResult {
 
 export interface ATSAnalysisOptions {
   includeAIAnalysis?: boolean;
-
   includeOptimizedSummary?: boolean;
-
   includeImprovedExperience?: boolean;
-
   includeKeywordAnalysis?: boolean;
-
   includeSemanticAnalysis?: boolean;
-
   includeParseabilityAnalysis?: boolean;
-
   includeContentQualityAnalysis?: boolean;
-
   includeDateConsistencyAnalysis?: boolean;
-
   includeSeniorityAnalysis?: boolean;
 }
 
@@ -167,11 +168,8 @@ export interface ATSAnalysisOptions {
 
 export interface ATSAnalyzeRequest {
   resumeId: string;
-
   targetRole: string;
-
   jobDescription?: string;
-
   options?: ATSAnalysisOptions;
 }
 
@@ -181,12 +179,9 @@ export interface ATSAnalyzeRequest {
 
 export interface ATSAnalyzeResponse {
   success: boolean;
-
   message?: string;
-
   data: {
     result: ATSResult;
-
     analysis: unknown;
   };
 }
@@ -197,7 +192,6 @@ export interface ATSAnalyzeResponse {
 
 export interface ATSLatestResponse {
   success: boolean;
-
   data: ATSResult;
 }
 
@@ -207,8 +201,6 @@ export interface ATSLatestResponse {
 
 export interface ATSHistoryResponse {
   success: boolean;
-
   count: number;
-
   data: ATSResult[];
 }

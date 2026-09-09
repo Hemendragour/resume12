@@ -76,7 +76,7 @@ export default function ATSPanel({
 
       {/* panel */}
       <aside
-        className={`fixed right-0 top-0 z-50 h-full w-full max-w-4xl overflow-y-auto bg-modal shadow-2xl transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-50 h-full w-full overflow-y-auto bg-modal shadow-2xl transition-transform duration-300 sm:w-1/2 sm:min-w-[480px] ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -84,7 +84,9 @@ export default function ATSPanel({
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-primary/10 bg-modal/95 px-6 py-4 backdrop-blur-xs">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-accent" />
-            <h2 className="text-lg font-bold text-dark">ATS Scanner & Deep Dive</h2>
+            <h2 className="text-lg font-bold text-dark">
+              ATS Scanner & Deep Dive
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -137,7 +139,8 @@ export default function ATSPanel({
 
             {isAnalyzeError && (
               <p className="text-xs font-semibold text-danger">
-                ATS analysis failed to complete. Please check the backend connection and try again.
+                ATS analysis failed to complete. Please check the backend
+                connection and try again.
               </p>
             )}
             {isAnalyzeSuccess && (
@@ -169,7 +172,9 @@ export default function ATSPanel({
                   Ready to scan your resume
                 </h3>
                 <p className="mt-1 text-xs text-primary/60 max-w-sm mx-auto">
-                  Provide your target role above and optionally paste a job description, then click "Run ATS Deep Scan" to receive scores, deep-dive line fixes, and keyword matching.
+                  Provide your target role above and optionally paste a job
+                  description, then click "Run ATS Deep Scan" to receive scores,
+                  deep-dive line fixes, and keyword matching.
                 </p>
               </div>
             )}

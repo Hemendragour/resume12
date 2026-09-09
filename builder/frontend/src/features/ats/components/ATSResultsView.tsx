@@ -16,7 +16,11 @@ interface Props {
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-6 animate-pulse" aria-busy="true" aria-label="Loading ATS analysis">
+    <div
+      className="space-y-6 animate-pulse"
+      aria-busy="true"
+      aria-label="Loading ATS analysis"
+    >
       {/* 1. Overall Score Skeleton */}
       <div className="h-56 rounded-2xl bg-card/60 p-6 border border-primary/10">
         <div className="flex justify-between items-center pb-4 border-b border-primary/10">
@@ -105,17 +109,17 @@ export default function ATSResultsView({
         analyzedAt={result.analyzedAt}
       />
 
-      {/* 2. CATEGORY BREAKDOWN */}
-      {result.categories && result.categories.length > 0 && (
-        <ATSCategoryBreakdown categories={result.categories} />
-      )}
-
-      {/* 3. KEYWORD MATCH */}
+      {/* 2. KEYWORD MATCH */}
       <ATSKeywordMatch
         matchedKeywords={result.matchedKeywords || []}
         missingKeywords={result.missingKeywords || []}
         hasJobDescription={result.hasJobDescription}
       />
+
+      {/* 3. CATEGORY BREAKDOWN */}
+      {result.categories && result.categories.length > 0 && (
+        <ATSCategoryBreakdown categories={result.categories} />
+      )}
 
       {/* 4. SECTION-WISE DEEP DIVE */}
       {result.sectionDeepDive && result.sectionDeepDive.length > 0 && (

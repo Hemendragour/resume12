@@ -1,111 +1,48 @@
 import { Response } from "express";
 
 import { asyncHandler } from "../../utils/asyncHandler";
- 
-import {
-  getDashboardStats,
-  getUsers,
-  updateUserStatus,
-} from "./admin.service";
 
-import {
-  getUserDetails,
-} from "./admin.service";
+import { getDashboardStats, getUsers, updateUserStatus } from "./admin.service";
 
-export const dashboardStats =
-  asyncHandler(
-    async (
-      _req: Request,
-      res: Response
-    ) => {
-      const stats =
-        await getDashboardStats();
+import { getUserDetails } from "./admin.service";
 
-      res.status(200).json({
-        success: true,
-        stats,
-      });
-    }
-  );
+export const dashboardStats = asyncHandler(
+  async (_req: Request, res: Response) => {
+    const stats = await getDashboardStats();
 
-
-   
+    res.status(200).json({
+      success: true,
+      stats,
+    });
+  },
+);
 
 import { AuthRequest } from "../../middleware/auth.middleware";
 
-export const usersList =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const page =
-        Number(req.query.page) || 1;
+export const usersList = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const page = Number(req.query.page) || 1;
 
-      const limit =
-        Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 10;
 
-      const search =
-        String(req.query.search || "");
+    const search = String(req.query.search || "");
 
-      const result =
-        await getUsers(
-          page,
-          limit,
-          search
-        );
+    const result = await getUsers(page, limit, search);
 
-      res.status(200).json({
-        success: true,
-        ...result,
-      });
-    }
-  );
-
-
-//   export const changeStatus =
-//   asyncHandler(
-//     async (
-//       req: AuthRequest,
-//       res: Response
-//     ) => {
-//       const status =
-//         req.body.status;
-
-//       if (
-//         status !== "active" &&
-//         status !== "suspended"
-//       ) {
-//         throw new ApiError(
-//           400,
-//           "Invalid status"
-//         );
-//       }
-
-//       const user =
-//         await updateUserStatus(
-//           req.params.id as string,
-//           status
-//         );
-
-//       res.status(200).json({
-//         success: true,
-//         user,
-//       });
-//     }
-//   );
-
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
+  },
+);
 
 export const changeStatus = asyncHandler(
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+  async (req: AuthRequest, res: Response) => {
     console.log("BODY", req.body);
 
     const user = await updateUserStatus(
       req.params.id as string,
-      req.body.status
+      req.body.status,
     );
 
     console.log("UPDATED USER", user);
@@ -114,46 +51,30 @@ export const changeStatus = asyncHandler(
       success: true,
       user,
     });
-  }
+  },
 );
-
-
- 
 
 import { deleteUser } from "./admin.service";
 import { ApiError } from "../../utils/ApiError";
 
 export const removeUser = asyncHandler(
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
-   await deleteUser(
-  req.params.id as string,
-);
+  async (req: AuthRequest, res: Response) => {
+    await deleteUser(req.params.id as string);
 
     res.status(200).json({
       success: true,
-      message:
-        "User deleted successfully",
+      message: "User deleted successfully",
     });
-  }
+  },
 );
 
-export const userDetails =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const result =
-        await getUserDetails(
-          req.params.id as string
-        );
+export const userDetails = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const result = await getUserDetails(req.params.id as string);
 
-      res.status(200).json({
-        success: true,
-        ...result,
-      });
-    }
-  );
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
+  },
+);

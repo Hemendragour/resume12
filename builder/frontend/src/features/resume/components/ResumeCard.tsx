@@ -7,6 +7,7 @@ import { Clock, Edit3, Briefcase } from "lucide-react";
 import ResumeCardMenu from "./ResumeCardMenu";
 import RenameResumeModal from "./RenameResumeModal";
 import DeleteResumeModal from "./DeleteResumeModal";
+import DuplicateResumeModal from "./DuplicateResumeModal";
 import ResumeThumbnail from "./ResumeThumbnail"; // ← Add this import
 
 import Card from "../../../components/ui/Card";
@@ -15,7 +16,6 @@ import Button from "../../../components/ui/Button";
 
 import { useRenameResume } from "../hooks/useRenameResume";
 import { useDeleteResume } from "../hooks/useDeleteResume";
-import { useDuplicateResume } from "../hooks/useDuplicateResume";
 
 import type { Resume } from "../types/resume.types";
 
@@ -32,13 +32,13 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
   const [title, setTitle] = useState(resume.title);
   const [shareOpen, setShareOpen] = useState(false);
   // //////////////////////
 
   const renameMutation = useRenameResume();
   const deleteMutation = useDeleteResume();
-  const duplicateMutation = useDuplicateResume();
 
   const [shareId, setShareId] = useState("");
 
@@ -84,14 +84,6 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     }
   };
 
-  const handleDuplicate = async () => {
-    try {
-      await duplicateMutation.mutateAsync(resume._id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleShare = async () => {
     try {
       const data = await shareMutation.mutateAsync(resume._id);
@@ -119,7 +111,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           <h3 className="text-lg font-bold line-clamp-1 text-dark">{title}</h3>{" "}
           <ResumeCardMenu
             onRename={() => setRenameOpen(true)}
-            onDuplicate={handleDuplicate}
+            onDuplicate={() => setDuplicateOpen(true)}
             onDelete={() => setDeleteOpen(true)}
             onDownload={() => navigate(`/resume/${resume._id}/edit`)}
             onShare={handleShare}
@@ -179,7 +171,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           {/* Menu */}
           {/* <ResumeCardMenu
             onRename={() => setRenameOpen(true)}
-            onDuplicate={handleDuplicate}
+            onDuplicate={() => setDuplicateOpen(true)}
             onDelete={() => setDeleteOpen(true)}
             onDownload={() => navigate(`/resume/${resume._id}/edit`)}
             onShare={handleShare}
@@ -219,6 +211,13 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         open={shareOpen}
         onClose={() => setShareOpen(false)}
         shareId={shareId}
+      />
+
+      <DuplicateResumeModal
+        open={duplicateOpen}
+        onClose={() => setDuplicateOpen(false)}
+        resumeId={resume._id}
+        currentTemplateId={resume.templateId}
       />
     </Card>
   );

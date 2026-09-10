@@ -11,7 +11,7 @@ import {
   ResumeStatus,
   ResumeTemplates,
 } from "../../models/resume.model";
-
+import { toSafeUrl } from "../../utils/url";
 const MIN_RESUME_TEXT_LENGTH = 80;
 
 const DEFAULT_SKILL_CATEGORIES = [
@@ -215,11 +215,14 @@ const mergeParsedResume = (
       email: mergeContactField(regexContact.email, personalInfo.email),
       phone: mergeContactField(regexContact.phone, personalInfo.phone),
       address: asString(personalInfo.address),
-      linkedIn: mergeContactField(regexContact.linkedIn, personalInfo.linkedIn),
-      github: mergeContactField(regexContact.github, personalInfo.github),
-      portfolio: mergeContactField(
-        regexContact.portfolio,
-        personalInfo.portfolio,
+      linkedIn: toSafeUrl(
+        mergeContactField(regexContact.linkedIn, personalInfo.linkedIn),
+      ),
+      github: toSafeUrl(
+        mergeContactField(regexContact.github, personalInfo.github),
+      ),
+      portfolio: toSafeUrl(
+        mergeContactField(regexContact.portfolio, personalInfo.portfolio),
       ),
       photo: "",
     },
@@ -284,8 +287,8 @@ const mergeParsedResume = (
             currentlyWorking: asBoolean(item?.currentlyWorking),
             description: asStringArray(item?.description),
             technologies: asStringArray(item?.technologies),
-            github: asString(item?.github),
-            link: asString(item?.link),
+            link: toSafeUrl(item?.link),
+            github: toSafeUrl(item?.github),
           }))
           .filter((item) => item.title && item.description.length > 0)
       : [],

@@ -1,4 +1,10 @@
 import { z } from "zod";
+import { toSafeUrl } from "../../utils/url";
+
+const safeUrlField = z.preprocess(
+  (value) => toSafeUrl(value),
+  z.union([z.string().url(), z.literal("")]),
+);
 
 const experienceSchema = z.object({
   company: z.string().min(1, "Company name is required"),
@@ -59,7 +65,6 @@ const projectSchema = z.object({
   technologies: z.array(z.string()),
 
   link: z.union([z.string().url(), z.literal("")]).optional(),
-
   github: z.union([z.string().url(), z.literal("")]).optional(),
 });
 
@@ -114,6 +119,9 @@ export const createResumeSchema = z.object({
       email: z.union([z.string().email(), z.literal("")]).optional(),
       phone: z.string().optional(),
       address: z.string().optional(),
+      // linkedIn: z.union([z.string().url(), z.literal("")]).optional(),
+      // github: z.union([z.string().url(), z.literal("")]).optional(),
+      // portfolio: z.union([z.string().url(), z.literal("")]).optional(),
       linkedIn: z.union([z.string().url(), z.literal("")]).optional(),
       github: z.union([z.string().url(), z.literal("")]).optional(),
       portfolio: z.union([z.string().url(), z.literal("")]).optional(),

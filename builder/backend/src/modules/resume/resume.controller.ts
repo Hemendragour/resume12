@@ -252,11 +252,15 @@ export const duplicateResume = asyncHandler(
     const { _id, createdAt, updatedAt, __v, ...resumeData } =
       existingResume.toObject();
 
+    const requestedTemplateId =
+      typeof req.body?.templateId === "string" ? req.body.templateId.trim() : "";
+
     const duplicatedResume = await Resume.create({
       ...resumeData,
       title: `${existingResume.title} Copy`,
       version: 1,
       userId: req.userId,
+      templateId: requestedTemplateId || existingResume.templateId,
     });
 
     if (req.userId) {

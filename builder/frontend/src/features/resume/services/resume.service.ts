@@ -92,8 +92,13 @@ export const deleteResume = async (id: string) => {
 /**
  * Duplicate Resume
  */
-export const duplicateResume = async (id: string): Promise<Resume> => {
-  const response = await api.post(`/resumes/${id}/duplicate`);
+export const duplicateResume = async (
+  id: string,
+  templateId?: string,
+): Promise<Resume> => {
+  const response = await api.post(`/resumes/${id}/duplicate`, {
+    ...(templateId ? { templateId } : {}),
+  });
 
   return response.data.resume;
 };

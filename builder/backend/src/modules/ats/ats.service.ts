@@ -806,6 +806,189 @@ Rules:
   };
 };
 
+export interface ExtractedResumeStructure {
+  personalInfo?: {
+    fullName?: string;
+    title?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    linkedIn?: string;
+    github?: string;
+    portfolio?: string;
+  };
+  summary?: string;
+  skills?: Array<{
+    title?: string;
+    skills?: string[];
+  }>;
+  experience?: Array<{
+    company?: string;
+    position?: string;
+    startDate?: string;
+    endDate?: string;
+    currentlyWorking?: boolean;
+    responsibilities?: string[];
+    achievements?: string[];
+    location?: string;
+  }>;
+  internships?: Array<{
+    company?: string;
+    role?: string;
+    startDate?: string;
+    endDate?: string;
+    currentlyInterning?: boolean;
+    responsibilities?: string[];
+    achievements?: string[];
+  }>;
+  education?: Array<{
+    institution?: string;
+    degree?: string;
+    fieldOfStudy?: string;
+    startYear?: number;
+    endYear?: number;
+    cgpa?: string;
+  }>;
+  projects?: Array<{
+    title?: string;
+    role?: string;
+    startDate?: string;
+    endDate?: string;
+    currentlyWorking?: boolean;
+    description?: string[];
+    technologies?: string[];
+    github?: string;
+    link?: string;
+  }>;
+  certifications?: string[];
+  languages?: Array<{
+    name?: string;
+    level?: string;
+  }>;
+  awards?: string[];
+  interests?: string[];
+  customSections?: Array<{
+    id?: string;
+    type?: string;
+    title?: string;
+    enabled?: boolean;
+    order?: number;
+    items?: Array<{
+      id?: string;
+      title?: string;
+      subtitle?: string;
+      startDate?: string;
+      endDate?: string;
+      description?: string;
+    }>;
+  }>;
+}
+
+export const extractResumeStructure = async (
+  resumeText: string,
+  knownContact: {
+    email?: string;
+    phone?: string;
+    linkedIn?: string;
+    github?: string;
+    portfolio?: string;
+  },
+): Promise<ExtractedResumeStructure> => {
+  const prompt = `
+You are an expert resume parser.
+
+Structure the following resume text into the application's Resume JSON shape.
+
+ALREADY-EXTRACTED CONTACT FIELDS (do not re-extract or contradict these):
+- email: ${knownContact.email || ""}
+- phone: ${knownContact.phone || ""}
+- linkedIn: ${knownContact.linkedIn || ""}
+- github: ${knownContact.github || ""}
+- portfolio: ${knownContact.portfolio || ""}
+
+RESUME TEXT:
+${resumeText}
+
+Return ONLY valid JSON.
+Do not use markdown.
+Do not add explanations.
+
+Return EXACTLY this structure:
+
+{
+  "personalInfo": {
+    "fullName": "",
+    "title": "",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "linkedIn": "",
+    "github": "",
+    "portfolio": ""
+  },
+  "summary": "",
+  "skills": [{ "title": "", "skills": [] }],
+  "experience": [{
+    "company": "",
+    "position": "",
+    "startDate": "",
+    "endDate": "",
+    "currentlyWorking": false,
+    "responsibilities": [],
+    "achievements": [],
+    "location": ""
+  }],
+  "internships": [{
+    "company": "",
+    "role": "",
+    "startDate": "",
+    "endDate": "",
+    "currentlyInterning": false,
+    "responsibilities": [],
+    "achievements": []
+  }],
+  "education": [{
+    "institution": "",
+    "degree": "",
+    "fieldOfStudy": "",
+    "startYear": 0,
+    "endYear": 0,
+    "cgpa": ""
+  }],
+  "projects": [{
+    "title": "",
+    "role": "",
+    "startDate": "",
+    "endDate": "",
+    "currentlyWorking": false,
+    "description": [],
+    "technologies": [],
+    "github": "",
+    "link": ""
+  }],
+  "certifications": [],
+  "languages": [{ "name": "", "level": "" }],
+  "awards": [],
+  "interests": [],
+  "customSections": []
+}
+
+Rules:
+- Do not invent content that is not present in the source text.
+- Preserve bullet points as separate array items. Never merge bullets into one paragraph.
+- Experience and internships dates must be strings (startDate/endDate). Use empty string if unknown. Use currentlyWorking/currentlyInterning true when the text says Present/Current.
+- Education dates must be numbers (startYear/endYear). Omit endYear if unknown or current.
+- Skills must be grouped into categories with a title and a skills string array. If the resume lists a flat skill list, put them in a category titled "Others".
+- Project description must be an array of bullet strings, not a single paragraph.
+- personalInfo.email and personalInfo.phone have already been extracted as shown above — copy those values through, do not re-derive them.
+- Focus on sections, experience, education, skills, projects, and other content.
+- Omit empty experience/education/project/internship objects. Return empty arrays when a section is absent.
+- customSections is only for genuine extra sections that do not fit the fields above.
+`;
+
+  return generateJSON<ExtractedResumeStructure>(prompt);
+};
+
 // ============================================================
 // MAIN SERVICE
 // ============================================================

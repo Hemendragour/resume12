@@ -97,3 +97,17 @@ export const duplicateResume = async (id: string): Promise<Resume> => {
 
   return response.data.resume;
 };
+
+/**
+ * Upload a PDF resume, parse it, and create a Resume document.
+ */
+export const uploadAndParseResume = async (file: File): Promise<Resume> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/resumes/upload-and-parse", formData, {
+    timeout: 120000,
+  });
+
+  return response.data.resume;
+};

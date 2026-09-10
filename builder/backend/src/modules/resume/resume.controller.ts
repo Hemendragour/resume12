@@ -9,6 +9,7 @@ import { AuthRequest } from "../../middleware/auth.middleware";
 import { getVisitorInfo } from "../../utils/visitor.util";
 import { createResumeSchema, updateResumeSchema } from "./resume.validation";
 import { analyticsService } from "../analytics/analytics.service";
+import { parseAndCreateResume } from "./resume-parse.service";
 import crypto from "crypto";
 
 export const createResume = asyncHandler(
@@ -57,6 +58,37 @@ export const createResume = asyncHandler(
     // Log activity
     await logActivity(
       req.userId as string,
+      ActivityTypes.RESUME_CREATED,
+      `Created resume "${resume.title}"`,
+    );
+
+    res.status(201).json({
+      success: true,
+      resume,
+    });
+  },
+);
+
+export const uploadAndParseResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    if (!req.userId) {
+      throw new ApiError(401, "Unauthorized");
+    }
+
+    if (!req.file) {
+      throw new ApiError(400, "Please upload a PDF resume.");
+    }
+
+    const resume = await parseAndCreateResume({
+      userId: req.userId,
+      fileBuffer: req.file.buffer,
+      originalFilename: req.file.originalname,
+    });
+
+    await analyticsService.createAnalytics(resume._id.toString(), req.userId);
+
+    await logActivity(
+      req.userId,
       ActivityTypes.RESUME_CREATED,
       `Created resume "${resume.title}"`,
     );

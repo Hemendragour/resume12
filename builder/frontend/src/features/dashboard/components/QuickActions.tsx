@@ -66,6 +66,7 @@ import { FilePlus2, Sparkles, ScanSearch, Upload } from "lucide-react";
 
 interface Props {
   onCreate: () => void;
+  onAnalyseATS: () => void;
 }
 
 const actions = [
@@ -91,7 +92,7 @@ const actions = [
   },
 ];
 
-export default function QuickActions({ onCreate }: Props) {
+export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
   return (
     <section>
       <h2 className="mb-5 text-2xl font-bold text-dark">⚡ Quick Actions</h2>
@@ -106,6 +107,13 @@ export default function QuickActions({ onCreate }: Props) {
               onClick={() => {
                 if (item.title === "Create Resume") {
                   onCreate();
+                }
+
+                if (
+                  item.title === "ATS Check" ||
+                  item.title === "Import Resume"
+                ) {
+                  onAnalyseATS();
                 }
               }}
               className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"

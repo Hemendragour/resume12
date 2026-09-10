@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
+import { MulterError } from "multer";
 import { ApiError } from "../utils/ApiError";
 
 export const errorHandler = (
@@ -20,6 +21,18 @@ export const errorHandler = (
     return res.status(err.statusCode).json({
       success: false,
       message: err.message,
+    });
+  }
+
+  if (err instanceof MulterError) {
+    const message =
+      err.code === "LIMIT_FILE_SIZE"
+        ? "PDF must be 5MB or smaller."
+        : err.message;
+
+    return res.status(400).json({
+      success: false,
+      message,
     });
   }
 

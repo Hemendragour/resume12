@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createResume,
+  uploadAndParseResume,
   getResumes,
   getResumeById,
   updateResume,
@@ -13,8 +14,7 @@ import {
 } from "./resume.controller";
 
 import { protect } from "../../middleware/auth.middleware";
-
-
+import { uploadResumePdf } from "../../middleware/upload-pdf.middleware";
 
 const router = Router();
 router.get("/public/:shareId", getPublicResume);
@@ -22,6 +22,7 @@ router.get("/public/:shareId", getPublicResume);
 router.use(protect);
 
 router.post("/", createResume);
+router.post("/upload-and-parse", uploadResumePdf, uploadAndParseResume);
 
 router.get("/", getResumes);
 

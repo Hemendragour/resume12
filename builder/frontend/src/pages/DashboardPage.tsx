@@ -11,6 +11,7 @@ import QuickActions from "../features/dashboard/components/QuickActions";
 
 import ResumeGrid from "../features/resume/components/ResumeGrid";
 import CreateResumeModal from "../features/resume/components/CreateResumeModal";
+import AnalyseATSScoreModal from "../features/resume/components/AnalyseATSScoreModal";
 import RecentActivity from "../features/dashboard/components/RecentActivity";
 import ResumeCompletionCard from "../features/resume/components/ResumeCompletionCard";
 import AISuggestionsCard from "../features/dashboard/components/AISuggestionsCard";
@@ -21,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
   const [open, setOpen] = useState(false);
+  const [analyseOpen, setAnalyseOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
@@ -149,7 +151,10 @@ export default function DashboardPage() {
             }
           }}
         />
-        <QuickActions onCreate={() => setOpen(true)} />
+        <QuickActions
+          onCreate={() => setOpen(true)}
+          onAnalyseATS={() => setAnalyseOpen(true)}
+        />
         <DashboardHeader
           total={total}
           search={search}
@@ -159,6 +164,7 @@ export default function DashboardPage() {
           onFilter={setFilter}
           onSort={setSort}
           onCreate={() => setOpen(true)}
+          onAnalyseATS={() => setAnalyseOpen(true)}
         />
 
         <DashboardStats
@@ -193,6 +199,10 @@ export default function DashboardPage() {
         {/* <RecentActivity /> */}
 
         <CreateResumeModal open={open} onClose={() => setOpen(false)} />
+        <AnalyseATSScoreModal
+          open={analyseOpen}
+          onClose={() => setAnalyseOpen(false)}
+        />
       </div>
     </>
   );

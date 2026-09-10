@@ -85,7 +85,7 @@
 // }
 
 // DashboardHeader.tsx
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, ScanSearch } from "lucide-react";
 
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
@@ -99,6 +99,7 @@ interface Props {
   onFilter: (value: "all" | "draft" | "completed") => void;
   onSort: (value: "updated" | "newest" | "oldest" | "az") => void;
   onCreate: () => void;
+  onAnalyseATS: () => void;
 }
 
 export default function DashboardHeader({
@@ -110,6 +111,7 @@ export default function DashboardHeader({
   onFilter,
   onSort,
   onCreate,
+  onAnalyseATS,
 }: Props) {
   return (
     <div className="flex flex-col gap-6 rounded-2xl border border-primary/10 bg-card p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
@@ -158,7 +160,15 @@ export default function DashboardHeader({
           <option value="az">A-Z</option>
         </select>
 
-        {/* Create Button */}
+        {/* Create / Analyse buttons */}
+        <Button
+          leftIcon={<ScanSearch size={18} />}
+          onClick={onAnalyseATS}
+          className="w-full lg:w-auto"
+        >
+          Analyse ATS Score
+        </Button>
+
         <Button
           leftIcon={<Plus size={18} />}
           onClick={onCreate}

@@ -21,9 +21,9 @@ export const ProfessionalModernTheme = {
   spacing: {
     page: "px-10 py-8",
 
-    section: "mt-6",
+    section: "mt-3",
 
-    paragraph: "mt-3",
+    paragraph: "mt-2",
 
     list: "mt-2",
 
@@ -33,7 +33,7 @@ export const ProfessionalModernTheme = {
   colors: {
     page: "bg-white",
 
-    header: "bg-[#f6c5c1]",
+    header: "bg-white",
 
     heading: "text-gray-800",
 
@@ -43,7 +43,7 @@ export const ProfessionalModernTheme = {
 
     border: "border-gray-400",
 
-    iconBackground: "bg-[#f6c5c1]",
+    iconBackground: "bg-white",
 
     icon: "text-gray-700",
   },

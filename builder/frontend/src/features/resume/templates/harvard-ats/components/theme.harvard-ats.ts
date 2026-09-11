@@ -76,7 +76,7 @@ export const HarvardATSTheme = {
   },
 
   skills: {
-    row: "flex items-start gap-3",
+    row: "flex items-start",
     category: "w-36 font-semibold shrink-0", // widened from w-28, added shrink-0
     value: "flex-1",
   },

@@ -29,9 +29,35 @@ export default function ProjectsPreview() {
             <div key={index}>
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
-                  <p className="text-[12px] text-black">
-                    <span className="font-bold">{proj.title}</span>
-                  </p>
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <p className="text-[12px] text-black">
+                      <span className="font-bold">{proj.title}</span>
+                    </p>
+                    {hasLinks && (
+                      <div className="flex gap-3 text-[11px]">
+                        {proj.link && (
+                          <a
+                            href={proj.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-700 underline hover:text-black"
+                          >
+                            Live Demo
+                          </a>
+                        )}
+                        {proj.github && (
+                          <a
+                            href={proj.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-700 underline hover:text-black"
+                          >
+                            GitHub
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   {proj.technologies?.length > 0 && (
                     <p className="italic text-[11px] text-slate-700">
                       {proj.technologies.join(", ")}
@@ -56,31 +82,6 @@ export default function ProjectsPreview() {
                     </li>
                   ))}
                 </ul>
-              )}
-
-              {hasLinks && (
-                <div className="mt-1 flex gap-3 text-[11px]">
-                  {proj.link && (
-                    <a
-                      href={proj.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-700 underline hover:text-black"
-                    >
-                      Live Demo
-                    </a>
-                  )}
-                  {proj.github && (
-                    <a
-                      href={proj.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-700 underline hover:text-black"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                </div>
               )}
             </div>
           );

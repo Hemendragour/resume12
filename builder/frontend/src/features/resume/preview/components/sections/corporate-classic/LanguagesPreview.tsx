@@ -15,7 +15,7 @@ function DotIndicator({ level }: { level: string }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <span
           key={i}
-          className={`h-2 w-2 rounded-full ${
+          className={`inline-block h-2 w-2 rounded-full ${
             i < filled ? "bg-slate-800" : "bg-slate-200"
           }`}
         />

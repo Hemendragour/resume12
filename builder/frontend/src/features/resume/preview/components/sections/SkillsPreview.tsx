@@ -40,7 +40,7 @@ export default function SkillsPreview() {
           ))}
       </div>
     ) : (
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         {resume.skills.map((category, index) => (
           <div key={index}>
             <p
@@ -50,7 +50,7 @@ export default function SkillsPreview() {
               {category.title}
             </p>
             <p
-              className="text-[11px] leading-4 mt-0.5"
+              className="text-[11px] leading-tight mt-0.5"
               style={{ color: theme.colors.text }}
             >
               {category.skills.join(", ")}

@@ -84,7 +84,7 @@ export default function EducationPreview() {
             {item.cgpa && (
               <p
                 className={`
-                  ${T.spacing.itemHeader}
+                 mt-1
                   ${T.fontSize.body}
                   ${T.colors.body}
                 `}
@@ -96,7 +96,7 @@ export default function EducationPreview() {
             {item.coursework && (
               <p
                 className={`
-                  ${T.spacing.itemHeader}
+                mt-1
                   ${T.fontSize.body}
                   ${T.lineHeight.body}
                   ${T.colors.body}

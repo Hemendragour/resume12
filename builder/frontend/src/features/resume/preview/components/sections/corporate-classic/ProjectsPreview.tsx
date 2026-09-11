@@ -28,9 +28,35 @@ export default function ProjectsPreview() {
           return (
             <div key={index} className="flex justify-between gap-6">
               <div className="flex-1">
-                <p className="text-[12px] font-bold text-slate-900">
-                  {proj.title}
-                </p>
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <p className="text-[12px] font-bold text-slate-900">
+                    {proj.title}
+                  </p>
+                  {hasLinks && (
+                    <div className="flex gap-3 text-[11px]">
+                      {proj.link && (
+                        <a
+                          href={proj.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-700 underline hover:text-slate-900"
+                        >
+                          Live Demo
+                        </a>
+                      )}
+                      {proj.github && (
+                        <a
+                          href={proj.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-700 underline hover:text-slate-900"
+                        >
+                          GitHub
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {proj.technologies?.length > 0 && (
                   <p className="text-[11px] italic text-slate-700">
@@ -47,31 +73,6 @@ export default function ProjectsPreview() {
                       </li>
                     ))}
                   </ul>
-                )}
-
-                {hasLinks && (
-                  <div className="mt-1.5 flex gap-3 text-[11px]">
-                    {proj.link && (
-                      <a
-                        href={proj.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-slate-700 underline hover:text-slate-900"
-                      >
-                        Live Demo
-                      </a>
-                    )}
-                    {proj.github && (
-                      <a
-                        href={proj.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-slate-700 underline hover:text-slate-900"
-                      >
-                        GitHub
-                      </a>
-                    )}
-                  </div>
                 )}
               </div>
 

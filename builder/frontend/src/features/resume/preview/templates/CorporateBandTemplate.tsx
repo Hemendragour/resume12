@@ -27,7 +27,7 @@ export default function CorporateBandTemplate() {
         </div>
       </div>
 
-      <div className="p-10">
+      <div className="px-10 pb-10 pt-2">
         <DynamicSectionRenderer
           registry={CorporateBandSectionRegistry}
           customSectionComponent={CorporateBandCustomSection}

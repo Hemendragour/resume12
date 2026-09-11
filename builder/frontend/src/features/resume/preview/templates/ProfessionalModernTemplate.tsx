@@ -24,6 +24,7 @@ export default function ProfessionalModernTemplate() {
         w-full
         h-full
         overflow-hidden
+       
         bg-white
         ${T.colors.page}
         ${T.fontFamily}
@@ -32,17 +33,17 @@ export default function ProfessionalModernTemplate() {
       {/* =====================================================
           HEADER
       ====================================================== */}
-
       {/* =====================================================
     HEADER
 ====================================================== */}
-
       <div
         className={`
     ${T.colors.header}
     ${T.radius.header}
     px-8
     py-6
+   
+    
     flex
     justify-between
     items-start
@@ -158,12 +159,10 @@ export default function ProfessionalModernTemplate() {
           )}
         </div>
       </div>
-
       {/* =====================================================
           RESUME BODY
       ====================================================== */}
-
-      <div
+      {/* <div
         className="
           w-full
           h-[calc(100%-120px)]
@@ -171,6 +170,16 @@ export default function ProfessionalModernTemplate() {
           px-8
           pt-6
         "
+      > */}
+
+      <div
+        className="
+    w-full
+    h-[calc(100%-120px)]
+    overflow-hidden
+    px-8
+    pt-2
+  "
       >
         <DynamicSectionRenderer
           registry={ProfessionalModernSectionRegistry}

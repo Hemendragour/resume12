@@ -29,28 +29,16 @@ export default function ProjectsPreview() {
           return (
             <div key={index} className="break-inside-avoid">
               <div className="flex items-start justify-between gap-4">
-                <h3
-                  className="text-[12px] font-bold leading-tight"
-                  style={{ color: theme.colors.secondary }}
-                >
-                  {project.title}
-                </h3>
-
-                <div className="flex flex-col items-end shrink-0">
-                  {theme.projects.dateRight && (
-                    <span
-                      className="text-[11px]"
-                      style={{ color: theme.colors.muted }}
-                    >
-                      {formatMonthYear(project.startDate)} –{" "}
-                      {project.currentlyWorking
-                        ? "Present"
-                        : formatMonthYear(project.endDate)}
-                    </span>
-                  )}
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <h3
+                    className="text-[12px] font-bold leading-tight"
+                    style={{ color: theme.colors.secondary }}
+                  >
+                    {project.title}
+                  </h3>
 
                   {(project.link || project.github) && (
-                    <div className="mt-1.5 flex gap-3 text-[11px] whitespace-nowrap">
+                    <div className="flex gap-3 text-[11px] whitespace-nowrap">
                       {project.link && (
                         <a
                           href={project.link}
@@ -76,6 +64,18 @@ export default function ProjectsPreview() {
                     </div>
                   )}
                 </div>
+
+                {theme.projects.dateRight && (
+                  <span
+                    className="text-[11px] shrink-0"
+                    style={{ color: theme.colors.muted }}
+                  >
+                    {formatMonthYear(project.startDate)} –{" "}
+                    {project.currentlyWorking
+                      ? "Present"
+                      : formatMonthYear(project.endDate)}
+                  </span>
+                )}
               </div>
 
               {theme.projects.technologiesInline &&

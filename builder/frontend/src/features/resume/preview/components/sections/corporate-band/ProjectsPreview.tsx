@@ -25,18 +25,12 @@ export default function ProjectsPreview() {
           return (
             <div key={index}>
               <div className="flex items-start justify-between gap-4">
-                <h3 className="text-[12px] font-bold text-slate-900">
-                  {project.title}
-                </h3>
-                <div className="flex flex-col items-end shrink-0">
-                  <span className="text-[11px] text-slate-600">
-                    {formatMonthYear(project.startDate)} –{" "}
-                    {project.currentlyWorking
-                      ? "Present"
-                      : formatMonthYear(project.endDate)}
-                  </span>
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <h3 className="text-[12px] font-bold text-slate-900">
+                    {project.title}
+                  </h3>
                   {(project.link || project.github) && (
-                    <div className="mt-1 flex gap-3 text-[11px]">
+                    <div className="flex gap-3 text-[11px]">
                       {project.link && (
                         <a
                           href={project.link}
@@ -60,6 +54,12 @@ export default function ProjectsPreview() {
                     </div>
                   )}
                 </div>
+                <span className="text-[11px] text-slate-600 shrink-0">
+                  {formatMonthYear(project.startDate)} –{" "}
+                  {project.currentlyWorking
+                    ? "Present"
+                    : formatMonthYear(project.endDate)}
+                </span>
               </div>
 
               {project.technologies?.length > 0 && (

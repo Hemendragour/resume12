@@ -20,7 +20,7 @@ export default function AchievementsPreview() {
       </h2>
 
       <ul
-        className="mt-3 list-disc pl-5 text-[11px] leading-4"
+        className="mt-2 list-disc pl-5 text-[11px] leading-4"
         style={{ color: theme.colors.text }}
       >
         {resume.achievements.map((point, index) => (

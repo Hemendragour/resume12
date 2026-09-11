@@ -30,7 +30,7 @@ export default function ExperiencePreview() {
         icon={<Briefcase size={16} />}
       />
 
-      <div className="mt-3 space-y-6">
+      <div className="mt-2 space-y-6">
         {experiences.map((item, index) => (
           <div key={index}>
             <div className="flex justify-between items-start">

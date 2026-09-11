@@ -19,7 +19,7 @@ export default function InterestsPreview() {
     <section className={T.spacing.section}>
       <SectionHeader title="Interests" icon={<Heart size={16} />} />
 
-      <p className={`mt-3 ${T.fontSize.body} ${T.colors.body}`}>
+      <p className={`mt-2 ${T.fontSize.body} ${T.colors.body}`}>
         {interests.join(", ")}
       </p>
     </section>

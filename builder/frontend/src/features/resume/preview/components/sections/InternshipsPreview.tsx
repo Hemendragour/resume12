@@ -20,7 +20,7 @@ export default function InternshipsPreview() {
         Internships
       </h2>
 
-      <div className="mt-3 space-y-4">
+      <div className="mt-2 space-y-4">
         {resume.internships.map((item, index) => (
           <div key={index}>
             <div className="flex items-start justify-between">

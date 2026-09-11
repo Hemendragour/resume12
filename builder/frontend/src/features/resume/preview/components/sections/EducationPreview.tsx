@@ -20,7 +20,7 @@ export default function EducationPreview() {
       </h2>
 
       {resume.education.length === 0 ? (
-        <p className="mt-3 text-[11px]" style={{ color: theme.colors.muted }}>
+        <p className="mt-2 text-[11px]" style={{ color: theme.colors.muted }}>
           No education added.
         </p>
       ) : (

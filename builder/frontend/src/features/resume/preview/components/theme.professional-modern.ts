@@ -21,7 +21,7 @@ export const ProfessionalModernTheme = {
   spacing: {
     page: "px-10 py-8",
 
-    section: "mt-3",
+    section: "mt-2",
 
     paragraph: "mt-2",
 

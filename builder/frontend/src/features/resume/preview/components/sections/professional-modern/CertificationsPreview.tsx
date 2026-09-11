@@ -30,7 +30,7 @@ export default function CertificationsPreview() {
         icon={<Award size={16} />}
       />
 
-      <ul className="mt-3 list-disc list-inside">
+      <ul className="mt-2 list-disc list-inside">
         {certifications.map((certificate, index) => (
           <li key={index} className={`${T.fontSize.body} ${T.colors.body}`}>
             {certificate}

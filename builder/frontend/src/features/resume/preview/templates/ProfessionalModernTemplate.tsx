@@ -24,7 +24,6 @@ export default function ProfessionalModernTemplate() {
         w-full
         h-full
         overflow-hidden
-       
         bg-white
         ${T.colors.page}
         ${T.fontFamily}
@@ -41,9 +40,7 @@ export default function ProfessionalModernTemplate() {
     ${T.colors.header}
     ${T.radius.header}
     px-8
-    py-6
-   
-    
+    py-6   
     flex
     justify-between
     items-start

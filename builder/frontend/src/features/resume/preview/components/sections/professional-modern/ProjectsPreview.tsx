@@ -28,7 +28,7 @@ export default function ProjectsPreview() {
         icon={<FolderKanban size={16} />}
       />
 
-      <div className="mt-3 space-y-6">
+      <div className="mt-2 space-y-6">
         {projects.map((project, index) => (
           <div key={index}>
             {/* Title row: title + links on the left, date pinned to the far right */}

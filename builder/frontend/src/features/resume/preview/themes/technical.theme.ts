@@ -29,10 +29,16 @@ export const technicalTheme: ResumeTheme = {
     compact: false,
   },
 
+  // section: {
+  //   uppercase: true,
+  //   divider: true,
+  //   spacing: "24px",
+  // },
+
   section: {
     uppercase: true,
     divider: true,
-    spacing: "24px",
+    spacing: "14px",
   },
 
   experience: {

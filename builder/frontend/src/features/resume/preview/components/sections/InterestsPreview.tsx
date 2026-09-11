@@ -19,7 +19,7 @@ export default function InterestsPreview() {
       </h2>
 
       {resume.interests.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {resume.interests.map((interest) => (
             <span
               key={interest}
@@ -34,7 +34,7 @@ export default function InterestsPreview() {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-[11px]" style={{ color: theme.colors.muted }}>
+        <p className="mt-2 text-[11px]" style={{ color: theme.colors.muted }}>
           No interests added.
         </p>
       )}

@@ -30,7 +30,7 @@ export default function SummaryPreview() {
 
       <p
         className={`
-          mt-3
+          mt-2
           leading-7
           whitespace-pre-line
           ${T.fontSize.body}

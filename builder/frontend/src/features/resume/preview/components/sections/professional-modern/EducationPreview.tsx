@@ -28,7 +28,7 @@ export default function EducationPreview() {
         icon={<GraduationCap size={16} />}
       />
 
-      <div className="mt-3 space-y-5">
+      <div className="mt-2 space-y-5">
         {education.map((item, index) => (
           <div key={index}>
             <div className="flex items-baseline justify-between gap-3">

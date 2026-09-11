@@ -28,7 +28,7 @@ export default function StrengthsPreview() {
         icon={<Sparkles size={16} />}
       />
 
-      <div className={`mt-3 space-y-2 ${T.fontSize.body} ${T.colors.body}`}>
+      <div className={`mt-2 space-y-2 ${T.fontSize.body} ${T.colors.body}`}>
         {strengths.map((s, index) => (
           <div key={index}>
             <span className="font-semibold">{s.title}</span>

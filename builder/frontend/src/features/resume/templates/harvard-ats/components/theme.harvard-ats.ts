@@ -48,7 +48,7 @@ export const HarvardATSTheme = {
     item: "mt-4",
     itemHeader: "mt-2",
     paragraph: "mt-2",
-    bullet: "space-y-1",
+    bullet: "space-y-0",
   },
 
   border: {

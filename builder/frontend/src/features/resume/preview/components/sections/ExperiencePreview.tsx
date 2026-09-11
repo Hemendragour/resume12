@@ -98,7 +98,7 @@ export default function ExperiencePreview() {
       ) : (
         <>
           {title}
-          <div className="mt-3">{content}</div>
+          <div className="mt-2">{content}</div>
         </>
       )}
     </section>

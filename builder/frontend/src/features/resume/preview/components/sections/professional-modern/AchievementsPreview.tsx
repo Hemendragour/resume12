@@ -30,7 +30,7 @@ export default function AchievementsPreview() {
 
       <ul
         className={`
-          mt-3
+          mt-2
           list-disc
           list-inside
           space-y-1

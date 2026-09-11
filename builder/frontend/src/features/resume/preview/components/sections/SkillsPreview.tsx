@@ -70,7 +70,7 @@ export default function SkillsPreview() {
       ) : (
         <>
           {title}
-          <div className="mt-3">{content}</div>
+          <div className="mt-2">{content}</div>
         </>
       )}
     </section>

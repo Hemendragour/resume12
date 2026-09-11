@@ -28,7 +28,7 @@ export default function CertificationsPreview() {
           ))}
         </ul>
       ) : (
-        <p className="mt-3 text-[11px]" style={{ color: theme.colors.muted }}>
+        <p className="mt-2 text-[11px]" style={{ color: theme.colors.muted }}>
           No certifications added.
         </p>
       )}

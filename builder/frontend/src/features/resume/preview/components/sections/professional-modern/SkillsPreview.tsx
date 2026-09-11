@@ -14,7 +14,7 @@ export default function SkillsPreview() {
   const skills = resume.skills ?? [];
 
   const skillsSection = resume.sections.find(
-    (section) => section.id === "skills"
+    (section) => section.id === "skills",
   );
 
   if (skills.length === 0) return null;
@@ -32,8 +32,7 @@ export default function SkillsPreview() {
 
       <div
         className={`
-          mt-3
-          space-y-2
+          mt-2
           ${T.fontSize.body}
           ${T.colors.body}
         `}

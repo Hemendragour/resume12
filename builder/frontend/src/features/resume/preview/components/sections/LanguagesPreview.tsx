@@ -24,7 +24,7 @@ export default function LanguagesPreview() {
         Languages
       </h2>
 
-      <div className="col-span-3 flex mt-3 flex-wrap gap-2">
+      <div className="col-span-3 flex mt-2 flex-wrap gap-2">
         {languages.map((lang, index) => (
           <span
             key={`${lang.name}-${index}`}

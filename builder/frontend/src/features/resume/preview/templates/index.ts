@@ -26,6 +26,7 @@ export const ResumeTemplatesMap = {
   "executive-blue": ExecutiveBlueTemplate,
   "enhancv-modern": EnhancvModernTemplate,
   "harvard-ats": HarvardATSTemplate,
+
   executive: ExecutiveTemplate,
   student: StudentTemplate,
   ats: AtsTemplate,

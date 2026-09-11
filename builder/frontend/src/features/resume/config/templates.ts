@@ -1,11 +1,11 @@
 import type { ResumeTemplate } from "../types/resume.types";
 
-import technicalClassic from "../../../assets/templates/technical_clasic.png";
+// import technicalClassic from "../../../assets/templates/technical_clasic.png";
 // import technicalClassic from "../../../assets/templates/technical-classic.png";
 import technicalDeveloper from "../../../assets/templates/technical_developer.png";
 // import technicalDeveloper from "../../../assets/templates/technical-developer.png";
 import modernProfessional from "../../../assets/templates/modern-professional.png";
-import minimalClean from "../../../assets/templates/MINIMALCLEAN.png";
+// import minimalClean from "../../../assets/templates/MINIMALCLEAN.png";
 // import minimalClean from "../../../assets/templates/minimal-clean.png";
 import splitLabel from "../../../assets/templates/split-label.png";
 import corporateBand from "../../../assets/templates/coporate_band.png";
@@ -50,14 +50,14 @@ export const templates: TemplateOption[] = [
     image: modernProfessional,
   },
 
-  {
-    id: "minimal-clean",
-    name: "Minimal Clean",
-    description: "Simple ATS Friendly Resume",
-    ats: "95% ATS",
-    color: "bg-card",
-    image: minimalClean,
-  },
+  // {
+  //   id: "minimal-clean",
+  //   name: "Minimal Clean",
+  //   description: "Simple ATS Friendly Resume",
+  //   ats: "95% ATS",
+  //   color: "bg-card",
+  //   image: minimalClean,
+  // },
 
   {
     id: "split-label",
@@ -132,13 +132,13 @@ export const templates: TemplateOption[] = [
     image: professionalModern,
   },
 
-  {
-    id: "technical-classic",
-    name: "Technical Classic",
-    description: "Best for Software Engineers & FAANG",
-    ats: "99% ATS",
-    featured: true,
-    color: "bg-card",
-    image: technicalClassic,
-  },
+  // {
+  //   id: "technical-classic",
+  //   name: "Technical Classic",
+  //   description: "Best for Software Engineers & FAANG",
+  //   ats: "99% ATS",
+  //   featured: true,
+  //   color: "bg-card",
+  //   image: technicalClassic,
+  // },
 ];

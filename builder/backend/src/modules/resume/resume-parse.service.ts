@@ -393,3 +393,55 @@ export const parseAndCreateResume = async (params: {
 
   return resume;
 };
+
+export const parseAndFillResume = async (params: {
+  userId: string;
+  resumeId: string;
+  fileBuffer: Buffer;
+}) => {
+  const existingResume = await Resume.findOne({
+    _id: params.resumeId,
+    userId: params.userId,
+  });
+
+  if (!existingResume) {
+    throw new ApiError(404, "Resume not found.");
+  }
+
+  const text = await extractTextFromPdf(params.fileBuffer);
+  const regexContact = extractContactWithRegex(text);
+
+  let structured: ExtractedResumeStructure;
+
+  try {
+    structured = await extractResumeStructure(text, regexContact);
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to structure the resume. Please try again.";
+
+    throw new ApiError(502, message);
+  }
+
+  const merged = mergeParsedResume(regexContact, structured);
+
+  existingResume.personalInfo = merged.personalInfo;
+  existingResume.targetRole =
+    merged.personalInfo.title || existingResume.targetRole;
+  existingResume.summary = merged.summary;
+  existingResume.skills = merged.skills;
+  existingResume.experience = merged.experience;
+  existingResume.internships = merged.internships;
+  existingResume.education = merged.education;
+  existingResume.projects = merged.projects;
+  existingResume.certifications = merged.certifications;
+  existingResume.languages = merged.languages;
+  existingResume.awards = merged.awards;
+  existingResume.interests = merged.interests;
+  existingResume.customSections = merged.customSections;
+
+  await existingResume.save();
+
+  return existingResume;
+};

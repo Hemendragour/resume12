@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   createResume,
   uploadAndParseResume,
+  uploadAndParseIntoResume,
   getResumes,
   getResumeById,
   updateResume,
@@ -36,4 +37,6 @@ router.post("/:id/share", shareResume);
 
 router.delete("/:id/share", disableShareResume);
 
+router.post("/upload-and-parse", uploadResumePdf, uploadAndParseResume);
+router.post("/:id/upload-and-parse", uploadResumePdf, uploadAndParseIntoResume);
 export default router;

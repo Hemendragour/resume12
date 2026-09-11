@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useResume } from "../../features/resume/editor/hooks/useResume";
 import { useAutoSave } from "../../features/resume/editor/hooks/useAutoSave";
@@ -18,6 +18,7 @@ import GenerateResumeLoader from "../../features/resume/editor/components/Genera
 import QuickGenerateForm from "../../features/resume/editor/components/GenerateGeneralResumeForm";
 import { Sparkles } from "lucide-react";
 import { mapResumeToQuickGenerateFormData } from "../../features/resume/editor/utils/mapResumeToGenerateForm";
+import { useLocation } from "react-router-dom";
 
 export default function ResumeEditorPage() {
   const [activeSection, setActiveSection] = useState("personal");
@@ -69,6 +70,14 @@ export default function ResumeEditorPage() {
       );
     }
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openAts) {
+      setIsATSPanelOpen(true);
+    }
+  }, [location.state]);
 
   if (loading) {
     return (

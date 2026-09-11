@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { X, Sparkles } from "lucide-react";
-
+import { Upload } from "lucide-react";
+import { useResumeStore } from "../../../../../store/resume.store";
+import { uploadAndParseIntoResume } from "../../../services/resume.service";
 import { useLatestATS, useAnalyzeATS } from "../../../../ats/hooks/useATSScore";
 import ATSResultsView from "../../../../ats/components/ATSResultsView";
 import JobDescriptionInput from "./JobDescriptionInput";
-
+import { useRef, useState as useStateAlias } from "react";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -64,6 +66,35 @@ export default function ATSPanel({
     });
   };
 
+  const resume = useResumeStore((state) => state.resume);
+  const setResume = useResumeStore((state) => state.setResume);
+
+  const [isParsingUpload, setIsParsingUpload] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const isResumeEmpty = !resume?.personalInfo?.fullName;
+
+  const handleFileUpload = async (file: File | undefined) => {
+    if (!file || !resumeId) return;
+
+    setUploadError(null);
+    setIsParsingUpload(true);
+
+    try {
+      const updatedResume = await uploadAndParseIntoResume(resumeId, file);
+      setResume(updatedResume);
+
+      if (updatedResume.targetRole) {
+        setTargetRole(updatedResume.targetRole);
+      }
+    } catch (error) {
+      console.error(error);
+      setUploadError("Failed to parse this PDF. Please try a different file.");
+    } finally {
+      setIsParsingUpload(false);
+    }
+  };
+
   return (
     <>
       {/* backdrop */}
@@ -117,7 +148,30 @@ export default function ATSPanel({
               value={jobDescription}
               onChange={setJobDescription}
             />
-
+            {isResumeEmpty && (
+              <div className="rounded-xl border border-dashed border-primary/20 bg-background/60 p-4">
+                <label className="flex cursor-pointer flex-col items-center gap-2 text-center">
+                  <Upload className="h-5 w-5 text-primary/60" />
+                  <span className="text-xs font-semibold text-dark">
+                    {isParsingUpload
+                      ? "Parsing your resume..."
+                      : "Upload a PDF to autofill this resume"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    disabled={isParsingUpload}
+                    onChange={(e) => handleFileUpload(e.target.files?.[0])}
+                  />
+                </label>
+                {uploadError && (
+                  <p className="mt-2 text-xs font-semibold text-danger">
+                    {uploadError}
+                  </p>
+                )}
+              </div>
+            )}
             <button
               type="button"
               onClick={handleAnalyze}

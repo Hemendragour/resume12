@@ -1,7 +1,8 @@
 import { Bell, Search, Plus, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";
-
+import { useState } from "react";
+import { useCreateResume } from "../../resume/hooks/useCreateResume";
 export default function Navbar() {
   const navigate = useNavigate();
 
@@ -14,6 +15,30 @@ export default function Navbar() {
     }
 
     navigate("/templates");
+  };
+
+  const [isCreatingAtsResume, setIsCreatingAtsResume] = useState(false);
+  const createResumeMutation = useCreateResume();
+
+  const handleCheckATSScore = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    setIsCreatingAtsResume(true);
+
+    try {
+      const resume = await createResumeMutation.mutateAsync({
+        title: "Untitled Resume",
+      });
+
+      navigate(`/resume/${resume._id}/edit`, { state: { openAts: true } });
+    } catch (error) {
+      console.error("Failed to create resume for ATS check:", error);
+    } finally {
+      setIsCreatingAtsResume(false);
+    }
   };
 
   return (
@@ -45,6 +70,15 @@ export default function Navbar() {
         >
           <Plus size={18} />
           Create Resume
+        </button>
+
+        <button
+          type="button"
+          onClick={handleCheckATSScore}
+          disabled={isCreatingAtsResume}
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
         </button>
 
         {/* Notifications */}

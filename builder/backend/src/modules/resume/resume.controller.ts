@@ -9,7 +9,10 @@ import { AuthRequest } from "../../middleware/auth.middleware";
 import { getVisitorInfo } from "../../utils/visitor.util";
 import { createResumeSchema, updateResumeSchema } from "./resume.validation";
 import { analyticsService } from "../analytics/analytics.service";
-import { parseAndCreateResume } from "./resume-parse.service";
+import {
+  parseAndCreateResume,
+  parseAndFillResume,
+} from "./resume-parse.service";
 import crypto from "crypto";
 
 export const createResume = asyncHandler(
@@ -253,7 +256,9 @@ export const duplicateResume = asyncHandler(
       existingResume.toObject();
 
     const requestedTemplateId =
-      typeof req.body?.templateId === "string" ? req.body.templateId.trim() : "";
+      typeof req.body?.templateId === "string"
+        ? req.body.templateId.trim()
+        : "";
 
     const duplicatedResume = await Resume.create({
       ...resumeData,
@@ -372,6 +377,45 @@ export const getPublicResume = asyncHandler(
       ip,
       visitor.browser,
       visitor.device,
+    );
+
+    res.status(200).json({
+      success: true,
+      resume,
+    });
+  },
+);
+
+export const uploadAndParseIntoResume = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    if (!req.userId) {
+      throw new ApiError(401, "Unauthorized");
+    }
+
+    if (!req.file) {
+      throw new ApiError(400, "Please upload a PDF resume.");
+    }
+
+    // const resume = await parseAndFillResume({
+    //   userId: req.userId,
+    //   resumeId: req.params.id,
+    //   fileBuffer: req.file.buffer,
+    // });
+
+    const resumeId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+
+    const resume = await parseAndFillResume({
+      userId: req.userId,
+      resumeId,
+      fileBuffer: req.file.buffer,
+    });
+
+    await logActivity(
+      req.userId,
+      ActivityTypes.RESUME_UPDATED,
+      `Filled resume "${resume.title}" from an uploaded PDF`,
     );
 
     res.status(200).json({

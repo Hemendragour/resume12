@@ -116,3 +116,20 @@ export const uploadAndParseResume = async (file: File): Promise<Resume> => {
 
   return response.data.resume;
 };
+
+/**
+ * Upload a PDF resume, parse it, and fill an existing Resume document.
+ */
+export const uploadAndParseIntoResume = async (
+  id: string,
+  file: File,
+): Promise<Resume> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post(`/resumes/${id}/upload-and-parse`, formData, {
+    timeout: 120000,
+  });
+
+  return response.data.resume;
+};

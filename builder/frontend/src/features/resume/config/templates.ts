@@ -1,15 +1,23 @@
 import type { ResumeTemplate } from "../types/resume.types";
 
-import technicalClassic from "../../../assets/templates/technical-classic.png";
-import technicalDeveloper from "../../../assets/templates/technical-developer.png";
+import technicalClassic from "../../../assets/templates/technical_clasic.png";
+// import technicalClassic from "../../../assets/templates/technical-classic.png";
+import technicalDeveloper from "../../../assets/templates/technical_developer.png";
+// import technicalDeveloper from "../../../assets/templates/technical-developer.png";
 import modernProfessional from "../../../assets/templates/modern-professional.png";
-import minimalClean from "../../../assets/templates/minimal-clean.png";
+import minimalClean from "../../../assets/templates/MINIMALCLEAN.png";
+// import minimalClean from "../../../assets/templates/minimal-clean.png";
 import splitLabel from "../../../assets/templates/split-label.png";
-import corporateBand from "../../../assets/templates/corporate-band.png";
-import classicSerif from "../../../assets/templates/classic-serif.png";
-import corporateClassic from "../../../assets/templates/corporate-classic.png";
-import executiveBlue from "../../../assets/templates/executive-blue.png";
-import professionalModern from "../../../assets/templates/professional-modern.png";
+import corporateBand from "../../../assets/templates/coporate_band.png";
+// import corporateBand from "../../../assets/templates/corporate-band.png";
+import classicSerif from "../../../assets/templates/clasic-serif.png";
+// import classicSerif from "../../../assets/templates/classic-serif.png";
+import corporateClassic from "../../../assets/templates/coporate_classic.png";
+// import corporateClassic from "../../../assets/templates/corporate-classic.png";
+import executiveBlue from "../../../assets/templates/executive_blue.png";
+// import executiveBlue from "../../../assets/templates/executive-blue.png";
+import professionalModern from "../../../assets/templates/professional_modern.png";
+// import professionalModern from "../../../assets/templates/professional-modern.png";
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
 import harvardATS from "../../../assets/templates/harvard-ats.png";
 

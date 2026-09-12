@@ -13,6 +13,7 @@ import ProfessionalModernTemplate from "./ProfessionalModernTemplate";
 import ModernProfessionalTemplate from "../../templates/modern-professional/ModernProfessionalTemplate";
 import EnhancvModernTemplate from "../../templates/enhancv-modern/EnhancvModernTemplate";
 import HarvardATSTemplate from "../../templates/harvard-ats/HarvardATSTemplate";
+import LatexAtsTemplate from "../../templates/latex-ats/LatexAtsTemplate";
 
 export const ResumeTemplatesMap = {
   "technical-developer": TechnicalDeveloperTemplate,
@@ -26,6 +27,7 @@ export const ResumeTemplatesMap = {
   "executive-blue": ExecutiveBlueTemplate,
   "enhancv-modern": EnhancvModernTemplate,
   "harvard-ats": HarvardATSTemplate,
+  "latex-ats": LatexAtsTemplate,
 
   executive: ExecutiveTemplate,
   student: StudentTemplate,

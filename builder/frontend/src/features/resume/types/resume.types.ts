@@ -19,6 +19,7 @@ export const ResumeTemplates = {
 
   // NEW
   ENHANCV_MODERN: "enhancv-modern",
+  LATEX_ATS: "latex-ats",
 } as const;
 
 export type ResumeTemplate =

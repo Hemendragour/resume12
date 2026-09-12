@@ -17,7 +17,7 @@ export default function SkillsPreview() {
           "Skills"}
       </h2>
 
-      <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-1.5 text-[11.5px] text-slate-700">
+      <div className="mt-3 grid grid-cols-6 gap-x-6 gap-y-1.5 text-[11.5px] text-slate-700">
         {allSkills.map((skill, i) => (
           <span key={i} className="flex items-center gap-2">
             <span>•</span> {skill}

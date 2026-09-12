@@ -31,11 +31,11 @@ export default function ProjectsPreview() {
 
       <div className="mt-3 space-y-3">
         {resume.projects.map((proj, index) => {
-          const lines = (proj.description || "")
+          const bulletLines = (proj.description || [])
             .map((line) => line.trim())
             .filter(Boolean);
 
-          const [introLine, ...bulletLines] = lines;
+          const introLine = proj.highlight?.trim();
 
           return (
             <div key={index}>

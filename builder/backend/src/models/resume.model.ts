@@ -203,6 +203,7 @@ export interface IResume extends Document {
     endDate?: string;
     currentlyWorking?: boolean;
     description: string[];
+    highlight?: string;
     technologies: string[];
     github?: string;
     link?: string;
@@ -435,6 +436,10 @@ const resumeSchema = new Schema<IResume>(
         description: {
           type: [String],
           required: true,
+        },
+        highlight: {
+          type: String,
+          default: "",
         },
 
         technologies: {

@@ -62,6 +62,8 @@ const projectSchema = z.object({
 
   description: z.array(z.string()),
 
+  highlight: z.string().optional(),
+
   technologies: z.array(z.string()),
 
   link: z.union([z.string().url(), z.literal("")]).optional(),
@@ -119,9 +121,6 @@ export const createResumeSchema = z.object({
       email: z.union([z.string().email(), z.literal("")]).optional(),
       phone: z.string().optional(),
       address: z.string().optional(),
-      // linkedIn: z.union([z.string().url(), z.literal("")]).optional(),
-      // github: z.union([z.string().url(), z.literal("")]).optional(),
-      // portfolio: z.union([z.string().url(), z.literal("")]).optional(),
       linkedIn: z.union([z.string().url(), z.literal("")]).optional(),
       github: z.union([z.string().url(), z.literal("")]).optional(),
       portfolio: z.union([z.string().url(), z.literal("")]).optional(),

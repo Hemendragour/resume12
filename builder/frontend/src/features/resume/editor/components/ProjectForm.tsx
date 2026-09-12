@@ -1,4 +1,3 @@
-// ProjectForm.tsx
 import { useEffect, useState } from "react";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
 import MonthYearPicker from "./MonthYearPicker";
@@ -20,6 +19,7 @@ interface ProjectFormData {
   title: string;
   role: string;
   description: { value: string }[];
+  highlight: string;
   startDate: string;
   endDate: string;
   currentlyWorking: boolean;
@@ -35,6 +35,8 @@ export default function ProjectForm({
 }: Props) {
   const addProject = useResumeStore((state) => state.addProject);
   const updateProject = useResumeStore((state) => state.updateProject);
+  const templateId = useResumeStore((state) => state.resume?.templateId);
+  const isExecutiveBlue = templateId === "executive-blue";
 
   const [technology, setTechnology] = useState("");
   const [showContextModal, setShowContextModal] = useState(false);
@@ -52,6 +54,7 @@ export default function ProjectForm({
       title: "",
       role: "",
       description: [{ value: "" }],
+      highlight: "",
       startDate: "",
       endDate: "",
       currentlyWorking: false,
@@ -92,6 +95,8 @@ export default function ProjectForm({
         description: (initialData.description || []).map((description) => ({
           value: description,
         })),
+
+        highlight: initialData.highlight || "",
 
         startDate: initialData.startDate || "",
         endDate: initialData.endDate || "",
@@ -248,6 +253,8 @@ export default function ProjectForm({
         .map((item) => item.value.trim())
         .filter(Boolean),
 
+      highlight: isExecutiveBlue ? (data.highlight?.trim() ?? "") : "",
+
       startDate: data.startDate,
 
       endDate: data.currentlyWorking ? "" : data.endDate,
@@ -320,6 +327,16 @@ export default function ProjectForm({
         placeholder="Full Stack Developer"
         {...register("role")}
       />
+
+      {/* HIGHLIGHT LINE — Executive Blue template only */}
+
+      {isExecutiveBlue && (
+        <Input
+          label="Highlight Line (shown above your bullet points)"
+          placeholder="One standout line that summarizes this project's impact"
+          {...register("highlight")}
+        />
+      )}
 
       {/* DESCRIPTION */}
 

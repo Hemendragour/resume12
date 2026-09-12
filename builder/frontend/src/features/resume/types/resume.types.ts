@@ -83,19 +83,13 @@ export interface Education {
 
 export interface Project {
   title: string;
-
   role?: string;
-
   startDate: string;
-
   endDate?: string;
-
   currentlyWorking?: boolean;
-
   description: string[];
-
+  highlight?: string;
   technologies: string[];
-
   github?: string;
 
   link?: string;

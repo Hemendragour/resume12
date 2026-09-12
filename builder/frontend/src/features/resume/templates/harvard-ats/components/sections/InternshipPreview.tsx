@@ -74,7 +74,7 @@ export default function InternshipPreview() {
               <ul
                 className={`
                   ${T.list.bullet}
-                  ${T.spacing.itemHeader}
+                 
                   ${T.spacing.bullet}
                   ${T.fontSize.body}
                   ${T.lineHeight.body}

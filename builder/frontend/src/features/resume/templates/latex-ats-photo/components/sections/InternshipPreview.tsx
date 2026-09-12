@@ -2,20 +2,19 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
-import { HarvardATSTheme as T } from "../theme.harvard-ats";
-import RichText from "../../../../components/RichText";
+import { LatexATSPhotoTheme as T } from "../theme.latex-ats-photo";
 
-export default function ExperiencePreview() {
+export default function InternshipPreview() {
   const resume = useResumeStore((state) => state.resume);
 
   if (!resume) return null;
 
-  const experience = resume.experience ?? [];
+  const internships = resume.internships ?? [];
 
-  if (!experience.length) return null;
+  if (!internships.length) return null;
 
   const section = resume.sections.find(
-    (section) => section.type === "experience",
+    (section) => section.type === "internships",
   );
 
   return (
@@ -24,14 +23,14 @@ export default function ExperiencePreview() {
         title={
           section?.displayTitle?.trim()
             ? section.displayTitle
-            : section?.title || "Professional Experience"
+            : section?.title || "Internships"
         }
       />
 
-      <div className={`${T.spacing.itemHeader} ${T.experience.container}`}>
-        {experience.map((item, index) => (
+      <div className={`${T.spacing.itemHeader} space-y-5`}>
+        {internships.map((item, index) => (
           <div key={index}>
-            {/* Company + Date */}
+            {/* Header */}
             <div className={T.layout.between}>
               <div>
                 <h3
@@ -47,11 +46,11 @@ export default function ExperiencePreview() {
                 <p
                   className={`
                     ${T.fontSize.itemSubtitle}
-                    ${T.colors.body}
                     italic
+                    ${T.colors.body}
                   `}
                 >
-                  {item.position}
+                  {item.role}
                 </p>
               </div>
 
@@ -63,66 +62,48 @@ export default function ExperiencePreview() {
                   `}
                 >
                   {formatMonthYear(item.startDate)} -{" "}
-                  {item.currentlyWorking
+                  {item.currentlyInterning
                     ? "Present"
                     : formatMonthYear(item.endDate) || "Present"}
                 </p>
-
-                {item.location && (
-                  <p
-                    className={`
-                      ${T.fontSize.location}
-                      ${T.colors.muted}
-                    `}
-                  >
-                    {item.location}
-                  </p>
-                )}
               </div>
             </div>
 
             {/* Responsibilities */}
-            {item.responsibilities?.length > 0 && (
+            {item.responsibilities.length > 0 && (
               <ul
                 className={`
                   ${T.list.bullet}
-                
+                  ${T.spacing.itemHeader}
                   ${T.spacing.bullet}
                   ${T.fontSize.body}
                   ${T.lineHeight.body}
                   ${T.colors.body}
                 `}
               >
-                {/* {item.responsibilities.map((point, i) => (
-                  <li key={i}>{point}</li>
-                ))} */}
-
                 {item.responsibilities.map((point, i) => (
-                  <li key={i}>
-                    <RichText text={point} />
-                  </li>
+                  <li key={i}>{point}</li>
                 ))}
               </ul>
             )}
 
             {/* Achievements */}
-            {/* Achievements */}
-            {item.achievements?.length ? (
+            {item.achievements.length > 0 && (
               <ul
                 className={`
-      ${T.list.bullet}
-      ${T.spacing.itemHeader}
-      ${T.spacing.bullet}
-      ${T.fontSize.body}
-      ${T.lineHeight.body}
-      ${T.colors.body}
-    `}
+                  ${T.list.bullet}
+                  ${T.spacing.itemHeader}
+                  ${T.spacing.bullet}
+                  ${T.fontSize.body}
+                  ${T.lineHeight.body}
+                  ${T.colors.body}
+                `}
               >
                 {item.achievements.map((point, i) => (
                   <li key={i}>{point}</li>
                 ))}
               </ul>
-            ) : null}
+            )}
           </div>
         ))}
       </div>

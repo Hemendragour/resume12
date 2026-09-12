@@ -2,7 +2,7 @@ import { useResumeStore } from "../../../../../../store/resume.store";
 import { formatMonthYear } from "../../../../editor/utils/formatDate";
 
 import SectionHeader from "../shared/SectionHeader";
-import { HarvardATSTheme as T } from "../theme.harvard-ats";
+import { LatexATSPhotoTheme as T } from "../theme.latex-ats-photo";
 import RichText from "../../../../components/RichText";
 
 export default function ExperiencePreview() {
@@ -86,7 +86,7 @@ export default function ExperiencePreview() {
               <ul
                 className={`
                   ${T.list.bullet}
-                
+                  ${T.spacing.itemHeader}
                   ${T.spacing.bullet}
                   ${T.fontSize.body}
                   ${T.lineHeight.body}

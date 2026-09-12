@@ -21,6 +21,7 @@ import professionalModern from "../../../assets/templates/professional_modern.pn
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
 import harvardATS from "../../../assets/templates/harvard-ats.png";
 import latexAts from "../../../assets/templates/latex-ats.png";
+import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -94,6 +95,15 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAts,
+  },
+  {
+    id: "latex-ats-photo",
+    name: "LaTeX ATS (Photo)",
+    description:
+      "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
+    ats: "97% ATS",
+    color: "bg-card",
+    image: latexAtsPhoto,
   },
   {
     id: "corporate-band",

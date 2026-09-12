@@ -30,9 +30,6 @@ export default function ProfessionalModernTemplate() {
       `}
     >
       {/* =====================================================
-          HEADER
-      ====================================================== */}
-      {/* =====================================================
     HEADER
 ====================================================== */}
       <div
@@ -40,19 +37,20 @@ export default function ProfessionalModernTemplate() {
     ${T.colors.header}
     ${T.radius.header}
     px-8
-    py-6   
+    py-10
     flex
     justify-between
     items-start
   `}
       >
-        {/* LEFT */}
+        {/* LEFT — NAME / TITLE / ADDRESS */}
         <div className="min-w-0 flex-1">
           <h1
             className={`
         ${T.fontSize.name}
         font-extrabold
         tracking-wide
+        leading-none
         ${T.colors.heading}
       `}
           >
@@ -65,6 +63,7 @@ export default function ProfessionalModernTemplate() {
         font-semibold
         uppercase
         tracking-wide
+        leading-tight
         ${T.fontSize.title}
         ${T.colors.body}
       `}
@@ -72,14 +71,12 @@ export default function ProfessionalModernTemplate() {
             {personalInfo.title}
           </p>
 
-          {/* ADDRESS */}
           {personalInfo.address && (
             <div
               className={`
           mt-2
           flex
           items-center
-          gap-2
           ${T.fontSize.contact}
           ${T.colors.body}
         `}
@@ -93,7 +90,9 @@ export default function ProfessionalModernTemplate() {
         <div
           className={`
       shrink-0
-      space-y-2
+      flex
+      flex-col
+      items-end
       text-right
       ${T.fontSize.contact}
       ${T.colors.body}
@@ -101,7 +100,7 @@ export default function ProfessionalModernTemplate() {
         >
           {/* PHONE */}
           {personalInfo.phone && (
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-2 leading-tight">
               <Phone size={14} />
               <span>{personalInfo.phone}</span>
             </div>
@@ -109,7 +108,7 @@ export default function ProfessionalModernTemplate() {
 
           {/* EMAIL */}
           {personalInfo.email && (
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-2 leading-tight mt-1">
               <Mail size={14} />
               <span>{personalInfo.email}</span>
             </div>
@@ -117,7 +116,7 @@ export default function ProfessionalModernTemplate() {
 
           {/* LINKEDIN */}
           {personalInfo.linkedIn && (
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-2 leading-tight mt-1">
               <FaLinkedin size={14} />
 
               <a
@@ -137,7 +136,7 @@ export default function ProfessionalModernTemplate() {
 
           {/* GITHUB */}
           {personalInfo.github && (
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-2 leading-tight mt-1">
               <FaGithub size={14} />
 
               <a
@@ -156,18 +155,10 @@ export default function ProfessionalModernTemplate() {
           )}
         </div>
       </div>
+
       {/* =====================================================
           RESUME BODY
       ====================================================== */}
-      {/* <div
-        className="
-          w-full
-          h-[calc(100%-120px)]
-          overflow-hidden
-          px-8
-          pt-6
-        "
-      > */}
 
       <div
         className="

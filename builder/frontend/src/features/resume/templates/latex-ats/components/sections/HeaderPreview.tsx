@@ -50,14 +50,18 @@ export default function HeaderPreview() {
           ${T.layout.wrapCenter}
           ${T.fontSize.contact}
           ${T.colors.body}
+          [font-variant-numeric:lining-nums]
           mt-1.5
           gap-x-3 gap-y-1
           w-full
         `}
       >
         {personalInfo.phone && (
-          <span className="flex items-center gap-1">
-            <Phone size={11} className="shrink-0" color={T.iconColors.body} />
+          // <span className="flex items-center gap-1">
+          //   <Phone size={11} className="shrink-0" color={T.iconColors.body} />
+          //   {personalInfo.phone}
+          // </span>
+          <span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
             {personalInfo.phone}
           </span>
         )}
@@ -86,7 +90,11 @@ export default function HeaderPreview() {
             rel="noreferrer"
             className="flex items-center gap-1 hover:underline break-all"
           >
-            <FaLinkedin size={11} className="shrink-0" color={T.iconColors.body} />
+            <FaLinkedin
+              size={11}
+              className="shrink-0"
+              color={T.iconColors.body}
+            />
             LinkedIn
           </a>
         )}
@@ -98,7 +106,11 @@ export default function HeaderPreview() {
             rel="noreferrer"
             className="flex items-center gap-1 hover:underline break-all"
           >
-            <FaGithub size={11} className="shrink-0" color={T.iconColors.body} />
+            <FaGithub
+              size={11}
+              className="shrink-0"
+              color={T.iconColors.body}
+            />
             GitHub
           </a>
         )}

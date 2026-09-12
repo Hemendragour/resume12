@@ -140,11 +140,19 @@ export default function HeaderPreview() {
             className={`
               ${T.fontFamily.body}
               ${T.fontSize.contact}
+              [font-variant-numeric:lining-nums]
               ${T.colors.body}
               mt-2 space-y-1
             `}
           >
-            {personalInfo.phone && <p>Phone: {personalInfo.phone}</p>}
+            {personalInfo.phone && (
+              <p>
+                Phone:{" "}
+                <span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  {personalInfo.phone}
+                </span>
+              </p>
+            )}
 
             {personalInfo.email && (
               <p>

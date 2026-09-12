@@ -1,28 +1,28 @@
 import type { ResumeTemplate } from "../types/resume.types";
 
-// import technicalClassic from "../../../assets/templates/technical_clasic.png";
-// import technicalClassic from "../../../assets/templates/technical-classic.png";
-import technicalDeveloper from "../../../assets/templates/technical_developer.png";
+import technicalDeveloper from "../../../assets/templates/technical developer.png";
+// import technicalDeveloper from "../../../assets/templates/technical_developer.png";
 // import technicalDeveloper from "../../../assets/templates/technical-developer.png";
 import modernProfessional from "../../../assets/templates/modern-professional.png";
 // import minimalClean from "../../../assets/templates/MINIMALCLEAN.png";
 // import minimalClean from "../../../assets/templates/minimal-clean.png";
 import splitLabel from "../../../assets/templates/split-label.png";
-import corporateBand from "../../../assets/templates/coporate_band.png";
+import corporateBand from "../../../assets/templates/coporate band.png";
 // import corporateBand from "../../../assets/templates/corporate-band.png";
-import classicSerif from "../../../assets/templates/clasic-serif.png";
+// import classicSerif from "../../../assets/templates/clasic-serif.png";
 // import classicSerif from "../../../assets/templates/classic-serif.png";
 import corporateClassic from "../../../assets/templates/coporate_classic.png";
 // import corporateClassic from "../../../assets/templates/corporate-classic.png";
 import executiveBlue from "../../../assets/templates/executive_blue.png";
 // import executiveBlue from "../../../assets/templates/executive-blue.png";
-import professionalModern from "../../../assets/templates/professional_modern.png";
+import professionalModern from "../../../assets/templates/professional modern.png";
+// import professionalModern from "../../../assets/templates/professional_modern.png";
 // import professionalModern from "../../../assets/templates/professional-modern.png";
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
-import harvardATS from "../../../assets/templates/harvard-ats.png";
-import latexAts from "../../../assets/templates/latex-ats.png";
+// import harvardATS from "../../../assets/templates/harvard-ats.png";
+// import latexAts from "../../../assets/templates/latex-ats.png";
 import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
-import latexAtsV2 from "../../../assets/templates/latex-ats-v2.png";
+import latexAtsV2 from "../../../assets/templates/latex-ats-nophoto.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -79,33 +79,33 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: enhancvModern,
   },
-  {
-    id: "harvard-ats",
-    name: "Harvard ATS",
-    description:
-      "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
-    ats: "99% ATS",
-    color: "bg-card",
-    image: harvardATS,
-  },
-  {
-    id: "latex-ats",
-    name: "LaTeX ATS",
-    description:
-      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
-    ats: "99% ATS",
-    color: "bg-card",
-    image: latexAts,
-  },
-  {
-    id: "latex-ats-photo",
-    name: "LaTeX ATS (Photo)",
-    description:
-      "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
-    ats: "97% ATS",
-    color: "bg-card",
-    image: latexAtsPhoto,
-  },
+  // {
+  //   id: "harvard-ats",
+  //   name: "Harvard ATS",
+  //   description:
+  //     "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
+  //   ats: "99% ATS",
+  //   color: "bg-card",
+  //   image: harvardATS,
+  // },
+  // {
+  //   id: "latex-ats",
+  //   name: "LaTeX ATS",
+  //   description:
+  //     "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+  //   ats: "99% ATS",
+  //   color: "bg-card",
+  //   image: latexAts,
+  // },
+  // {
+  //   id: "latex-ats-photo",
+  //   name: "LaTeX ATS (Photo)",
+  //   description:
+  //     "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
+  //   ats: "97% ATS",
+  //   color: "bg-card",
+  //   image: latexAtsPhoto,
+  // },
   {
     id: "latex-ats-v2",
     name: "LaTeX ATS (No Photo)",
@@ -124,14 +124,14 @@ export const templates: TemplateOption[] = [
     image: corporateBand,
   },
 
-  {
-    id: "classic-serif",
-    name: "Classic Serif",
-    description: "Centered serif header, elegant single-column layout",
-    ats: "98% ATS",
-    color: "bg-card",
-    image: classicSerif,
-  },
+  // {
+  //   id: "classic-serif",
+  //   name: "Classic Serif",
+  //   description: "Centered serif header, elegant single-column layout",
+  //   ats: "98% ATS",
+  //   color: "bg-card",
+  //   image: classicSerif,
+  // },
 
   {
     id: "corporate-classic",

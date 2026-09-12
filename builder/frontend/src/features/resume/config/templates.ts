@@ -22,6 +22,7 @@ import enhancvModern from "../../../assets/templates/enhancv-modern.png";
 import harvardATS from "../../../assets/templates/harvard-ats.png";
 import latexAts from "../../../assets/templates/latex-ats.png";
 import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
+import latexAtsV2 from "../../../assets/templates/latex-ats-v2.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -104,6 +105,15 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: latexAtsPhoto,
+  },
+  {
+    id: "latex-ats-v2",
+    name: "LaTeX ATS (No Photo)",
+    description:
+      "Same as LaTeX ATS Photo but full-width header with labeled contact lines and no profile photo",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsV2,
   },
   {
     id: "corporate-band",

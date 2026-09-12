@@ -21,6 +21,7 @@ export const ResumeTemplates = {
   ENHANCV_MODERN: "enhancv-modern",
   LATEX_ATS: "latex-ats",
   LATEX_ATS_PHOTO: "latex-ats-photo",
+  LATEX_ATS_V2: "latex-ats-v2",
 } as const;
 
 export type ResumeTemplate =

@@ -15,6 +15,7 @@ import EnhancvModernTemplate from "../../templates/enhancv-modern/EnhancvModernT
 import HarvardATSTemplate from "../../templates/harvard-ats/HarvardATSTemplate";
 import LatexAtsTemplate from "../../templates/latex-ats/LatexAtsTemplate";
 import LatexAtsPhotoTemplate from "../../templates/latex-ats-photo/LatexAtsPhotoTemplate";
+import LatexAtsV2Template from "../../templates/latex-ats-v2/LatexAtsV2Template";
 
 export const ResumeTemplatesMap = {
   "technical-developer": TechnicalDeveloperTemplate,
@@ -30,6 +31,7 @@ export const ResumeTemplatesMap = {
   "harvard-ats": HarvardATSTemplate,
   "latex-ats": LatexAtsTemplate,
   "latex-ats-photo": LatexAtsPhotoTemplate,
+  "latex-ats-v2": LatexAtsV2Template,
 
   executive: ExecutiveTemplate,
   student: StudentTemplate,

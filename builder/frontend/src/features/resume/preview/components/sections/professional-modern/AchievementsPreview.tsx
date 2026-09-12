@@ -32,7 +32,8 @@ export default function AchievementsPreview() {
         className={`
           mt-2
           list-disc
-          list-inside
+          list-outside
+          pl-5
           space-y-1
           ${T.fontSize.body}
           ${T.colors.body}

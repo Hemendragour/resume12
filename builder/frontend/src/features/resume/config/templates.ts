@@ -19,11 +19,12 @@ import professionalModern from "../../../assets/templates/professional_modern.pn
 // import professionalModern from "../../../assets/templates/professional_modern.png";
 // import professionalModern from "../../../assets/templates/professional-modern.png";
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
-// import harvardATS from "../../../assets/templates/harvard-ats.png";
-// import latexAts from "../../../assets/templates/latex-ats.png";
+import harvardATS from "../../../assets/templates/harvard-ats.png";
+import latexAts from "../../../assets/templates/latex-ats.png";
 import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
 import latexAtsV2 from "../../../assets/templates/latex-ats-v2.png";
 import executiveSidebar from "../../../assets/templates/executive-sidebar.png";
+import latexSidebar from "../../../assets/templates/latex-sidebar.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -80,33 +81,33 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: enhancvModern,
   },
-  // {
-  //   id: "harvard-ats",
-  //   name: "Harvard ATS",
-  //   description:
-  //     "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
-  //   ats: "99% ATS",
-  //   color: "bg-card",
-  //   image: harvardATS,
-  // },
-  // {
-  //   id: "latex-ats",
-  //   name: "LaTeX ATS",
-  //   description:
-  //     "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
-  //   ats: "99% ATS",
-  //   color: "bg-card",
-  //   image: latexAts,
-  // },
-  // {
-  //   id: "latex-ats-photo",
-  //   name: "LaTeX ATS (Photo)",
-  //   description:
-  //     "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
-  //   ats: "97% ATS",
-  //   color: "bg-card",
-  //   image: latexAtsPhoto,
-  // },
+  {
+    id: "harvard-ats",
+    name: "Harvard ATS",
+    description:
+      "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: harvardATS,
+  },
+  {
+    id: "latex-ats",
+    name: "LaTeX ATS",
+    description:
+      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAts,
+  },
+  {
+    id: "latex-ats-photo",
+    name: "LaTeX ATS (Photo)",
+    description:
+      "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
+    ats: "97% ATS",
+    color: "bg-card",
+    image: latexAtsPhoto,
+  },
   {
     id: "latex-ats-v2",
     name: "LaTeX ATS (No Photo)",
@@ -124,6 +125,15 @@ export const templates: TemplateOption[] = [
     ats: "92% ATS",
     color: "bg-card",
     image: executiveSidebar,
+  },
+  {
+    id: "latex-sidebar",
+    name: "LaTeX Sidebar",
+    description:
+      "Two-column sidebar resume inspired by LaTeX — light sidebar for personal info, skills, languages & certificates; clean white main panel for experience, education and projects",
+    ats: "95% ATS",
+    color: "bg-card",
+    image: latexSidebar,
   },
   {
     id: "corporate-band",

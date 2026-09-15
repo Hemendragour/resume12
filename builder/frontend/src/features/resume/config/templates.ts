@@ -23,6 +23,7 @@ import enhancvModern from "../../../assets/templates/enhancv-modern.png";
 // import latexAts from "../../../assets/templates/latex-ats.png";
 import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
 import latexAtsV2 from "../../../assets/templates/latex-ats-v2.png";
+import executiveSidebar from "../../../assets/templates/executive-sidebar.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -114,6 +115,15 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAtsV2,
+  },
+  {
+    id: "executive-sidebar",
+    name: "Executive Sidebar",
+    description:
+      "One-page sidebar resume with photo, contact, skills and languages on the left; a navy highlight bar for name/profession only, plain dates and clean white body on the right",
+    ats: "92% ATS",
+    color: "bg-card",
+    image: executiveSidebar,
   },
   {
     id: "corporate-band",

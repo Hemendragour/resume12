@@ -16,6 +16,7 @@ import HarvardATSTemplate from "../../templates/harvard-ats/HarvardATSTemplate";
 import LatexAtsTemplate from "../../templates/latex-ats/LatexAtsTemplate";
 import LatexAtsPhotoTemplate from "../../templates/latex-ats-photo/LatexAtsPhotoTemplate";
 import LatexAtsV2Template from "../../templates/latex-ats-v2/LatexAtsV2Template";
+import ExecutiveSidebarTemplate from "../../templates/executive-sidebar/ExecutiveSidebarTemplate";
 
 export const ResumeTemplatesMap = {
   "technical-developer": TechnicalDeveloperTemplate,
@@ -32,6 +33,7 @@ export const ResumeTemplatesMap = {
   "latex-ats": LatexAtsTemplate,
   "latex-ats-photo": LatexAtsPhotoTemplate,
   "latex-ats-v2": LatexAtsV2Template,
+  "executive-sidebar": ExecutiveSidebarTemplate,
 
   executive: ExecutiveTemplate,
   student: StudentTemplate,

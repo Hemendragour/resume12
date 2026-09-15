@@ -22,6 +22,7 @@ export const ResumeTemplates = {
   LATEX_ATS: "latex-ats",
   LATEX_ATS_PHOTO: "latex-ats-photo",
   LATEX_ATS_V2: "latex-ats-v2",
+  EXECUTIVE_SIDEBAR: "executive-sidebar",
 } as const;
 
 export type ResumeTemplate =

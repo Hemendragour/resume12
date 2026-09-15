@@ -1,8 +1,9 @@
-import { Bell, Search, Plus, ChevronDown } from "lucide-react";
+import { Bell, Search, Plus, ChevronDown, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";
 import { useState } from "react";
 import { useCreateResume } from "../../resume/hooks/useCreateResume";
+import UploadResumeModal from "../../resume/components/UploadResumeModal";
 export default function Navbar() {
   const navigate = useNavigate();
 
@@ -19,6 +20,16 @@ export default function Navbar() {
 
   const [isCreatingAtsResume, setIsCreatingAtsResume] = useState(false);
   const createResumeMutation = useCreateResume();
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const handleOpenUploadResume = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    setIsUploadModalOpen(true);
+  };
 
   const handleCheckATSScore = async () => {
     if (!user) {
@@ -81,6 +92,17 @@ export default function Navbar() {
           {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
         </button>
 
+        {/* Upload Resume */}
+
+        <button
+          type="button"
+          onClick={handleOpenUploadResume}
+          className="inline-flex items-center gap-2 rounded-xl border border-primary/50 px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
+        >
+          <Upload size={18} />
+          Upload Resume
+        </button>
+
         {/* Notifications */}
 
         <button className="relative rounded-xl border border-primary/50 p-3 transition hover:bg-background">
@@ -109,6 +131,11 @@ export default function Navbar() {
           <ChevronDown size={18} className="text-primary/70" />
         </button>
       </div>
+
+      <UploadResumeModal
+        open={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </header>
   );
 }

@@ -1,0 +1,385 @@
+diff --git a/builder/backend/src/modules/resume/resume-parse.service.ts b/builder/backend/src/modules/resume/resume-parse.service.ts
+index 7bacbb0..f7de802 100644
+--- a/builder/backend/src/modules/resume/resume-parse.service.ts
++++ b/builder/backend/src/modules/resume/resume-parse.service.ts
+@@ -345,6 +345,7 @@ export const parseAndCreateResume = async (params: {
+   userId: string;
+   fileBuffer: Buffer;
+   originalFilename?: string;
++  templateId?: string;
+ }) => {
+   const text = await extractTextFromPdf(params.fileBuffer);
+   const regexContact = extractContactWithRegex(text);
+@@ -371,7 +372,7 @@ export const parseAndCreateResume = async (params: {
+       ? `${fullName}'s Resume`
+       : titleFromFilename(params.originalFilename),
+     targetRole: merged.personalInfo.title,
+-    templateId: ResumeTemplates.TECHNICAL,
++    templateId: params.templateId || ResumeTemplates.TECHNICAL,
+     sections: DefaultResumeSections,
+     version: 1,
+     status: ResumeStatus.DRAFT,
+diff --git a/builder/backend/src/modules/resume/resume.controller.ts b/builder/backend/src/modules/resume/resume.controller.ts
+index 9ab3d7e..f27cad8 100644
+--- a/builder/backend/src/modules/resume/resume.controller.ts
++++ b/builder/backend/src/modules/resume/resume.controller.ts
+@@ -82,10 +82,16 @@ export const uploadAndParseResume = asyncHandler(
+       throw new ApiError(400, "Please upload a PDF resume.");
+     }
+ 
++    const requestedTemplateId =
++      typeof req.body?.templateId === "string"
++        ? req.body.templateId.trim()
++        : undefined;
++
+     const resume = await parseAndCreateResume({
+       userId: req.userId,
+       fileBuffer: req.file.buffer,
+       originalFilename: req.file.originalname,
++      templateId: requestedTemplateId || undefined,
+     });
+ 
+     await analyticsService.createAnalytics(resume._id.toString(), req.userId);
+diff --git a/builder/frontend/src/features/dashboard/components/Navbar.tsx b/builder/frontend/src/features/dashboard/components/Navbar.tsx
+index 3688fa2..1a2c4d8 100644
+--- a/builder/frontend/src/features/dashboard/components/Navbar.tsx
++++ b/builder/frontend/src/features/dashboard/components/Navbar.tsx
+@@ -1,8 +1,9 @@
+-import { Bell, Search, Plus, ChevronDown } from "lucide-react";
++import { Bell, Search, Plus, ChevronDown, Upload } from "lucide-react";
+ import { useNavigate } from "react-router-dom";
+ import { useAuthStore } from "../../../store/auth.store";
+ import { useState } from "react";
+ import { useCreateResume } from "../../resume/hooks/useCreateResume";
++import UploadResumeModal from "../../resume/components/UploadResumeModal";
+ export default function Navbar() {
+   const navigate = useNavigate();
+ 
+@@ -19,6 +20,16 @@ export default function Navbar() {
+ 
+   const [isCreatingAtsResume, setIsCreatingAtsResume] = useState(false);
+   const createResumeMutation = useCreateResume();
++  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
++
++  const handleOpenUploadResume = () => {
++    if (!user) {
++      navigate("/login");
++      return;
++    }
++
++    setIsUploadModalOpen(true);
++  };
+ 
+   const handleCheckATSScore = async () => {
+     if (!user) {
+@@ -81,6 +92,17 @@ export default function Navbar() {
+           {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
+         </button>
+ 
++        {/* Upload Resume */}
++
++        <button
++          type="button"
++          onClick={handleOpenUploadResume}
++          className="inline-flex items-center gap-2 rounded-xl border border-primary/50 px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
++        >
++          <Upload size={18} />
++          Upload Resume
++        </button>
++
+         {/* Notifications */}
+ 
+         <button className="relative rounded-xl border border-primary/50 p-3 transition hover:bg-background">
+@@ -109,6 +131,11 @@ export default function Navbar() {
+           <ChevronDown size={18} className="text-primary/70" />
+         </button>
+       </div>
++
++      <UploadResumeModal
++        open={isUploadModalOpen}
++        onClose={() => setIsUploadModalOpen(false)}
++      />
+     </header>
+   );
+ }
+diff --git a/builder/frontend/src/features/resume/components/UploadResumeModal.tsx b/builder/frontend/src/features/resume/components/UploadResumeModal.tsx
+new file mode 100644
+index 0000000..6847cd8
+--- /dev/null
++++ b/builder/frontend/src/features/resume/components/UploadResumeModal.tsx
+@@ -0,0 +1,223 @@
++import { useRef, useState } from "react";
++import { useNavigate } from "react-router-dom";
++import { ArrowLeft, FileText, Loader2, UploadCloud } from "lucide-react";
++
++import Modal from "../../../components/ui/Modal";
++import { templates } from "../config/templates";
++import { useUploadAndParseResume } from "../hooks/useUploadAndParseResume";
++import type { ResumeTemplate } from "../types/resume.types";
++
++interface Props {
++  open: boolean;
++  onClose: () => void;
++}
++
++type Step = "template" | "upload";
++
++const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB, matches backend limit
++
++export default function UploadResumeModal({ open, onClose }: Props) {
++  const navigate = useNavigate();
++  const uploadMutation = useUploadAndParseResume();
++
++  const [step, setStep] = useState<Step>("template");
++  const [selectedTemplateId, setSelectedTemplateId] =
++    useState<ResumeTemplate | null>(null);
++  const [selectedFile, setSelectedFile] = useState<File | null>(null);
++  const [error, setError] = useState<string | null>(null);
++  const [isDragging, setIsDragging] = useState(false);
++
++  const fileInputRef = useRef<HTMLInputElement>(null);
++
++  const resetState = () => {
++    setStep("template");
++    setSelectedTemplateId(null);
++    setSelectedFile(null);
++    setError(null);
++    setIsDragging(false);
++  };
++
++  const handleClose = () => {
++    if (uploadMutation.isPending) return;
++    resetState();
++    onClose();
++  };
++
++  const handleSelectTemplate = (templateId: ResumeTemplate) => {
++    setSelectedTemplateId(templateId);
++    setError(null);
++    setStep("upload");
++  };
++
++  const validateAndSetFile = (file: File | undefined) => {
++    if (!file) return;
++
++    if (file.type !== "application/pdf") {
++      setError("Please upload a PDF file.");
++      return;
++    }
++
++    if (file.size > MAX_FILE_SIZE) {
++      setError("PDF must be 5MB or smaller.");
++      return;
++    }
++
++    setError(null);
++    setSelectedFile(file);
++  };
++
++  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++    validateAndSetFile(e.target.files?.[0]);
++  };
++
++  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
++    e.preventDefault();
++    setIsDragging(false);
++    validateAndSetFile(e.dataTransfer.files?.[0]);
++  };
++
++  const handleUpload = async () => {
++    if (!selectedFile || !selectedTemplateId) return;
++
++    setError(null);
++
++    try {
++      const resume = await uploadMutation.mutateAsync({
++        file: selectedFile,
++        templateId: selectedTemplateId,
++      });
++
++      resetState();
++      onClose();
++      navigate(`/resume/${resume._id}/edit`);
++    } catch (err) {
++      console.error(err);
++      setError(
++        "Failed to parse your resume. Please check the file and try again.",
++      );
++    }
++  };
++
++  return (
++    <Modal
++      open={open}
++      onClose={handleClose}
++      title="Upload Resume"
++      description={
++        step === "template"
++          ? "Choose a template for your uploaded resume."
++          : "Upload your existing resume as a PDF. We'll parse it into your chosen template."
++      }
++      size={step === "template" ? "xl" : "md"}
++    >
++      {error && (
++        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
++          {error}
++        </p>
++      )}
++
++      {step === "template" && (
++        <div className="grid max-h-[70vh] grid-cols-1 gap-5 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
++          {templates.map((template) => (
++            <button
++              key={template.id}
++              type="button"
++              onClick={() => handleSelectTemplate(template.id)}
++              className={`relative text-left border rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 border-primary/10 ${template.color}`}
++            >
++              <div className="mb-4 flex justify-center">
++                <div className="overflow-hidden rounded-lg bg-white shadow-md">
++                  <img
++                    src={template.image}
++                    alt={template.name}
++                    className="w-full h-auto block"
++                  />
++                </div>
++              </div>
++              <h3 className="font-semibold text-lg">{template.name}</h3>
++              <span className="inline-block mt-3 text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
++                {template.ats}
++              </span>
++            </button>
++          ))}
++        </div>
++      )}
++
++      {step === "upload" && (
++        <div>
++          <button
++            type="button"
++            onClick={() => {
++              setStep("template");
++              setError(null);
++            }}
++            disabled={uploadMutation.isPending}
++            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary/70 hover:text-primary disabled:opacity-50"
++          >
++            <ArrowLeft size={16} />
++            Choose a different template
++          </button>
++
++          <input
++            ref={fileInputRef}
++            type="file"
++            accept="application/pdf"
++            hidden
++            onChange={handleFileInputChange}
++          />
++
++          <div
++            onClick={() => fileInputRef.current?.click()}
++            onDragOver={(e) => {
++              e.preventDefault();
++              setIsDragging(true);
++            }}
++            onDragLeave={() => setIsDragging(false)}
++            onDrop={handleDrop}
++            className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition ${
++              isDragging
++                ? "border-accent bg-accent/5"
++                : "border-primary/20 hover:border-primary/40"
++            }`}
++          >
++            {selectedFile ? (
++              <>
++                <FileText size={32} className="text-accent" />
++                <p className="text-sm font-medium text-dark">
++                  {selectedFile.name}
++                </p>
++                <p className="text-xs text-primary/60">
++                  Click or drop another file to replace it
++                </p>
++              </>
++            ) : (
++              <>
++                <UploadCloud size={32} className="text-primary/50" />
++                <p className="text-sm font-medium text-dark">
++                  Click to browse or drag & drop your resume
++                </p>
++                <p className="text-xs text-primary/60">PDF only, up to 5MB</p>
++              </>
++            )}
++          </div>
++
++          <button
++            type="button"
++            onClick={handleUpload}
++            disabled={!selectedFile || uploadMutation.isPending}
++            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-background transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
++          >
++            {uploadMutation.isPending ? (
++              <>
++                <Loader2 size={18} className="animate-spin" />
++                Parsing your resume...
++              </>
++            ) : (
++              "Upload & Continue"
++            )}
++          </button>
++        </div>
++      )}
++    </Modal>
++  );
++}
+diff --git a/builder/frontend/src/features/resume/hooks/useUploadAndParseResume.ts b/builder/frontend/src/features/resume/hooks/useUploadAndParseResume.ts
+new file mode 100644
+index 0000000..5986343
+--- /dev/null
++++ b/builder/frontend/src/features/resume/hooks/useUploadAndParseResume.ts
+@@ -0,0 +1,23 @@
++import { useMutation, useQueryClient } from "@tanstack/react-query";
++
++import { uploadAndParseResume } from "../services/resume.service";
++
++export const useUploadAndParseResume = () => {
++  const queryClient = useQueryClient();
++
++  return useMutation({
++    mutationFn: ({
++      file,
++      templateId,
++    }: {
++      file: File;
++      templateId?: string;
++    }) => uploadAndParseResume(file, templateId),
++
++    onSuccess: () => {
++      queryClient.invalidateQueries({
++        queryKey: ["resumes"],
++      });
++    },
++  });
++};
+diff --git a/builder/frontend/src/features/resume/services/resume.service.ts b/builder/frontend/src/features/resume/services/resume.service.ts
+index ff37112..6ecd1c5 100644
+--- a/builder/frontend/src/features/resume/services/resume.service.ts
++++ b/builder/frontend/src/features/resume/services/resume.service.ts
+@@ -106,10 +106,17 @@ export const duplicateResume = async (
+ /**
+  * Upload a PDF resume, parse it, and create a Resume document.
+  */
+-export const uploadAndParseResume = async (file: File): Promise<Resume> => {
++export const uploadAndParseResume = async (
++  file: File,
++  templateId?: string,
++): Promise<Resume> => {
+   const formData = new FormData();
+   formData.append("file", file);
+ 
++  if (templateId) {
++    formData.append("templateId", templateId);
++  }
++
+   const response = await api.post("/resumes/upload-and-parse", formData, {
+     timeout: 120000,
+   });

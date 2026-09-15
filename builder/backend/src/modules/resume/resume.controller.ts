@@ -82,10 +82,16 @@ export const uploadAndParseResume = asyncHandler(
       throw new ApiError(400, "Please upload a PDF resume.");
     }
 
+    const requestedTemplateId =
+      typeof req.body?.templateId === "string"
+        ? req.body.templateId.trim()
+        : undefined;
+
     const resume = await parseAndCreateResume({
       userId: req.userId,
       fileBuffer: req.file.buffer,
       originalFilename: req.file.originalname,
+      templateId: requestedTemplateId || undefined,
     });
 
     await analyticsService.createAnalytics(resume._id.toString(), req.userId);

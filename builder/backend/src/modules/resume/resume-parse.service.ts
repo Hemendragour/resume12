@@ -345,6 +345,7 @@ export const parseAndCreateResume = async (params: {
   userId: string;
   fileBuffer: Buffer;
   originalFilename?: string;
+  templateId?: string;
 }) => {
   const text = await extractTextFromPdf(params.fileBuffer);
   const regexContact = extractContactWithRegex(text);
@@ -371,7 +372,7 @@ export const parseAndCreateResume = async (params: {
       ? `${fullName}'s Resume`
       : titleFromFilename(params.originalFilename),
     targetRole: merged.personalInfo.title,
-    templateId: ResumeTemplates.TECHNICAL,
+    templateId: params.templateId || ResumeTemplates.TECHNICAL,
     sections: DefaultResumeSections,
     version: 1,
     status: ResumeStatus.DRAFT,

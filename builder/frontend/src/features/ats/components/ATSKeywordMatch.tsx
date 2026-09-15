@@ -35,7 +35,10 @@ export default function ATSKeywordMatch({
       : 0;
 
   return (
-    <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+    <section
+      id="ats-keyword-match"
+      className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm scroll-mt-24"
+    >
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-primary/10 pb-4">
         <div>

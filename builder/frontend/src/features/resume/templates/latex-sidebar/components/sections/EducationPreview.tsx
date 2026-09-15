@@ -43,7 +43,9 @@ export default function EducationPreview() {
                     {item.degree}
                     {item.fieldOfStudy ? `, ${item.fieldOfStudy}` : ""}
                   </h3>
-                  <p className={`${T.fontSize.itemSubtitle} ${T.colors.body} italic`}>
+                  <p
+                    className={`${T.fontSize.itemSubtitle} ${T.colors.body} italic`}
+                  >
                     {item.institution}
                     {item.location ? ` · ${item.location}` : ""}
                   </p>
@@ -57,11 +59,11 @@ export default function EducationPreview() {
               </div>
 
               {(item.cgpa || item.coursework) && (
-                <p className={`${T.fontSize.body} ${T.colors.body} mt-1`}>
-                  {item.cgpa && `CGPA: ${item.cgpa}`}
-                  {item.cgpa && item.coursework ? " · " : ""}
-                  {item.coursework}
-                </p>
+                <div className={`${T.fontSize.body} ${T.colors.body} mt-1`}>
+                  {item.cgpa && <p>CGPA: {item.cgpa}</p>}
+
+                  {item.coursework && <p>Coursework: {item.coursework}</p>}
+                </div>
               )}
             </div>
           );

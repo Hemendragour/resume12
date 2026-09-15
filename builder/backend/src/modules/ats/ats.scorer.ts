@@ -324,11 +324,11 @@ const getCategory = (id: string) => {
   return ATS_SCORE_CATEGORIES.find((category) => category.id === id);
 };
 
-const getCategoryMaxScore = (id: string): number => {
+export const getCategoryMaxScore = (id: string): number => {
   return getCategory(id)?.maxScore ?? 0;
 };
 
-const makeCategoryResult = (
+export const makeCategoryResult = (
   categoryId: string,
   score: number,
   summary: string,
@@ -2173,7 +2173,18 @@ const buildSectionFromCategory = (
   sectionId: ATSScoreCategory,
   title: string,
 ): ATSSectionDeepDive => {
-  if (!category || category.issues.length === 0) {
+  const issues = category?.issues ?? [];
+  const suggestions = category?.suggestions ?? [];
+
+  // A category can have zero "issues" (nothing hard-broken) while
+  // still carrying "suggestions" for optional-but-scored items — e.g.
+  // Contact has no *issue* for a missing LinkedIn/GitHub/Portfolio
+  // link, only a suggestion, yet those are worth real points. Labelling
+  // that "Fully Optimized" contradicted a percentage below 100 and
+  // hid the very suggestions that would close the gap. Only call it
+  // fully optimized when there's truly nothing left to flag or
+  // suggest.
+  if (issues.length === 0 && suggestions.length === 0) {
     const percentage = category?.percentage ?? 100;
 
     return {
@@ -2189,24 +2200,185 @@ const buildSectionFromCategory = (
     };
   }
 
-  const findings: ATSFinding[] = category.issues.map((issue, index) => ({
-    id: `${sectionId}-${index}`,
+  const issueFindings: ATSFinding[] = issues.map((issue, index) => ({
+    id: `${sectionId}-issue-${index}`,
     targetText: issue,
     verdict: "needs-improvement",
     problems: [issue],
     whyItMatters: issue,
-    suggestedFix: category.suggestions[index] ?? category.suggestions[0] ?? "",
+    suggestedFix: suggestions[index] ?? suggestions[0] ?? "",
     needsQuantification: false,
     quantificationExamples: [],
   }));
 
+  // Suggestions that don't correspond 1:1 to a hard issue (e.g.
+  // optional fields) still deserve a visible finding, otherwise the
+  // score reflects them but the deep dive stays silent about why.
+  const extraSuggestions = suggestions.slice(issues.length);
+
+  const suggestionFindings: ATSFinding[] = extraSuggestions.map(
+    (suggestion, index) => ({
+      id: `${sectionId}-suggestion-${index}`,
+      targetText: suggestion,
+      verdict: "needs-improvement",
+      problems: ["Optional enhancement"],
+      whyItMatters:
+        "This is optional, but adding it strengthens your score and gives recruiters more ways to verify or reach you.",
+      suggestedFix: suggestion,
+      needsQuantification: false,
+      quantificationExamples: [],
+    }),
+  );
+
+  const findings = [...issueFindings, ...suggestionFindings];
+
+  const percentage = category?.percentage ?? 100;
+
   return {
     sectionId,
     title,
-    percentage: category.percentage,
+    percentage,
     priority: getATSSectionDeepDivePriority(
-      category.status,
-      category.percentage,
+      category?.status ?? getATSCategoryStatus(percentage),
+      percentage,
+    ),
+    isFullyOptimized: false,
+    findings,
+  };
+};
+
+/**
+ * "Section Completeness" scores whether important resume sections
+ * exist/are filled in, but previously had no matching deep-dive
+ * card — so a 67% score had nowhere to explain *which* sections to
+ * add to close the gap. This builds one, naming the specific
+ * missing/empty sections and what to do about each.
+ */
+const SECTION_TITLE_LABELS: Record<string, string> = {
+  summary: "Summary",
+  experience: "Experience",
+  internships: "Internships",
+  education: "Education",
+  skills: "Skills",
+  projects: "Projects",
+  certifications: "Certifications",
+  languages: "Languages",
+  awards: "Awards",
+  achievements: "Achievements",
+  interests: "Interests",
+  strengths: "Strengths",
+};
+
+const humanizeSectionName = (id: string): string =>
+  SECTION_TITLE_LABELS[id] ??
+  id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, " $1");
+
+const buildSectionCompletenessDeepDive = (
+  sectionAnalysis: ATSSectionAnalysis,
+  categoryOverride?: ATSCategoryResult,
+): ATSSectionDeepDive => {
+  const percentage = categoryOverride?.percentage ?? sectionAnalysis.score;
+
+  // Important sections worth actively recommending if absent —
+  // mirrors the weighting used when this category is scored.
+  const highValueMissing = sectionAnalysis.missing.filter((section) =>
+    ["experience", "projects", "certifications", "languages", "awards"].includes(
+      section,
+    ),
+  );
+
+  const findings: ATSFinding[] = [];
+
+  highValueMissing.forEach((section, index) => {
+    findings.push({
+      id: `sections-missing-${index}`,
+      targetText: humanizeSectionName(section),
+      verdict: "needs-improvement",
+      problems: ["Section missing"],
+      whyItMatters: `A ${humanizeSectionName(
+        section,
+      )} section is one recruiters and ATS parsers commonly look for — leaving it out can cost you points and context.`,
+      suggestedFix: `Add a ${humanizeSectionName(section)} section${
+        section === "experience"
+          ? " with your relevant work or internship history."
+          : section === "projects"
+            ? " showcasing 2-3 relevant projects."
+            : "."
+      }`,
+      needsQuantification: false,
+      quantificationExamples: [],
+    });
+  });
+
+  sectionAnalysis.empty.forEach((section, index) => {
+    findings.push({
+      id: `sections-empty-${index}`,
+      targetText: humanizeSectionName(section),
+      verdict: "needs-improvement",
+      problems: ["Section present but empty"],
+      whyItMatters: `Your resume includes a ${humanizeSectionName(
+        section,
+      )} section, but it has no content — an empty section signals incompleteness to both recruiters and ATS parsers.`,
+      suggestedFix: `Fill in your ${humanizeSectionName(section)} section, or remove it if it doesn't apply.`,
+      needsQuantification: false,
+      quantificationExamples: [],
+    });
+  });
+
+  // Lower-priority missing sections (interests, strengths, ...) still
+  // get a lightweight mention via the category's own suggestions,
+  // covering anything not already called out above.
+  const alreadyCovered = new Set([
+    ...highValueMissing,
+    ...sectionAnalysis.empty,
+  ]);
+
+  const remainingSuggestions = (categoryOverride?.suggestions ?? []).filter(
+    (suggestion) =>
+      !findings.some((finding) => suggestion.includes(finding.targetText)),
+  );
+
+  remainingSuggestions.forEach((suggestion, index) => {
+    // Avoid duplicating a suggestion that's just a generic restatement
+    // of something we already built a targeted finding for.
+    if ([...alreadyCovered].some((section) => suggestion.toLowerCase().includes(section))) {
+      return;
+    }
+
+    findings.push({
+      id: `sections-suggestion-${index}`,
+      targetText: suggestion,
+      verdict: "needs-improvement",
+      problems: ["Optional enhancement"],
+      whyItMatters:
+        "Rounding out your section coverage helps both recruiters and ATS parsers get a complete picture of your background.",
+      suggestedFix: suggestion,
+      needsQuantification: false,
+      quantificationExamples: [],
+    });
+  });
+
+  if (findings.length === 0) {
+    return {
+      sectionId: "sections",
+      title: "Section Completeness",
+      percentage,
+      priority: getATSSectionDeepDivePriority(
+        categoryOverride?.status ?? getATSCategoryStatus(percentage),
+        percentage,
+      ),
+      isFullyOptimized: true,
+      findings: [],
+    };
+  }
+
+  return {
+    sectionId: "sections",
+    title: "Section Completeness",
+    percentage,
+    priority: getATSSectionDeepDivePriority(
+      categoryOverride?.status ?? getATSCategoryStatus(percentage),
+      percentage,
     ),
     isFullyOptimized: false,
     findings,
@@ -2277,6 +2449,14 @@ export const buildDeterministicSectionDeepDive = (
       findCategory("formatting"),
       "formatting",
       "Formatting",
+    ),
+  );
+
+  // --- Section Completeness: intrinsic, always shown ---
+  sections.push(
+    buildSectionCompletenessDeepDive(
+      ruleAnalysis.sections,
+      findCategory("sections"),
     ),
   );
 
@@ -5236,12 +5416,14 @@ const analyzeResumeKeywords = (
   //   ONLY JD keywords
   //
   // ROLE MODE:
-  //   Resume skills + technologies + role benchmark
+  //   ONLY the role benchmark pool. Resume-extracted skills/
+  //   technologies are deliberately excluded here — including them
+  //   made every candidate self-referential (a keyword pulled FROM
+  //   the resume will always be found IN the resume), which silently
+  //   forced coverage toward 100% regardless of actual keyword gaps.
   // ============================================================
 
-  const keywordCandidates = hasJD
-    ? jdKeywordCandidates
-    : uniqueStrings([...skillNames, ...technologies, ...roleKeywordPool]);
+  const keywordCandidates = hasJD ? jdKeywordCandidates : roleKeywordPool;
 
   // ============================================================
   // KEYWORD FREQUENCY
@@ -5352,18 +5534,56 @@ const analyzeResumeKeywords = (
       : 0;
 
   // ============================================================
+  // GENERIC FALLBACK (no JD AND no recognized role benchmark)
+  //
+  // With nothing external to compare against, scoring keyword
+  // "coverage" would mean comparing the resume to itself — which
+  // trivially returns ~100% every time and can never surface a
+  // missing keyword. Instead, score conservatively off raw keyword
+  // depth/diversity, and tell the user how to get a real match score.
+  // ============================================================
+
+  const noExternalBenchmark = !hasJD && !roleBenchmarkAvailable;
+
+  const genericKeywordCandidates = uniqueStrings([
+    ...skillNames,
+    ...technologies,
+  ]);
+
+  const GENERIC_KEYWORD_TARGET = 12;
+
+  const genericKeywordCoverage = noExternalBenchmark
+    ? Math.min(
+        (genericKeywordCandidates.length / GENERIC_KEYWORD_TARGET) * 100,
+        100,
+      )
+    : 0;
+
+  // ============================================================
   // ISSUES / SUGGESTIONS
   // ============================================================
 
   const issues: string[] = [];
   const suggestions: string[] = [];
 
-  if (keywordCandidates.length === 0) {
+  if (keywordCandidates.length === 0 && !noExternalBenchmark) {
     issues.push(
       hasJD
         ? "No recognizable job-specific keywords were detected in the job description."
         : "Very few role-related keywords were detected.",
     );
+  }
+
+  if (noExternalBenchmark) {
+    issues.push(
+      "Keyword relevance can't be precisely measured without a job description or a recognized target role — add one of these for an accurate match score and a real missing-keywords list.",
+    );
+
+    if (genericKeywordCandidates.length < GENERIC_KEYWORD_TARGET) {
+      suggestions.push(
+        `Add more specific, role-relevant skills and technologies (currently ${genericKeywordCandidates.length} detected — aim for ${GENERIC_KEYWORD_TARGET}+) so ATS systems have more to match against.`,
+      );
+    }
   }
 
   if (hasJD && missingKeywords.length > 0) {
@@ -5402,6 +5622,11 @@ const analyzeResumeKeywords = (
           (Math.min(keywordCoverage, 100) / 100) * 0.3) *
         baseMaxScore
       ).toFixed(2),
+    );
+  } else if (noExternalBenchmark) {
+    // FALLBACK MODE — see comment above.
+    score = Number(
+      ((genericKeywordCoverage / 100) * baseMaxScore).toFixed(2),
     );
   } else {
     // JD MODE
@@ -5448,4 +5673,78 @@ const analyzeResumeKeywords = (
 
     suggestions: uniqueStrings(suggestions),
   };
+};
+
+// ============================================================
+// RECONCILE "KEYWORDS" CATEGORY WITH THE REAL JD ANALYSIS
+// ============================================================
+
+/**
+ * `ruleAnalysis.categories` (built in `analyzeResumeATS`, before any
+ * JD has been parsed) scores "Keyword Relevance" using a small
+ * hardcoded list of ~14 keywords as a rough placeholder — see the
+ * comment in `analyzeResumeKeywords`. By the time a job description
+ * has actually been AI-parsed into `ATSJobDescriptionAnalysis`
+ * (dynamic required/preferred skills, technologies, domains, with a
+ * real `overallMatchPercentage`), that placeholder score is stale and
+ * can disagree with the matched/missing keyword lists shown elsewhere
+ * in the UI — which already correctly use `jdAnalysis`.
+ *
+ * This replaces the "keywords" entry in the category list with one
+ * derived from the real JD analysis whenever it's available, so the
+ * score, status, and matched/missing keywords the user sees all agree
+ * with each other.
+ */
+export const reconcileKeywordCategoryWithJD = (
+  categories: ATSCategoryResult[],
+  jdAnalysis: ATSJobDescriptionAnalysis | undefined,
+  hasJobDescription: boolean,
+): ATSCategoryResult[] => {
+  if (!hasJobDescription || !jdAnalysis) {
+    return categories;
+  }
+
+  const matched = uniqueStrings(jdAnalysis.matchedRequirements);
+
+  const missing = uniqueStrings([
+    ...jdAnalysis.criticalMissingRequirements,
+    ...jdAnalysis.matches
+      .filter((match) => match.status === "missing")
+      .map((match) => match.requirement),
+  ]);
+
+  const partial = uniqueStrings(jdAnalysis.partialRequirements);
+
+  const issues: string[] = [];
+  const suggestions: string[] = [...jdAnalysis.suggestions];
+
+  if (missing.length > 0) {
+    issues.push(
+      `Missing ${missing.length} keyword${missing.length === 1 ? "" : "s"} the job description asks for: ${missing
+        .slice(0, 8)
+        .join(", ")}${missing.length > 8 ? ", ..." : ""}.`,
+    );
+  }
+
+  if (partial.length > 0) {
+    issues.push(
+      `${partial.length} requirement${partial.length === 1 ? "" : "s"} only partially demonstrated: ${partial
+        .slice(0, 5)
+        .join(", ")}${partial.length > 5 ? ", ..." : ""}.`,
+    );
+  }
+
+  const reconciledKeywordCategory = makeCategoryResult(
+    "keywords",
+    (jdAnalysis.overallMatchPercentage / 100) * getCategoryMaxScore("keywords"),
+    matched.length > 0
+      ? `Matches ${matched.length} of ${matched.length + missing.length + partial.length} keywords/requirements identified in the job description.`
+      : "No keywords from the job description were confidently matched in this resume.",
+    issues,
+    suggestions,
+  );
+
+  return categories.map((category) =>
+    category.category === "keywords" ? reconciledKeywordCategory : category,
+  );
 };

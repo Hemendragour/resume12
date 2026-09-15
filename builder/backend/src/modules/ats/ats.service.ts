@@ -13,6 +13,7 @@ import {
   refineJDMatchesWithAI,
   buildDeterministicSectionDeepDive,
   enrichSectionDeepDiveWithAI,
+  reconcileKeywordCategoryWithJD,
 } from "./ats.scorer";
 import type {
   ATSAnalyzeRequest,
@@ -499,6 +500,17 @@ const buildATSResult = (
     new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
   ).slice(0, 10);
 
+  // "Keyword Relevance" is computed deterministically before the JD
+  // has been AI-parsed (see analyzeResumeKeywords). Once the real,
+  // dynamic JD analysis is available, replace that placeholder score
+  // so it agrees with the matched/missing keyword lists above instead
+  // of silently disagreeing with them.
+  const reconciledCategories = reconcileKeywordCategoryWithJD(
+    ruleAnalysis.categories,
+    jdAnalysis,
+    hasJobDescription,
+  );
+
   return {
     resumeId,
 
@@ -526,7 +538,7 @@ const buildATSResult = (
 
     breakdown: ruleAnalysis.breakdown,
 
-    categories: ruleAnalysis.categories,
+    categories: reconciledCategories,
 
     // ==========================================================
     // KEYWORDS

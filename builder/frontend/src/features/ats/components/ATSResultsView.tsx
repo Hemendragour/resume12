@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { AlertOctagon, RotateCw } from "lucide-react";
 import type { ATSResult } from "../types/ats.types";
 import ATSOverallScore from "./ATSOverallScore";
@@ -5,6 +6,25 @@ import ATSCategoryBreakdown from "./ATSCategoryBreakdown";
 import ATSKeywordMatch from "./ATSKeywordMatch";
 import ATSSectionDeepDive from "./ATSSectionDeepDive";
 import ATSStrengthsWeaknesses from "./ATSStrengthsWeaknesses";
+
+/**
+ * Category Breakdown ids don't map 1:1 onto Section Deep Dive ids
+ * (some categories, like Action Verbs or Quantified Impact, don't get
+ * their own deep-dive card — their findings live inside "experience").
+ * This maps every category id to the deep-dive section it should
+ * jump to. "keywords" is handled separately since it scrolls to the
+ * Keyword Match card instead of the deep dive.
+ */
+const CATEGORY_TO_DEEPDIVE_SECTION: Record<string, string> = {
+  contact: "contact",
+  sections: "sections",
+  skills: "skills",
+  experience: "experience",
+  actionVerbs: "experience",
+  quantifiedResults: "experience",
+  formatting: "formatting",
+  dateConsistency: "experience",
+};
 
 interface Props {
   result: ATSResult | null;
@@ -64,6 +84,26 @@ export default function ATSResultsView({
   errorMessage = "Failed to load ATS analysis results.",
   onRetry,
 }: Props) {
+  const [focusRequest, setFocusRequest] = useState<{
+    sectionId: string;
+    token: number;
+  } | null>(null);
+
+  const handleCategorySelect = (categoryId: string) => {
+    if (categoryId === "keywords") {
+      document
+        .getElementById("ats-keyword-match")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    const targetSectionId = CATEGORY_TO_DEEPDIVE_SECTION[categoryId] ?? categoryId;
+
+    // New object identity each click so the effect re-fires even when
+    // the same category is clicked twice in a row.
+    setFocusRequest({ sectionId: targetSectionId, token: Date.now() });
+  };
+
   if (isLoading) {
     return <LoadingSkeleton />;
   }
@@ -118,7 +158,10 @@ export default function ATSResultsView({
 
       {/* 3. CATEGORY BREAKDOWN */}
       {result.categories && result.categories.length > 0 && (
-        <ATSCategoryBreakdown categories={result.categories} />
+        <ATSCategoryBreakdown
+          categories={result.categories}
+          onCategorySelect={handleCategorySelect}
+        />
       )}
 
       {/* 4. SECTION-WISE DEEP DIVE */}
@@ -126,6 +169,7 @@ export default function ATSResultsView({
         <ATSSectionDeepDive
           sections={result.sectionDeepDive}
           hasJobDescription={result.hasJobDescription}
+          focusRequest={focusRequest}
         />
       )}
 

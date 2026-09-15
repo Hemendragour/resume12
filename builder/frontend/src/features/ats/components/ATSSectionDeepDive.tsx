@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ChevronDown,
   CheckCircle2,
@@ -17,10 +17,24 @@ import type {
   ATSFinding,
 } from "../types/ats.types";
 
+interface FocusRequest {
+  sectionId: string;
+  token: number;
+}
+
 interface Props {
   sections: ATSSectionDeepDiveType[];
   hasJobDescription: boolean;
+  /**
+   * Set (with a fresh token on every click) when another part of the
+   * page — e.g. the Category Breakdown — wants this section expanded
+   * and scrolled into view. A changing `token` re-triggers the effect
+   * even if the same sectionId is requested twice in a row.
+   */
+  focusRequest?: FocusRequest | null;
 }
+
+export const getDeepDiveAnchorId = (sectionId: string) => `ats-deepdive-${sectionId}`;
 
 const PRIORITY_ORDER: Record<ATSSectionDeepDivePriority, number> = {
   critical: 0,
@@ -201,6 +215,7 @@ function FindingCard({
 export default function ATSSectionDeepDive({
   sections,
   hasJobDescription,
+  focusRequest,
 }: Props) {
   // Sort sections strictly by priority (critical -> high -> medium -> low)
   const sortedSections = useMemo(() => {
@@ -229,6 +244,32 @@ export default function ATSSectionDeepDive({
       [id]: !prev[id],
     }));
   };
+
+  // When the Category Breakdown (or anything else) asks us to jump to
+  // a specific section, expand it and scroll it into view.
+  useEffect(() => {
+    if (!focusRequest) return;
+
+    const { sectionId } = focusRequest;
+
+    const exists = sortedSections.some((sec) => sec.sectionId === sectionId);
+    if (!exists) return;
+
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionId]: true,
+    }));
+
+    // Wait a tick so the panel has expanded before we scroll to it.
+    const frame = requestAnimationFrame(() => {
+      document
+        .getElementById(getDeepDiveAnchorId(sectionId))
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRequest]);
 
   if (!sections || sections.length === 0) {
     return null;
@@ -261,7 +302,8 @@ export default function ATSSectionDeepDive({
           return (
             <div
               key={sec.sectionId}
-              className="overflow-hidden rounded-xl border border-primary/10 bg-background transition-all hover:border-primary/20"
+              id={getDeepDiveAnchorId(sec.sectionId)}
+              className="overflow-hidden rounded-xl border border-primary/10 bg-background transition-all hover:border-primary/20 scroll-mt-24"
             >
               {/* Panel Header */}
               <button

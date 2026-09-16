@@ -13,7 +13,7 @@ import latexAts from "../../../assets/templates/latexAts-1.png";
 import latexAtsPhoto from "../../../assets/templates/latexAtsPhoto-1.png";
 import latexAtsV2 from "../../../assets/templates/latex-ats-nophoto.png";
 import executiveSidebar from "../../../assets/templates/executive_sideBar-1.png";
-import latexSidebar from "../../../assets/templates/latexSideBar-1.png";
+import latexSidebar from "../../../assets/templates/latex-sidebar-1.png";
 import ClassicSerif from "../../../assets/templates/clasic-serif.png";
 
 export interface TemplateOption {

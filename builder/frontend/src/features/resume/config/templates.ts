@@ -1,30 +1,20 @@
 import type { ResumeTemplate } from "../types/resume.types";
 
-import technicalDeveloper from "../../../assets/templates/technical_developer.png";
-// import technicalDeveloper from "../../../assets/templates/technical_developer.png";
-// import technicalDeveloper from "../../../assets/templates/technical-developer.png";
+import technicalDeveloper from "../../../assets/templates/technical developer.png";
 import modernProfessional from "../../../assets/templates/modern-professional.png";
-// import minimalClean from "../../../assets/templates/MINIMALCLEAN.png";
-// import minimalClean from "../../../assets/templates/minimal-clean.png";
 import splitLabel from "../../../assets/templates/split-label.png";
-import corporateBand from "../../../assets/templates/coporate_band.png";
-// import corporateBand from "../../../assets/templates/corporate-band.png";
-// import classicSerif from "../../../assets/templates/clasic-serif.png";
-// import classicSerif from "../../../assets/templates/classic-serif.png";
-import corporateClassic from "../../../assets/templates/coporate_classic.png";
-// import corporateClassic from "../../../assets/templates/corporate-classic.png";
+import corporateBand from "../../../assets/templates/coporate band.png";
+import corporateClassic from "../../../assets/templates/coporate-classic-1.png";
 import executiveBlue from "../../../assets/templates/executive_blue.png";
-// import executiveBlue from "../../../assets/templates/executive-blue.png";
-import professionalModern from "../../../assets/templates/professional_modern.png";
-// import professionalModern from "../../../assets/templates/professional_modern.png";
-// import professionalModern from "../../../assets/templates/professional-modern.png";
+import professionalModern from "../../../assets/templates/professional modern.png";
 import enhancvModern from "../../../assets/templates/enhancv-modern.png";
-import harvardATS from "../../../assets/templates/harvard-ats.png";
-import latexAts from "../../../assets/templates/latex-ats.png";
-import latexAtsPhoto from "../../../assets/templates/latex-ats-photo.png";
-import latexAtsV2 from "../../../assets/templates/latex-ats-v2.png";
-import executiveSidebar from "../../../assets/templates/executive-sidebar.png";
-import latexSidebar from "../../../assets/templates/latex-sidebar.png";
+import harvardATS from "../../../assets/templates/hardwardAts-1.png";
+import latexAts from "../../../assets/templates/latexAts-1.png";
+import latexAtsPhoto from "../../../assets/templates/latexAtsPhoto-1.png";
+import latexAtsV2 from "../../../assets/templates/latex-ats-nophoto.png";
+import executiveSidebar from "../../../assets/templates/executive_sideBar-1.png";
+import latexSidebar from "../../../assets/templates/latexSideBar-1.png";
+import ClassicSerif from "../../../assets/templates/clasic-serif.png";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -46,32 +36,6 @@ export const templates: TemplateOption[] = [
     image: technicalDeveloper,
   },
 
-  {
-    id: "modern-professional",
-    name: "Modern Professional",
-    description: "Professional Business Layout",
-    ats: "96% ATS",
-    color: "bg-card",
-    image: modernProfessional,
-  },
-
-  // {
-  //   id: "minimal-clean",
-  //   name: "Minimal Clean",
-  //   description: "Simple ATS Friendly Resume",
-  //   ats: "95% ATS",
-  //   color: "bg-card",
-  //   image: minimalClean,
-  // },
-
-  {
-    id: "split-label",
-    name: "Split Label",
-    description: "Elegant label-left layout for creative & business roles",
-    ats: "94% ATS",
-    color: "bg-card",
-    image: splitLabel,
-  },
   {
     id: "enhancv-modern",
     name: "Enhancv Modern",
@@ -144,14 +108,14 @@ export const templates: TemplateOption[] = [
     image: corporateBand,
   },
 
-  // {
-  //   id: "classic-serif",
-  //   name: "Classic Serif",
-  //   description: "Centered serif header, elegant single-column layout",
-  //   ats: "98% ATS",
-  //   color: "bg-card",
-  //   image: classicSerif,
-  // },
+  {
+    id: "classic-serif",
+    name: "Classic Serif",
+    description: "Centered serif header, elegant single-column layout",
+    ats: "98% ATS",
+    color: "bg-card",
+    image: ClassicSerif,
+  },
 
   {
     id: "corporate-classic",
@@ -181,14 +145,21 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: professionalModern,
   },
+  {
+    id: "modern-professional",
+    name: "Modern Professional",
+    description: "Professional Business Layout",
+    ats: "96% ATS",
+    color: "bg-card",
+    image: modernProfessional,
+  },
 
-  // {
-  //   id: "technical-classic",
-  //   name: "Technical Classic",
-  //   description: "Best for Software Engineers & FAANG",
-  //   ats: "99% ATS",
-  //   featured: true,
-  //   color: "bg-card",
-  //   image: technicalClassic,
-  // },
+  {
+    id: "split-label",
+    name: "Split Label",
+    description: "Elegant label-left layout for creative & business roles",
+    ats: "94% ATS",
+    color: "bg-card",
+    image: splitLabel,
+  },
 ];

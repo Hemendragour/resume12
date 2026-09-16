@@ -11,7 +11,7 @@ import {
   User,
   Home,
 } from "lucide-react";
-
+import { BriefcaseBusiness } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { useAuthStore } from "../../../store/auth.store";
@@ -76,6 +76,13 @@ const menus: Menu[] = [
     title: "Settings",
     path: "/settings",
     icon: Settings,
+    roles: ["user", "admin"],
+  },
+
+  {
+    title: "Interview",
+    path: "/interview",
+    icon: BriefcaseBusiness,
     roles: ["user", "admin"],
   },
 

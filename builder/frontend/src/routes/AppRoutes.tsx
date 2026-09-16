@@ -22,6 +22,7 @@ import ResumeEditorPage from "../pages/resume/ResumeEditorPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersPage from "../pages/admin/UsersPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import InterviewPage from "../pages/InterviewPage";
 
 export default function AppRoutes() {
   return (
@@ -62,6 +63,7 @@ export default function AppRoutes() {
         <Route path="/analytics" element={<AnalyticsPage />} />
 
         <Route path="/settings" element={<Settings />} />
+        <Route path="/interview" element={<InterviewPage />} />
 
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
       </Route>

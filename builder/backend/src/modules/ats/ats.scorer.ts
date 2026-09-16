@@ -3616,7 +3616,7 @@ const buildCategoryResults = (analysis: {
 // GENERIC SCORE CALCULATION
 // ============================================================
 
-const calculateOverallScore = (categories: ATSCategoryResult[]): number => {
+export const calculateOverallScore = (categories: ATSCategoryResult[]): number => {
   const totalMax = categories.reduce(
     (sum, category) => sum + category.maxScore,
     0,
@@ -3683,7 +3683,7 @@ const buildRecommendations = (
 // STRENGTHS
 // ============================================================
 
-const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
+export const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
   // return categories
   //   .filter(
   //     (category) =>
@@ -3703,7 +3703,7 @@ const buildStrengths = (categories: ATSCategoryResult[]): string[] => {
 // WEAKNESSES
 // ============================================================
 
-const buildWeaknesses = (categories: ATSCategoryResult[]): string[] => {
+export const buildWeaknesses = (categories: ATSCategoryResult[]): string[] => {
   // return categories
   //   .filter(
   //     (category) =>
@@ -5822,4 +5822,48 @@ export const reconcileKeywordCategoryWithJD = (
   return categories.map((category) =>
     category.category === "keywords" ? reconciledKeywordCategory : category,
   );
+};
+
+/**
+ * Reconciling only `categories` isn't enough: `overallScore`,
+ * `breakdown`, `strengths`, and `weaknesses` are all derived from the
+ * categories INSIDE `analyzeResumeATS`, which runs before the JD has
+ * been AI-parsed. So even after fixing the "Keyword Relevance" card
+ * itself, the headline score, the breakdown map, and text like
+ * "Strong keyword relevance (100%)" in strengths were all silently
+ * still computed from the stale, pre-reconciliation categories.
+ *
+ * This re-derives all four from the reconciled categories so every
+ * part of the result — score, breakdown, and the strengths/weaknesses
+ * copy — agrees with the same JD-aware keyword score.
+ */
+export const reconcileRuleAnalysisWithJD = (
+  ruleAnalysis: ATSRuleAnalysis,
+  jdAnalysis: ATSJobDescriptionAnalysis | undefined,
+  hasJobDescription: boolean,
+): ATSRuleAnalysis => {
+  if (!hasJobDescription || !jdAnalysis) {
+    return ruleAnalysis;
+  }
+
+  const reconciledCategories = reconcileKeywordCategoryWithJD(
+    ruleAnalysis.categories,
+    jdAnalysis,
+    hasJobDescription,
+  );
+
+  const breakdown: ATSBreakdown = {};
+
+  reconciledCategories.forEach((category) => {
+    breakdown[category.category] = category.score;
+  });
+
+  return {
+    ...ruleAnalysis,
+    categories: reconciledCategories,
+    overallScore: calculateOverallScore(reconciledCategories),
+    breakdown,
+    strengths: buildStrengths(reconciledCategories),
+    weaknesses: buildWeaknesses(reconciledCategories),
+  };
 };

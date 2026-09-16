@@ -13,7 +13,7 @@ import {
   refineJDMatchesWithAI,
   buildDeterministicSectionDeepDive,
   enrichSectionDeepDiveWithAI,
-  reconcileKeywordCategoryWithJD,
+  reconcileRuleAnalysisWithJD,
 } from "./ats.scorer";
 import type {
   ATSAnalyzeRequest,
@@ -416,17 +416,6 @@ const buildATSResult = (
     new Set([...ruleAnalysis.weaknesses, ...sanitizedAiWeaknesses]),
   ).slice(0, 10);
 
-  // "Keyword Relevance" is computed deterministically before the JD
-  // has been AI-parsed (see analyzeResumeKeywords). Once the real,
-  // dynamic JD analysis is available, replace that placeholder score
-  // so it agrees with the matched/missing keyword lists above instead
-  // of silently disagreeing with them.
-  const reconciledCategories = reconcileKeywordCategoryWithJD(
-    ruleAnalysis.categories,
-    jdAnalysis,
-    hasJobDescription,
-  );
-
   return {
     resumeId,
 
@@ -450,11 +439,16 @@ const buildATSResult = (
 
     // ==========================================================
     // RULE BASED ANALYSIS
+    //
+    // ruleAnalysis arrives here already reconciled with the JD (see
+    // reconcileRuleAnalysisWithJD in analyzeResumeService) — its
+    // categories, breakdown, strengths, and weaknesses are already
+    // JD-aware, so nothing further needs to be re-derived here.
     // ==========================================================
 
     breakdown: ruleAnalysis.breakdown,
 
-    categories: reconciledCategories,
+    categories: ruleAnalysis.categories,
 
     // ==========================================================
     // KEYWORDS
@@ -951,7 +945,7 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
   // 3. Deterministic ATS analysis
   // --------------------------------------------------------
 
-  const ruleAnalysis = analyzeResumeATS(atsResume as any, jobDescription);
+  let ruleAnalysis = analyzeResumeATS(atsResume as any, jobDescription);
 
   let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
 
@@ -988,6 +982,19 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
 
     console.log("====================================");
   }
+
+  const hasJobDescriptionForScoring = Boolean(jobDescription?.trim());
+
+  // Bring overallScore/breakdown/strengths/weaknesses in line with the
+  // JD-aware "keywords" category BEFORE computing the headline score
+  // below — otherwise finalATSScore blends in a stale, pre-JD
+  // overallScore that still has the inflated placeholder keyword
+  // score baked into it.
+  ruleAnalysis = reconcileRuleAnalysisWithJD(
+    ruleAnalysis,
+    jdAnalysis,
+    hasJobDescriptionForScoring,
+  );
 
   let finalATSScore = ruleAnalysis.overallScore;
 

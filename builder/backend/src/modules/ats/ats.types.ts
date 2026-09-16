@@ -225,6 +225,7 @@ export type ATSScoreCategory = KnownATSCategory | (string & {});
  *   ...
  * }
  */
+
 export type ATSBreakdown = Record<string, number>;
 
 // ============================================================

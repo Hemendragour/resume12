@@ -190,6 +190,51 @@ const normalizeText = (value: unknown): string => {
     .trim();
 };
 
+// ============================================================
+// JD EXPERIENCE-EXPECTATION SIGNAL
+// ============================================================
+
+/**
+ * Whether the resume is even expected to show formal professional
+ * experience at all, based on the raw JD text (this runs before the
+ * JD has been AI-parsed, so only the raw string is available here).
+ *
+ * Used by Section Completeness (and its deep-dive card) so a missing
+ * Experience section isn't penalized — or recommended as a fix — for
+ * fresher/entry-level postings that explicitly don't require it.
+ */
+const FRESHER_JD_SIGNALS = [
+  "fresher",
+  "freshers",
+  "entry level",
+  "entry-level",
+  "no experience required",
+  "no prior experience",
+  "0-1 year",
+  "0 to 1 year",
+  "campus hire",
+  "graduate trainee",
+  "internship only",
+];
+
+export const isExperienceExpectedFromJD = (jobDescription?: string): boolean => {
+  const text = cleanText(jobDescription);
+
+  if (!text) {
+    // No JD at all — we don't know the role's seniority bar, so keep
+    // the traditional assumption that a resume should show experience.
+    return true;
+  }
+
+  const normalized = normalizeText(text);
+
+  const isFresherRole = FRESHER_JD_SIGNALS.some((signal) =>
+    normalized.includes(normalizeText(signal)),
+  );
+
+  return !isFresherRole;
+};
+
 // const containsNormalizedPhrase = (text: string, phrase: string): boolean => {
 //   const normalizedText = normalizeRequirementForMatch(text)
 //     .toLowerCase()
@@ -339,9 +384,9 @@ export const makeCategoryResult = (
 
   const maxScore = category?.maxScore ?? 0;
 
-  const safeScore = clampATSScore(score, 0, maxScore);
+  const safeScore = Math.round(clampATSScore(score, 0, maxScore));
 
-  const percentage = calculateATSPercentage(safeScore, maxScore);
+  const percentage = Math.round(calculateATSPercentage(safeScore, maxScore));
 
   const status: ATSCategoryStatus = getATSCategoryStatus(percentage);
 
@@ -456,7 +501,12 @@ export const analyzeContact = (resume: ATSResume): ATSContactAnalysis => {
 // SECTION ANALYSIS
 // ============================================================
 
-export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
+export const analyzeSections = (
+  resume: ATSResume,
+  jobDescription?: string,
+): ATSSectionAnalysis => {
+  const experienceExpected = isExperienceExpectedFromJD(jobDescription);
+
   const sections = resume.sections ?? [];
 
   const enabledSections = sections.filter(
@@ -559,7 +609,15 @@ export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
   }
 
   if (!present.includes("experience") && !present.includes("internships")) {
-    suggestions.push("Add relevant professional or internship experience.");
+    if (experienceExpected) {
+      suggestions.push("Add relevant professional or internship experience.");
+    } else {
+      // This role doesn't require prior experience — don't nudge the
+      // candidate toward something the JD never asked for.
+      suggestions.push(
+        "This role doesn't require prior professional experience — strong Projects and Skills sections can carry equivalent weight.",
+      );
+    }
   }
 
   if (!present.includes("skills")) {
@@ -578,13 +636,9 @@ export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
    * 15 points distributed according to important
    * section availability and completeness.
    */
-  const importantSections = [
-    "summary",
-    "experience",
-    "education",
-    "skills",
-    "projects",
-  ];
+  const importantSections = experienceExpected
+    ? ["summary", "experience", "education", "skills", "projects"]
+    : ["summary", "education", "skills", "projects"];
 
   const availableImportantSections = importantSections.filter(
     (section) => present.includes(section) && !empty.includes(section),
@@ -611,6 +665,18 @@ export const analyzeSections = (resume: ATSResume): ATSSectionAnalysis => {
   }
   if (empty.length === 0) {
     score += 1;
+  }
+
+  // Exceeding the bar: the JD doesn't require experience, but the
+  // candidate has a genuine, filled Experience section anyway. A
+  // modest bonus (not a blanket +20%, since this category only has 15
+  // points total to give) rather than a big arbitrary jump.
+  if (
+    !experienceExpected &&
+    present.includes("experience") &&
+    !empty.includes("experience")
+  ) {
+    score += 2;
   }
 
   return {
@@ -2276,16 +2342,23 @@ const humanizeSectionName = (id: string): string =>
 const buildSectionCompletenessDeepDive = (
   sectionAnalysis: ATSSectionAnalysis,
   categoryOverride?: ATSCategoryResult,
+  experienceExpected = true,
 ): ATSSectionDeepDive => {
   const percentage = categoryOverride?.percentage ?? sectionAnalysis.score;
 
   // Important sections worth actively recommending if absent —
-  // mirrors the weighting used when this category is scored.
-  const highValueMissing = sectionAnalysis.missing.filter((section) =>
-    ["experience", "projects", "certifications", "languages", "awards"].includes(
+  // mirrors the weighting used when this category is scored. Skip
+  // "experience" here when the JD doesn't actually call for it, so
+  // this card doesn't tell a fresher to add something the role never
+  // required.
+  const highValueMissing = sectionAnalysis.missing.filter((section) => {
+    if (section === "experience" && !experienceExpected) {
+      return false;
+    }
+    return ["experience", "projects", "certifications", "languages", "awards"].includes(
       section,
-    ),
-  );
+    );
+  });
 
   const findings: ATSFinding[] = [];
 
@@ -2423,6 +2496,7 @@ export const buildDeterministicSectionDeepDive = (
   resume: ATSResume,
   ruleAnalysis: ATSRuleAnalysis,
   jdAnalysis?: ATSJobDescriptionAnalysis,
+  jobDescription?: string,
 ): ATSSectionDeepDive[] => {
   const { categories } = ruleAnalysis;
 
@@ -2457,6 +2531,7 @@ export const buildDeterministicSectionDeepDive = (
     buildSectionCompletenessDeepDive(
       ruleAnalysis.sections,
       findCategory("sections"),
+      isExperienceExpectedFromJD(jobDescription),
     ),
   );
 
@@ -3667,7 +3742,7 @@ export const analyzeResumeATS = (
 ): ATSRuleAnalysis => {
   const contact = analyzeContact(resume);
 
-  const sections = analyzeSections(resume);
+  const sections = analyzeSections(resume, jobDescription);
 
   const skills = analyzeSkills(resume);
 

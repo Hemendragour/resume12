@@ -25,6 +25,7 @@ import type {
   ATSModeAnalysis,
   ATSJobDescriptionAnalysis,
   ATSSectionDeepDive,
+  ATSRecommendation,
 } from "./ats.types";
 
 // ============================================================
@@ -56,6 +57,47 @@ const getResumeObject = (resume: any): Record<string, unknown> => {
 
   return resume;
 };
+
+// ============================================================
+// GUARD AGAINST HALLUCINATED "X YEARS OF EXPERIENCE" CLAIMS
+// ============================================================
+
+/**
+ * The AI analysis prompt is instructed to never invent a requirement
+ * that isn't in the JD, but LLMs can still slip a generic "you need
+ * 2+ years of experience" line into weaknesses/recommendations even
+ * when the actual job description never states any minimum years —
+ * a real, observed failure mode for entry-level/fresher postings.
+ * This is a deterministic safety net: any generated text that cites a
+ * specific number of years is dropped unless the raw job description
+ * text itself actually states a years-of-experience figure.
+ */
+const YEARS_OF_EXPERIENCE_PATTERN = /\b\d+(?:\.\d+)?\+?\s*(?:years?|yrs?)\b/i;
+
+const jdStatesYearsRequirement = (jobDescription: string): boolean =>
+  YEARS_OF_EXPERIENCE_PATTERN.test(jobDescription);
+
+const mentionsInventedYears = (text: string, jobDescription: string): boolean =>
+  YEARS_OF_EXPERIENCE_PATTERN.test(text) &&
+  !jdStatesYearsRequirement(jobDescription);
+
+const filterInventedExperienceYears = (
+  items: string[],
+  jobDescription: string,
+): string[] =>
+  items.filter((item) => !mentionsInventedYears(item, jobDescription));
+
+const filterInventedExperienceYearsFromRecommendations = (
+  items: ATSRecommendation[],
+  jobDescription: string,
+): ATSRecommendation[] =>
+  items.filter(
+    (item) =>
+      !mentionsInventedYears(
+        `${item.title} ${item.description} ${item.suggestedFix ?? ""}`,
+        jobDescription,
+      ),
+  );
 
 // ============================================================
 // AI RESPONSE NORMALIZATION
@@ -331,17 +373,6 @@ const buildATSResult = (
 
   const mode: ATSAnalysisMode = hasJobDescription ? "job-description" : "role";
 
-  // const matchedKeywords = ruleAnalysis.keywords.matchedKeywords;
-
-  // const missingKeywords = ruleAnalysis.keywords.missingKeywords;
-  // const uniqueMatchedKeywords = Array.from(
-  //   new Set(matchedKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
-  // );
-
-  // const uniqueMissingKeywords = Array.from(
-  //   new Set(missingKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
-  // );
-
   const matchedKeywords =
     hasJobDescription && jdAnalysis
       ? jdAnalysis.matchedRequirements
@@ -368,136 +399,21 @@ const buildATSResult = (
     new Set(missingKeywords.map((keyword) => keyword.trim()).filter(Boolean)),
   );
 
-  // const strengths = Array.from(
-  //   new Set([...ruleAnalysis.strengths, ...ai.strengths]),
-  // ).slice(0, 10);
-
-  // const weaknesses = Array.from(
-  //   new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
-  // ).slice(0, 10);
-
-  // const recommendations = mergeRecommendations(ruleAnalysis, ai);
-
-  /*
-   * IMPORTANT:
-   *
-   * modeAnalysis is currently built from the
-   * deterministic analysis available in ruleAnalysis.
-   *
-   * JD-specific intelligence will be expanded
-   * in the next layer.
-   */
-  // const modeAnalysis: ATSModeAnalysis = {
-  //   mode,
-
-  //   targetRole: targetRole.trim(),
-
-  //   hasJobDescription,
-  //   jdAnalysis,
-  //   skillEvidence: [],
-
-  //   scoreDimensions: [],
-
-  //   scoreExplanation: {
-  //     positiveFactors: ruleAnalysis.strengths.slice(0, 5),
-
-  //     negativeFactors: ruleAnalysis.weaknesses.slice(0, 5),
-
-  //     criticalFactors: ruleAnalysis.weaknesses.slice(0, 3),
-
-  //     scoreCalculation: hasJobDescription
-  //       ? `JD-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`
-  //       : `Role-based analysis using ${ruleAnalysis.categories.length} ATS scoring categories.`,
-
-  //     confidence: hasJobDescription ? 90 : 80,
-  //   },
-
-  //   quickWins: [],
-  // };
-  // return {
-  //   resumeId,
-
-  //   // ==========================================================
-  //   // ANALYSIS MODE
-  //   // ==========================================================
-
-  //   mode,
-
-  //   targetRole: targetRole.trim(),
-
-  //   hasJobDescription,
-
-  //   // ==========================================================
-  //   // FINAL SCORE
-  //   // ==========================================================
-
-  //   atsScore: finalATSScore,
-
-  //   grade: getGradeFromScore(finalATSScore),
-
-  //   // ==========================================================
-  //   // RULE BASED ANALYSIS
-  //   // ==========================================================
-
-  //   breakdown: ruleAnalysis.breakdown,
-
-  //   categories: ruleAnalysis.categories,
-
-  //   // ==========================================================
-  //   // MODE ANALYSIS
-  //   // ==========================================================
-
-  //   modeAnalysis,
-
-  //   // ==========================================================
-  //   // KEYWORDS
-  //   // ==========================================================
-
-  //   matchedKeywords: uniqueMatchedKeywords,
-
-  //   missingKeywords: uniqueMissingKeywords,
-
-  //   // ==========================================================
-  //   // SECTION DEEP DIVE
-  //   //
-  //   // Placeholder for now — populated in the next build step
-  //   // (deterministic bullet tagging + per-section AI pass).
-  //   // ==========================================================
-
-  //   sectionDeepDive,
-  //   // ==========================================================
-  //   // DATE
-  //   // ==========================================================
-
-  //   dateConsistency: ruleAnalysis.dateConsistency,
-
-  //   // ==========================================================
-  //   // AI
-  //   // ==========================================================
-
-  //   strengths,
-
-  //   weaknesses,
-
-  //   recommendations,
-
-  //   optimizedSummary: ai.optimizedSummary,
-
-  //   improvedExperience: ai.improvedExperience,
-
-  //   // ==========================================================
-  //   // META
-  //   // ==========================================================
-
-  //   analyzedAt: new Date().toISOString(),
-  // };
-
   const strengths = Array.from(
     new Set([...ruleAnalysis.strengths, ...ai.strengths]),
   ).slice(0, 10);
 
+  // Strip any AI-generated "you need N years of experience" claim that
+  // isn't actually backed by the job description text — see the
+  // filter's own comment for why this guard exists.
+  const rawJobDescription = jobDescription ?? "";
+
+  const sanitizedAiWeaknesses = hasJobDescription
+    ? filterInventedExperienceYears(ai.weaknesses, rawJobDescription)
+    : ai.weaknesses;
+
   const weaknesses = Array.from(
-    new Set([...ruleAnalysis.weaknesses, ...ai.weaknesses]),
+    new Set([...ruleAnalysis.weaknesses, ...sanitizedAiWeaknesses]),
   ).slice(0, 10);
 
   // "Keyword Relevance" is computed deterministically before the JD
@@ -1037,15 +953,6 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
 
   const ruleAnalysis = analyzeResumeATS(atsResume as any, jobDescription);
 
-  // let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
-
-  // if (jobDescription?.trim()) {
-  //   const extractedJD = await extractJDRequirements(jobDescription, targetRole);
-
-  //   jdAnalysis = analyzeJobDescriptionMatch(atsResume as any, extractedJD);
-
-  //   console.log("========== JD MATCH DEBUG ==========");
-
   let jdAnalysis: ATSJobDescriptionAnalysis | undefined;
 
   if (jobDescription?.trim()) {
@@ -1089,42 +996,6 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
       ruleAnalysis.overallScore * 0.6 + jdAnalysis.overallMatchPercentage * 0.4,
     );
   }
-  // // --------------------------------------------------------
-  // // 4. AI analysis
-  // // --------------------------------------------------------
-
-  // let aiAnalysis: ATSAIAnalysis | undefined;
-
-  // /**
-  //  * AI analysis is enabled by default.
-  //  *
-  //  * If explicitly disabled, only deterministic ATS
-  //  * analysis is returned.
-  //  */
-  // const shouldRunAI = options?.includeAIAnalysis !== false;
-
-  // if (shouldRunAI) {
-  //   aiAnalysis = await runAIAnalysis(
-  //     atsResume,
-  //     targetRole,
-  //     jobDescription ?? "",
-  //   );
-  // }
-
-  // // --------------------------------------------------------
-  // // 5. Merge
-  // // --------------------------------------------------------
-
-  // const result = buildATSResult(
-  //   resumeId,
-  //   ruleAnalysis,
-  //   targetRole,
-  //   jobDescription,
-  //   aiAnalysis,
-  //   finalATSScore,
-  //   jdAnalysis,
-  //   atsResume,
-  // );
 
   // --------------------------------------------------------
   // 4. AI analysis
@@ -1162,6 +1033,7 @@ export const analyzeResumeService = async (context: ATSServiceContext) => {
     atsResume as any,
     ruleAnalysis,
     jdAnalysis,
+    jobDescription,
   );
 
   // const sectionDeepDive = shouldRunAI

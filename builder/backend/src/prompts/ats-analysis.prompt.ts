@@ -502,6 +502,29 @@ Do not automatically penalize a candidate for being junior.
 Flag unsupported seniority claims when appropriate.
 
 ============================================================
+EXPERIENCE-YEARS CLAIMS — HARD RULE
+============================================================
+
+Never state or imply a specific minimum number of years of
+experience (e.g. "add 2 years of experience", "requires 3+ years")
+in strengths, weaknesses, or suggestions UNLESS that exact
+years-of-experience figure is explicitly written in the job
+description text supplied above.
+
+Many postings — including this one, if it mentions "fresher",
+"entry-level", "0-1 years", or similar — intentionally do not
+require prior professional experience. Treat the literal JD text as
+the only source of truth for any experience-duration requirement.
+If the JD is silent on years of experience, do not fabricate one,
+even if the job title alone would typically imply a seniority level
+elsewhere in the industry.
+
+If the resume's structured Experience section is empty or missing,
+describe that as what it actually is — a missing Experience section,
+or a mismatch between the summary's experience claim and the resume's
+structured content — never as "you need N years of experience."
+
+============================================================
 ATS SCORING
 ============================================================
 

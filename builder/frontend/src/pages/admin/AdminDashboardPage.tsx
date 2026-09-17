@@ -42,12 +42,20 @@
 //   );
 // }
 
+import { useNavigate } from "react-router-dom";
+import { CalendarCheck2, ChevronRight } from "lucide-react";
+
 import AdminStatCard from "../../features/admin/components/AdminStatCard";
 import { useDashboardStats } from "../../features/admin/hooks/useDashboardStats";
 import UserTable from "../../features/admin/components/UserTable";
+import { useAdminBookings } from "../../features/booking/hooks/useBookings";
 
 export default function AdminDashboardPage() {
   const { data, isLoading } = useDashboardStats();
+  const navigate = useNavigate();
+  const { data: bookings = [] } = useAdminBookings();
+
+  const pendingCount = bookings.filter((b) => b.status === "pending").length;
 
   if (isLoading) {
     return <div className="p-10">Loading...</div>;
@@ -56,6 +64,37 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8 p-8">
       <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+
+      {/* Interview Session Requests quick access */}
+      <button
+        onClick={() => navigate("/admin/bookings")}
+        className="flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
+            <CalendarCheck2 size={24} className="text-primary" />
+          </div>
+          <div>
+            <p className="font-semibold text-dark">
+              Interview Session Requests
+            </p>
+            <p className="text-sm text-primary/60">
+              {pendingCount > 0
+                ? `${pendingCount} pending request${pendingCount === 1 ? "" : "s"} awaiting review`
+                : "No pending requests"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {pendingCount > 0 && (
+            <span className="rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white">
+              {pendingCount}
+            </span>
+          )}
+          <ChevronRight size={20} className="text-primary/40" />
+        </div>
+      </button>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">

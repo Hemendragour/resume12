@@ -10,6 +10,7 @@ import {
   Sparkles,
   User,
   Home,
+  CalendarCheck2,
 } from "lucide-react";
 import { BriefcaseBusiness } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -99,6 +100,13 @@ const menus: Menu[] = [
     title: "View Users",
     path: "/admin/users",
     icon: User,
+    roles: ["admin"],
+  },
+
+  {
+    title: "Session Requests",
+    path: "/admin/bookings",
+    icon: CalendarCheck2,
     roles: ["admin"],
   },
 ];

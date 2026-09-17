@@ -1,5 +1,6 @@
 import { BookingSession, BookingStatus } from "../../models/booking-session.model";
 import { User } from "../../models/user.model";
+import { Resume } from "../../models/resume.model";
 import { ApiError } from "../../utils/ApiError";
 import {
   CreateBookingInput,
@@ -10,6 +11,20 @@ import {
 import { createNotification } from "../notification/notification.service";
 
 export const createBooking = async (data: CreateBookingInput) => {
+  // If a resumeId was provided, make sure it actually belongs to this
+  // user — otherwise a client could pass any resumeId (including one
+  // that isn't theirs) and it would silently get attached to the booking.
+  if (data.resumeId) {
+    const resume = await Resume.findOne({
+      _id: data.resumeId,
+      userId: data.userId,
+    });
+
+    if (!resume) {
+      throw new ApiError(404, "Resume not found");
+    }
+  }
+
   const booking = new BookingSession(data);
   return await booking.save();
 };

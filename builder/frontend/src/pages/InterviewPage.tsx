@@ -2,13 +2,19 @@ import { Bot, CalendarCheck2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useInterviewHistory } from "../features/interview/hooks/useInterviewHistory";
+import { useMyBookings } from "../features/booking/hooks/useBookings";
 import InterviewHistoryBox from "../features/interview/components/InterviewHistoryBox";
 
 export default function InterviewPage() {
   const navigate = useNavigate();
-  const { sessions, loading } = useInterviewHistory();
+  const { sessions, loading: loadingAi } = useInterviewHistory();
+  const { data: bookings = [], isLoading: loadingBookings } = useMyBookings();
 
-  const hasHistory = !loading && sessions.length > 0;
+  // Show the history box if the user has EITHER an AI practice session
+  // or a live booked session (confirmed/cancelled/completed) — not just
+  // AI ones, since someone might only ever book a live session.
+  const loading = loadingAi || loadingBookings;
+  const hasHistory = !loading && (sessions.length > 0 || bookings.length > 0);
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">

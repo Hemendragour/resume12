@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, ChevronRight, Calendar, Star } from "lucide-react";
+import { ArrowLeft, Loader2, ChevronRight, Calendar, Star } from "lucide-react";
 
 import { useInterviewHistory } from "../../features/interview/hooks/useInterviewHistory";
 import { useMyBookings } from "../../features/booking/hooks/useBookings";
@@ -70,6 +70,14 @@ export default function InterviewHistoryPage() {
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-10">
+      <button
+        onClick={() => navigate("/interview")}
+        className="mb-6 flex items-center gap-1.5 text-sm font-medium text-primary/60 transition hover:text-dark"
+      >
+        <ArrowLeft size={16} />
+        Back to Interview Prep
+      </button>
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-dark">Interview History</h1>
         <p className="mt-2 text-primary/70">

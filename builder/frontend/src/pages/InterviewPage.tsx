@@ -1,8 +1,14 @@
 import { Bot, CalendarCheck2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { useInterviewHistory } from "../features/interview/hooks/useInterviewHistory";
+import InterviewHistoryBox from "../features/interview/components/InterviewHistoryBox";
+
 export default function InterviewPage() {
   const navigate = useNavigate();
+  const { sessions, loading } = useInterviewHistory();
+
+  const hasHistory = !loading && sessions.length > 0;
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">
@@ -13,6 +19,8 @@ export default function InterviewPage() {
           placement expert — the choice is yours.
         </p>
       </div>
+
+      {hasHistory && <InterviewHistoryBox />}
 
       <div className="grid gap-6 md:grid-cols-2">
         <button

@@ -25,6 +25,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import InterviewPage from "../pages/InterviewPage";
 import GenerateInterviewPage from "../pages/interview/GenerateInterviewPage";
 import InterviewSessionPage from "../pages/interview/InterviewSessionPage";
+import InterviewHistoryPage from "../pages/interview/InterviewHistoryPage";
 
 export default function AppRoutes() {
   return (
@@ -71,6 +72,7 @@ export default function AppRoutes() {
           path="/interview/ai/session/:sessionId"
           element={<InterviewSessionPage />}
         />
+        <Route path="/interview/history" element={<InterviewHistoryPage />} />
 
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
       </Route>

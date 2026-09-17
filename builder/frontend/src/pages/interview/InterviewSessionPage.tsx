@@ -12,6 +12,7 @@ import QuestionCard from "../../features/interview/components/QuestionCard";
 import FeedbackCard from "../../features/interview/components/FeedbackCard";
 import EndTestModal from "../../features/interview/components/EndTestModal";
 import SessionSummary from "../../features/interview/components/SessionSummary";
+import QuestionReviewCard from "../../features/interview/components/QuestionReviewCard";
 
 import type { InterviewFeedback } from "../../features/interview/types/interview.types";
 
@@ -55,13 +56,31 @@ export default function InterviewSessionPage() {
     return (
       <section className="mx-auto max-w-2xl px-4 py-10">
         {session.summary ? (
-          <SessionSummary
-            summary={session.summary}
-            answeredCount={
-              session.questions.filter((q) => q.feedback).length
-            }
-            totalQuestions={session.totalQuestions}
-          />
+          <>
+            <SessionSummary
+              summary={session.summary}
+              answeredCount={
+                session.questions.filter((q) => q.feedback).length
+              }
+              totalQuestions={session.totalQuestions}
+            />
+
+            {session.questions.length > 0 && (
+              <div className="mt-8 space-y-4">
+                <h2 className="text-lg font-semibold text-dark">
+                  Question by Question
+                </h2>
+
+                {session.questions.map((question, i) => (
+                  <QuestionReviewCard
+                    key={question.index}
+                    question={question}
+                    number={i + 1}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-center text-primary/70">
             This interview session has ended.

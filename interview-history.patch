@@ -1,0 +1,363 @@
+diff --git a/builder/frontend/src/features/interview/components/InterviewHistoryBox.tsx b/builder/frontend/src/features/interview/components/InterviewHistoryBox.tsx
+new file mode 100644
+index 0000000..46cdf7e
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/InterviewHistoryBox.tsx
+@@ -0,0 +1,28 @@
++import { History, ChevronRight } from "lucide-react";
++import { useNavigate } from "react-router-dom";
++
++export default function InterviewHistoryBox() {
++  const navigate = useNavigate();
++
++  return (
++    <button
++      onClick={() => navigate("/interview/history")}
++      className="mb-6 flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card px-5 py-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
++    >
++      <div className="flex items-center gap-3">
++        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15">
++          <History size={20} className="text-primary" />
++        </div>
++
++        <div>
++          <p className="font-semibold text-dark">View your interview history</p>
++          <p className="text-sm text-primary/60">
++            See your past sessions, scores, and feedback
++          </p>
++        </div>
++      </div>
++
++      <ChevronRight size={20} className="text-primary/40" />
++    </button>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/QuestionReviewCard.tsx b/builder/frontend/src/features/interview/components/QuestionReviewCard.tsx
+new file mode 100644
+index 0000000..867ec8c
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/QuestionReviewCard.tsx
+@@ -0,0 +1,79 @@
++import { CheckCircle2, XCircle } from "lucide-react";
++
++import type { InterviewQuestion } from "../types/interview.types";
++
++interface QuestionReviewCardProps {
++  question: InterviewQuestion;
++  number: number;
++}
++
++export default function QuestionReviewCard({
++  question,
++  number,
++}: QuestionReviewCardProps) {
++  const feedback = question.feedback;
++
++  return (
++    <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-sm">
++      <div className="mb-2 flex items-center gap-2">
++        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary/70">
++          {number}
++        </span>
++
++        {question.isFollowUp && (
++          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-semibold text-accent">
++            Follow-up
++          </span>
++        )}
++
++        {feedback && (
++          <span className="ml-auto rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-semibold text-accent">
++            {feedback.overallScore}/100
++          </span>
++        )}
++      </div>
++
++      <p className="mb-3 font-medium text-dark">{question.question}</p>
++
++      {question.answerText ? (
++        <div className="mb-3 rounded-xl bg-primary/5 p-3 text-sm text-primary/80">
++          {question.answerText}
++        </div>
++      ) : (
++        <p className="mb-3 text-sm italic text-primary/40">
++          Not answered — session ended before this question.
++        </p>
++      )}
++
++      {feedback && (
++        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
++          {feedback.strengths.length > 0 && (
++            <div>
++              <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-green-600">
++                <CheckCircle2 size={14} /> Strengths
++              </p>
++              <ul className="space-y-0.5 text-xs text-primary/70">
++                {feedback.strengths.map((item, i) => (
++                  <li key={i}>• {item}</li>
++                ))}
++              </ul>
++            </div>
++          )}
++
++          {feedback.improvements.length > 0 && (
++            <div>
++              <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-amber-600">
++                <XCircle size={14} /> Improve
++              </p>
++              <ul className="space-y-0.5 text-xs text-primary/70">
++                {feedback.improvements.map((item, i) => (
++                  <li key={i}>• {item}</li>
++                ))}
++              </ul>
++            </div>
++          )}
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/hooks/useInterviewHistory.ts b/builder/frontend/src/features/interview/hooks/useInterviewHistory.ts
+new file mode 100644
+index 0000000..9a52872
+--- /dev/null
++++ b/builder/frontend/src/features/interview/hooks/useInterviewHistory.ts
+@@ -0,0 +1,16 @@
++import { useQuery } from "@tanstack/react-query";
++
++import { getInterviewHistory } from "../services/interview.service";
++
++export const useInterviewHistory = () => {
++  const { data, isLoading, isError } = useQuery({
++    queryKey: ["interview-history"],
++    queryFn: getInterviewHistory,
++  });
++
++  return {
++    sessions: data ?? [],
++    loading: isLoading,
++    isError,
++  };
++};
+diff --git a/builder/frontend/src/pages/InterviewPage.tsx b/builder/frontend/src/pages/InterviewPage.tsx
+index 5581874..24cf548 100644
+--- a/builder/frontend/src/pages/InterviewPage.tsx
++++ b/builder/frontend/src/pages/InterviewPage.tsx
+@@ -1,8 +1,14 @@
+ import { Bot, CalendarCheck2 } from "lucide-react";
+ import { useNavigate } from "react-router-dom";
+ 
++import { useInterviewHistory } from "../features/interview/hooks/useInterviewHistory";
++import InterviewHistoryBox from "../features/interview/components/InterviewHistoryBox";
++
+ export default function InterviewPage() {
+   const navigate = useNavigate();
++  const { sessions, loading } = useInterviewHistory();
++
++  const hasHistory = !loading && sessions.length > 0;
+ 
+   return (
+     <section className="mx-auto max-w-5xl px-4 py-10">
+@@ -14,6 +20,8 @@ export default function InterviewPage() {
+         </p>
+       </div>
+ 
++      {hasHistory && <InterviewHistoryBox />}
++
+       <div className="grid gap-6 md:grid-cols-2">
+         <button
+           onClick={() => navigate("/interview/ai")}
+diff --git a/builder/frontend/src/pages/interview/InterviewHistoryPage.tsx b/builder/frontend/src/pages/interview/InterviewHistoryPage.tsx
+new file mode 100644
+index 0000000..77625d1
+--- /dev/null
++++ b/builder/frontend/src/pages/interview/InterviewHistoryPage.tsx
+@@ -0,0 +1,117 @@
++import { useNavigate } from "react-router-dom";
++import { Loader2, ChevronRight, Calendar } from "lucide-react";
++
++import { useInterviewHistory } from "../../features/interview/hooks/useInterviewHistory";
++
++const STATUS_LABELS: Record<string, string> = {
++  completed: "Completed",
++  ended_early: "Ended Early",
++  in_progress: "In Progress",
++};
++
++const STATUS_STYLES: Record<string, string> = {
++  completed: "bg-green-100 text-green-700",
++  ended_early: "bg-amber-100 text-amber-700",
++  in_progress: "bg-blue-100 text-blue-700",
++};
++
++export default function InterviewHistoryPage() {
++  const navigate = useNavigate();
++  const { sessions, loading, isError } = useInterviewHistory();
++
++  if (loading) {
++    return (
++      <div className="flex min-h-[50vh] items-center justify-center">
++        <Loader2 className="animate-spin text-accent" size={32} />
++      </div>
++    );
++  }
++
++  if (isError) {
++    return (
++      <div className="mx-auto max-w-lg px-4 py-16 text-center">
++        <p className="text-primary/70">
++          We couldn't load your interview history. Please try again.
++        </p>
++      </div>
++    );
++  }
++
++  return (
++    <section className="mx-auto max-w-3xl px-4 py-10">
++      <div className="mb-8">
++        <h1 className="text-3xl font-bold text-dark">Interview History</h1>
++        <p className="mt-2 text-primary/70">
++          Your past AI interview sessions, scores, and feedback.
++        </p>
++      </div>
++
++      {sessions.length === 0 ? (
++        <p className="text-center text-primary/60">
++          You haven't taken any interviews yet.
++        </p>
++      ) : (
++        <div className="space-y-3">
++          {sessions.map((session) => {
++            const answeredCount = session.questions.filter(
++              (q) => q.feedback,
++            ).length;
++
++            return (
++              <button
++                key={session._id}
++                onClick={() =>
++                  navigate(`/interview/ai/session/${session._id}`)
++                }
++                className="flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
++              >
++                <div>
++                  <div className="mb-1 flex items-center gap-2">
++                    <h3 className="font-semibold text-dark">
++                      {session.targetRole}
++                    </h3>
++
++                    <span
++                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
++                        STATUS_STYLES[session.status] ??
++                        "bg-primary/10 text-primary/60"
++                      }`}
++                    >
++                      {STATUS_LABELS[session.status] ?? session.status}
++                    </span>
++                  </div>
++
++                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-primary/60">
++                    <span className="flex items-center gap-1">
++                      <Calendar size={14} />
++                      {new Date(session.createdAt).toLocaleDateString(
++                        undefined,
++                        { year: "numeric", month: "short", day: "numeric" },
++                      )}
++                    </span>
++
++                    <span className="capitalize">
++                      {session.questionType} · {session.difficulty}
++                    </span>
++
++                    <span>
++                      {answeredCount}/{session.totalQuestions} answered
++                    </span>
++
++                    {session.summary && (
++                      <span className="font-semibold text-accent">
++                        {session.summary.overallScore}/100
++                      </span>
++                    )}
++                  </div>
++                </div>
++
++                <ChevronRight size={20} className="shrink-0 text-primary/40" />
++              </button>
++            );
++          })}
++        </div>
++      )}
++    </section>
++  );
++}
+diff --git a/builder/frontend/src/pages/interview/InterviewSessionPage.tsx b/builder/frontend/src/pages/interview/InterviewSessionPage.tsx
+index 4a20ed4..a33c901 100644
+--- a/builder/frontend/src/pages/interview/InterviewSessionPage.tsx
++++ b/builder/frontend/src/pages/interview/InterviewSessionPage.tsx
+@@ -12,6 +12,7 @@ import QuestionCard from "../../features/interview/components/QuestionCard";
+ import FeedbackCard from "../../features/interview/components/FeedbackCard";
+ import EndTestModal from "../../features/interview/components/EndTestModal";
+ import SessionSummary from "../../features/interview/components/SessionSummary";
++import QuestionReviewCard from "../../features/interview/components/QuestionReviewCard";
+ 
+ import type { InterviewFeedback } from "../../features/interview/types/interview.types";
+ 
+@@ -55,13 +56,31 @@ export default function InterviewSessionPage() {
+     return (
+       <section className="mx-auto max-w-2xl px-4 py-10">
+         {session.summary ? (
+-          <SessionSummary
+-            summary={session.summary}
+-            answeredCount={
+-              session.questions.filter((q) => q.feedback).length
+-            }
+-            totalQuestions={session.totalQuestions}
+-          />
++          <>
++            <SessionSummary
++              summary={session.summary}
++              answeredCount={
++                session.questions.filter((q) => q.feedback).length
++              }
++              totalQuestions={session.totalQuestions}
++            />
++
++            {session.questions.length > 0 && (
++              <div className="mt-8 space-y-4">
++                <h2 className="text-lg font-semibold text-dark">
++                  Question by Question
++                </h2>
++
++                {session.questions.map((question, i) => (
++                  <QuestionReviewCard
++                    key={question.index}
++                    question={question}
++                    number={i + 1}
++                  />
++                ))}
++              </div>
++            )}
++          </>
+         ) : (
+           <p className="text-center text-primary/70">
+             This interview session has ended.
+diff --git a/builder/frontend/src/routes/AppRoutes.tsx b/builder/frontend/src/routes/AppRoutes.tsx
+index 47377b9..631d2cd 100644
+--- a/builder/frontend/src/routes/AppRoutes.tsx
++++ b/builder/frontend/src/routes/AppRoutes.tsx
+@@ -25,6 +25,7 @@ import NotFoundPage from "../pages/NotFoundPage";
+ import InterviewPage from "../pages/InterviewPage";
+ import GenerateInterviewPage from "../pages/interview/GenerateInterviewPage";
+ import InterviewSessionPage from "../pages/interview/InterviewSessionPage";
++import InterviewHistoryPage from "../pages/interview/InterviewHistoryPage";
+ 
+ export default function AppRoutes() {
+   return (
+@@ -71,6 +72,7 @@ export default function AppRoutes() {
+           path="/interview/ai/session/:sessionId"
+           element={<InterviewSessionPage />}
+         />
++        <Route path="/interview/history" element={<InterviewHistoryPage />} />
+ 
+         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
+       </Route>

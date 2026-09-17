@@ -107,7 +107,10 @@ export const submitInterviewAnswer = asyncHandler(
 // ============================================================
 
 export const endInterview = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (
+    req: AuthRequest<{ sessionId: string }>,
+    res: Response,
+  ) => {
     if (!req.userId) {
       throw new ApiError(401, "Authentication required");
     }
@@ -133,7 +136,10 @@ export const endInterview = asyncHandler(
 // ============================================================
 
 export const getSession = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (
+    req: AuthRequest<{ sessionId: string }>,
+    res: Response,
+  ) => {
     if (!req.userId) {
       throw new ApiError(401, "Authentication required");
     }

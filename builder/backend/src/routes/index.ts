@@ -18,6 +18,10 @@ import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 
 import interviewRoutes from "../modules/interview/interview.routes";
 
+import notificationRoutes from "../modules/notification/notification.routes";
+
+import bookingRoutes from "../modules/booking/booking.routes";
+
 const router = Router();
 // router.use(protect);
 
@@ -46,5 +50,9 @@ router.use("/ats", atsRoutes);
 router.use("/upload", uploadRoutes);
 
 router.use("/interview", interviewRoutes);
+
+router.use("/booking", bookingRoutes);
+
+router.use("/notifications", notificationRoutes);
 
 export default router;

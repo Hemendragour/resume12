@@ -21,11 +21,13 @@ import ResumeEditorPage from "../pages/resume/ResumeEditorPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersPage from "../pages/admin/UsersPage";
+import BookingRequestsPage from "../pages/admin/BookingRequestsPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import InterviewPage from "../pages/InterviewPage";
 import GenerateInterviewPage from "../pages/interview/GenerateInterviewPage";
 import InterviewSessionPage from "../pages/interview/InterviewSessionPage";
 import InterviewHistoryPage from "../pages/interview/InterviewHistoryPage";
+import BookSessionPage from "../pages/interview/BookSessionPage";
 
 export default function AppRoutes() {
   return (
@@ -72,6 +74,7 @@ export default function AppRoutes() {
           path="/interview/ai/session/:sessionId"
           element={<InterviewSessionPage />}
         />
+        <Route path="/interview/book" element={<BookSessionPage />} />
         <Route path="/interview/history" element={<InterviewHistoryPage />} />
 
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
@@ -89,6 +92,8 @@ export default function AppRoutes() {
         <Route path="/admin" element={<AdminDashboardPage />} />
 
         <Route path="/admin/users" element={<UsersPage />} />
+
+        <Route path="/admin/bookings" element={<BookingRequestsPage />} />
       </Route>
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<NotFoundPage />} />

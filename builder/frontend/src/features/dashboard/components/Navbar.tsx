@@ -4,6 +4,7 @@ import { useAuthStore } from "../../../store/auth.store";
 import { useState } from "react";
 import { useCreateResume } from "../../resume/hooks/useCreateResume";
 import UploadResumeModal from "../../resume/components/UploadResumeModal";
+import NotificationDropdown from "../../notification/components/NotificationDropdown";
 export default function Navbar() {
   const navigate = useNavigate();
 
@@ -105,11 +106,7 @@ export default function Navbar() {
 
         {/* Notifications */}
 
-        <button className="relative rounded-xl border border-primary/50 p-3 transition hover:bg-background">
-          <Bell size={19} />
-
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger" />
-        </button>
+        <NotificationDropdown />
 
         {/* User */}
 

@@ -42,7 +42,7 @@ export default function InterviewPage() {
         </button>
 
         <button
-          // TODO: wire up booking flow when that page is built
+          onClick={() => navigate("/interview/book")}
           className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
         >
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">

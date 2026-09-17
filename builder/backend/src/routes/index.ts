@@ -16,6 +16,8 @@ import adminRoutes from "../modules/admin/admin.routes";
 
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 
+import interviewRoutes from "../modules/interview/interview.routes";
+
 const router = Router();
 // router.use(protect);
 
@@ -42,4 +44,7 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/ats", atsRoutes);
 
 router.use("/upload", uploadRoutes);
+
+router.use("/interview", interviewRoutes);
+
 export default router;

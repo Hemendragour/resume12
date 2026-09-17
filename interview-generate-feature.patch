@@ -1,0 +1,2159 @@
+diff --git a/builder/backend/src/models/interview-session.model.ts b/builder/backend/src/models/interview-session.model.ts
+new file mode 100644
+index 0000000..aa348a9
+--- /dev/null
++++ b/builder/backend/src/models/interview-session.model.ts
+@@ -0,0 +1,167 @@
++import mongoose, { Schema, Document } from "mongoose";
++
++export const InterviewQuestionType = {
++  TECHNICAL: "technical",
++  HR: "hr",
++  BEHAVIORAL: "behavioral",
++  MIXED: "mixed",
++} as const;
++
++export const InterviewDifficulty = {
++  EASY: "easy",
++  MEDIUM: "medium",
++  HARD: "hard",
++} as const;
++
++export const InterviewSessionStatus = {
++  IN_PROGRESS: "in_progress",
++  COMPLETED: "completed",
++  ENDED_EARLY: "ended_early",
++} as const;
++
++export interface IInterviewFeedback {
++  strengths: string[];
++  improvements: string[];
++  clarity: number;
++  structure: number;
++  technicalAccuracy: number;
++  overallScore: number;
++  comment: string;
++}
++
++export interface IInterviewQuestion {
++  index: number;
++  question: string;
++  isFollowUp: boolean;
++  answerText: string;
++  timeTakenSeconds?: number;
++  feedback?: IInterviewFeedback;
++  answeredAt?: Date;
++}
++
++export interface IInterviewSession extends Document {
++  userId: mongoose.Types.ObjectId;
++  resumeId: mongoose.Types.ObjectId;
++
++  targetRole: string;
++  jobDescription: string;
++  preparationNotes: string;
++
++  questionType: (typeof InterviewQuestionType)[keyof typeof InterviewQuestionType];
++  difficulty: (typeof InterviewDifficulty)[keyof typeof InterviewDifficulty];
++  totalQuestions: number;
++
++  questions: IInterviewQuestion[];
++
++  status: (typeof InterviewSessionStatus)[keyof typeof InterviewSessionStatus];
++
++  summary?: {
++    overallScore: number;
++    strengths: string[];
++    weaknesses: string[];
++    comment: string;
++  };
++
++  createdAt: Date;
++  updatedAt: Date;
++}
++
++const interviewFeedbackSchema = new Schema<IInterviewFeedback>(
++  {
++    strengths: { type: [String], default: [] },
++    improvements: { type: [String], default: [] },
++    clarity: { type: Number, default: 0 },
++    structure: { type: Number, default: 0 },
++    technicalAccuracy: { type: Number, default: 0 },
++    overallScore: { type: Number, default: 0 },
++    comment: { type: String, default: "" },
++  },
++  { _id: false },
++);
++
++const interviewQuestionSchema = new Schema<IInterviewQuestion>(
++  {
++    index: { type: Number, required: true },
++    question: { type: String, required: true },
++    isFollowUp: { type: Boolean, default: false },
++    answerText: { type: String, default: "" },
++    timeTakenSeconds: { type: Number },
++    feedback: { type: interviewFeedbackSchema },
++    answeredAt: { type: Date },
++  },
++  { _id: false },
++);
++
++const interviewSessionSchema = new Schema<IInterviewSession>(
++  {
++    userId: {
++      type: Schema.Types.ObjectId,
++      ref: "User",
++      required: true,
++    },
++
++    resumeId: {
++      type: Schema.Types.ObjectId,
++      ref: "Resume",
++      required: true,
++    },
++
++    targetRole: {
++      type: String,
++      required: true,
++    },
++
++    jobDescription: {
++      type: String,
++      default: "",
++    },
++
++    preparationNotes: {
++      type: String,
++      default: "",
++    },
++
++    questionType: {
++      type: String,
++      enum: Object.values(InterviewQuestionType),
++      default: InterviewQuestionType.MIXED,
++    },
++
++    difficulty: {
++      type: String,
++      enum: Object.values(InterviewDifficulty),
++      default: InterviewDifficulty.MEDIUM,
++    },
++
++    totalQuestions: {
++      type: Number,
++      required: true,
++    },
++
++    questions: {
++      type: [interviewQuestionSchema],
++      default: [],
++    },
++
++    status: {
++      type: String,
++      enum: Object.values(InterviewSessionStatus),
++      default: InterviewSessionStatus.IN_PROGRESS,
++    },
++
++    summary: {
++      overallScore: { type: Number },
++      strengths: { type: [String], default: [] },
++      weaknesses: { type: [String], default: [] },
++      comment: { type: String, default: "" },
++    },
++  },
++  {
++    timestamps: true,
++  },
++);
++
++export const InterviewSession = mongoose.model<IInterviewSession>(
++  "InterviewSession",
++  interviewSessionSchema,
++);
+diff --git a/builder/backend/src/modules/interview/interview.controller.ts b/builder/backend/src/modules/interview/interview.controller.ts
+new file mode 100644
+index 0000000..1e0c2d0
+--- /dev/null
++++ b/builder/backend/src/modules/interview/interview.controller.ts
+@@ -0,0 +1,174 @@
++import { Response } from "express";
++
++import { asyncHandler } from "../../utils/asyncHandler";
++import { ApiError } from "../../utils/ApiError";
++
++import { AuthRequest } from "../../middleware/auth.middleware";
++
++import {
++  startInterviewSession,
++  submitAnswer,
++  endInterviewSession,
++  getInterviewSession,
++  getInterviewHistory,
++} from "./interview.service";
++
++import {
++  validateStartInterviewRequest,
++  validateSubmitAnswerRequest,
++} from "./interview.validation";
++
++// ============================================================
++// START INTERVIEW SESSION
++// ============================================================
++
++export const startInterview = asyncHandler(
++  async (req: AuthRequest, res: Response) => {
++    if (!req.userId) {
++      throw new ApiError(401, "Authentication required");
++    }
++
++    const {
++      resumeId,
++      targetRole,
++      jobDescription,
++      preparationNotes,
++      questionType,
++      difficulty,
++      totalQuestions,
++    } = req.body;
++
++    validateStartInterviewRequest({
++      resumeId,
++      targetRole,
++      jobDescription,
++      preparationNotes,
++      questionType,
++      difficulty,
++      totalQuestions,
++    });
++
++    const session = await startInterviewSession(req.userId, {
++      resumeId,
++      targetRole,
++      jobDescription,
++      preparationNotes,
++      questionType,
++      difficulty,
++      totalQuestions,
++    });
++
++    res.status(201).json({
++      success: true,
++      message: "Interview session started",
++      data: { session },
++    });
++  },
++);
++
++// ============================================================
++// SUBMIT ANSWER
++// ============================================================
++
++export const submitInterviewAnswer = asyncHandler(
++  async (req: AuthRequest, res: Response) => {
++    if (!req.userId) {
++      throw new ApiError(401, "Authentication required");
++    }
++
++    const { sessionId, questionIndex, answerText, timeTakenSeconds } =
++      req.body;
++
++    validateSubmitAnswerRequest({
++      sessionId,
++      questionIndex,
++      answerText,
++      timeTakenSeconds,
++    });
++
++    const result = await submitAnswer(
++      req.userId,
++      sessionId,
++      questionIndex,
++      answerText,
++      timeTakenSeconds,
++    );
++
++    res.status(200).json({
++      success: true,
++      message: "Answer submitted",
++      data: result,
++    });
++  },
++);
++
++// ============================================================
++// END SESSION EARLY
++// ============================================================
++
++export const endInterview = asyncHandler(
++  async (req: AuthRequest, res: Response) => {
++    if (!req.userId) {
++      throw new ApiError(401, "Authentication required");
++    }
++
++    const { sessionId } = req.params;
++
++    if (!sessionId) {
++      throw new ApiError(400, "sessionId is required");
++    }
++
++    const session = await endInterviewSession(req.userId, sessionId);
++
++    res.status(200).json({
++      success: true,
++      message: "Interview session ended",
++      data: { session },
++    });
++  },
++);
++
++// ============================================================
++// GET SESSION
++// ============================================================
++
++export const getSession = asyncHandler(
++  async (req: AuthRequest, res: Response) => {
++    if (!req.userId) {
++      throw new ApiError(401, "Authentication required");
++    }
++
++    const { sessionId } = req.params;
++
++    if (!sessionId) {
++      throw new ApiError(400, "sessionId is required");
++    }
++
++    const session = await getInterviewSession(req.userId, sessionId);
++
++    res.status(200).json({
++      success: true,
++      data: { session },
++    });
++  },
++);
++
++// ============================================================
++// GET HISTORY
++// ============================================================
++
++export const getHistory = asyncHandler(
++  async (req: AuthRequest, res: Response) => {
++    if (!req.userId) {
++      throw new ApiError(401, "Authentication required");
++    }
++
++    const sessions = await getInterviewHistory(req.userId);
++
++    res.status(200).json({
++      success: true,
++      count: sessions.length,
++      data: sessions,
++    });
++  },
++);
+diff --git a/builder/backend/src/modules/interview/interview.routes.ts b/builder/backend/src/modules/interview/interview.routes.ts
+new file mode 100644
+index 0000000..2790eae
+--- /dev/null
++++ b/builder/backend/src/modules/interview/interview.routes.ts
+@@ -0,0 +1,51 @@
++import { Router } from "express";
++
++import { protect } from "../../middleware/auth.middleware";
++
++import {
++  startInterview,
++  submitInterviewAnswer,
++  endInterview,
++  getSession,
++  getHistory,
++} from "./interview.controller";
++
++const router = Router();
++
++// ============================================================
++// Authentication
++// ============================================================
++
++router.use(protect);
++
++// ============================================================
++// SESSION HISTORY
++// ============================================================
++
++router.get("/history", getHistory);
++
++// ============================================================
++// START INTERVIEW
++// ============================================================
++
++router.post("/start", startInterview);
++
++// ============================================================
++// SUBMIT ANSWER (returns feedback + next question, or completes session)
++// ============================================================
++
++router.post("/submit-answer", submitInterviewAnswer);
++
++// ============================================================
++// GET SESSION
++// ============================================================
++
++router.get("/:sessionId", getSession);
++
++// ============================================================
++// END SESSION EARLY
++// ============================================================
++
++router.post("/:sessionId/end", endInterview);
++
++export default router;
+diff --git a/builder/backend/src/modules/interview/interview.service.ts b/builder/backend/src/modules/interview/interview.service.ts
+new file mode 100644
+index 0000000..a5c4a89
+--- /dev/null
++++ b/builder/backend/src/modules/interview/interview.service.ts
+@@ -0,0 +1,281 @@
++import mongoose from "mongoose";
++
++import { Resume } from "../../models/resume.model";
++import {
++  InterviewSession,
++  InterviewSessionStatus,
++  IInterviewSession,
++} from "../../models/interview-session.model";
++
++import { ApiError } from "../../utils/ApiError";
++
++import { generateJSON } from "../../providers/gemini.provider";
++
++import { buildInterviewTurnPrompt } from "../../prompts/interview-turn.prompt";
++
++import {
++  StartInterviewRequest,
++  EvaluateAndNextResult,
++  InterviewSummary,
++} from "./interview.types";
++
++// ============================================================
++// HELPERS
++// ============================================================
++
++const getResumeObject = (resume: any): Record<string, unknown> => {
++  if (resume && typeof resume.toObject === "function") {
++    return resume.toObject();
++  }
++
++  return resume;
++};
++
++const loadOwnedSession = async (
++  userId: string,
++  sessionId: string,
++): Promise<IInterviewSession> => {
++  if (!mongoose.Types.ObjectId.isValid(sessionId)) {
++    throw new ApiError(400, "Invalid sessionId");
++  }
++
++  const session = await InterviewSession.findOne({
++    _id: sessionId,
++    userId,
++  });
++
++  if (!session) {
++    throw new ApiError(404, "Interview session not found");
++  }
++
++  return session;
++};
++
++const buildDeterministicSummary = (
++  session: IInterviewSession,
++): InterviewSummary => {
++  const answered = session.questions.filter((q) => q.feedback);
++
++  if (answered.length === 0) {
++    return {
++      overallScore: 0,
++      strengths: [],
++      weaknesses: [],
++      comment: "No questions were answered in this session.",
++    };
++  }
++
++  const avg = (nums: number[]) =>
++    Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
++
++  const overallScore = avg(
++    answered.map((q) => q.feedback?.overallScore ?? 0),
++  );
++
++  const strengths = Array.from(
++    new Set(answered.flatMap((q) => q.feedback?.strengths ?? [])),
++  ).slice(0, 5);
++
++  const weaknesses = Array.from(
++    new Set(answered.flatMap((q) => q.feedback?.improvements ?? [])),
++  ).slice(0, 5);
++
++  return {
++    overallScore,
++    strengths,
++    weaknesses,
++    comment: `You answered ${answered.length} of ${session.totalQuestions} question(s) with an average score of ${overallScore}/100.`,
++  };
++};
++
++// ============================================================
++// START INTERVIEW SESSION
++// ============================================================
++
++export const startInterviewSession = async (
++  userId: string,
++  request: StartInterviewRequest,
++) => {
++  const resume = await Resume.findOne({
++    _id: request.resumeId,
++    userId,
++  });
++
++  if (!resume) {
++    throw new ApiError(404, "Resume not found");
++  }
++
++  const session = await InterviewSession.create({
++    userId,
++    resumeId: request.resumeId,
++    targetRole: request.targetRole.trim(),
++    jobDescription: request.jobDescription?.trim() ?? "",
++    preparationNotes: request.preparationNotes?.trim() ?? "",
++    questionType: request.questionType,
++    difficulty: request.difficulty,
++    totalQuestions: request.totalQuestions,
++    questions: [],
++    status: InterviewSessionStatus.IN_PROGRESS,
++  });
++
++  const turn = await generateJSON<EvaluateAndNextResult>(
++    buildInterviewTurnPrompt({
++      resume: getResumeObject(resume),
++      targetRole: session.targetRole,
++      jobDescription: session.jobDescription,
++      preparationNotes: session.preparationNotes,
++      questionType: session.questionType,
++      difficulty: session.difficulty,
++      totalQuestions: session.totalQuestions,
++      currentQuestionNumber: 1,
++      history: [],
++    }),
++  );
++
++  if (!turn.nextQuestion) {
++    throw new ApiError(500, "Failed to generate the first question");
++  }
++
++  session.questions.push({
++    index: 0,
++    question: turn.nextQuestion.question,
++    isFollowUp: false,
++    answerText: "",
++  });
++
++  await session.save();
++
++  return session;
++};
++
++// ============================================================
++// SUBMIT ANSWER -> GET FEEDBACK + NEXT QUESTION (OR END)
++// ============================================================
++
++export const submitAnswer = async (
++  userId: string,
++  sessionId: string,
++  questionIndex: number,
++  answerText: string,
++  timeTakenSeconds?: number,
++) => {
++  const session = await loadOwnedSession(userId, sessionId);
++
++  if (session.status !== InterviewSessionStatus.IN_PROGRESS) {
++    throw new ApiError(400, "This interview session has already ended");
++  }
++
++  const question = session.questions[questionIndex];
++
++  if (!question) {
++    throw new ApiError(400, "Invalid questionIndex for this session");
++  }
++
++  if (question.answerText) {
++    throw new ApiError(400, "This question has already been answered");
++  }
++
++  const resume = await Resume.findOne({
++    _id: session.resumeId,
++    userId,
++  });
++
++  if (!resume) {
++    throw new ApiError(404, "Resume not found");
++  }
++
++  question.answerText = answerText.trim();
++  question.timeTakenSeconds = timeTakenSeconds;
++  question.answeredAt = new Date();
++
++  const history = session.questions
++    .filter((q) => q.answerText)
++    .map((q) => ({
++      question: q.question,
++      isFollowUp: q.isFollowUp,
++      answerText: q.answerText,
++    }));
++
++  const nextQuestionNumber = session.questions.length + 1;
++
++  const turn = await generateJSON<EvaluateAndNextResult>(
++    buildInterviewTurnPrompt({
++      resume: getResumeObject(resume),
++      targetRole: session.targetRole,
++      jobDescription: session.jobDescription,
++      preparationNotes: session.preparationNotes,
++      questionType: session.questionType,
++      difficulty: session.difficulty,
++      totalQuestions: session.totalQuestions,
++      currentQuestionNumber: nextQuestionNumber,
++      history,
++    }),
++  );
++
++  if (!turn.feedback) {
++    throw new ApiError(500, "Failed to evaluate the answer");
++  }
++
++  question.feedback = turn.feedback;
++
++  if (turn.nextQuestion && session.questions.length < session.totalQuestions) {
++    session.questions.push({
++      index: session.questions.length,
++      question: turn.nextQuestion.question,
++      isFollowUp: turn.nextQuestion.isFollowUp,
++      answerText: "",
++    });
++  } else {
++    session.status = InterviewSessionStatus.COMPLETED;
++    session.summary = buildDeterministicSummary(session);
++  }
++
++  await session.save();
++
++  return {
++    feedback: question.feedback,
++    session,
++  };
++};
++
++// ============================================================
++// END SESSION EARLY
++// ============================================================
++
++export const endInterviewSession = async (
++  userId: string,
++  sessionId: string,
++) => {
++  const session = await loadOwnedSession(userId, sessionId);
++
++  if (session.status === InterviewSessionStatus.IN_PROGRESS) {
++    session.status = InterviewSessionStatus.ENDED_EARLY;
++    session.summary = buildDeterministicSummary(session);
++
++    await session.save();
++  }
++
++  return session;
++};
++
++// ============================================================
++// GET SESSION
++// ============================================================
++
++export const getInterviewSession = async (
++  userId: string,
++  sessionId: string,
++) => {
++  return loadOwnedSession(userId, sessionId);
++};
++
++// ============================================================
++// GET SESSION HISTORY
++// ============================================================
++
++export const getInterviewHistory = async (userId: string) => {
++  return InterviewSession.find({ userId })
++    .sort({ createdAt: -1 })
++    .select("-questions.feedback")
++    .lean();
++};
+diff --git a/builder/backend/src/modules/interview/interview.types.ts b/builder/backend/src/modules/interview/interview.types.ts
+new file mode 100644
+index 0000000..89a1c47
+--- /dev/null
++++ b/builder/backend/src/modules/interview/interview.types.ts
+@@ -0,0 +1,43 @@
++export interface StartInterviewRequest {
++  resumeId: string;
++  targetRole: string;
++  jobDescription?: string;
++  preparationNotes?: string;
++  questionType: "technical" | "hr" | "behavioral" | "mixed";
++  difficulty: "easy" | "medium" | "hard";
++  totalQuestions: 5 | 10 | 15;
++}
++
++export interface SubmitAnswerRequest {
++  sessionId: string;
++  questionIndex: number;
++  answerText: string;
++  timeTakenSeconds?: number;
++}
++
++export interface GeneratedQuestion {
++  question: string;
++  isFollowUp: boolean;
++}
++
++export interface AnswerFeedback {
++  strengths: string[];
++  improvements: string[];
++  clarity: number;
++  structure: number;
++  technicalAccuracy: number;
++  overallScore: number;
++  comment: string;
++}
++
++export interface EvaluateAndNextResult {
++  feedback: AnswerFeedback;
++  nextQuestion: GeneratedQuestion | null;
++}
++
++export interface InterviewSummary {
++  overallScore: number;
++  strengths: string[];
++  weaknesses: string[];
++  comment: string;
++}
+diff --git a/builder/backend/src/modules/interview/interview.validation.ts b/builder/backend/src/modules/interview/interview.validation.ts
+new file mode 100644
+index 0000000..ceabe82
+--- /dev/null
++++ b/builder/backend/src/modules/interview/interview.validation.ts
+@@ -0,0 +1,96 @@
++import { ApiError } from "../../utils/ApiError";
++
++import { StartInterviewRequest, SubmitAnswerRequest } from "./interview.types";
++
++const VALID_QUESTION_TYPES = ["technical", "hr", "behavioral", "mixed"];
++const VALID_DIFFICULTIES = ["easy", "medium", "hard"];
++const VALID_QUESTION_COUNTS = [5, 10, 15];
++
++// ============================================================
++// START INTERVIEW REQUEST
++// ============================================================
++
++export const validateStartInterviewRequest = (
++  request: Partial<StartInterviewRequest>,
++) => {
++  if (!request.resumeId || typeof request.resumeId !== "string") {
++    throw new ApiError(400, "resumeId is required");
++  }
++
++  if (
++    !request.targetRole ||
++    typeof request.targetRole !== "string" ||
++    !request.targetRole.trim()
++  ) {
++    throw new ApiError(400, "targetRole is required");
++  }
++
++  if (
++    request.jobDescription !== undefined &&
++    typeof request.jobDescription !== "string"
++  ) {
++    throw new ApiError(400, "jobDescription must be a string");
++  }
++
++  if (
++    request.preparationNotes !== undefined &&
++    typeof request.preparationNotes !== "string"
++  ) {
++    throw new ApiError(400, "preparationNotes must be a string");
++  }
++
++  if (
++    !request.questionType ||
++    !VALID_QUESTION_TYPES.includes(request.questionType)
++  ) {
++    throw new ApiError(
++      400,
++      `questionType must be one of: ${VALID_QUESTION_TYPES.join(", ")}`,
++    );
++  }
++
++  if (!request.difficulty || !VALID_DIFFICULTIES.includes(request.difficulty)) {
++    throw new ApiError(
++      400,
++      `difficulty must be one of: ${VALID_DIFFICULTIES.join(", ")}`,
++    );
++  }
++
++  if (
++    !request.totalQuestions ||
++    !VALID_QUESTION_COUNTS.includes(request.totalQuestions)
++  ) {
++    throw new ApiError(
++      400,
++      `totalQuestions must be one of: ${VALID_QUESTION_COUNTS.join(", ")}`,
++    );
++  }
++};
++
++// ============================================================
++// SUBMIT ANSWER REQUEST
++// ============================================================
++
++export const validateSubmitAnswerRequest = (
++  request: Partial<SubmitAnswerRequest>,
++) => {
++  if (!request.sessionId || typeof request.sessionId !== "string") {
++    throw new ApiError(400, "sessionId is required");
++  }
++
++  if (
++    request.questionIndex === undefined ||
++    typeof request.questionIndex !== "number" ||
++    request.questionIndex < 0
++  ) {
++    throw new ApiError(400, "questionIndex is required");
++  }
++
++  if (
++    !request.answerText ||
++    typeof request.answerText !== "string" ||
++    !request.answerText.trim()
++  ) {
++    throw new ApiError(400, "answerText is required");
++  }
++};
+diff --git a/builder/backend/src/prompts/interview-turn.prompt.ts b/builder/backend/src/prompts/interview-turn.prompt.ts
+new file mode 100644
+index 0000000..331c73a
+--- /dev/null
++++ b/builder/backend/src/prompts/interview-turn.prompt.ts
+@@ -0,0 +1,145 @@
++interface PreviousTurn {
++  question: string;
++  isFollowUp: boolean;
++  answerText: string;
++}
++
++interface BuildInterviewTurnPromptArgs {
++  resume: object;
++  targetRole: string;
++  jobDescription?: string;
++  preparationNotes?: string;
++  questionType: string;
++  difficulty: string;
++  totalQuestions: number;
++  currentQuestionNumber: number; // 1-based index of the question being produced
++  history: PreviousTurn[]; // all previous question/answer pairs in this session
++}
++
++/**
++ * Builds a single prompt that does TWO jobs in one LLM call:
++ *
++ *  1. Evaluate the most recent answer (if any) and return structured feedback.
++ *  2. Decide the NEXT question — either a follow-up that digs deeper into the
++ *     answer just given, or a fresh question on a new topic — while staying
++ *     within the fixed totalQuestions budget the user picked.
++ *
++ * Combining both into one call halves the number of round trips compared to
++ * "evaluate" + "generate" as two separate requests.
++ */
++export const buildInterviewTurnPrompt = ({
++  resume,
++  targetRole,
++  jobDescription,
++  preparationNotes,
++  questionType,
++  difficulty,
++  totalQuestions,
++  currentQuestionNumber,
++  history,
++}: BuildInterviewTurnPromptArgs): string => {
++  const normalizedJD =
++    typeof jobDescription === "string" ? jobDescription.trim() : "";
++
++  const hasJobDescription = normalizedJD.length > 0;
++
++  const hasHistory = history.length > 0;
++
++  const lastTurn = hasHistory ? history[history.length - 1] : null;
++
++  const historyBlock = hasHistory
++    ? history
++        .map(
++          (turn, i) =>
++            `Q${i + 1} (${turn.isFollowUp ? "follow-up" : "new topic"}): ${turn.question}\nCandidate's answer: ${turn.answerText}`,
++        )
++        .join("\n\n")
++    : "None yet — this is the first question of the session.";
++
++  const isFinalQuestion = currentQuestionNumber >= totalQuestions;
++
++  return `
++You are an experienced technical interviewer conducting a mock interview.
++
++============================================================
++CANDIDATE CONTEXT
++============================================================
++
++Target role: ${targetRole}
++
++Resume (structured JSON):
++${JSON.stringify(resume)}
++
++${
++  hasJobDescription
++    ? `Job description the candidate is preparing for:\n${normalizedJD}\n`
++    : "No job description was provided — base questions on the target role and resume only.\n"
++}
++
++${
++  preparationNotes
++    ? `Candidate's own notes on what they want to practice:\n${preparationNotes}\n`
++    : ""
++}
++
++============================================================
++SESSION SETTINGS
++============================================================
++
++Question type focus: ${questionType} (technical | hr | behavioral | mixed)
++Difficulty: ${difficulty}
++Total questions in this session: ${totalQuestions}
++This is question number: ${currentQuestionNumber} of ${totalQuestions}
++
++============================================================
++CONVERSATION SO FAR
++============================================================
++
++${historyBlock}
++
++============================================================
++YOUR TASK
++============================================================
++
++${
++  lastTurn
++    ? `1. Evaluate the candidate's most recent answer above ("${lastTurn.answerText.slice(0, 40)}...") on clarity, structure, and technical accuracy (each 0-10), list concrete strengths and improvements, and give a short overall comment plus an overallScore (0-100).`
++    : `1. There is no previous answer yet, so return null for "feedback".`
++}
++
++2. ${
++    isFinalQuestion
++      ? `This is the LAST question of the session (question ${currentQuestionNumber} of ${totalQuestions}) — after this one there are no more questions, so set "nextQuestion" to null.`
++      : `Decide the next question to ask (this will become question ${currentQuestionNumber} of ${totalQuestions}). Choose ONE of:
++   - A FOLLOW-UP that digs deeper into the candidate's last answer, if it was vague, incomplete, or invites a natural probe (set isFollowUp: true)
++   - A NEW question on a different topic relevant to the target role/resume/JD and the requested question type + difficulty (set isFollowUp: false)
++   Do not repeat a question already asked. Stay strictly within the "${questionType}" focus and "${difficulty}" difficulty band.`
++  }
++
++Respond with ONLY this JSON shape, no extra text:
++
++{
++  "feedback": ${
++    lastTurn
++      ? `{
++    "strengths": string[],
++    "improvements": string[],
++    "clarity": number,
++    "structure": number,
++    "technicalAccuracy": number,
++    "overallScore": number,
++    "comment": string
++  }`
++      : "null"
++  },
++  "nextQuestion": ${
++    isFinalQuestion
++      ? "null"
++      : `{
++    "question": string,
++    "isFollowUp": boolean
++  }`
++  }
++}
++`.trim();
++};
+diff --git a/builder/backend/src/routes/index.ts b/builder/backend/src/routes/index.ts
+index 4034b4b..c07d632 100644
+--- a/builder/backend/src/routes/index.ts
++++ b/builder/backend/src/routes/index.ts
+@@ -16,6 +16,8 @@ import adminRoutes from "../modules/admin/admin.routes";
+ 
+ import dashboardRoutes from "../modules/dashboard/dashboard.routes";
+ 
++import interviewRoutes from "../modules/interview/interview.routes";
++
+ const router = Router();
+ // router.use(protect);
+ 
+@@ -42,4 +44,7 @@ router.use("/dashboard", dashboardRoutes);
+ router.use("/ats", atsRoutes);
+ 
+ router.use("/upload", uploadRoutes);
++
++router.use("/interview", interviewRoutes);
++
+ export default router;
+diff --git a/builder/frontend/src/features/interview/components/EndTestModal.tsx b/builder/frontend/src/features/interview/components/EndTestModal.tsx
+new file mode 100644
+index 0000000..39f3e2f
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/EndTestModal.tsx
+@@ -0,0 +1,48 @@
++interface EndTestModalProps {
++  open: boolean;
++  onCancel: () => void;
++  onConfirm: () => void;
++  ending: boolean;
++}
++
++export default function EndTestModal({
++  open,
++  onCancel,
++  onConfirm,
++  ending,
++}: EndTestModalProps) {
++  if (!open) return null;
++
++  return (
++    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
++      <div className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-xl">
++        <h3 className="mb-2 text-lg font-semibold text-dark">
++          End this interview?
++        </h3>
++
++        <p className="mb-6 text-sm text-primary/70">
++          You'll get a summary based on the questions you've answered so far.
++          You won't be able to resume this session afterwards.
++        </p>
++
++        <div className="flex gap-3">
++          <button
++            onClick={onCancel}
++            disabled={ending}
++            className="flex-1 rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary/70 transition hover:bg-primary/5 disabled:opacity-50"
++          >
++            Keep going
++          </button>
++
++          <button
++            onClick={onConfirm}
++            disabled={ending}
++            className="flex-1 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-50"
++          >
++            {ending ? "Ending..." : "End Test"}
++          </button>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/FeedbackCard.tsx b/builder/frontend/src/features/interview/components/FeedbackCard.tsx
+new file mode 100644
+index 0000000..1e9d915
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/FeedbackCard.tsx
+@@ -0,0 +1,87 @@
++import { CheckCircle2, ChevronRight, XCircle } from "lucide-react";
++
++import type { InterviewFeedback } from "../types/interview.types";
++
++interface FeedbackCardProps {
++  feedback: InterviewFeedback;
++  isLastQuestion: boolean;
++  onNext: () => void;
++}
++
++const ScoreBar = ({ label, value }: { label: string; value: number }) => (
++  <div>
++    <div className="mb-1 flex justify-between text-xs font-medium text-primary/60">
++      <span>{label}</span>
++      <span>{value}/10</span>
++    </div>
++    <div className="h-1.5 w-full overflow-hidden rounded-full bg-primary/10">
++      <div
++        className="h-full rounded-full bg-accent"
++        style={{ width: `${(value / 10) * 100}%` }}
++      />
++    </div>
++  </div>
++);
++
++export default function FeedbackCard({
++  feedback,
++  isLastQuestion,
++  onNext,
++}: FeedbackCardProps) {
++  return (
++    <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
++      <div className="mb-4 flex items-center justify-between">
++        <h3 className="text-lg font-semibold text-dark">Feedback</h3>
++        <span className="rounded-full bg-accent/15 px-3 py-1 text-sm font-semibold text-accent">
++          {feedback.overallScore}/100
++        </span>
++      </div>
++
++      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
++        <ScoreBar label="Clarity" value={feedback.clarity} />
++        <ScoreBar label="Structure" value={feedback.structure} />
++        <ScoreBar label="Technical accuracy" value={feedback.technicalAccuracy} />
++      </div>
++
++      {feedback.comment && (
++        <p className="mb-5 text-sm text-primary/80">{feedback.comment}</p>
++      )}
++
++      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
++        {feedback.strengths.length > 0 && (
++          <div>
++            <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-green-600">
++              <CheckCircle2 size={16} /> Strengths
++            </p>
++            <ul className="space-y-1 text-sm text-primary/70">
++              {feedback.strengths.map((item, i) => (
++                <li key={i}>• {item}</li>
++              ))}
++            </ul>
++          </div>
++        )}
++
++        {feedback.improvements.length > 0 && (
++          <div>
++            <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-amber-600">
++              <XCircle size={16} /> Improve
++            </p>
++            <ul className="space-y-1 text-sm text-primary/70">
++              {feedback.improvements.map((item, i) => (
++                <li key={i}>• {item}</li>
++              ))}
++            </ul>
++          </div>
++        )}
++      </div>
++
++      <button
++        onClick={onNext}
++        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90"
++      >
++        {isLastQuestion ? "See Summary" : "Next Question"}
++        <ChevronRight size={18} />
++      </button>
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/InterviewConfigForm.tsx b/builder/frontend/src/features/interview/components/InterviewConfigForm.tsx
+new file mode 100644
+index 0000000..67b2c38
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/InterviewConfigForm.tsx
+@@ -0,0 +1,278 @@
++import { useRef, useState } from "react";
++import { Loader2, UploadCloud } from "lucide-react";
++
++import { useResumes } from "../../resume/hooks/useResumes";
++import { useUploadAndParseResume } from "../../resume/hooks/useUploadAndParseResume";
++
++import type {
++  Difficulty,
++  QuestionCount,
++  QuestionType,
++  StartInterviewPayload,
++} from "../types/interview.types";
++
++interface InterviewConfigFormProps {
++  onSubmit: (payload: StartInterviewPayload) => void;
++  submitting: boolean;
++}
++
++const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
++  { value: "mixed", label: "Mixed" },
++  { value: "technical", label: "Technical" },
++  { value: "hr", label: "HR" },
++  { value: "behavioral", label: "Behavioral" },
++];
++
++const DIFFICULTIES: { value: Difficulty; label: string }[] = [
++  { value: "easy", label: "Easy" },
++  { value: "medium", label: "Medium" },
++  { value: "hard", label: "Hard" },
++];
++
++const QUESTION_COUNTS: QuestionCount[] = [5, 10, 15];
++
++export default function InterviewConfigForm({
++  onSubmit,
++  submitting,
++}: InterviewConfigFormProps) {
++  const { resumes, loading: loadingResumes } = useResumes();
++  const uploadAndParse = useUploadAndParseResume();
++
++  const fileInputRef = useRef<HTMLInputElement>(null);
++
++  const [resumeId, setResumeId] = useState("");
++  const [targetRole, setTargetRole] = useState("");
++  const [jobDescription, setJobDescription] = useState("");
++  const [preparationNotes, setPreparationNotes] = useState("");
++  const [questionType, setQuestionType] = useState<QuestionType>("mixed");
++  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
++  const [totalQuestions, setTotalQuestions] = useState<QuestionCount>(5);
++
++  const handleFileChange = async (
++    e: React.ChangeEvent<HTMLInputElement>,
++  ) => {
++    const file = e.target.files?.[0];
++
++    if (!file) return;
++
++    const resume = await uploadAndParse.mutateAsync({ file });
++
++    // Newly uploaded resume is saved to the user's resumes and selected.
++    setResumeId(resume._id);
++  };
++
++  const canSubmit =
++    resumeId.trim().length > 0 &&
++    targetRole.trim().length > 0 &&
++    !submitting &&
++    !uploadAndParse.isPending;
++
++  const handleSubmit = (e: React.FormEvent) => {
++    e.preventDefault();
++
++    if (!canSubmit) return;
++
++    onSubmit({
++      resumeId,
++      targetRole: targetRole.trim(),
++      jobDescription: jobDescription.trim() || undefined,
++      preparationNotes: preparationNotes.trim() || undefined,
++      questionType,
++      difficulty,
++      totalQuestions,
++    });
++  };
++
++  return (
++    <form onSubmit={handleSubmit} className="space-y-8">
++      {/* Resume */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Resume
++        </label>
++
++        <div className="flex flex-wrap items-center gap-3">
++          <select
++            value={resumeId}
++            onChange={(e) => setResumeId(e.target.value)}
++            disabled={loadingResumes}
++            className="min-w-[220px] flex-1 rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
++          >
++            <option value="">
++              {loadingResumes ? "Loading resumes..." : "Select a saved resume"}
++            </option>
++
++            {resumes.map((resume) => (
++              <option key={resume._id} value={resume._id}>
++                {resume.title || "Untitled resume"}
++              </option>
++            ))}
++          </select>
++
++          <span className="text-xs text-primary/50">or</span>
++
++          <button
++            type="button"
++            onClick={() => fileInputRef.current?.click()}
++            disabled={uploadAndParse.isPending}
++            className="flex items-center gap-2 rounded-xl border border-dashed border-primary/25 px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent hover:text-accent disabled:opacity-60"
++          >
++            {uploadAndParse.isPending ? (
++              <Loader2 size={16} className="animate-spin" />
++            ) : (
++              <UploadCloud size={16} />
++            )}
++            Upload new resume
++          </button>
++
++          <input
++            ref={fileInputRef}
++            type="file"
++            accept=".pdf,.doc,.docx"
++            className="hidden"
++            onChange={handleFileChange}
++          />
++        </div>
++
++        {uploadAndParse.isError && (
++          <p className="mt-2 text-xs text-red-500">
++            Couldn't upload that file. Please try again.
++          </p>
++        )}
++      </div>
++
++      {/* Target role */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Target role
++        </label>
++
++        <input
++          type="text"
++          value={targetRole}
++          onChange={(e) => setTargetRole(e.target.value)}
++          placeholder="e.g. Frontend Developer, Data Analyst"
++          className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
++        />
++      </div>
++
++      {/* Job description (optional) */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Job description{" "}
++          <span className="font-normal text-primary/50">(optional)</span>
++        </label>
++
++        <textarea
++          value={jobDescription}
++          onChange={(e) => setJobDescription(e.target.value)}
++          rows={4}
++          placeholder="Paste the job description here for more relevant questions"
++          className="w-full resize-none rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
++        />
++      </div>
++
++      {/* Preparation notes */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          What are you preparing for?
++        </label>
++
++        <textarea
++          value={preparationNotes}
++          onChange={(e) => setPreparationNotes(e.target.value)}
++          rows={3}
++          placeholder="e.g. I want more system design questions, I'm weak in SQL..."
++          className="w-full resize-none rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
++        />
++      </div>
++
++      {/* Question type */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Question type
++        </label>
++
++        <div className="flex flex-wrap gap-2">
++          {QUESTION_TYPES.map((option) => (
++            <button
++              key={option.value}
++              type="button"
++              onClick={() => setQuestionType(option.value)}
++              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
++                questionType === option.value
++                  ? "bg-accent text-white"
++                  : "border border-primary/15 text-primary/70 hover:border-accent"
++              }`}
++            >
++              {option.label}
++            </button>
++          ))}
++        </div>
++      </div>
++
++      {/* Difficulty */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Difficulty
++        </label>
++
++        <div className="flex flex-wrap gap-2">
++          {DIFFICULTIES.map((option) => (
++            <button
++              key={option.value}
++              type="button"
++              onClick={() => setDifficulty(option.value)}
++              className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
++                difficulty === option.value
++                  ? "bg-accent text-white"
++                  : "border border-primary/15 text-primary/70 hover:border-accent"
++              }`}
++            >
++              {option.label}
++            </button>
++          ))}
++        </div>
++      </div>
++
++      {/* Question count */}
++      <div>
++        <label className="mb-2 block text-sm font-semibold text-dark">
++          Number of questions
++        </label>
++
++        <div className="flex flex-wrap gap-2">
++          {QUESTION_COUNTS.map((count) => (
++            <button
++              key={count}
++              type="button"
++              onClick={() => setTotalQuestions(count)}
++              className={`h-11 w-11 rounded-full text-sm font-semibold transition ${
++                totalQuestions === count
++                  ? "bg-accent text-white"
++                  : "border border-primary/15 text-primary/70 hover:border-accent"
++              }`}
++            >
++              {count}
++            </button>
++          ))}
++        </div>
++      </div>
++
++      <button
++        type="submit"
++        disabled={!canSubmit}
++        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
++      >
++        {submitting ? (
++          <>
++            <Loader2 size={18} className="animate-spin" />
++            Generating your first question...
++          </>
++        ) : (
++          "Generate"
++        )}
++      </button>
++    </form>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/ProgressBar.tsx b/builder/frontend/src/features/interview/components/ProgressBar.tsx
+new file mode 100644
+index 0000000..8b96e64
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/ProgressBar.tsx
+@@ -0,0 +1,26 @@
++interface ProgressBarProps {
++  current: number;
++  total: number;
++}
++
++export default function ProgressBar({ current, total }: ProgressBarProps) {
++  const percentage = Math.min(100, Math.round((current / total) * 100));
++
++  return (
++    <div>
++      <div className="mb-1 flex items-center justify-between text-sm font-medium text-primary/70">
++        <span>
++          Question {Math.min(current, total)} / {total}
++        </span>
++        <span>{percentage}%</span>
++      </div>
++
++      <div className="h-2 w-full overflow-hidden rounded-full bg-primary/10">
++        <div
++          className="h-full rounded-full bg-accent transition-all duration-500"
++          style={{ width: `${percentage}%` }}
++        />
++      </div>
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/QuestionCard.tsx b/builder/frontend/src/features/interview/components/QuestionCard.tsx
+new file mode 100644
+index 0000000..9f59242
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/QuestionCard.tsx
+@@ -0,0 +1,143 @@
++import { useEffect, useRef, useState } from "react";
++import { Mic, MicOff, Timer } from "lucide-react";
++
++interface QuestionCardProps {
++  question: string;
++  isFollowUp: boolean;
++  onSubmit: (answerText: string, timeTakenSeconds: number) => void;
++  submitting: boolean;
++}
++
++// Not every browser supports the Web Speech API (notably Safari has patchy
++// support), so we feature-detect and simply hide the mic button if it's
++// unavailable rather than breaking the write flow.
++const SpeechRecognitionCtor: any =
++  typeof window !== "undefined"
++    ? (window as any).SpeechRecognition ||
++      (window as any).webkitSpeechRecognition
++    : undefined;
++
++const formatTime = (seconds: number) => {
++  const m = Math.floor(seconds / 60)
++    .toString()
++    .padStart(2, "0");
++  const s = (seconds % 60).toString().padStart(2, "0");
++  return `${m}:${s}`;
++};
++
++export default function QuestionCard({
++  question,
++  isFollowUp,
++  onSubmit,
++  submitting,
++}: QuestionCardProps) {
++  const [answerText, setAnswerText] = useState("");
++  const [seconds, setSeconds] = useState(0);
++  const [isListening, setIsListening] = useState(false);
++
++  const recognitionRef = useRef<any>(null);
++
++  // Timer — starts as soon as a new question is shown.
++  useEffect(() => {
++    setAnswerText("");
++    setSeconds(0);
++
++    const interval = setInterval(() => {
++      setSeconds((s) => s + 1);
++    }, 1000);
++
++    return () => clearInterval(interval);
++  }, [question]);
++
++  const toggleListening = () => {
++    if (!SpeechRecognitionCtor) return;
++
++    if (isListening) {
++      recognitionRef.current?.stop();
++      setIsListening(false);
++      return;
++    }
++
++    const recognition = new SpeechRecognitionCtor();
++    recognition.continuous = true;
++    recognition.interimResults = true;
++    recognition.lang = "en-US";
++
++    recognition.onresult = (event: any) => {
++      let transcript = "";
++      for (let i = 0; i < event.results.length; i++) {
++        transcript += event.results[i][0].transcript;
++      }
++      setAnswerText(transcript);
++    };
++
++    recognition.onerror = () => setIsListening(false);
++    recognition.onend = () => setIsListening(false);
++
++    recognitionRef.current = recognition;
++    recognition.start();
++    setIsListening(true);
++  };
++
++  const handleSubmit = () => {
++    if (!answerText.trim() || submitting) return;
++
++    recognitionRef.current?.stop();
++    setIsListening(false);
++
++    onSubmit(answerText.trim(), seconds);
++  };
++
++  return (
++    <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
++      <div className="mb-4 flex items-center justify-between">
++        {isFollowUp && (
++          <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
++            Follow-up
++          </span>
++        )}
++
++        <div className="ml-auto flex items-center gap-1.5 text-sm font-medium text-primary/60">
++          <Timer size={16} />
++          {formatTime(seconds)}
++        </div>
++      </div>
++
++      <p className="mb-6 text-lg font-medium text-dark">{question}</p>
++
++      <div className="relative">
++        <textarea
++          value={answerText}
++          onChange={(e) => setAnswerText(e.target.value)}
++          rows={6}
++          placeholder="Type your answer here..."
++          disabled={submitting}
++          className="w-full resize-none rounded-xl border border-primary/15 bg-white px-4 py-3 pr-12 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
++        />
++
++        {SpeechRecognitionCtor && (
++          <button
++            type="button"
++            onClick={toggleListening}
++            title={isListening ? "Stop recording" : "Answer by speaking"}
++            className={`absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full transition ${
++              isListening
++                ? "bg-red-500 text-white"
++                : "bg-primary/10 text-primary/60 hover:bg-accent/15 hover:text-accent"
++            }`}
++          >
++            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
++          </button>
++        )}
++      </div>
++
++      <button
++        onClick={handleSubmit}
++        disabled={!answerText.trim() || submitting}
++        className="mt-4 w-full rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
++      >
++        {submitting ? "Evaluating your answer..." : "Submit Answer"}
++      </button>
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/components/SessionSummary.tsx b/builder/frontend/src/features/interview/components/SessionSummary.tsx
+new file mode 100644
+index 0000000..d4c16f8
+--- /dev/null
++++ b/builder/frontend/src/features/interview/components/SessionSummary.tsx
+@@ -0,0 +1,69 @@
++import { useNavigate } from "react-router-dom";
++
++import type { InterviewSummary } from "../types/interview.types";
++
++interface SessionSummaryProps {
++  summary: InterviewSummary;
++  answeredCount: number;
++  totalQuestions: number;
++}
++
++export default function SessionSummary({
++  summary,
++  answeredCount,
++  totalQuestions,
++}: SessionSummaryProps) {
++  const navigate = useNavigate();
++
++  return (
++    <div className="rounded-2xl border border-primary/10 bg-card p-6 text-center shadow-sm">
++      <p className="text-sm font-medium text-primary/60">
++        You answered {answeredCount} of {totalQuestions} questions
++      </p>
++
++      <div className="my-6 text-5xl font-bold text-accent">
++        {summary.overallScore}
++        <span className="text-xl text-primary/40">/100</span>
++      </div>
++
++      <p className="mx-auto mb-6 max-w-md text-sm text-primary/70">
++        {summary.comment}
++      </p>
++
++      <div className="grid grid-cols-1 gap-4 text-left sm:grid-cols-2">
++        {summary.strengths.length > 0 && (
++          <div>
++            <p className="mb-2 text-sm font-semibold text-green-600">
++              Strengths
++            </p>
++            <ul className="space-y-1 text-sm text-primary/70">
++              {summary.strengths.map((s, i) => (
++                <li key={i}>• {s}</li>
++              ))}
++            </ul>
++          </div>
++        )}
++
++        {summary.weaknesses.length > 0 && (
++          <div>
++            <p className="mb-2 text-sm font-semibold text-amber-600">
++              Areas to improve
++            </p>
++            <ul className="space-y-1 text-sm text-primary/70">
++              {summary.weaknesses.map((w, i) => (
++                <li key={i}>• {w}</li>
++              ))}
++            </ul>
++          </div>
++        )}
++      </div>
++
++      <button
++        onClick={() => navigate("/interview")}
++        className="mt-8 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90"
++      >
++        Back to Interview Home
++      </button>
++    </div>
++  );
++}
+diff --git a/builder/frontend/src/features/interview/hooks/useEndInterview.ts b/builder/frontend/src/features/interview/hooks/useEndInterview.ts
+new file mode 100644
+index 0000000..1fb6f90
+--- /dev/null
++++ b/builder/frontend/src/features/interview/hooks/useEndInterview.ts
+@@ -0,0 +1,9 @@
++import { useMutation } from "@tanstack/react-query";
++
++import { endInterviewSession } from "../services/interview.service";
++
++export const useEndInterview = () => {
++  return useMutation({
++    mutationFn: (sessionId: string) => endInterviewSession(sessionId),
++  });
++};
+diff --git a/builder/frontend/src/features/interview/hooks/useStartInterview.ts b/builder/frontend/src/features/interview/hooks/useStartInterview.ts
+new file mode 100644
+index 0000000..1043214
+--- /dev/null
++++ b/builder/frontend/src/features/interview/hooks/useStartInterview.ts
+@@ -0,0 +1,9 @@
++import { useMutation } from "@tanstack/react-query";
++
++import { startInterview } from "../services/interview.service";
++
++export const useStartInterview = () => {
++  return useMutation({
++    mutationFn: startInterview,
++  });
++};
+diff --git a/builder/frontend/src/features/interview/hooks/useSubmitAnswer.ts b/builder/frontend/src/features/interview/hooks/useSubmitAnswer.ts
+new file mode 100644
+index 0000000..46cf171
+--- /dev/null
++++ b/builder/frontend/src/features/interview/hooks/useSubmitAnswer.ts
+@@ -0,0 +1,9 @@
++import { useMutation } from "@tanstack/react-query";
++
++import { submitInterviewAnswer } from "../services/interview.service";
++
++export const useSubmitAnswer = () => {
++  return useMutation({
++    mutationFn: submitInterviewAnswer,
++  });
++};
+diff --git a/builder/frontend/src/features/interview/services/interview.service.ts b/builder/frontend/src/features/interview/services/interview.service.ts
+new file mode 100644
+index 0000000..4205e3d
+--- /dev/null
++++ b/builder/frontend/src/features/interview/services/interview.service.ts
+@@ -0,0 +1,63 @@
++import api from "../../../api/axios";
++
++import type {
++  InterviewSession,
++  StartInterviewPayload,
++  SubmitAnswerPayload,
++  SubmitAnswerResponse,
++} from "../types/interview.types";
++
++/**
++ * Start a new interview session — generates and returns the first question.
++ */
++export const startInterview = async (
++  payload: StartInterviewPayload,
++): Promise<InterviewSession> => {
++  const response = await api.post("/interview/start", payload);
++
++  return response.data.data.session;
++};
++
++/**
++ * Submit an answer for the current question.
++ * Returns feedback for that answer, plus the updated session
++ * (which will contain the next question, or be marked completed).
++ */
++export const submitInterviewAnswer = async (
++  payload: SubmitAnswerPayload,
++): Promise<SubmitAnswerResponse> => {
++  const response = await api.post("/interview/submit-answer", payload);
++
++  return response.data.data;
++};
++
++/**
++ * End a session early.
++ */
++export const endInterviewSession = async (
++  sessionId: string,
++): Promise<InterviewSession> => {
++  const response = await api.post(`/interview/${sessionId}/end`);
++
++  return response.data.data.session;
++};
++
++/**
++ * Fetch a single session (e.g. on page refresh).
++ */
++export const getInterviewSession = async (
++  sessionId: string,
++): Promise<InterviewSession> => {
++  const response = await api.get(`/interview/${sessionId}`);
++
++  return response.data.data.session;
++};
++
++/**
++ * Fetch past interview sessions for the history view.
++ */
++export const getInterviewHistory = async (): Promise<InterviewSession[]> => {
++  const response = await api.get("/interview/history");
++
++  return response.data.data;
++};
+diff --git a/builder/frontend/src/features/interview/types/interview.types.ts b/builder/frontend/src/features/interview/types/interview.types.ts
+new file mode 100644
+index 0000000..052b2d7
+--- /dev/null
++++ b/builder/frontend/src/features/interview/types/interview.types.ts
+@@ -0,0 +1,74 @@
++export type QuestionType = "technical" | "hr" | "behavioral" | "mixed";
++export type Difficulty = "easy" | "medium" | "hard";
++export type QuestionCount = 5 | 10 | 15;
++
++export interface StartInterviewPayload {
++  resumeId: string;
++  targetRole: string;
++  jobDescription?: string;
++  preparationNotes?: string;
++  questionType: QuestionType;
++  difficulty: Difficulty;
++  totalQuestions: QuestionCount;
++}
++
++export interface InterviewFeedback {
++  strengths: string[];
++  improvements: string[];
++  clarity: number;
++  structure: number;
++  technicalAccuracy: number;
++  overallScore: number;
++  comment: string;
++}
++
++export interface InterviewQuestion {
++  index: number;
++  question: string;
++  isFollowUp: boolean;
++  answerText: string;
++  timeTakenSeconds?: number;
++  feedback?: InterviewFeedback;
++  answeredAt?: string;
++}
++
++export type InterviewSessionStatus =
++  | "in_progress"
++  | "completed"
++  | "ended_early";
++
++export interface InterviewSummary {
++  overallScore: number;
++  strengths: string[];
++  weaknesses: string[];
++  comment: string;
++}
++
++export interface InterviewSession {
++  _id: string;
++  userId: string;
++  resumeId: string;
++  targetRole: string;
++  jobDescription: string;
++  preparationNotes: string;
++  questionType: QuestionType;
++  difficulty: Difficulty;
++  totalQuestions: number;
++  questions: InterviewQuestion[];
++  status: InterviewSessionStatus;
++  summary?: InterviewSummary;
++  createdAt: string;
++  updatedAt: string;
++}
++
++export interface SubmitAnswerPayload {
++  sessionId: string;
++  questionIndex: number;
++  answerText: string;
++  timeTakenSeconds?: number;
++}
++
++export interface SubmitAnswerResponse {
++  feedback: InterviewFeedback;
++  session: InterviewSession;
++}
+diff --git a/builder/frontend/src/pages/GenerateInterviewPage.tsx b/builder/frontend/src/pages/GenerateInterviewPage.tsx
+deleted file mode 100644
+index 583494b..0000000
+--- a/builder/frontend/src/pages/GenerateInterviewPage.tsx
++++ /dev/null
+@@ -1,7 +0,0 @@
+-export default function GenerateInterviewPage() {
+-  return (
+-    <section className="mx-auto max-w-5xl px-4 py-10">
+-      <h1 className="text-3xl font-bold text-dark">Generate Questions</h1>
+-    </section>
+-  );
+-}
+diff --git a/builder/frontend/src/pages/interview/GenerateInterviewPage.tsx b/builder/frontend/src/pages/interview/GenerateInterviewPage.tsx
+new file mode 100644
+index 0000000..f4c024b
+--- /dev/null
++++ b/builder/frontend/src/pages/interview/GenerateInterviewPage.tsx
+@@ -0,0 +1,42 @@
++import { useNavigate } from "react-router-dom";
++
++import InterviewConfigForm from "../../features/interview/components/InterviewConfigForm";
++import { useStartInterview } from "../../features/interview/hooks/useStartInterview";
++
++import type { StartInterviewPayload } from "../../features/interview/types/interview.types";
++
++export default function GenerateInterviewPage() {
++  const navigate = useNavigate();
++  const startInterview = useStartInterview();
++
++  const handleSubmit = (payload: StartInterviewPayload) => {
++    startInterview.mutate(payload, {
++      onSuccess: (session) => {
++        navigate(`/interview/ai/session/${session._id}`);
++      },
++    });
++  };
++
++  return (
++    <section className="mx-auto max-w-2xl px-4 py-10">
++      <div className="mb-8">
++        <h1 className="text-3xl font-bold text-dark">Generate Questions</h1>
++        <p className="mt-2 text-primary/70">
++          Tell us what you're preparing for and we'll build a mock interview
++          around it.
++        </p>
++      </div>
++
++      <InterviewConfigForm
++        onSubmit={handleSubmit}
++        submitting={startInterview.isPending}
++      />
++
++      {startInterview.isError && (
++        <p className="mt-4 text-center text-sm text-red-500">
++          Something went wrong starting your interview. Please try again.
++        </p>
++      )}
++    </section>
++  );
++}
+diff --git a/builder/frontend/src/pages/interview/InterviewSessionPage.tsx b/builder/frontend/src/pages/interview/InterviewSessionPage.tsx
+new file mode 100644
+index 0000000..4a20ed4
+--- /dev/null
++++ b/builder/frontend/src/pages/interview/InterviewSessionPage.tsx
+@@ -0,0 +1,166 @@
++import { useState } from "react";
++import { useParams } from "react-router-dom";
++import { useQuery, useQueryClient } from "@tanstack/react-query";
++import { Loader2, XCircle } from "lucide-react";
++
++import { getInterviewSession } from "../../features/interview/services/interview.service";
++import { useSubmitAnswer } from "../../features/interview/hooks/useSubmitAnswer";
++import { useEndInterview } from "../../features/interview/hooks/useEndInterview";
++
++import ProgressBar from "../../features/interview/components/ProgressBar";
++import QuestionCard from "../../features/interview/components/QuestionCard";
++import FeedbackCard from "../../features/interview/components/FeedbackCard";
++import EndTestModal from "../../features/interview/components/EndTestModal";
++import SessionSummary from "../../features/interview/components/SessionSummary";
++
++import type { InterviewFeedback } from "../../features/interview/types/interview.types";
++
++export default function InterviewSessionPage() {
++  const { sessionId } = useParams<{ sessionId: string }>();
++  const queryClient = useQueryClient();
++
++  const [pendingFeedback, setPendingFeedback] =
++    useState<InterviewFeedback | null>(null);
++  const [showEndModal, setShowEndModal] = useState(false);
++
++  const submitAnswer = useSubmitAnswer();
++  const endInterview = useEndInterview();
++
++  const { data: session, isLoading, isError } = useQuery({
++    queryKey: ["interview-session", sessionId],
++    queryFn: () => getInterviewSession(sessionId as string),
++    enabled: !!sessionId,
++  });
++
++  if (isLoading) {
++    return (
++      <div className="flex min-h-[50vh] items-center justify-center">
++        <Loader2 className="animate-spin text-accent" size={32} />
++      </div>
++    );
++  }
++
++  if (isError || !session || !sessionId) {
++    return (
++      <div className="mx-auto max-w-lg px-4 py-16 text-center">
++        <XCircle className="mx-auto mb-3 text-red-500" size={32} />
++        <p className="text-primary/70">
++          We couldn't load this interview session.
++        </p>
++      </div>
++    );
++  }
++
++  if (session.status !== "in_progress") {
++    return (
++      <section className="mx-auto max-w-2xl px-4 py-10">
++        {session.summary ? (
++          <SessionSummary
++            summary={session.summary}
++            answeredCount={
++              session.questions.filter((q) => q.feedback).length
++            }
++            totalQuestions={session.totalQuestions}
++          />
++        ) : (
++          <p className="text-center text-primary/70">
++            This interview session has ended.
++          </p>
++        )}
++      </section>
++    );
++  }
++
++  const currentQuestion = session.questions[session.questions.length - 1];
++  const currentIndex = session.questions.length - 1;
++  const isLastQuestion = session.questions.length >= session.totalQuestions;
++
++  const handleAnswerSubmit = (
++    answerText: string,
++    timeTakenSeconds: number,
++  ) => {
++    submitAnswer.mutate(
++      {
++        sessionId,
++        questionIndex: currentIndex,
++        answerText,
++        timeTakenSeconds,
++      },
++      {
++        onSuccess: (result) => {
++          setPendingFeedback(result.feedback);
++          queryClient.setQueryData(
++            ["interview-session", sessionId],
++            result.session,
++          );
++        },
++      },
++    );
++  };
++
++  const handleNext = () => {
++    setPendingFeedback(null);
++  };
++
++  const handleEndConfirm = () => {
++    endInterview.mutate(sessionId, {
++      onSuccess: (updatedSession) => {
++        setShowEndModal(false);
++        setPendingFeedback(null);
++        queryClient.setQueryData(
++          ["interview-session", sessionId],
++          updatedSession,
++        );
++      },
++    });
++  };
++
++  return (
++    <section className="mx-auto max-w-2xl px-4 py-10">
++      <div className="mb-6">
++        <ProgressBar
++          current={session.questions.length}
++          total={session.totalQuestions}
++        />
++      </div>
++
++      {pendingFeedback ? (
++        <FeedbackCard
++          feedback={pendingFeedback}
++          isLastQuestion={isLastQuestion}
++          onNext={handleNext}
++        />
++      ) : (
++        <QuestionCard
++          key={currentQuestion.index}
++          question={currentQuestion.question}
++          isFollowUp={currentQuestion.isFollowUp}
++          onSubmit={handleAnswerSubmit}
++          submitting={submitAnswer.isPending}
++        />
++      )}
++
++      {submitAnswer.isError && (
++        <p className="mt-4 text-center text-sm text-red-500">
++          Something went wrong evaluating your answer. Please try again.
++        </p>
++      )}
++
++      <div className="mt-6 text-center">
++        <button
++          onClick={() => setShowEndModal(true)}
++          className="text-sm font-medium text-primary/50 underline-offset-2 hover:text-red-500 hover:underline"
++        >
++          End Test
++        </button>
++      </div>
++
++      <EndTestModal
++        open={showEndModal}
++        onCancel={() => setShowEndModal(false)}
++        onConfirm={handleEndConfirm}
++        ending={endInterview.isPending}
++      />
++    </section>
++  );
++}
+diff --git a/builder/frontend/src/routes/AppRoutes.tsx b/builder/frontend/src/routes/AppRoutes.tsx
+index 358d002..47377b9 100644
+--- a/builder/frontend/src/routes/AppRoutes.tsx
++++ b/builder/frontend/src/routes/AppRoutes.tsx
+@@ -23,7 +23,8 @@ import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+ import UsersPage from "../pages/admin/UsersPage";
+ import NotFoundPage from "../pages/NotFoundPage";
+ import InterviewPage from "../pages/InterviewPage";
+-import GenerateInterviewPage from "../pages/GenerateInterviewPage";
++import GenerateInterviewPage from "../pages/interview/GenerateInterviewPage";
++import InterviewSessionPage from "../pages/interview/InterviewSessionPage";
+ 
+ export default function AppRoutes() {
+   return (
+@@ -66,6 +67,10 @@ export default function AppRoutes() {
+         <Route path="/settings" element={<Settings />} />
+         <Route path="/interview" element={<InterviewPage />} />
+         <Route path="/interview/ai" element={<GenerateInterviewPage />} />
++        <Route
++          path="/interview/ai/session/:sessionId"
++          element={<InterviewSessionPage />}
++        />
+ 
+         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
+       </Route>

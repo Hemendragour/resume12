@@ -68,7 +68,19 @@ export interface SubmitAnswerPayload {
   timeTakenSeconds?: number;
 }
 
+export interface QuestionAudio {
+  mimeType: string;
+  base64: string;
+}
+
+export interface StartInterviewResult {
+  session: InterviewSession;
+  audio: QuestionAudio;
+}
+
 export interface SubmitAnswerResponse {
   feedback: InterviewFeedback;
   session: InterviewSession;
+  // null once the session has just completed - there is no next question.
+  audio: QuestionAudio | null;
 }

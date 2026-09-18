@@ -94,3 +94,21 @@ export const validateSubmitAnswerRequest = (
     throw new ApiError(400, "answerText is required");
   }
 };
+
+// ============================================================
+// TTS REQUEST (question read aloud)
+// ============================================================
+
+export const validateTtsRequest = (request: Partial<{ text: string }>) => {
+  if (
+    !request.text ||
+    typeof request.text !== "string" ||
+    !request.text.trim()
+  ) {
+    throw new ApiError(400, "text is required");
+  }
+
+  if (request.text.length > 2000) {
+    throw new ApiError(400, "text must be 2000 characters or fewer");
+  }
+};

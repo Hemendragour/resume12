@@ -1,5 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Modality } from "@google/genai";
 import { env } from "../config/env";
+import { pcmToWav } from "../utils/audio";
 
 const ai = new GoogleGenAI({
   apiKey: env.GEMINI_API_KEY,
@@ -82,4 +83,74 @@ export const generateJSON = async <T>(prompt: string): Promise<T> => {
 
     throw new Error("AI response could not be parsed. Please try again.");
   }
+};
+
+// ============================================================
+// TEXT -> SPEECH (interview questions read aloud)
+// ============================================================
+
+export const generateSpeech = async (
+  text: string,
+): Promise<{ buffer: Buffer; mimeType: string }> => {
+  const response = await ai.models.generateContent({
+    model: env.GEMINI_TTS_MODEL,
+    contents: [{ role: "user", parts: [{ text }] }],
+    config: {
+      responseModalities: [Modality.AUDIO],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: { voiceName: env.GEMINI_TTS_VOICE },
+        },
+      },
+    },
+  });
+
+  const audioPart = response.candidates?.[0]?.content?.parts?.find(
+    (part) => part.inlineData?.data,
+  );
+
+  if (!audioPart?.inlineData?.data) {
+    throw new Error("Gemini did not return any audio for this text.");
+  }
+
+  // Gemini returns raw 16-bit PCM @ 24kHz mono - wrap it as a playable WAV file.
+  const pcmBuffer = Buffer.from(audioPart.inlineData.data, "base64");
+  const wavBuffer = pcmToWav(pcmBuffer, 24000, 1, 16);
+
+  return { buffer: wavBuffer, mimeType: "audio/wav" };
+};
+
+// ============================================================
+// SPEECH -> TEXT (candidate's spoken answer)
+// ============================================================
+
+export const transcribeAudio = async (
+  audioBuffer: Buffer,
+  mimeType: string,
+): Promise<string> => {
+  const response = await ai.models.generateContent({
+    model: env.GEMINI_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text:
+              "Transcribe the following spoken audio exactly as spoken, " +
+              "word for word. Return ONLY the plain transcript text - no " +
+              "labels, no quotation marks, no commentary, no formatting. " +
+              "If the audio is silent or unintelligible, return an empty string.",
+          },
+          {
+            inlineData: {
+              mimeType,
+              data: audioBuffer.toString("base64"),
+            },
+          },
+        ],
+      },
+    ],
+  });
+
+  return response.text?.trim() ?? "";
 };

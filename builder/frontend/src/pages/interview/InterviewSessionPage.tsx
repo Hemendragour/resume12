@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, XCircle } from "lucide-react";
 
-import { getInterviewSession } from "../../features/interview/services/interview.service";
+import {
+  getInterviewSession,
+  synthesizeQuestionAudio,
+} from "../../features/interview/services/interview.service";
+import { base64ToAudioBlob } from "../../features/interview/utils/base64ToAudioBlob";
 import { useSubmitAnswer } from "../../features/interview/hooks/useSubmitAnswer";
 import { useEndInterview } from "../../features/interview/hooks/useEndInterview";
 
@@ -14,15 +18,35 @@ import EndTestModal from "../../features/interview/components/EndTestModal";
 import SessionSummary from "../../features/interview/components/SessionSummary";
 import QuestionReviewCard from "../../features/interview/components/QuestionReviewCard";
 
-import type { InterviewFeedback } from "../../features/interview/types/interview.types";
+import type {
+  InterviewFeedback,
+  QuestionAudio,
+} from "../../features/interview/types/interview.types";
+
+interface SessionLocationState {
+  initialAudio?: QuestionAudio;
+}
 
 export default function InterviewSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   const [pendingFeedback, setPendingFeedback] =
     useState<InterviewFeedback | null>(null);
+  // True only once the backend confirms there is no next question - i.e.
+  // audio came back null. session.questions.length already includes the
+  // next (unanswered) question by this point, so it can't be used here.
+  const [isFinalAnswer, setIsFinalAnswer] = useState(false);
   const [showEndModal, setShowEndModal] = useState(false);
+
+  // Audio for each question, keyed by question index. A question is
+  // only ever rendered once its entry exists here - text and audio
+  // always arrive, and appear, together.
+  const [audioByIndex, setAudioByIndex] = useState<Record<number, Blob>>({});
+  const [audioFetchError, setAudioFetchError] = useState(false);
+  const [audioRetryTick, setAudioRetryTick] = useState(0);
+  const fetchingIndexRef = useRef<number | null>(null);
 
   const submitAnswer = useSubmitAnswer();
   const endInterview = useEndInterview();
@@ -32,6 +56,62 @@ export default function InterviewSessionPage() {
     queryFn: () => getInterviewSession(sessionId as string),
     enabled: !!sessionId,
   });
+
+  // Seed question 0's audio from the start-interview response that was
+  // just handed to us via navigation - avoids a redundant fetch for
+  // the very first question.
+  useEffect(() => {
+    const initialAudio = (location.state as SessionLocationState | null)
+      ?.initialAudio;
+
+    if (!initialAudio) return;
+
+    setAudioByIndex((prev) =>
+      prev[0]
+        ? prev
+        : {
+            ...prev,
+            0: base64ToAudioBlob(initialAudio.base64, initialAudio.mimeType),
+          },
+    );
+    // Only ever meant to run once, for the question this page was
+    // navigated to with - session/currentIndex intentionally excluded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const currentIndex = session ? session.questions.length - 1 : -1;
+  const currentQuestion = session?.questions[currentIndex];
+
+  // Fallback: if the current question has no audio yet (e.g. the user
+  // landed here via a page refresh, so there was no bundled response
+  // to seed from), fetch it on its own. This never fires on the normal
+  // start/submit-answer path, since that audio is already in the map
+  // by the time this effect runs.
+  useEffect(() => {
+    if (!currentQuestion || pendingFeedback) return;
+    if (audioByIndex[currentIndex]) return;
+    if (fetchingIndexRef.current === currentIndex) return;
+
+    fetchingIndexRef.current = currentIndex;
+    setAudioFetchError(false);
+
+    synthesizeQuestionAudio(currentQuestion.question)
+      .then((blob) => {
+        setAudioByIndex((prev) => ({ ...prev, [currentIndex]: blob }));
+      })
+      .catch(() => {
+        setAudioFetchError(true);
+      })
+      .finally(() => {
+        fetchingIndexRef.current = null;
+      });
+  }, [
+    currentIndex,
+    currentQuestion,
+    audioByIndex,
+    pendingFeedback,
+    audioRetryTick,
+  ]);
 
   if (isLoading) {
     return (
@@ -52,7 +132,7 @@ export default function InterviewSessionPage() {
     );
   }
 
-  if (session.status !== "in_progress") {
+  if (session.status !== "in_progress" && !pendingFeedback) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-10">
         {session.summary ? (
@@ -90,9 +170,8 @@ export default function InterviewSessionPage() {
     );
   }
 
-  const currentQuestion = session.questions[session.questions.length - 1];
-  const currentIndex = session.questions.length - 1;
-  const isLastQuestion = session.questions.length >= session.totalQuestions;
+  const activeQuestion = session.questions[currentIndex];
+  const activeAudio = audioByIndex[currentIndex] ?? null;
 
   const handleAnswerSubmit = (
     answerText: string,
@@ -107,7 +186,27 @@ export default function InterviewSessionPage() {
       },
       {
         onSuccess: (result) => {
+          const nextIndex = result.session.questions.length - 1;
+
+          // Updating the session cache and the next question's audio
+          // together, in this one handler, means React batches them
+          // into a single render - the next question and its audio
+          // always appear together, never one before the other.
           setPendingFeedback(result.feedback);
+          // audio is only ever null when the backend generated no next
+          // question - the one true signal that this was the last one.
+          setIsFinalAnswer(!result.audio);
+
+          if (result.audio) {
+            setAudioByIndex((prev) => ({
+              ...prev,
+              [nextIndex]: base64ToAudioBlob(
+                result.audio!.base64,
+                result.audio!.mimeType,
+              ),
+            }));
+          }
+
           queryClient.setQueryData(
             ["interview-session", sessionId],
             result.session,
@@ -119,6 +218,7 @@ export default function InterviewSessionPage() {
 
   const handleNext = () => {
     setPendingFeedback(null);
+    setIsFinalAnswer(false);
   };
 
   const handleEndConfirm = () => {
@@ -126,6 +226,7 @@ export default function InterviewSessionPage() {
       onSuccess: (updatedSession) => {
         setShowEndModal(false);
         setPendingFeedback(null);
+        setIsFinalAnswer(false);
         queryClient.setQueryData(
           ["interview-session", sessionId],
           updatedSession,
@@ -138,7 +239,8 @@ export default function InterviewSessionPage() {
     <section className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-6">
         <ProgressBar
-          current={session.questions.length}
+          current={Math.min(currentIndex + 1, session.totalQuestions)}
+          answered={session.questions.filter((q) => q.feedback).length}
           total={session.totalQuestions}
         />
       </div>
@@ -146,17 +248,39 @@ export default function InterviewSessionPage() {
       {pendingFeedback ? (
         <FeedbackCard
           feedback={pendingFeedback}
-          isLastQuestion={isLastQuestion}
+          isLastQuestion={isFinalAnswer}
           onNext={handleNext}
         />
-      ) : (
+      ) : activeAudio ? (
         <QuestionCard
-          key={currentQuestion.index}
-          question={currentQuestion.question}
-          isFollowUp={currentQuestion.isFollowUp}
+          key={activeQuestion.index}
+          question={activeQuestion.question}
+          isFollowUp={activeQuestion.isFollowUp}
+          audioBlob={activeAudio}
           onSubmit={handleAnswerSubmit}
           submitting={submitAnswer.isPending}
         />
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-primary/10 bg-card p-10 text-center">
+          <Loader2 className="animate-spin text-accent" size={28} />
+          <p className="text-sm text-primary/60">
+            Preparing your question...
+          </p>
+          {audioFetchError && (
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs text-red-500">
+                Couldn't load the question audio.
+              </p>
+              <button
+                type="button"
+                onClick={() => setAudioRetryTick((t) => t + 1)}
+                className="text-xs font-medium text-accent underline-offset-2 hover:underline"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {submitAnswer.isError && (

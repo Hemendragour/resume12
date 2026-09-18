@@ -9,7 +9,11 @@ import {
 
 import { ApiError } from "../../utils/ApiError";
 
-import { generateJSON } from "../../providers/gemini.provider";
+import {
+  generateJSON,
+  generateSpeech,
+  transcribeAudio,
+} from "../../providers/gemini.provider";
 
 import { buildInterviewTurnPrompt } from "../../prompts/interview-turn.prompt";
 
@@ -136,16 +140,23 @@ export const startInterviewSession = async (
     throw new ApiError(500, "Failed to generate the first question");
   }
 
+  const questionText = turn.nextQuestion.question;
+
+  // Generate the question's audio BEFORE persisting it, so a TTS
+  // failure never leaves a question saved without matching audio -
+  // the frontend is only ever handed question + audio together.
+  const audio = await synthesizeQuestionSpeech(questionText);
+
   session.questions.push({
     index: 0,
-    question: turn.nextQuestion.question,
+    question: questionText,
     isFollowUp: false,
     answerText: "",
   });
 
   await session.save();
 
-  return session;
+  return { session, audio };
 };
 
 // ============================================================
@@ -218,10 +229,19 @@ export const submitAnswer = async (
 
   question.feedback = turn.feedback;
 
+  let audio: { buffer: Buffer; mimeType: string } | null = null;
+
   if (turn.nextQuestion && session.questions.length < session.totalQuestions) {
+    const questionText = turn.nextQuestion.question;
+
+    // Same rule as startInterviewSession: synthesize speech BEFORE
+    // saving, so the session is never persisted mid-way through a
+    // question that has no matching audio yet.
+    audio = await synthesizeQuestionSpeech(questionText);
+
     session.questions.push({
       index: session.questions.length,
-      question: turn.nextQuestion.question,
+      question: questionText,
       isFollowUp: turn.nextQuestion.isFollowUp,
       answerText: "",
     });
@@ -235,6 +255,7 @@ export const submitAnswer = async (
   return {
     feedback: question.feedback,
     session,
+    audio,
   };
 };
 
@@ -278,4 +299,32 @@ export const getInterviewHistory = async (userId: string) => {
     .sort({ createdAt: -1 })
     .select("-questions.feedback")
     .lean();
+};
+
+// ============================================================
+// TEXT -> SPEECH (read a question aloud)
+// ============================================================
+
+export const synthesizeQuestionSpeech = async (text: string) => {
+  return generateSpeech(text);
+};
+
+// ============================================================
+// SPEECH -> TEXT (transcribe the candidate's spoken answer)
+// ============================================================
+
+export const transcribeAnswerAudio = async (
+  audioBuffer: Buffer,
+  mimeType: string,
+) => {
+  const transcript = await transcribeAudio(audioBuffer, mimeType);
+
+  if (!transcript) {
+    throw new ApiError(
+      422,
+      "Couldn't make out any speech in that recording. Please try again or type your answer.",
+    );
+  }
+
+  return transcript;
 };

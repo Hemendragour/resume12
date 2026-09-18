@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { protect } from "../../middleware/auth.middleware";
+import { uploadAnswerAudio } from "../../middleware/upload-audio.middleware";
 
 import {
   startInterview,
@@ -8,6 +9,8 @@ import {
   endInterview,
   getSession,
   getHistory,
+  synthesizeQuestionAudio,
+  transcribeAnswer,
 } from "./interview.controller";
 
 const router = Router();
@@ -35,6 +38,18 @@ router.post("/start", startInterview);
 // ============================================================
 
 router.post("/submit-answer", submitInterviewAnswer);
+
+// ============================================================
+// TEXT -> SPEECH (read the current question aloud)
+// ============================================================
+
+router.post("/tts", synthesizeQuestionAudio);
+
+// ============================================================
+// SPEECH -> TEXT (transcribe a recorded answer, field name "audio")
+// ============================================================
+
+router.post("/transcribe", uploadAnswerAudio, transcribeAnswer);
 
 // ============================================================
 // GET SESSION

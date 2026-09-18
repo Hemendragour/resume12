@@ -1,10 +1,15 @@
 interface ProgressBarProps {
   current: number;
+  answered: number;
   total: number;
 }
 
-export default function ProgressBar({ current, total }: ProgressBarProps) {
-  const percentage = Math.min(100, Math.round((current / total) * 100));
+export default function ProgressBar({
+  current,
+  answered,
+  total,
+}: ProgressBarProps) {
+  const percentage = Math.min(100, Math.round((answered / total) * 100));
 
   return (
     <div>

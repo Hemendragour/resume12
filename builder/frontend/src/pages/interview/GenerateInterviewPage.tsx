@@ -11,8 +11,10 @@ export default function GenerateInterviewPage() {
 
   const handleSubmit = (payload: StartInterviewPayload) => {
     startInterview.mutate(payload, {
-      onSuccess: (session) => {
-        navigate(`/interview/ai/session/${session._id}`);
+      onSuccess: ({ session, audio }) => {
+        navigate(`/interview/ai/session/${session._id}`, {
+          state: { initialAudio: audio },
+        });
       },
     });
   };

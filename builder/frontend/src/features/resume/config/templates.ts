@@ -16,6 +16,14 @@ import executiveSidebar from "../../../assets/templates/executive_sideBar-1.png"
 import latexSidebar from "../../../assets/templates/latex-sidebar-1.png";
 import ClassicSerif from "../../../assets/templates/clasic-serif.png";
 
+export type ExperienceLevel = "fresher" | "experienced";
+export type Domain =
+  | "full-stack"
+  | "frontend"
+  | "backend"
+  | "ai"
+  | "data-science";
+
 export interface TemplateOption {
   id: ResumeTemplate;
   name: string;
@@ -24,6 +32,8 @@ export interface TemplateOption {
   featured?: boolean;
   color: string;
   image: string;
+  experienceLevel: ExperienceLevel[];
+  domain: Domain[];
 }
 
 export const templates: TemplateOption[] = [
@@ -34,6 +44,8 @@ export const templates: TemplateOption[] = [
     ats: "98% ATS",
     color: "bg-card",
     image: technicalDeveloper,
+    experienceLevel: ["fresher", "experienced"],
+    domain: ["full-stack"],
   },
 
   {
@@ -44,6 +56,8 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: enhancvModern,
+    experienceLevel: ["fresher", "experienced"],
+    domain: ["full-stack"],
   },
   {
     id: "harvard-ats",
@@ -53,6 +67,8 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: harvardATS,
+    experienceLevel: ["fresher"],
+    domain: ["data-science"],
   },
   {
     id: "latex-ats",
@@ -62,6 +78,8 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAts,
+    experienceLevel: ["fresher"],
+    domain: ["ai"],
   },
   {
     id: "latex-ats-photo",
@@ -71,6 +89,8 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: latexAtsPhoto,
+    experienceLevel: ["fresher"],
+    domain: ["ai"],
   },
   {
     id: "latex-ats-v2",
@@ -80,6 +100,8 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAtsV2,
+    experienceLevel: ["fresher", "experienced"],
+    domain: ["data-science"],
   },
   {
     id: "executive-sidebar",
@@ -89,6 +111,8 @@ export const templates: TemplateOption[] = [
     ats: "92% ATS",
     color: "bg-card",
     image: executiveSidebar,
+    experienceLevel: ["experienced"],
+    domain: ["backend"],
   },
   {
     id: "latex-sidebar",
@@ -98,6 +122,8 @@ export const templates: TemplateOption[] = [
     ats: "95% ATS",
     color: "bg-card",
     image: latexSidebar,
+    experienceLevel: ["experienced"],
+    domain: ["backend"],
   },
   {
     id: "corporate-band",
@@ -106,6 +132,8 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: corporateBand,
+    experienceLevel: ["experienced"],
+    domain: ["frontend"],
   },
 
   {
@@ -115,6 +143,8 @@ export const templates: TemplateOption[] = [
     ats: "98% ATS",
     color: "bg-card",
     image: ClassicSerif,
+    experienceLevel: ["fresher", "experienced"],
+    domain: ["data-science"],
   },
 
   {
@@ -124,6 +154,8 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: corporateClassic,
+    experienceLevel: ["experienced"],
+    domain: ["backend"],
   },
 
   {
@@ -134,6 +166,8 @@ export const templates: TemplateOption[] = [
     ats: "96% ATS",
     color: "bg-card",
     image: executiveBlue,
+    experienceLevel: ["experienced"],
+    domain: ["full-stack"],
   },
 
   {
@@ -144,6 +178,8 @@ export const templates: TemplateOption[] = [
     featured: true,
     color: "bg-card",
     image: professionalModern,
+    experienceLevel: ["fresher", "experienced"],
+    domain: ["backend"],
   },
   {
     id: "modern-professional",
@@ -152,6 +188,8 @@ export const templates: TemplateOption[] = [
     ats: "96% ATS",
     color: "bg-card",
     image: modernProfessional,
+    experienceLevel: ["experienced"],
+    domain: ["full-stack"],
   },
 
   {
@@ -161,5 +199,7 @@ export const templates: TemplateOption[] = [
     ats: "94% ATS",
     color: "bg-card",
     image: splitLabel,
+    experienceLevel: ["fresher"],
+    domain: ["frontend"],
   },
 ];

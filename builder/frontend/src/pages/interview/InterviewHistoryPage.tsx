@@ -95,7 +95,7 @@ export default function InterviewHistoryPage() {
             if (item.type === "ai") {
               const session = item.data;
               const answeredCount = session.questions.filter(
-                (q: any) => q.feedback,
+                (q: any) => q.answerText,
               ).length;
 
               return (

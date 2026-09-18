@@ -56,7 +56,7 @@ export const buildInterviewTurnPrompt = ({
         .join("\n\n")
     : "None yet — this is the first question of the session.";
 
-  const isFinalQuestion = currentQuestionNumber >= totalQuestions;
+  const isFinalQuestion = currentQuestionNumber > totalQuestions;
 
   return `
 You are an experienced technical interviewer conducting a mock interview.

@@ -59,31 +59,16 @@ export default function ProjectsPreview() {
           return (
             <div key={index}>
               <div className="flex items-start justify-between gap-4">
-                <h3
-                  className="text-[12px] font-bold"
-                  style={{ color: theme.colors.secondary }}
-                >
-                  {project.title}
-                </h3>
-
-                <div className="flex flex-col items-end shrink-0">
-                  {theme.projects.dateRight ? (
-                    <span
-                      className="text-[11px]"
-                      style={{ color: theme.colors.muted }}
-                    >
-                      {formatMonthYear(project.startDate)} -{" "}
-                      {formatMonthYear(dateLabel)}
-                    </span>
-                  ) : null}
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <h3
+                    className="text-[12px] font-bold"
+                    style={{ color: theme.colors.secondary }}
+                  >
+                    {project.title}
+                  </h3>
 
                   {hasLinks ? (
-                    <div
-                      className={
-                        "flex gap-3 text-[11px] " +
-                        (theme.projects.linksBelowDate ? "mt-1" : "")
-                      }
-                    >
+                    <div className="flex items-baseline gap-x-1 text-[11px]">
                       {project.link ? (
                         <a
                           href={project.link}
@@ -94,6 +79,9 @@ export default function ProjectsPreview() {
                         >
                           Live Demo
                         </a>
+                      ) : null}
+                      {project.link && project.github ? (
+                        <span style={{ color: theme.colors.muted }}>|</span>
                       ) : null}
                       {project.github ? (
                         <a
@@ -109,11 +97,21 @@ export default function ProjectsPreview() {
                     </div>
                   ) : null}
                 </div>
+
+                {theme.projects.dateRight ? (
+                  <span
+                    className="shrink-0 text-[11px]"
+                    style={{ color: theme.colors.muted }}
+                  >
+                    {formatMonthYear(project.startDate)} -{" "}
+                    {formatMonthYear(dateLabel)}
+                  </span>
+                ) : null}
               </div>
 
               {hasTech ? (
                 <p
-                  className="mt-1 text-[11px]"
+                  className="mt-1 pl-5 text-[11px]"
                   style={{ color: theme.colors.muted }}
                 >
                   {project.technologies.join(", ")}

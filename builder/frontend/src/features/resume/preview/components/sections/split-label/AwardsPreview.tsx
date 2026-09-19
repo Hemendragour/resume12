@@ -36,7 +36,7 @@ export default function AwardsPreview() {
 
       <div className="col-span-3">
         <ul
-          className="list-disc space-y-1 pl-5 text-[11px] leading-4"
+          className="list-inside list-disc space-y-1 text-[11px] leading-4"
           style={{ color: theme.colors.text }}
         >
           {awards.map((award, i) => (

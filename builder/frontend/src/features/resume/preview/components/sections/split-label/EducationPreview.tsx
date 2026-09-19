@@ -53,7 +53,7 @@ export default function EducationPreview() {
                 </span>
               )}
             </div>
-            <div className="flex justify-between">
+            <div className="mt-1 flex justify-between">
               <p className="text-[11px]" style={{ color: theme.colors.text }}>
                 {edu.degree}
                 {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}

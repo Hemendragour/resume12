@@ -35,12 +35,12 @@ export default function CertificationsPreview() {
     >
       {isSplit ? <div className="col-span-1">{title}</div> : title}
       <div className={isSplit ? "col-span-3" : "mt-3"}>
-        <ul
-          className="list-inside list-disc space-y-1 text-[11px]"
-          style={{ color: theme.colors.text }}
-        >
+        <ul className="space-y-1 text-[11px]" style={{ color: theme.colors.text }}>
           {resume.certifications.map((c) => (
-            <li key={c}>{c}</li>
+            <li key={c} className="flex gap-2">
+              <span className="shrink-0">•</span>
+              <span>{c}</span>
+            </li>
           ))}
         </ul>
       </div>

@@ -1,0 +1,94 @@
+diff --git a/builder/backend/src/app.ts b/builder/backend/src/app.ts
+index 52d193f..c4bdfd6 100644
+--- a/builder/backend/src/app.ts
++++ b/builder/backend/src/app.ts
+@@ -16,7 +16,7 @@ app.use(
+   })
+ );
+ 
+-app.use(express.json());
++app.use(express.json({ limit: "5mb" }));
+ app.use(cookieParser());
+ 
+ 
+diff --git a/builder/frontend/src/features/resume/editor/sections/PersonalInfoSection.tsx b/builder/frontend/src/features/resume/editor/sections/PersonalInfoSection.tsx
+index 8351b0b..72d7f82 100644
+--- a/builder/frontend/src/features/resume/editor/sections/PersonalInfoSection.tsx
++++ b/builder/frontend/src/features/resume/editor/sections/PersonalInfoSection.tsx
+@@ -1608,6 +1608,7 @@ import { useForm } from "react-hook-form";
+ import { X, Pencil } from "lucide-react";
+ 
+ import { useResumeStore } from "../../../../store/resume.store";
++import { uploadProfilePhoto } from "../../../../services/upload.service";
+ 
+ export interface PersonalInfoFormData {
+   fullName: string;
+@@ -1634,6 +1635,7 @@ export default function PersonalInfoSection() {
+ 
+   const [photoPreview, setPhotoPreview] = useState<string>("");
+   const [photoError, setPhotoError] = useState<string>("");
++  const [photoUploading, setPhotoUploading] = useState<boolean>(false);
+ 
+   const containerRef = useRef<HTMLDivElement>(null);
+   const dragInfo = useRef<{
+@@ -1680,8 +1682,12 @@ export default function PersonalInfoSection() {
+   const clamp = (val: number, max: number) => Math.max(-max, Math.min(max, val));
+ 
+   // CREATE / UPDATE: handles both the first upload and replacing an existing photo
+-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++  const handlePhotoChange = async (
++    e: React.ChangeEvent<HTMLInputElement>,
++  ) => {
+     const file = e.target.files?.[0];
++    // reset input value so re-selecting the same file still fires onChange
++    e.target.value = "";
+     if (!file) return;
+ 
+     setPhotoError("");
+@@ -1697,17 +1703,25 @@ export default function PersonalInfoSection() {
+       return;
+     }
+ 
+-    const reader = new FileReader();
+-    reader.onload = () => {
+-      const base64 = reader.result as string;
+-      setPhotoPreview(base64);
++    try {
++      setPhotoUploading(true);
++      // Upload to Cloudinary and store the returned URL, not a base64
++      // data URI — a base64-encoded image easily exceeds the backend's
++      // JSON body size limit and makes autosave fail with a 413.
++      const photo = await uploadProfilePhoto(file);
++      setPhotoPreview(photo.url);
+       // reset zoom/position for the new photo
+-      updatePersonalInfo({ photo: base64, photoZoom: 1, photoPosition: { x: 0, y: 0 } });
+-    };
+-    reader.readAsDataURL(file);
+-
+-    // reset input value so re-selecting the same file still fires onChange
+-    e.target.value = "";
++      updatePersonalInfo({
++        photo: photo.url,
++        photoZoom: 1,
++        photoPosition: { x: 0, y: 0 },
++      });
++    } catch (err) {
++      console.error(err);
++      setPhotoError("Photo upload failed. Please try again.");
++    } finally {
++      setPhotoUploading(false);
++    }
+   };
+ 
+   // DELETE
+@@ -1853,6 +1867,10 @@ export default function PersonalInfoSection() {
+           />
+         )}
+ 
++        {photoUploading && (
++          <p className="text-sm text-slate-500">Uploading photo…</p>
++        )}
++
+         {photoError && <p className="text-sm text-red-500">{photoError}</p>}
+       </div>
+ 

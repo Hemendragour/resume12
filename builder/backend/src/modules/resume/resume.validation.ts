@@ -66,8 +66,8 @@ const projectSchema = z.object({
 
   technologies: z.array(z.string()),
 
-  link: z.union([z.string().url(), z.literal("")]).optional(),
-  github: z.union([z.string().url(), z.literal("")]).optional(),
+  link: safeUrlField.optional(),
+  github: safeUrlField.optional(),
 });
 
 const skillCategorySchema = z.object({
@@ -121,10 +121,17 @@ export const createResumeSchema = z.object({
       email: z.union([z.string().email(), z.literal("")]).optional(),
       phone: z.string().optional(),
       address: z.string().optional(),
-      linkedIn: z.union([z.string().url(), z.literal("")]).optional(),
-      github: z.union([z.string().url(), z.literal("")]).optional(),
-      portfolio: z.union([z.string().url(), z.literal("")]).optional(),
+      linkedIn: safeUrlField.optional(),
+      github: safeUrlField.optional(),
+      portfolio: safeUrlField.optional(),
       photo: z.string().optional(),
+      photoZoom: z.number().optional(),
+      photoPosition: z
+        .object({
+          x: z.number(),
+          y: z.number(),
+        })
+        .optional(),
     })
     .optional(),
 

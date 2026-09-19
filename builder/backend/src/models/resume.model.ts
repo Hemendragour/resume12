@@ -155,6 +155,8 @@ export interface IResume extends Document {
     github?: string;
     portfolio?: string;
     photo?: string;
+    photoZoom?: number;
+    photoPosition?: { x: number; y: number };
   };
 
   summary?: string;
@@ -351,6 +353,11 @@ const resumeSchema = new Schema<IResume>(
       github: { type: String, default: "" },
       portfolio: { type: String, default: "" },
       photo: { type: String, default: "" },
+      photoZoom: { type: Number, default: 1 },
+      photoPosition: {
+        x: { type: Number, default: 0 },
+        y: { type: Number, default: 0 },
+      },
     },
 
     summary: {

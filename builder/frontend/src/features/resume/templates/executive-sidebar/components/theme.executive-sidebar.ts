@@ -72,6 +72,10 @@ export const ExecutiveSidebarTheme = {
     bullet: "space-y-1",
   },
 
+  layout: {
+    between: "flex justify-between items-start gap-3",
+  },
+
   divider: {
     // Plain neutral rule — never the navy accent, per the "no highlight
     // outside name/profession" requirement

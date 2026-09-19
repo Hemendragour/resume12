@@ -27,7 +27,7 @@ export default function AchievementsPreview() {
         }
       />
 
-      <div className="mt-4 space-y-3">
+      <div className={`mt-4 ${T.spacing.bullet}`}>
         {achievements.map((item, index) => (
           <div key={index} className="">
             <p

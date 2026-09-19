@@ -34,29 +34,66 @@ export default function ProjectsPreview() {
           <div key={index} className={` ${index !== 0 ? T.spacing.item : ""}`}>
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <h3
-                  className={`
-                    ${T.fontSize.itemTitle}
-                    ${T.fontWeight.heading}
-                    ${T.colors.heading}
-                    ${T.lineHeight.title}
-                  `}
-                >
-                  {project.title}
-                </h3>
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <h3
+                    className={`
+                      ${T.fontSize.itemTitle}
+                      ${T.fontWeight.heading}
+                      ${T.colors.heading}
+                      ${T.lineHeight.title}
+                    `}
+                  >
+                    {project.title}
+                  </h3>
 
-                <p
-                  className={`
-                    mt-1
-                    ${T.fontSize.date}
-                    ${T.colors.muted}
-                  `}
-                >
-                  {formatMonthYear(project.startDate)} -{" "}
-                  {project.currentlyWorking
-                    ? "Present"
-                    : formatMonthYear(project.endDate)}
-                </p>
+                  {(project.link || project.github) && (
+                    <span
+                      className={`flex items-center gap-x-1 ${T.fontSize.body} ${T.colors.accent}`}
+                    >
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="underline hover:no-underline"
+                        >
+                          Live
+                        </a>
+                      )}
+                      {project.link && project.github && <span>|</span>}
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="underline hover:no-underline"
+                        >
+                          GitHub
+                        </a>
+                      )}
+                    </span>
+                  )}
+                </div>
+
+                {(project.startDate ||
+                  project.endDate ||
+                  project.currentlyWorking) && (
+                  <p
+                    className={`
+                      mt-1
+                      ${T.fontSize.date}
+                      ${T.colors.muted}
+                    `}
+                  >
+                    {formatMonthYear(project.startDate)}
+                    {project.startDate &&
+                      (project.currentlyWorking || project.endDate) &&
+                      " - "}
+                    {project.currentlyWorking
+                      ? "Present"
+                      : formatMonthYear(project.endDate)}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -88,32 +125,6 @@ export default function ProjectsPreview() {
                 `}
               >
                 <strong>Tech:</strong> {project.technologies.join(", ")}
-              </p>
-            )}
-
-            {project.github && (
-              <p
-                className={`
-                  mt-1
-                  ${T.fontSize.body}
-                  ${T.colors.accent}
-                  ${T.lineHeight.body}
-                `}
-              >
-                GitHub: {project.github}
-              </p>
-            )}
-
-            {project.link && (
-              <p
-                className={`
-                  mt-1
-                  ${T.fontSize.body}
-                  ${T.colors.accent}
-                  ${T.lineHeight.body}
-                `}
-              >
-                Live: {project.link}
               </p>
             )}
           </div>

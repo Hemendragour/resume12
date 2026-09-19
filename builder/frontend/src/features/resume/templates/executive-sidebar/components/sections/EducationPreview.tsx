@@ -59,10 +59,20 @@ export default function EducationPreview() {
                 </p>
               </div>
 
-              {(item.cgpa || item.coursework) && (
+              {item.cgpa && (
                 <p className={`${T.fontSize.body} ${T.colors.body} mt-1`}>
-                  {item.cgpa && `CGPA: ${item.cgpa}`}
-                  {item.cgpa && item.coursework ? " · " : ""}
+                  <span className={T.fontWeight.bold}>CGPA:</span>{" "}
+                  {item.cgpa}
+                </p>
+              )}
+
+              {item.coursework && (
+                <p
+                  className={`${T.fontSize.body} ${T.colors.body} ${item.cgpa ? "mt-0.5" : "mt-1"}`}
+                >
+                  <span className={T.fontWeight.bold}>
+                    Relevant Coursework:
+                  </span>{" "}
                   {item.coursework}
                 </p>
               )}

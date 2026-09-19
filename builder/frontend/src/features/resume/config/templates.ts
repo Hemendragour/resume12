@@ -44,7 +44,7 @@ export const templates: TemplateOption[] = [
     ats: "98% ATS",
     color: "bg-card",
     image: technicalDeveloper,
-    experienceLevel: ["fresher", "experienced"],
+    experienceLevel: ["fresher"],
     domain: ["full-stack"],
   },
 

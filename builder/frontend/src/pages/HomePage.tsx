@@ -1,77 +1,284 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
-import { templates } from "../features/resume/config/templates";
+import {
+  templates,
+  type Domain,
+  type ExperienceLevel,
+  type TemplateOption,
+} from "../features/resume/config/templates";
 import CreateResumeModal from "../features/resume/components/CreateResumeModal";
 import type { ResumeTemplate } from "../features/resume/types/resume.types";
 
 import { useAuthStore } from "../store/auth.store";
 
+const EXPERIENCE_OPTIONS: { label: string; value: ExperienceLevel | "all" }[] =
+  [
+    { label: "All levels", value: "all" },
+    { label: "Fresher", value: "fresher" },
+    { label: "Experienced", value: "experienced" },
+  ];
+
+const DOMAIN_OPTIONS: { label: string; value: Domain }[] = [
+  { label: "Full Stack", value: "full-stack" },
+  { label: "Frontend", value: "frontend" },
+  { label: "Backend", value: "backend" },
+  { label: "AI", value: "ai" },
+  { label: "Data Science", value: "data-science" },
+  { label: "Cloud", value: "cloud" },
+];
+
+type OpenMenu = "level" | "domain" | null;
+
+function getColumnCount(width: number) {
+  if (width >= 1024) return 4;
+  if (width >= 768) return 3;
+  return 2;
+}
+
 export default function HomePage() {
   const navigate = useNavigate();
-
   const user = useAuthStore((state) => state.user);
-
   const [selectedTemplateId, setSelectedTemplateId] =
     useState<ResumeTemplate | null>(null);
 
+  const [experienceFilter, setExperienceFilter] = useState<
+    ExperienceLevel | "all"
+  >("all");
+  const [domainFilter, setDomainFilter] = useState<Domain[]>([]);
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
+  const [columns, setColumns] = useState(() =>
+    getColumnCount(typeof window !== "undefined" ? window.innerWidth : 1280),
+  );
+
+  useEffect(() => {
+    const handleResize = () => setColumns(getColumnCount(window.innerWidth));
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const filterBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterBarRef.current &&
+        !filterBarRef.current.contains(event.target as Node)
+      ) {
+        setOpenMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleMenu = (menu: OpenMenu) => {
+    setOpenMenu((prev) => (prev === menu ? null : menu));
+  };
+
+  const toggleDomain = (domain: Domain) => {
+    setDomainFilter((prev) =>
+      prev.includes(domain)
+        ? prev.filter((d) => d !== domain)
+        : [...prev, domain],
+    );
+  };
+
+  const filteredTemplates = useMemo(() => {
+    return templates.filter((template) => {
+      const matchesExperience =
+        experienceFilter === "all" ||
+        template.experienceLevel.includes(experienceFilter);
+      const matchesDomain =
+        domainFilter.length === 0 ||
+        template.domain.some((d) => domainFilter.includes(d));
+      return matchesExperience && matchesDomain;
+    });
+  }, [experienceFilter, domainFilter]);
+
+  const heroTemplates = filteredTemplates.slice(0, columns);
+  const remainingTemplates = filteredTemplates.slice(columns);
+
   const handleTemplateClick = (templateId: ResumeTemplate) => {
-    // User is not logged in
     if (!user) {
       navigate("/login");
       return;
     }
-
-    // User is logged in
     setSelectedTemplateId(templateId);
   };
 
-  return (
-    <div className="p-6 bg-background min-h-screen">
-      <h1 className="text-2xl font-semibold mb-1 text-dark">
-        Choose a Template
-      </h1>
+  const levelLabel =
+    EXPERIENCE_OPTIONS.find((opt) => opt.value === experienceFilter)?.label ??
+    "All levels";
+  const domainLabel =
+    domainFilter.length === 0 ? "Domain" : `Domain (${domainFilter.length})`;
 
-      <p className="text-primary/70 mb-6">
-        Pick a template to start building your resume
-      </p>
-
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"> */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl">
-        {templates.map((template) => (
-          <button
-            key={template.id}
-            onClick={() => handleTemplateClick(template.id)}
-            className={`relative text-left border border-primary/10 rounded-xl p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
-          >
-            {template.featured && (
-              <span className="absolute top-3 right-3 text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
-                Featured
-              </span>
-            )}
-
-            <div className="mb-4 flex justify-center">
-              <div className="overflow-hidden rounded-lg bg-modal shadow-md">
-                <img
-                  src={template.image}
-                  alt={template.name}
-                  className="w-full h-auto block"
-                />
-              </div>
-            </div>
-
-            <h3 className="font-semibold text-lg text-dark">{template.name}</h3>
-
-            <p className="text-sm text-primary/80 mt-1">
-              {template.description}
-            </p>
-
-            <span className="inline-block mt-3 text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
-              {template.ats}
-            </span>
-          </button>
-        ))}
+  const renderTemplateCard = (template: TemplateOption) => (
+    <button
+      key={template.slug}
+      onClick={() => handleTemplateClick(template.id)}
+      className={`relative text-left border border-primary/10 rounded-xl p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+    >
+      {template.featured && (
+        <span className="absolute top-3 right-3 text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
+          Featured
+        </span>
+      )}
+      <div className="mb-4 flex justify-center">
+        <div className="overflow-hidden rounded-lg bg-modal shadow-md">
+          <img
+            src={template.image}
+            alt={template.name}
+            className="w-full h-auto block"
+          />
+        </div>
       </div>
+      <h3 className="font-semibold text-lg text-dark">{template.name}</h3>
+      <p className="text-sm text-primary/80 mt-1">{template.description}</p>
+      <span className="inline-block mt-3 text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+        {template.ats}
+      </span>
+    </button>
+  );
+
+  return (
+    <div className="bg-background">
+      <div className="h-screen flex flex-col justify-center px-6">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-extrabold text-dark">
+            Build Your Resume with{" "}
+            <span className="text-primary">ResumeAI</span>
+          </h1>
+          <p className="text-primary/70 mt-2 max-w-xl mx-auto">
+            Choose an ATS-friendly template matched to your experience level and
+            domain, then let our AI help you fill it in and land more
+            interviews.
+          </p>
+        </div>
+
+        <div
+          ref={filterBarRef}
+          className="relative z-10 flex items-center justify-center gap-4 mb-8"
+        >
+          {/* Level dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleMenu("level")}
+              className={`flex items-center gap-1.5 text-sm font-medium pb-1 border-b-2 transition-colors ${
+                openMenu === "level" || experienceFilter !== "all"
+                  ? "text-success border-success"
+                  : "text-dark border-transparent hover:text-dark/70"
+              }`}
+            >
+              {levelLabel === "All levels" ? "Level" : levelLabel}
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  openMenu === "level" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openMenu === "level" && (
+              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+                {EXPERIENCE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => {
+                      setExperienceFilter(opt.value);
+                      setOpenMenu(null);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                      experienceFilter === opt.value
+                        ? "text-success font-medium"
+                        : "text-dark/80 hover:bg-background"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Domain dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleMenu("domain")}
+              className={`flex items-center gap-1.5 text-sm font-medium pb-1 border-b-2 transition-colors ${
+                openMenu === "domain" || domainFilter.length > 0
+                  ? "text-success border-success"
+                  : "text-dark border-transparent hover:text-dark/70"
+              }`}
+            >
+              {domainLabel}
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  openMenu === "domain" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openMenu === "domain" && (
+              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+                {DOMAIN_OPTIONS.map((opt) => {
+                  const active = domainFilter.includes(opt.value);
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => toggleDomain(opt.value)}
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                        active
+                          ? "text-success font-medium"
+                          : "text-dark/80 hover:bg-background"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+                {domainFilter.length > 0 && (
+                  <>
+                    <div className="my-1 h-px bg-primary/10" />
+                    <button
+                      onClick={() => setDomainFilter([])}
+                      className="w-full text-left px-4 py-2 text-sm text-dark/50 hover:bg-background"
+                    >
+                      Clear domain
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {filteredTemplates.length === 0 ? (
+          <p className="text-center text-sm text-dark/50">
+            No templates match the selected filters.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto w-full">
+            {heroTemplates.map(renderTemplateCard)}
+          </div>
+        )}
+
+        {remainingTemplates.length > 0 && (
+          <p className="text-center text-xs text-dark/40 mt-6">
+            Scroll down for more templates ↓
+          </p>
+        )}
+      </div>
+
+      {remainingTemplates.length > 0 && (
+        <div className="px-6 pb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+            {remainingTemplates.map(renderTemplateCard)}
+          </div>
+        </div>
+      )}
 
       {selectedTemplateId && (
         <CreateResumeModal

@@ -15,6 +15,15 @@ import latexAtsV2 from "../../../assets/templates/latex-ats-nophoto.png";
 import executiveSidebar from "../../../assets/templates/executive_sideBar-1.png";
 import latexSidebar from "../../../assets/templates/latex-sidebar-1.png";
 import ClassicSerif from "../../../assets/templates/clasic-serif.png";
+import coporateClassicFresherCloud from "../../../assets/templates/coporate-classic-fresher-cloud-1.png";
+import enhanceCVFresherAi from "../../../assets/templates/enhanceCV-fresher-ai-1.png";
+import executivesidebarDataAnafrom from "../../../assets/templates/executive sidebar -data analyts-1.png";
+import executiveBlueExpML from "../../../assets/templates/executive-blue-exp-ml-1.png";
+import latexAtsExpFullStack from "../../../assets/templates/latex-ats-exp.-full stack-1.png";
+import latexAtsPhotoDevopsFresher from "../../../assets/templates/latex-ats-photo-devops-fresh-1.png";
+import latexSidebarExpAi from "../../../assets/templates/latex-sidebar-exp.-ai eng-1.png";
+import modernProfessionalFrontendFresher from "../../../assets/templates/modern-professional-frontend-fresh-1.png";
+import splitlabelBackendFresher from "../../../assets/templates/split-label-backend-fresher-1.png";
 
 export type ExperienceLevel = "fresher" | "experienced";
 export type Domain =
@@ -22,7 +31,8 @@ export type Domain =
   | "frontend"
   | "backend"
   | "ai"
-  | "data-science";
+  | "data-science"
+  | "cloud";
 
 export interface TemplateOption {
   id: ResumeTemplate;
@@ -60,6 +70,17 @@ export const templates: TemplateOption[] = [
     domain: ["full-stack"],
   },
   {
+    id: "enhancv-modern",
+    name: "Enhancv Modern fresher ai",
+    description:
+      "Modern professional layout inspired by Enhancv with clean ATS-friendly design",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: enhanceCVFresherAi,
+    experienceLevel: ["fresher"],
+    domain: ["ai"],
+  },
+  {
     id: "harvard-ats",
     name: "Harvard ATS",
     description:
@@ -68,7 +89,7 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: harvardATS,
     experienceLevel: ["fresher"],
-    domain: ["data-science"],
+    domain: ["frontend"],
   },
   {
     id: "latex-ats",
@@ -78,8 +99,19 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAts,
-    experienceLevel: ["fresher"],
+    experienceLevel: ["experienced"],
     domain: ["ai"],
+  },
+  {
+    id: "latex-ats",
+    name: "LaTeX ATS full stack exp",
+    description:
+      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsExpFullStack,
+    experienceLevel: ["experienced"],
+    domain: ["full-stack"],
   },
   {
     id: "latex-ats-photo",
@@ -89,8 +121,19 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: latexAtsPhoto,
+    experienceLevel: ["experienced"],
+    domain: ["full-stack"],
+  },
+  {
+    id: "latex-ats-photo",
+    name: "LaTeX ATS (Photo) devops fresher",
+    description:
+      "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
+    ats: "97% ATS",
+    color: "bg-card",
+    image: latexAtsPhotoDevopsFresher,
     experienceLevel: ["fresher"],
-    domain: ["ai"],
+    domain: ["cloud"],
   },
   {
     id: "latex-ats-v2",
@@ -100,8 +143,8 @@ export const templates: TemplateOption[] = [
     ats: "99% ATS",
     color: "bg-card",
     image: latexAtsV2,
-    experienceLevel: ["fresher", "experienced"],
-    domain: ["data-science"],
+    experienceLevel: ["experienced"],
+    domain: ["ai"],
   },
   {
     id: "executive-sidebar",
@@ -112,7 +155,18 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: executiveSidebar,
     experienceLevel: ["experienced"],
-    domain: ["backend"],
+    domain: ["full-stack"],
+  },
+  {
+    id: "executive-sidebar",
+    name: "Executive Sidebar data analyts",
+    description:
+      "One-page sidebar resume with photo, contact, skills and languages on the left; a navy highlight bar for name/profession only, plain dates and clean white body on the right",
+    ats: "92% ATS",
+    color: "bg-card",
+    image: executivesidebarDataAnafrom,
+    experienceLevel: ["fresher"],
+    domain: ["data-science"],
   },
   {
     id: "latex-sidebar",
@@ -122,8 +176,19 @@ export const templates: TemplateOption[] = [
     ats: "95% ATS",
     color: "bg-card",
     image: latexSidebar,
+    experienceLevel: ["fresher"],
+    domain: ["full-stack"],
+  },
+  {
+    id: "latex-sidebar",
+    name: "LaTeX Sidebar experience ai",
+    description:
+      "Two-column sidebar resume inspired by LaTeX — light sidebar for personal info, skills, languages & certificates; clean white main panel for experience, education and projects",
+    ats: "95% ATS",
+    color: "bg-card",
+    image: latexSidebarExpAi,
     experienceLevel: ["experienced"],
-    domain: ["backend"],
+    domain: ["ai"],
   },
   {
     id: "corporate-band",
@@ -132,8 +197,8 @@ export const templates: TemplateOption[] = [
     ats: "97% ATS",
     color: "bg-card",
     image: corporateBand,
-    experienceLevel: ["experienced"],
-    domain: ["frontend"],
+    experienceLevel: ["fresher"],
+    domain: ["backend"],
   },
 
   {
@@ -143,8 +208,8 @@ export const templates: TemplateOption[] = [
     ats: "98% ATS",
     color: "bg-card",
     image: ClassicSerif,
-    experienceLevel: ["fresher", "experienced"],
-    domain: ["data-science"],
+    experienceLevel: ["fresher"],
+    domain: ["frontend"],
   },
 
   {
@@ -155,7 +220,17 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: corporateClassic,
     experienceLevel: ["experienced"],
-    domain: ["backend"],
+    domain: ["ai"],
+  },
+  {
+    id: "corporate-classic",
+    name: "Corporate Classic fresher could",
+    description: "Centered bordered headers, structured grid layout",
+    ats: "97% ATS",
+    color: "bg-card",
+    image: coporateClassicFresherCloud,
+    experienceLevel: ["fresher"],
+    domain: ["cloud"],
   },
 
   {
@@ -169,6 +244,17 @@ export const templates: TemplateOption[] = [
     experienceLevel: ["experienced"],
     domain: ["full-stack"],
   },
+  {
+    id: "executive-blue",
+    name: "Executive Blue exp ml",
+    description:
+      "Bold blue accents, badge-style certifications, GitHub-linked projects",
+    ats: "96% ATS",
+    color: "bg-card",
+    image: executiveBlueExpML,
+    experienceLevel: ["experienced"],
+    domain: ["ai"],
+  },
 
   {
     id: "professional-modern",
@@ -178,8 +264,8 @@ export const templates: TemplateOption[] = [
     featured: true,
     color: "bg-card",
     image: professionalModern,
-    experienceLevel: ["fresher", "experienced"],
-    domain: ["backend"],
+    experienceLevel: ["experienced"],
+    domain: ["full-stack"],
   },
   {
     id: "modern-professional",
@@ -191,6 +277,16 @@ export const templates: TemplateOption[] = [
     experienceLevel: ["experienced"],
     domain: ["full-stack"],
   },
+  {
+    id: "modern-professional",
+    name: "Modern Professional frontend fresher",
+    description: "Professional Business Layout",
+    ats: "96% ATS",
+    color: "bg-card",
+    image: modernProfessionalFrontendFresher,
+    experienceLevel: ["fresher"],
+    domain: ["frontend"],
+  },
 
   {
     id: "split-label",
@@ -200,6 +296,16 @@ export const templates: TemplateOption[] = [
     color: "bg-card",
     image: splitLabel,
     experienceLevel: ["fresher"],
-    domain: ["frontend"],
+    domain: ["full-stack"],
+  },
+  {
+    id: "split-label",
+    name: "Split Label backend frehser",
+    description: "Elegant label-left layout for creative & business roles",
+    ats: "94% ATS",
+    color: "bg-card",
+    image: splitlabelBackendFresher,
+    experienceLevel: ["fresher"],
+    domain: ["backend"],
   },
 ];

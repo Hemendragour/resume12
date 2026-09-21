@@ -24,6 +24,12 @@ import latexAtsPhotoDevopsFresher from "../../../assets/templates/latex-ats-phot
 import latexSidebarExpAi from "../../../assets/templates/latex-sidebar-exp.-ai eng-1.png";
 import modernProfessionalFrontendFresher from "../../../assets/templates/modern-professional-frontend-fresh-1.png";
 import splitlabelBackendFresher from "../../../assets/templates/split-label-backend-fresher-1.png";
+import harvardATSFresherAi from "../../../assets/templates/hardwardATs-fresher-ai-1.png";
+import latexAtsExpBackend from "../../../assets/templates/latex-ats-exp-backend-1.png";
+import latexAtsExpDataScience from "../../../assets/templates/latex-ats-exp-datascience-1.png";
+import latexAtsExpFrontend from "../../../assets/templates/latex-ats-exp-frontend-1.png";
+import latexAtsNoPhotoExpCloud from "../../../assets/templates/latex-ats-no-photo-exp-cloud-1.png";
+import modernProfessionalFresherDataAnalyst from "../../../assets/templates/modern-prof-fresh-data-analyts-1.png";
 
 export type ExperienceLevel = "fresher" | "experienced";
 export type Domain =
@@ -103,6 +109,18 @@ export const templates: TemplateOption[] = [
     domain: ["frontend"],
   },
   {
+    id: "harvard-ats",
+    name: "Harvard ATS fresher ai",
+    slug: "harvard-ats-fresher-ai",
+    description:
+      "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: harvardATSFresherAi,
+    experienceLevel: ["fresher"],
+    domain: ["ai"],
+  },
+  {
     id: "latex-ats",
     name: "LaTeX ATS",
     slug: "latex-ats",
@@ -125,6 +143,42 @@ export const templates: TemplateOption[] = [
     image: latexAtsExpFullStack,
     experienceLevel: ["experienced"],
     domain: ["full-stack"],
+  },
+  {
+    id: "latex-ats",
+    name: "LaTeX ATS backend exp",
+    slug: "latex-ats-backend-exp",
+    description:
+      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsExpBackend,
+    experienceLevel: ["experienced"],
+    domain: ["backend"],
+  },
+  {
+    id: "latex-ats",
+    name: "LaTeX ATS data science exp",
+    slug: "latex-ats-data-science-exp",
+    description:
+      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsExpDataScience,
+    experienceLevel: ["experienced"],
+    domain: ["data-science"],
+  },
+  {
+    id: "latex-ats",
+    name: "LaTeX ATS frontend exp",
+    slug: "latex-ats-frontend-exp",
+    description:
+      "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsExpFrontend,
+    experienceLevel: ["experienced"],
+    domain: ["frontend"],
   },
   {
     id: "latex-ats-photo",
@@ -161,6 +215,18 @@ export const templates: TemplateOption[] = [
     image: latexAtsV2,
     experienceLevel: ["experienced"],
     domain: ["ai"],
+  },
+  {
+    id: "latex-ats-v2",
+    name: "LaTeX ATS (No Photo) cloud exp",
+    slug: "latex-ats-no-photo-cloud-exp",
+    description:
+      "Same as LaTeX ATS Photo but full-width header with labeled contact lines and no profile photo",
+    ats: "99% ATS",
+    color: "bg-card",
+    image: latexAtsNoPhotoExpCloud,
+    experienceLevel: ["experienced"],
+    domain: ["cloud"],
   },
   {
     id: "executive-sidebar",
@@ -315,6 +381,17 @@ export const templates: TemplateOption[] = [
     image: modernProfessionalFrontendFresher,
     experienceLevel: ["fresher"],
     domain: ["frontend"],
+  },
+  {
+    id: "modern-professional",
+    name: "Modern Professional fresher data analyst",
+    slug: "modern-professional-fresher-data-analyst",
+    description: "Professional Business Layout",
+    ats: "96% ATS",
+    color: "bg-card",
+    image: modernProfessionalFresherDataAnalyst,
+    experienceLevel: ["fresher"],
+    domain: ["data-science"],
   },
 
   {

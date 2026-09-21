@@ -28,16 +28,23 @@ export default function CertificationsSection() {
   );
 
   const [value, setValue] = useState("");
+  const [link, setLink] = useState("");
 
   // Add certification
   const handleAddCertification = () => {
     const certification = value.trim();
+    const certificationLink = link.trim();
 
     if (!certification) return;
 
-    addCertification(certification);
+    const combined = certificationLink
+      ? `${certification} - ${certificationLink}`
+      : certification;
+
+    addCertification(combined);
 
     setValue("");
+    setLink("");
   };
 
   // Add certification when pressing Enter
@@ -56,7 +63,8 @@ export default function CertificationsSection() {
         <h2 className="text-2xl font-bold">Certifications</h2>
 
         <p className="mt-1 text-gray-500">
-          Press Enter or click Add to add a certification.
+          Press Enter or click Add to add a certification. Add a link if you
+          want it to show up as a clickable, underlined link on your resume.
         </p>
       </div>
 
@@ -70,23 +78,33 @@ export default function CertificationsSection() {
         }
       />
 
-      {/* Certification Input + Add Button */}
-      <div className="flex gap-3">
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="AWS Certified Cloud Practitioner"
-          className="h-12 flex-1 rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
-        />
+      {/* Certification Name + Link Inputs + Add Button */}
+      <div className="space-y-3">
+        <div className="flex gap-3">
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="AWS Certified Cloud Practitioner"
+            className="h-12 flex-1 rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+          />
 
-        <Button
-          type="button"
-          leftIcon={<Plus size={18} />}
-          onClick={handleAddCertification}
-        >
-          Add
-        </Button>
+          <Button
+            type="button"
+            leftIcon={<Plus size={18} />}
+            onClick={handleAddCertification}
+          >
+            Add
+          </Button>
+        </div>
+
+        <input
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Certificate link (optional) — e.g. https://coursera.org/verify/xxxx"
+          className="h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+        />
       </div>
 
       {/* Certification List */}

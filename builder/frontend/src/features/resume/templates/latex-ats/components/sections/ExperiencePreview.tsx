@@ -59,6 +59,7 @@ export default function ExperiencePreview() {
                 <p
                   className={`
                     ${T.fontSize.date}
+                      ${T.fontWeight.bold}
                     ${T.colors.muted}
                   `}
                 >

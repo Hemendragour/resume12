@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";
@@ -28,9 +30,14 @@ export default function LanguagesPreview() {
         // icon={<Languages size={16} />}
       />
 
-      <div className="mt-4 space-y-3">
+      <div
+        className={`
+          mt-4
+          grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2
+        `}
+      >
         {languages.map((language, index) => (
-          <div key={index} className="flex items-center gap-4">
+          <Fragment key={index}>
             <span
               className={`
                 ${T.fontSize.body}
@@ -48,7 +55,7 @@ export default function LanguagesPreview() {
             >
               {language.level}
             </span>
-          </div>
+          </Fragment>
         ))}
       </div>
     </section>

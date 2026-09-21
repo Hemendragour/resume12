@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { useResumeStore } from "../../../../../../store/resume.store";
 
 import SectionHeader from "../shared/SectionHeader";
@@ -26,22 +28,28 @@ export default function LanguagesPreview() {
         }
       />
 
-      <div className={`${T.spacing.itemHeader} space-y-1`}>
+      <div
+        className={`
+          ${T.spacing.itemHeader}
+          grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1
+        `}
+      >
         {languages.map((language, index) => (
-          <div
-            key={index}
-            className={`
-              flex
-              gap-4
-              items-center
-              ${T.fontSize.body}
-              ${T.colors.body}
-            `}
-          >
-            <span className={T.fontWeight.bold}>{language.name}</span>
+          <Fragment key={index}>
+            <span
+              className={`
+                ${T.fontWeight.bold}
+                ${T.fontSize.body}
+                ${T.colors.body}
+              `}
+            >
+              {language.name}
+            </span>
 
-            <span>{language.level}</span>
-          </div>
+            <span className={`${T.fontSize.body} ${T.colors.body}`}>
+              {language.level}
+            </span>
+          </Fragment>
         ))}
       </div>
     </section>

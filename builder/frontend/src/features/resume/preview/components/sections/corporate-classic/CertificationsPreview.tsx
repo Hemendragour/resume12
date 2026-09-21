@@ -1,5 +1,40 @@
 import { useResumeStore } from "../../../../../../store/resume.store";
 
+const URL_PATTERN = /(https?:\/\/[^\s)]+|www\.[^\s)]+)/gi;
+
+/**
+ * Renders a certification line as plain text, but turns any URL found in it
+ * into a clickable, underlined "Link" — so certificates that include a
+ * verification link show a clean hyperlink instead of exposing the raw URL.
+ */
+function renderCertification(text: string) {
+  // With one capturing group, String.split interleaves plain text and
+  // matched URLs: [text, url, text, url, ...]. Odd indices are the matches.
+  const parts = text.split(URL_PATTERN);
+
+  return parts.map((part, index) => {
+    const isUrl = index % 2 === 1;
+
+    if (!isUrl) {
+      return <span key={index}>{part}</span>;
+    }
+
+    const href = part.startsWith("http") ? part : `https://${part}`;
+
+    return (
+      <a
+        key={index}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-slate-700 underline hover:text-slate-900"
+      >
+        Link
+      </a>
+    );
+  });
+}
+
 export default function CertificationsPreview() {
   const resume = useResumeStore((state) => state.resume);
   if (!resume || resume.certifications.length === 0) return null;
@@ -17,7 +52,7 @@ export default function CertificationsPreview() {
       <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-2 text-[11.5px] leading-5 text-slate-700">
         {resume.certifications.map((cert, i) => (
           <span key={i} className="flex gap-2">
-            <span>•</span> <span>{cert}</span>
+            <span>•</span> <span>{renderCertification(cert)}</span>
           </span>
         ))}
       </div>

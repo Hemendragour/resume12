@@ -36,6 +36,13 @@ export type Domain =
 
 export interface TemplateOption {
   id: ResumeTemplate;
+  /**
+   * Unique identifier for this specific template *variant*.
+   * `id` maps to the shared React template/renderer and is intentionally
+   * reused across variants (e.g. multiple "latex-ats" entries), so it must
+   * NOT be used as a React list key or the filtered grid will mix up cards.
+   */
+  slug: string;
   name: string;
   description: string;
   ats: string;
@@ -50,6 +57,7 @@ export const templates: TemplateOption[] = [
   {
     id: "technical-developer",
     name: "Technical Developer",
+    slug: "technical-developer",
     description: "Modern Developer Resume",
     ats: "98% ATS",
     color: "bg-card",
@@ -61,6 +69,7 @@ export const templates: TemplateOption[] = [
   {
     id: "enhancv-modern",
     name: "Enhancv Modern",
+    slug: "enhancv-modern",
     description:
       "Modern professional layout inspired by Enhancv with clean ATS-friendly design",
     ats: "99% ATS",
@@ -72,6 +81,7 @@ export const templates: TemplateOption[] = [
   {
     id: "enhancv-modern",
     name: "Enhancv Modern fresher ai",
+    slug: "enhancv-modern-fresher-ai",
     description:
       "Modern professional layout inspired by Enhancv with clean ATS-friendly design",
     ats: "99% ATS",
@@ -83,6 +93,7 @@ export const templates: TemplateOption[] = [
   {
     id: "harvard-ats",
     name: "Harvard ATS",
+    slug: "harvard-ats",
     description:
       "Classic Harvard-style ATS-friendly resume with a clean and professional layout",
     ats: "99% ATS",
@@ -94,6 +105,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-ats",
     name: "LaTeX ATS",
+    slug: "latex-ats",
     description:
       "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
     ats: "99% ATS",
@@ -105,6 +117,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-ats",
     name: "LaTeX ATS full stack exp",
+    slug: "latex-ats-full-stack-exp",
     description:
       "Classic LaTeX-style ATS resume with small-caps headings, tabular subheadings, and tight serif typography",
     ats: "99% ATS",
@@ -116,6 +129,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-ats-photo",
     name: "LaTeX ATS (Photo)",
+    slug: "latex-ats-photo",
     description:
       "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
     ats: "97% ATS",
@@ -127,6 +141,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-ats-photo",
     name: "LaTeX ATS (Photo) devops fresher",
+    slug: "latex-ats-photo-devops-fresher",
     description:
       "LaTeX-style ATS resume with a profile photo, labeled contact lines, and inline project tech stacks",
     ats: "97% ATS",
@@ -138,6 +153,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-ats-v2",
     name: "LaTeX ATS (No Photo)",
+    slug: "latex-ats-no-photo",
     description:
       "Same as LaTeX ATS Photo but full-width header with labeled contact lines and no profile photo",
     ats: "99% ATS",
@@ -149,6 +165,7 @@ export const templates: TemplateOption[] = [
   {
     id: "executive-sidebar",
     name: "Executive Sidebar",
+    slug: "executive-sidebar",
     description:
       "One-page sidebar resume with photo, contact, skills and languages on the left; a navy highlight bar for name/profession only, plain dates and clean white body on the right",
     ats: "92% ATS",
@@ -160,6 +177,7 @@ export const templates: TemplateOption[] = [
   {
     id: "executive-sidebar",
     name: "Executive Sidebar data analyts",
+    slug: "executive-sidebar-data-analyts",
     description:
       "One-page sidebar resume with photo, contact, skills and languages on the left; a navy highlight bar for name/profession only, plain dates and clean white body on the right",
     ats: "92% ATS",
@@ -171,6 +189,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-sidebar",
     name: "LaTeX Sidebar",
+    slug: "latex-sidebar",
     description:
       "Two-column sidebar resume inspired by LaTeX — light sidebar for personal info, skills, languages & certificates; clean white main panel for experience, education and projects",
     ats: "95% ATS",
@@ -182,6 +201,7 @@ export const templates: TemplateOption[] = [
   {
     id: "latex-sidebar",
     name: "LaTeX Sidebar experience ai",
+    slug: "latex-sidebar-experience-ai",
     description:
       "Two-column sidebar resume inspired by LaTeX — light sidebar for personal info, skills, languages & certificates; clean white main panel for experience, education and projects",
     ats: "95% ATS",
@@ -193,6 +213,7 @@ export const templates: TemplateOption[] = [
   {
     id: "corporate-band",
     name: "Corporate Band",
+    slug: "corporate-band",
     description: "Bold header for Marketing & Corporate roles",
     ats: "97% ATS",
     color: "bg-card",
@@ -204,6 +225,7 @@ export const templates: TemplateOption[] = [
   {
     id: "classic-serif",
     name: "Classic Serif",
+    slug: "classic-serif",
     description: "Centered serif header, elegant single-column layout",
     ats: "98% ATS",
     color: "bg-card",
@@ -215,6 +237,7 @@ export const templates: TemplateOption[] = [
   {
     id: "corporate-classic",
     name: "Corporate Classic",
+    slug: "corporate-classic",
     description: "Centered bordered headers, structured grid layout",
     ats: "97% ATS",
     color: "bg-card",
@@ -225,6 +248,7 @@ export const templates: TemplateOption[] = [
   {
     id: "corporate-classic",
     name: "Corporate Classic fresher could",
+    slug: "corporate-classic-fresher-could",
     description: "Centered bordered headers, structured grid layout",
     ats: "97% ATS",
     color: "bg-card",
@@ -236,6 +260,7 @@ export const templates: TemplateOption[] = [
   {
     id: "executive-blue",
     name: "Executive Blue",
+    slug: "executive-blue",
     description:
       "Bold blue accents, badge-style certifications, GitHub-linked projects",
     ats: "96% ATS",
@@ -247,6 +272,7 @@ export const templates: TemplateOption[] = [
   {
     id: "executive-blue",
     name: "Executive Blue exp ml",
+    slug: "executive-blue-exp-ml",
     description:
       "Bold blue accents, badge-style certifications, GitHub-linked projects",
     ats: "96% ATS",
@@ -259,6 +285,7 @@ export const templates: TemplateOption[] = [
   {
     id: "professional-modern",
     name: "Professional Modern",
+    slug: "professional-modern",
     description: "Professional ATS Resume with Icon Sections",
     ats: "99% ATS",
     featured: true,
@@ -270,6 +297,7 @@ export const templates: TemplateOption[] = [
   {
     id: "modern-professional",
     name: "Modern Professional",
+    slug: "modern-professional",
     description: "Professional Business Layout",
     ats: "96% ATS",
     color: "bg-card",
@@ -280,6 +308,7 @@ export const templates: TemplateOption[] = [
   {
     id: "modern-professional",
     name: "Modern Professional frontend fresher",
+    slug: "modern-professional-frontend-fresher",
     description: "Professional Business Layout",
     ats: "96% ATS",
     color: "bg-card",
@@ -291,6 +320,7 @@ export const templates: TemplateOption[] = [
   {
     id: "split-label",
     name: "Split Label",
+    slug: "split-label",
     description: "Elegant label-left layout for creative & business roles",
     ats: "94% ATS",
     color: "bg-card",
@@ -301,6 +331,7 @@ export const templates: TemplateOption[] = [
   {
     id: "split-label",
     name: "Split Label backend frehser",
+    slug: "split-label-backend-frehser",
     description: "Elegant label-left layout for creative & business roles",
     ats: "94% ATS",
     color: "bg-card",

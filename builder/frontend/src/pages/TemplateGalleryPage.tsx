@@ -21,6 +21,7 @@ const DOMAIN_OPTIONS: { label: string; value: Domain }[] = [
   { label: "Backend", value: "backend" },
   { label: "AI", value: "ai" },
   { label: "Data Science", value: "data-science" },
+  { label: "Cloud", value: "cloud" },
 ];
 
 export default function TemplateGalleryPage() {
@@ -155,7 +156,7 @@ export default function TemplateGalleryPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredTemplates.map((template) => (
             <button
-              key={template.id}
+              key={template.slug}
               onClick={() => handleTemplateClick(template.id)}
               className={`relative text-left border border-primary/10 rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
             >

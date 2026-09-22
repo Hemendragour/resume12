@@ -15,6 +15,23 @@ export const useCoverLetter = () => {
   const fetchCoverLetter = async () => {
     if (!id) return;
 
+    // "draft" is a synthetic id used for an AI-generated cover letter
+    // that hasn't been saved yet — the store already has the content
+    // (loaded via loadDraft), so there's nothing to fetch.
+    if (id === "draft") {
+      setLoading(false);
+      return;
+    }
+
+    // The store can already hold this exact cover letter — e.g. right
+    // after auto-save creates it and navigates to its real id. Re-fetching
+    // in that case is a wasted round trip (and, combined with other
+    // effects, has previously caused request loops), so skip it.
+    if (coverLetter?._id === id) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const data = await getCoverLetterById(id);
       setCoverLetter(data);

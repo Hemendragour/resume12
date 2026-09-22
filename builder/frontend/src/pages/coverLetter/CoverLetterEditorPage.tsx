@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useCoverLetter } from "../../features/coverLetter/editor/hooks/useCoverLetter";
 import { useAutoSaveCoverLetter } from "../../features/coverLetter/editor/hooks/useAutoSaveCoverLetter";
@@ -10,6 +11,9 @@ import CoverLetterEditorSidebar, {
 import CoverLetterPreviewPanel from "../../features/coverLetter/editor/components/CoverLetterPreviewPanel";
 import CoverLetterDynamicEditorRenderer from "../../features/coverLetter/editor/components/CoverLetterDynamicEditorRenderer";
 import ExportCoverLetterPdfButton from "../../features/coverLetter/components/ExportCoverLetterPdfButton";
+import RegenerateCoverLetterModal from "../../features/coverLetter/editor/components/RegenerateCoverLetterModal";
+import Button from "../../components/ui/Button";
+import { Sparkles } from "lucide-react";
 
 const sectionLabels: Record<CoverLetterSection, string> = {
   header: "Header & Greeting",
@@ -20,6 +24,11 @@ const sectionLabels: Record<CoverLetterSection, string> = {
 export default function CoverLetterEditorPage() {
   const [activeSection, setActiveSection] =
     useState<CoverLetterSection>("header");
+
+  const [regenerateOpen, setRegenerateOpen] = useState(false);
+
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const { loading, coverLetter } = useCoverLetter();
 
@@ -35,6 +44,13 @@ export default function CoverLetterEditorPage() {
     );
   }
 
+  // Draft state lost (e.g. page was refreshed before the first save) —
+  // there's nothing in memory to show, so send them back to start over.
+  if (id === "draft" && !coverLetter) {
+    navigate("/cover-letters", { replace: true });
+    return null;
+  }
+
   return (
     <div className="flex min-h-[calc(100vh-112px)] flex-col rounded-2xl bg-modal shadow-sm">
       <EditorHeader
@@ -44,7 +60,19 @@ export default function CoverLetterEditorPage() {
 
       <div className="border-b border-card bg-modal px-6 py-4">
         <div className="flex flex-nowrap items-center justify-end gap-3 overflow-x-auto">
-          {coverLetter && <ExportCoverLetterPdfButton />}
+          {coverLetter && (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRegenerateOpen(true)}
+              >
+                <Sparkles size={16} className="mr-2 inline" />
+                Regenerate with AI
+              </Button>
+              <ExportCoverLetterPdfButton />
+            </>
+          )}
         </div>
       </div>
 
@@ -71,6 +99,13 @@ export default function CoverLetterEditorPage() {
 
         <CoverLetterPreviewPanel />
       </div>
+
+      {coverLetter && (
+        <RegenerateCoverLetterModal
+          open={regenerateOpen}
+          onClose={() => setRegenerateOpen(false)}
+        />
+      )}
     </div>
   );
 }

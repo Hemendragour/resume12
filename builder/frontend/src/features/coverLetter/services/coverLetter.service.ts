@@ -7,9 +7,14 @@ import type {
 
 /**
  * Create Cover Letter
+ *
+ * `data` can be just { title, targetRole, templateId } for a blank
+ * manually-created letter, or can additionally include personalInfo /
+ * recipient / body / closing when saving an AI-generated draft for
+ * the first time.
  */
 export const createCoverLetter = async (
-  data: CreateCoverLetterRequest,
+  data: CreateCoverLetterRequest | Partial<CoverLetter>,
 ): Promise<CoverLetter> => {
   const response = await api.post("/cover-letters", data);
 

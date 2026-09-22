@@ -53,3 +53,9 @@ export interface CreateCoverLetterRequest {
   targetRole: string;
   templateId: CoverLetterTemplate;
 }
+
+export type RegenerateCoverLetterTarget =
+  | "full"
+  | "opening"
+  | "closing"
+  | `paragraph:${number}`;

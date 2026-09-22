@@ -19,7 +19,16 @@ import {
   generateCustomSectionService,
   generateInternshipService,
   generateFullResumeService,
+  generateCoverLetterService,
+  regenerateCoverLetterSectionService,
 } from "./ai.service";
+
+import { extractResumeStructure } from "../ats/ats.service";
+import {
+  extractTextFromPdf,
+  extractContactWithRegex,
+} from "../resume/resume-parse.service";
+import type { RegenerateCoverLetterTarget } from "../../prompts/regenerate-cover-letter.prompt";
 
 export const generateSummary = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -194,6 +203,116 @@ export const generateResume = asyncHandler(
     res.status(200).json({
       success: true,
       resume,
+    });
+  },
+);
+
+/**
+ * Generate Cover Letter with AI
+ *
+ * Accepts either:
+ * - resumeId: an existing saved resume to base the letter on, OR
+ * - an uploaded PDF resume (multipart "file") — parsed in-memory only,
+ *   never saved as a resume record.
+ *
+ * And either:
+ * - jobDescription, OR
+ * - companyName (+ optional companyInfo) when no JD is available.
+ *
+ * Returns the generated cover letter CONTENT only. It is not saved to
+ * the database here — the frontend saves it via the normal cover
+ * letter create/update endpoints once the user keeps/edits it.
+ */
+export const generateCoverLetter = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { targetRole, jobDescription, companyName, companyInfo, resumeId } =
+      req.body;
+
+    if (!targetRole) {
+      throw new ApiError(400, "Target role is required");
+    }
+
+    if (!jobDescription && !companyName) {
+      throw new ApiError(
+        400,
+        "Please provide a job description, or a company name if you don't have one.",
+      );
+    }
+
+    let candidateProfile: unknown;
+
+    if (req.file) {
+      // Fresh upload — parse in-memory only, never persisted.
+      const text = await extractTextFromPdf(req.file.buffer);
+      const regexContact = extractContactWithRegex(text);
+
+      candidateProfile = await extractResumeStructure(text, regexContact);
+    } else if (resumeId) {
+      const resume = await Resume.findOne({
+        _id: resumeId,
+        userId: req.userId,
+      });
+
+      if (!resume) {
+        throw new ApiError(404, "Resume not found");
+      }
+
+      candidateProfile = resume;
+    } else {
+      throw new ApiError(
+        400,
+        "Please select an existing resume or upload one to base the letter on.",
+      );
+    }
+
+    const generated = await generateCoverLetterService({
+      targetRole,
+      jobDescription: jobDescription || undefined,
+      companyName: companyName || undefined,
+      companyInfo: companyInfo || undefined,
+      candidateProfile,
+    });
+
+    await trackAIUsage(req.userId!, "generate-cover-letter");
+
+    res.status(200).json({
+      success: true,
+      coverLetter: generated,
+    });
+  },
+);
+
+/**
+ * Regenerate one section (or the whole body) of a cover letter.
+ * Also returns content only — not saved here.
+ */
+export const regenerateCoverLetterSection = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { currentLetter, target, reason } = req.body as {
+      currentLetter: unknown;
+      target: RegenerateCoverLetterTarget;
+      reason: string;
+    };
+
+    if (!currentLetter || !target) {
+      throw new ApiError(400, "currentLetter and target are required");
+    }
+
+    if (!reason || !reason.trim()) {
+      throw new ApiError(400, "Please describe what you'd like changed");
+    }
+
+    const result = await regenerateCoverLetterSectionService({
+      currentLetter,
+      target,
+      reason,
+    });
+
+    await trackAIUsage(req.userId!, "regenerate-cover-letter");
+
+    res.status(200).json({
+      success: true,
+      result,
     });
   },
 );

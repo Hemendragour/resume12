@@ -10,9 +10,12 @@ import {
   generateCustomSection,
   generateInternship,
   generateResume,
+  generateCoverLetter,
+  regenerateCoverLetterSection,
 } from "./ai.controller";
 
 import { protect } from "../../middleware/auth.middleware";
+import { uploadResumePdf } from "../../middleware/upload-pdf.middleware";
 
 const router = Router();
 
@@ -35,5 +38,13 @@ router.post("/custom-section", generateCustomSection);
 router.post("/internship", generateInternship);
 
 router.post("/generate-resume", generateResume);
+
+router.post(
+  "/generate-cover-letter",
+  uploadResumePdf,
+  generateCoverLetter,
+);
+
+router.post("/regenerate-cover-letter", regenerateCoverLetterSection);
 
 export default router;

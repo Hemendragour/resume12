@@ -16,24 +16,39 @@ export const createCoverLetter = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const data = createCoverLetterSchema.parse(req.body);
 
+    const defaultDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     const coverLetter = await CoverLetter.create({
       userId: req.userId,
       title: data.title,
       targetRole: data.targetRole ?? "",
       templateId: data.templateId ?? CoverLetterTemplates.CLASSIC_FORMAL,
+
+      // If full content was supplied (e.g. an AI-generated draft being
+      // saved for the first time), use it. Otherwise fall back to the
+      // same empty defaults as a manually-created cover letter.
+      personalInfo: data.personalInfo ?? undefined,
+
       recipient: {
-        date: new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        recipientName: "Hiring Manager",
-        companyName: "",
-        subject: data.targetRole
-          ? `Application for ${data.targetRole} Position`
-          : "",
-        greeting: "Dear Hiring Manager,",
+        date: data.recipient?.date || defaultDate,
+        recipientName: data.recipient?.recipientName || "Hiring Manager",
+        companyName: data.recipient?.companyName || "",
+        companyLocation: data.recipient?.companyLocation || "",
+        subject:
+          data.recipient?.subject ||
+          (data.targetRole
+            ? `Application for ${data.targetRole} Position`
+            : ""),
+        greeting: data.recipient?.greeting || "Dear Hiring Manager,",
       },
+
+      body: data.body ?? undefined,
+
+      closing: data.closing ?? undefined,
     });
 
     res.status(201).json({

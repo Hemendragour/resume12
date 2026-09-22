@@ -13,6 +13,22 @@ interface CoverLetterState {
 
   setCoverLetter: (coverLetter: CoverLetter) => void;
 
+  /**
+   * Loads an AI-generated draft into the store as an unsaved cover
+   * letter (no _id yet). useAutoSaveCoverLetter detects the missing
+   * _id and creates the DB record on the first edit instead of
+   * patching an existing one.
+   */
+  loadDraft: (draft: {
+    title: string;
+    targetRole: string;
+    templateId: CoverLetter["templateId"];
+    personalInfo: CoverLetterPersonalInfo;
+    recipient: CoverLetterRecipient;
+    body: CoverLetterBody;
+    closing: CoverLetterClosing;
+  }) => void;
+
   updatePersonalInfo: (data: Partial<CoverLetterPersonalInfo>) => void;
 
   updateRecipient: (data: Partial<CoverLetterRecipient>) => void;
@@ -38,6 +54,25 @@ export const useCoverLetterStore = create<CoverLetterState>((set) => ({
   coverLetter: null,
 
   setCoverLetter: (coverLetter) => set({ coverLetter }),
+
+  loadDraft: (draft) =>
+    set({
+      coverLetter: {
+        // No _id/userId/timestamps yet — this cover letter does not
+        // exist in the database until the user makes their first edit.
+        _id: "",
+        userId: "",
+        createdAt: "",
+        updatedAt: "",
+        title: draft.title,
+        targetRole: draft.targetRole,
+        templateId: draft.templateId,
+        personalInfo: draft.personalInfo,
+        recipient: draft.recipient,
+        body: draft.body,
+        closing: draft.closing,
+      },
+    }),
 
   updatePersonalInfo: (data) =>
     set((state) => {

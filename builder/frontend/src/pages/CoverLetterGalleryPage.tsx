@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 
 import { coverLetterTemplates } from "../features/coverLetter/config/coverLetterTemplates";
 import CreateCoverLetterModal from "../features/coverLetter/components/CreateCoverLetterModal";
+import GenerateCoverLetterWithAiModal from "../features/coverLetter/components/GenerateCoverLetterWithAiModal";
 import type { CoverLetterTemplate } from "../features/coverLetter/types/coverLetter.types";
 
 /**
@@ -36,12 +38,29 @@ export default function CoverLetterGalleryPage() {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState<CoverLetterTemplate | null>(null);
 
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-1">Choose a Cover Letter Template</h1>
-      <p className="text-gray-500 mb-6">
-        Pick a template to start writing your cover letter
-      </p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold mb-1">
+            Choose a Cover Letter Template
+          </h1>
+          <p className="text-gray-500">
+            Pick a template to start writing your cover letter
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setAiModalOpen(true)}
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-dark"
+        >
+          <Sparkles size={18} />
+          Create Cover Letter with AI
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {coverLetterTemplates.map((template) => (
@@ -68,6 +87,11 @@ export default function CoverLetterGalleryPage() {
           templateId={selectedTemplateId}
         />
       )}
+
+      <GenerateCoverLetterWithAiModal
+        open={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+      />
     </div>
   );
 }

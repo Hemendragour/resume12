@@ -126,3 +126,29 @@ export const generateFullResumeService = async (formData: any) => {
   const prompt = buildGenerateResumePrompt(formData);
   return generateJSON<any>(prompt); // type this against IResume once you're ready
 };
+
+import { buildGenerateCoverLetterPrompt } from "../../prompts/generate-cover-letter.prompt";
+import {
+  buildRegenerateCoverLetterPrompt,
+  type RegenerateCoverLetterTarget,
+} from "../../prompts/regenerate-cover-letter.prompt";
+
+export const generateCoverLetterService = async (input: {
+  targetRole: string;
+  jobDescription?: string;
+  companyName?: string;
+  companyInfo?: string;
+  candidateProfile: unknown;
+}) => {
+  const prompt = buildGenerateCoverLetterPrompt(input);
+  return generateJSON<any>(prompt);
+};
+
+export const regenerateCoverLetterSectionService = async (input: {
+  currentLetter: unknown;
+  target: RegenerateCoverLetterTarget;
+  reason: string;
+}) => {
+  const prompt = buildRegenerateCoverLetterPrompt(input);
+  return generateJSON<any>(prompt);
+};

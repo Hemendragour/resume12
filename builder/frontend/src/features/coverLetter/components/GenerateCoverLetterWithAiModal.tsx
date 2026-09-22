@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, UploadCloud, FileText } from "lucide-react";
+import { Sparkles, UploadCloud, FileText, Lock } from "lucide-react";
 
 import Modal from "../../../components/ui/Modal";
 import Button from "../../../components/ui/Button";
@@ -9,7 +9,12 @@ import Input from "../../../components/ui/Input";
 import { getResumes } from "../../resume/services/resume.service";
 import type { Resume } from "../../resume/types/resume.types";
 
-import { generateCoverLetterWithAI } from "../services/coverLetterAi.service";
+import {
+  generateCoverLetterWithAI,
+  getCoverLetterAiCredits,
+  getAiErrorMessage,
+  type CoverLetterAiCredits,
+} from "../services/coverLetterAi.service";
 import { useCoverLetterStore } from "../../../store/coverLetter.store";
 import { CoverLetterTemplates } from "../types/coverLetter.types";
 import type { CoverLetterTemplate } from "../types/coverLetter.types";
@@ -50,6 +55,9 @@ export default function GenerateCoverLetterWithAiModal({
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [resumesLoading, setResumesLoading] = useState(false);
 
+  const [credits, setCredits] = useState<CoverLetterAiCredits | null>(null);
+  const [creditsLoading, setCreditsLoading] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,9 +69,16 @@ export default function GenerateCoverLetterWithAiModal({
       .then((res) => setResumes(res.resumes))
       .catch(() => setResumes([]))
       .finally(() => setResumesLoading(false));
+
+    setCreditsLoading(true);
+    getCoverLetterAiCredits()
+      .then(setCredits)
+      .catch(() => setCredits(null))
+      .finally(() => setCreditsLoading(false));
   }, [open]);
 
   const hasJD = jobDescription.trim().length > 0;
+  const outOfCredits = credits !== null && credits.remaining <= 0;
 
   const handleFileSelect = (file: File | null) => {
     setError(null);
@@ -89,6 +104,12 @@ export default function GenerateCoverLetterWithAiModal({
   const handleSubmit = async () => {
     setError(null);
 
+    if (outOfCredits) {
+      return setError(
+        "You've used all your free AI generations. Buy more credits to continue.",
+      );
+    }
+
     if (!title.trim()) return setError("Cover letter name is required.");
     if (!targetRole.trim()) return setError("Target role is required.");
 
@@ -109,14 +130,17 @@ export default function GenerateCoverLetterWithAiModal({
     try {
       setLoading(true);
 
-      const generated = await generateCoverLetterWithAI({
-        targetRole: targetRole.trim(),
-        jobDescription: hasJD ? jobDescription.trim() : undefined,
-        companyName: companyName.trim() || undefined,
-        companyInfo: companyInfo.trim() || undefined,
-        resumeId: resumeSource === "existing" ? resumeId : undefined,
-        resumeFile: resumeSource === "upload" ? resumeFile : undefined,
-      });
+      const { coverLetter: generated, credits: updatedCredits } =
+        await generateCoverLetterWithAI({
+          targetRole: targetRole.trim(),
+          jobDescription: hasJD ? jobDescription.trim() : undefined,
+          companyName: companyName.trim() || undefined,
+          companyInfo: companyInfo.trim() || undefined,
+          resumeId: resumeSource === "existing" ? resumeId : undefined,
+          resumeFile: resumeSource === "upload" ? resumeFile : undefined,
+        });
+
+      setCredits(updatedCredits);
 
       loadDraft({
         title: title.trim(),
@@ -132,7 +156,19 @@ export default function GenerateCoverLetterWithAiModal({
       navigate("/cover-letter/draft/edit");
     } catch (err) {
       console.error(err);
-      setError("Failed to generate cover letter. Please try again.");
+
+      const message = getAiErrorMessage(
+        err,
+        "Failed to generate cover letter. Please try again.",
+      );
+
+      setError(message);
+
+      // A 403 here means credits ran out between opening the modal and
+      // submitting (e.g. another tab) — refresh so the form locks too.
+      if ((err as any)?.response?.status === 403) {
+        getCoverLetterAiCredits().then(setCredits).catch(() => {});
+      }
     } finally {
       setLoading(false);
     }
@@ -147,6 +183,32 @@ export default function GenerateCoverLetterWithAiModal({
       size="lg"
     >
       <div className="space-y-6">
+        {/* Credits banner */}
+        {!creditsLoading && credits && (
+          <div
+            className={`rounded-xl border p-4 text-sm ${
+              outOfCredits
+                ? "border-red-200 bg-red-50 text-red-700"
+                : "border-emerald-200 bg-emerald-50 text-emerald-700"
+            }`}
+          >
+            {outOfCredits ? (
+              <div className="flex items-center gap-2">
+                <Lock size={16} />
+                <span>
+                  You've used all {credits.limit} free AI generations. Buy
+                  more credits to continue.
+                </span>
+              </div>
+            ) : (
+              <span>
+                {credits.remaining} of {credits.limit} free AI generations
+                left (regenerate uses these too).
+              </span>
+            )}
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <Input
             label="Cover Letter Name"
@@ -308,9 +370,17 @@ export default function GenerateCoverLetterWithAiModal({
             Cancel
           </Button>
 
-          <Button type="button" onClick={handleSubmit} disabled={loading}>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading || outOfCredits}
+          >
             <Sparkles size={16} className="mr-2 inline" />
-            {loading ? "Generating..." : "Create with AI"}
+            {loading
+              ? "Generating..."
+              : outOfCredits
+                ? "Buy Credits to Continue"
+                : "Create with AI"}
           </Button>
         </div>
       </div>

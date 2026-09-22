@@ -29,6 +29,10 @@ import {
   extractContactWithRegex,
 } from "../resume/resume-parse.service";
 import type { RegenerateCoverLetterTarget } from "../../prompts/regenerate-cover-letter.prompt";
+import {
+  getCoverLetterAiCredits,
+  FREE_COVER_LETTER_AI_CREDITS,
+} from "./coverLetterCredits.service";
 
 export const generateSummary = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -239,6 +243,15 @@ export const generateCoverLetter = asyncHandler(
       );
     }
 
+    const credits = await getCoverLetterAiCredits(req.userId!);
+
+    if (credits.remaining <= 0) {
+      throw new ApiError(
+        403,
+        `You've used all ${FREE_COVER_LETTER_AI_CREDITS} free AI cover letter generations. Buy more credits to continue.`,
+      );
+    }
+
     let candidateProfile: unknown;
 
     if (req.file) {
@@ -275,9 +288,12 @@ export const generateCoverLetter = asyncHandler(
 
     await trackAIUsage(req.userId!, "generate-cover-letter");
 
+    const updatedCredits = await getCoverLetterAiCredits(req.userId!);
+
     res.status(200).json({
       success: true,
       coverLetter: generated,
+      credits: updatedCredits,
     });
   },
 );
@@ -302,6 +318,15 @@ export const regenerateCoverLetterSection = asyncHandler(
       throw new ApiError(400, "Please describe what you'd like changed");
     }
 
+    const credits = await getCoverLetterAiCredits(req.userId!);
+
+    if (credits.remaining <= 0) {
+      throw new ApiError(
+        403,
+        `You've used all ${FREE_COVER_LETTER_AI_CREDITS} free AI cover letter generations. Buy more credits to continue.`,
+      );
+    }
+
     const result = await regenerateCoverLetterSectionService({
       currentLetter,
       target,
@@ -310,9 +335,27 @@ export const regenerateCoverLetterSection = asyncHandler(
 
     await trackAIUsage(req.userId!, "regenerate-cover-letter");
 
+    const updatedCredits = await getCoverLetterAiCredits(req.userId!);
+
     res.status(200).json({
       success: true,
       result,
+      credits: updatedCredits,
+    });
+  },
+);
+
+/**
+ * Get the current user's remaining free cover-letter AI credits
+ * (shared pool between generate and regenerate).
+ */
+export const getCoverLetterCredits = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const credits = await getCoverLetterAiCredits(req.userId!);
+
+    res.status(200).json({
+      success: true,
+      credits,
     });
   },
 );

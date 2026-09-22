@@ -14,7 +14,9 @@ export interface IAIUsage extends Document {
     | "generate-coursework"
     | "generate-custom-section"
     | "generate-internship"
-    | "generate-resume";
+    | "generate-resume"
+    | "generate-cover-letter"
+    | "regenerate-cover-letter";
 
   tokensUsed: number;
 

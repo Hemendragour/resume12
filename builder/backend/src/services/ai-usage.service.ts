@@ -12,7 +12,9 @@ type AIFeature =
   | "generate-coursework"
   | "generate-custom-section"
   | "generate-internship"
-  | "generate-resume";
+  | "generate-resume"
+  | "generate-cover-letter"
+  | "regenerate-cover-letter";
 
 export const trackAIUsage = async (
   userId: string,

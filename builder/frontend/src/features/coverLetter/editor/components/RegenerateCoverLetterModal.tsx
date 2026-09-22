@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Lock } from "lucide-react";
 
 import Modal from "../../../../components/ui/Modal";
 import Button from "../../../../components/ui/Button";
 
 import { useCoverLetterStore } from "../../../../store/coverLetter.store";
-import { regenerateCoverLetterSection } from "../../services/coverLetterAi.service";
+import {
+  regenerateCoverLetterSection,
+  getCoverLetterAiCredits,
+  getAiErrorMessage,
+  type CoverLetterAiCredits,
+} from "../../services/coverLetterAi.service";
 import type { RegenerateCoverLetterTarget } from "../../types/coverLetter.types";
 
 interface Props {
@@ -22,7 +28,22 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [credits, setCredits] = useState<CoverLetterAiCredits | null>(null);
+  const [creditsLoading, setCreditsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    setCreditsLoading(true);
+    getCoverLetterAiCredits()
+      .then(setCredits)
+      .catch(() => setCredits(null))
+      .finally(() => setCreditsLoading(false));
+  }, [open]);
+
   if (!coverLetter) return null;
+
+  const outOfCredits = credits !== null && credits.remaining <= 0;
 
   const paragraphOptions = coverLetter.body.paragraphs.map((_, index) => ({
     value: `paragraph:${index}` as RegenerateCoverLetterTarget,
@@ -30,6 +51,13 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
   }));
 
   const handleRegenerate = async () => {
+    if (outOfCredits) {
+      setError(
+        "You've used all your free AI generations. Buy more credits to continue.",
+      );
+      return;
+    }
+
     if (!reason.trim()) {
       setError("Please describe what you'd like changed.");
       return;
@@ -48,11 +76,14 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
       setLoading(true);
       setError(null);
 
-      const result = await regenerateCoverLetterSection({
-        currentLetter: coverLetter,
-        target,
-        reason: reason.trim(),
-      });
+      const { result, credits: updatedCredits } =
+        await regenerateCoverLetterSection({
+          currentLetter: coverLetter,
+          target,
+          reason: reason.trim(),
+        });
+
+      setCredits(updatedCredits);
 
       if (target === "full") {
         updateBodyField({
@@ -78,7 +109,14 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
       onClose();
     } catch (err) {
       console.error(err);
-      setError("Failed to regenerate. Please try again.");
+
+      setError(
+        getAiErrorMessage(err, "Failed to regenerate. Please try again."),
+      );
+
+      if ((err as any)?.response?.status === 403) {
+        getCoverLetterAiCredits().then(setCredits).catch(() => {});
+      }
     } finally {
       setLoading(false);
     }
@@ -93,6 +131,31 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
       size="md"
     >
       <div className="space-y-5">
+        {!creditsLoading && credits && (
+          <div
+            className={`rounded-xl border p-3 text-sm ${
+              outOfCredits
+                ? "border-red-200 bg-red-50 text-red-700"
+                : "border-emerald-200 bg-emerald-50 text-emerald-700"
+            }`}
+          >
+            {outOfCredits ? (
+              <div className="flex items-center gap-2">
+                <Lock size={16} />
+                <span>
+                  You've used all {credits.limit} free AI generations. Buy
+                  more credits to continue.
+                </span>
+              </div>
+            ) : (
+              <span>
+                {credits.remaining} of {credits.limit} free AI generations
+                left.
+              </span>
+            )}
+          </div>
+        )}
+
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
             What should be regenerated?
@@ -138,8 +201,16 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
             Cancel
           </Button>
 
-          <Button type="button" onClick={handleRegenerate} disabled={loading}>
-            {loading ? "Regenerating..." : "Regenerate"}
+          <Button
+            type="button"
+            onClick={handleRegenerate}
+            disabled={loading || outOfCredits}
+          >
+            {loading
+              ? "Regenerating..."
+              : outOfCredits
+                ? "Buy Credits to Continue"
+                : "Regenerate"}
           </Button>
         </div>
       </div>

@@ -12,6 +12,7 @@ import {
   generateResume,
   generateCoverLetter,
   regenerateCoverLetterSection,
+  getCoverLetterCredits,
 } from "./ai.controller";
 
 import { protect } from "../../middleware/auth.middleware";
@@ -46,5 +47,7 @@ router.post(
 );
 
 router.post("/regenerate-cover-letter", regenerateCoverLetterSection);
+
+router.get("/cover-letter-credits", getCoverLetterCredits);
 
 export default router;

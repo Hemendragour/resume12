@@ -10,6 +10,12 @@ export type GeneratedCoverLetterContent = Pick<
   "personalInfo" | "recipient" | "body" | "closing"
 >;
 
+export interface CoverLetterAiCredits {
+  used: number;
+  limit: number;
+  remaining: number;
+}
+
 export interface GenerateCoverLetterParams {
   targetRole: string;
   jobDescription?: string;
@@ -17,6 +23,11 @@ export interface GenerateCoverLetterParams {
   companyInfo?: string;
   resumeId?: string;
   resumeFile?: File | null;
+}
+
+export interface GenerateCoverLetterResult {
+  coverLetter: GeneratedCoverLetterContent;
+  credits: CoverLetterAiCredits;
 }
 
 /**
@@ -29,7 +40,7 @@ export interface GenerateCoverLetterParams {
  */
 export const generateCoverLetterWithAI = async (
   params: GenerateCoverLetterParams,
-): Promise<GeneratedCoverLetterContent> => {
+): Promise<GenerateCoverLetterResult> => {
   const formData = new FormData();
 
   formData.append("targetRole", params.targetRole);
@@ -58,7 +69,10 @@ export const generateCoverLetterWithAI = async (
     timeout: 120000,
   });
 
-  return response.data.coverLetter;
+  return {
+    coverLetter: response.data.coverLetter,
+    credits: response.data.credits,
+  };
 };
 
 export interface RegenerateCoverLetterParams {
@@ -67,10 +81,44 @@ export interface RegenerateCoverLetterParams {
   reason: string;
 }
 
+export interface RegenerateCoverLetterResult {
+  result: Record<string, unknown>;
+  credits: CoverLetterAiCredits;
+}
+
 export const regenerateCoverLetterSection = async (
   params: RegenerateCoverLetterParams,
-): Promise<Record<string, unknown>> => {
+): Promise<RegenerateCoverLetterResult> => {
   const response = await api.post("/ai/regenerate-cover-letter", params);
 
-  return response.data.result;
+  return {
+    result: response.data.result,
+    credits: response.data.credits,
+  };
+};
+
+/**
+ * Fetch the current user's remaining free cover-letter AI credits
+ * (shared pool between generate and regenerate) — used to show
+ * "X free generations left" before the user commits to filling out
+ * the whole form.
+ */
+export const getCoverLetterAiCredits =
+  async (): Promise<CoverLetterAiCredits> => {
+    const response = await api.get("/ai/cover-letter-credits");
+
+    return response.data.credits;
+  };
+
+/**
+ * Pulls a human-readable message out of an axios error response, e.g.
+ * the 403 "you're out of credits" message from the backend.
+ */
+export const getAiErrorMessage = (
+  error: unknown,
+  fallback: string,
+): string => {
+  const message = (error as any)?.response?.data?.message;
+
+  return typeof message === "string" ? message : fallback;
 };

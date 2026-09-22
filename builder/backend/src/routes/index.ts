@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import authRoutes from "../modules/auth/auth.routes";
 import resumeRoutes from "../modules/resume/resume.routes";
+import coverLetterRoutes from "../modules/coverLetter/coverLetter.routes";
 import exportRoutes from "../modules/export/export.routes";
 import aiRoutes from "../modules/ai/ai.routes";
 // import atsRoutes from "../modules/ats/ats.routes";
@@ -30,6 +31,8 @@ const router = Router();
 router.use("/auth", authRoutes);
 
 router.use("/resumes", resumeRoutes);
+
+router.use("/cover-letters", coverLetterRoutes);
 
 router.use("/export", exportRoutes);
 

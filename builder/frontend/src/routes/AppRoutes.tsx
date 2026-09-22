@@ -10,6 +10,7 @@ import RegisterPage from "../pages/RegisterPage";
 
 import HomePage from "../pages/HomePage";
 import TemplateGalleryPage from "../pages/TemplateGalleryPage";
+import CoverLetterGalleryPage from "../pages/CoverLetterGalleryPage";
 import AiPage from "../pages/AiPage";
 import PublicResumePage from "../pages/PublicResumePage";
 
@@ -18,6 +19,7 @@ import MyResumePage from "../pages/MyResumePage";
 import AnalyticsPage from "../pages/AnalyticsPage";
 import Settings from "../pages/SettingsPage";
 import ResumeEditorPage from "../pages/resume/ResumeEditorPage";
+import CoverLetterEditorPage from "../pages/coverLetter/CoverLetterEditorPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import UsersPage from "../pages/admin/UsersPage";
@@ -49,6 +51,8 @@ export default function AppRoutes() {
 
         <Route path="/templates" element={<TemplateGalleryPage />} />
 
+        <Route path="/cover-letters" element={<CoverLetterGalleryPage />} />
+
         <Route path="/ai" element={<AiPage />} />
       </Route>
 
@@ -78,6 +82,11 @@ export default function AppRoutes() {
         <Route path="/interview/history" element={<InterviewHistoryPage />} />
 
         <Route path="/resume/:id/edit" element={<ResumeEditorPage />} />
+
+        <Route
+          path="/cover-letter/:id/edit"
+          element={<CoverLetterEditorPage />}
+        />
       </Route>
 
       {/* ================= ADMIN ================= */}

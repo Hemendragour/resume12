@@ -11,6 +11,7 @@ import {
   User,
   Home,
   CalendarCheck2,
+  Mail,
 } from "lucide-react";
 import { BriefcaseBusiness } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -40,6 +41,13 @@ const menus: Menu[] = [
     title: "Templates",
     path: "/templates",
     icon: Palette,
+    roles: ["public", "user", "admin"],
+  },
+
+  {
+    title: "Cover Letter",
+    path: "/cover-letters",
+    icon: Mail,
     roles: ["public", "user", "admin"],
   },
 

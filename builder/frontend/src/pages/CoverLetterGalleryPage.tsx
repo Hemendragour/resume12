@@ -41,13 +41,13 @@ export default function CoverLetterGalleryPage() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div className="p-4 sm:p-6">
+      <div className="mb-6 flex flex-col items-center gap-4 text-center sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:text-left">
         <div>
-          <h1 className="text-2xl font-semibold mb-1">
+          <h1 className="text-xl sm:text-2xl font-semibold mb-1">
             Choose a Cover Letter Template
           </h1>
-          <p className="text-gray-500">
+          <p className="text-sm sm:text-base text-gray-500">
             Pick a template to start writing your cover letter
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function CoverLetterGalleryPage() {
         <button
           type="button"
           onClick={() => setAiModalOpen(true)}
-          className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-3 font-semibold text-white transition hover:bg-dark"
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm sm:text-base font-semibold text-white transition hover:bg-dark"
         >
           <Sparkles size={18} />
           Create Cover Letter with AI

@@ -176,14 +176,16 @@ export default function MyResumePage() {
           HEADER
       ====================================== */}
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
             <FileText size={22} className="text-primary" />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">My Resumes</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+              My Resumes
+            </h1>
 
             <p className="mt-1 text-sm text-slate-500">
               Create, edit and manage all your resumes

@@ -172,7 +172,7 @@ export default function HomePage() {
               onClick={() => toggleMenu("level")}
               className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "level" || experienceFilter !== "all"
-                  ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
+                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
                   : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
               }`}
             >
@@ -196,7 +196,7 @@ export default function HomePage() {
                     }}
                     className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                       experienceFilter === opt.value
-                        ? "text-success font-medium"
+                        ? "text-primary font-medium"
                         : "text-dark/80 hover:bg-background"
                     }`}
                   >
@@ -213,7 +213,7 @@ export default function HomePage() {
               onClick={() => toggleMenu("domain")}
               className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "domain" || domainFilter.length > 0
-                  ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
+                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
                   : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
               }`}
             >
@@ -236,7 +236,7 @@ export default function HomePage() {
                       onClick={() => toggleDomain(opt.value)}
                       className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                         active
-                          ? "text-success font-medium"
+                          ? "text-primary font-medium"
                           : "text-dark/80 hover:bg-background"
                       }`}
                     >
@@ -259,6 +259,10 @@ export default function HomePage() {
             )}
           </div>
         </div>
+
+        <p className="text-center text-xs sm:text-sm text-dark/40 mb-4 sm:mb-6">
+          {filteredTemplates.length} of {templates.length} templates
+        </p>
 
         {filteredTemplates.length === 0 ? (
           <p className="text-center text-sm text-dark/50">

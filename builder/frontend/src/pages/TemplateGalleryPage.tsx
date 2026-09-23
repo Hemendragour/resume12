@@ -109,105 +109,107 @@ export default function TemplateGalleryPage() {
 
       <div
         ref={filterBarRef}
-        className="relative z-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+        className="relative z-10 flex flex-wrap items-center justify-between gap-4 sm:gap-6"
       >
-        {/* Level dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => toggleMenu("level")}
-            className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
-              openMenu === "level" || experienceFilter !== "all"
-                ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
-                : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
-            }`}
-          >
-            {levelLabel === "All levels" ? "Level" : levelLabel}
-            <ChevronDown
-              size={16}
-              className={`transition-transform ${
-                openMenu === "level" ? "rotate-180" : ""
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          {/* Level dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleMenu("level")}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
+                openMenu === "level" || experienceFilter !== "all"
+                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
+                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
               }`}
-            />
-          </button>
+            >
+              {levelLabel === "All levels" ? "Level" : levelLabel}
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  openMenu === "level" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
 
-          {openMenu === "level" && (
-            <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
-              {EXPERIENCE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setExperienceFilter(opt.value);
-                    setOpenMenu(null);
-                  }}
-                  className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                    experienceFilter === opt.value
-                      ? "text-success font-medium"
-                      : "text-dark/80 hover:bg-background"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Domain dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => toggleMenu("domain")}
-            className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
-              openMenu === "domain" || domainFilter.length > 0
-                ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
-                : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
-            }`}
-          >
-            {domainLabel}
-            <ChevronDown
-              size={16}
-              className={`transition-transform ${
-                openMenu === "domain" ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {openMenu === "domain" && (
-            <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
-              {DOMAIN_OPTIONS.map((opt) => {
-                const active = domainFilter.includes(opt.value);
-                return (
+            {openMenu === "level" && (
+              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+                {EXPERIENCE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
-                    onClick={() => toggleDomain(opt.value)}
+                    onClick={() => {
+                      setExperienceFilter(opt.value);
+                      setOpenMenu(null);
+                    }}
                     className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                      active
-                        ? "text-success font-medium"
+                      experienceFilter === opt.value
+                        ? "text-primary font-medium"
                         : "text-dark/80 hover:bg-background"
                     }`}
                   >
                     {opt.label}
                   </button>
-                );
-              })}
-              {domainFilter.length > 0 && (
-                <>
-                  <div className="my-1 h-px bg-primary/10" />
-                  <button
-                    onClick={() => setDomainFilter([])}
-                    className="w-full text-left px-4 py-2 text-sm text-dark/50 hover:bg-background"
-                  >
-                    Clear domain
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Domain dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleMenu("domain")}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
+                openMenu === "domain" || domainFilter.length > 0
+                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
+                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
+              }`}
+            >
+              {domainLabel}
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  openMenu === "domain" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openMenu === "domain" && (
+              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+                {DOMAIN_OPTIONS.map((opt) => {
+                  const active = domainFilter.includes(opt.value);
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => toggleDomain(opt.value)}
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                        active
+                          ? "text-primary font-medium"
+                          : "text-dark/80 hover:bg-background"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+                {domainFilter.length > 0 && (
+                  <>
+                    <div className="my-1 h-px bg-primary/10" />
+                    <button
+                      onClick={() => setDomainFilter([])}
+                      className="w-full text-left px-4 py-2 text-sm text-dark/50 hover:bg-background"
+                    >
+                      Clear domain
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex items-center gap-1 text-sm text-dark/50 hover:text-dark sm:ml-auto"
+            className="flex items-center gap-1 text-sm text-dark/50 hover:text-dark"
           >
             <X size={14} />
             Clear filters

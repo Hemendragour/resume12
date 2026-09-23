@@ -34,7 +34,8 @@ type OpenMenu = "level" | "domain" | null;
 function getColumnCount(width: number) {
   if (width >= 1024) return 4;
   if (width >= 768) return 3;
-  return 2;
+  if (width >= 640) return 2;
+  return 1;
 }
 
 export default function HomePage() {
@@ -169,10 +170,10 @@ export default function HomePage() {
           <div className="relative">
             <button
               onClick={() => toggleMenu("level")}
-              className={`flex items-center gap-1.5 text-sm font-medium pb-1 border-b-2 transition-colors ${
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "level" || experienceFilter !== "all"
-                  ? "text-success border-success"
-                  : "text-dark border-transparent hover:text-dark/70"
+                  ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
+                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
               }`}
             >
               {levelLabel === "All levels" ? "Level" : levelLabel}
@@ -210,10 +211,10 @@ export default function HomePage() {
           <div className="relative">
             <button
               onClick={() => toggleMenu("domain")}
-              className={`flex items-center gap-1.5 text-sm font-medium pb-1 border-b-2 transition-colors ${
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "domain" || domainFilter.length > 0
-                  ? "text-success border-success"
-                  : "text-dark border-transparent hover:text-dark/70"
+                  ? "border-success/40 bg-success/10 text-success sm:bg-transparent sm:border-success"
+                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
               }`}
             >
               {domainLabel}
@@ -264,7 +265,7 @@ export default function HomePage() {
             No templates match the selected filters.
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto w-full">
             {heroTemplates.map(renderTemplateCard)}
           </div>
         )}
@@ -278,7 +279,7 @@ export default function HomePage() {
 
       {remainingTemplates.length > 0 && (
         <div className="px-4 sm:px-6 pb-10">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto">
             {remainingTemplates.map(renderTemplateCard)}
           </div>
         </div>

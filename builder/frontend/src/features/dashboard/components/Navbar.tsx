@@ -61,28 +61,28 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
 
           <input
             placeholder="Search resumes..."
-            className="h-11 w-64 rounded-xl border border-primary/50 pl-11 pr-4 text-sm text-dark outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 xl:w-80"
+            className="h-11 w-40 rounded-xl border border-primary/50 pl-11 pr-4 text-sm text-dark outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 xl:w-80"
           />
         </div>
 
         {/* Right */}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 xl:gap-3">
           {/* Create Resume */}
 
           <button
             onClick={handleCreateResume}
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
+            className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-background transition hover:bg-dark xl:px-4"
           >
             <Plus size={18} />
-            <span className="hidden xl:inline">Create Resume</span>
+            <span>Create Resume</span>
           </button>
 
           <button
             type="button"
             onClick={handleCheckATSScore}
             disabled={isCreatingAtsResume}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50 xl:px-4"
           >
             {isCreatingAtsResume ? (
               "Preparing..."
@@ -99,10 +99,10 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
           <button
             type="button"
             onClick={handleOpenUploadResume}
-            className="inline-flex items-center gap-2 rounded-xl border border-primary/50 px-4 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl border border-primary/50 px-3 py-2.5 text-sm font-semibold text-dark transition hover:bg-background xl:px-4"
           >
             <Upload size={18} />
-            <span className="hidden xl:inline">Upload Resume</span>
+            <span>Upload Resume</span>
           </button>
 
           {/* Notifications */}

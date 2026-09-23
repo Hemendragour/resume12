@@ -1,0 +1,674 @@
+diff --git a/builder/frontend/src/features/dashboard/components/Navbar.tsx b/builder/frontend/src/features/dashboard/components/Navbar.tsx
+index 72b660c..9e8836e 100644
+--- a/builder/frontend/src/features/dashboard/components/Navbar.tsx
++++ b/builder/frontend/src/features/dashboard/components/Navbar.tsx
+@@ -1,63 +1,58 @@
+ import { Search, Plus, ChevronDown, Upload } from "lucide-react";
+-import { useNavigate } from "react-router-dom";
++import { CiMenuBurger } from "react-icons/ci";
++
+ import { useAuthStore } from "../../../store/auth.store";
+-import { useState } from "react";
+-import { useCreateResume } from "../../resume/hooks/useCreateResume";
+-import UploadResumeModal from "../../resume/components/UploadResumeModal";
+ import NotificationDropdown from "../../notification/components/NotificationDropdown";
+-export default function Navbar() {
+-  const navigate = useNavigate();
++import type { QuickActions } from "../hooks/useQuickActions";
++
++interface NavbarProps {
++  onMenuClick: () => void;
++  quickActions: QuickActions;
++}
+ 
++export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
+   const user = useAuthStore((state) => state.user);
+ 
+-  const handleCreateResume = () => {
+-    if (!user) {
+-      navigate("/login");
+-      return;
+-    }
+-
+-    navigate("/templates");
+-  };
+-
+-  const [isCreatingAtsResume, setIsCreatingAtsResume] = useState(false);
+-  const createResumeMutation = useCreateResume();
+-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+-
+-  const handleOpenUploadResume = () => {
+-    if (!user) {
+-      navigate("/login");
+-      return;
+-    }
+-
+-    setIsUploadModalOpen(true);
+-  };
+-
+-  const handleCheckATSScore = async () => {
+-    if (!user) {
+-      navigate("/login");
+-      return;
+-    }
+-
+-    setIsCreatingAtsResume(true);
+-
+-    try {
+-      const resume = await createResumeMutation.mutateAsync({
+-        title: "Untitled Resume",
+-      });
+-
+-      navigate(`/resume/${resume._id}/edit`, { state: { openAts: true } });
+-    } catch (error) {
+-      console.error("Failed to create resume for ATS check:", error);
+-    } finally {
+-      setIsCreatingAtsResume(false);
+-    }
+-  };
++  const {
++    handleCreateResume,
++    handleCheckATSScore,
++    handleOpenUploadResume,
++    isCreatingAtsResume,
++  } = quickActions;
++
++  const initial = user?.fullName?.charAt(0).toUpperCase() ?? "G";
+ 
+   return (
+-    <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-primary/10 bg-card px-8">
+-      {/* Left */}
++    <header className="sticky top-0 z-30 border-b border-primary/10 bg-card">
++      {/* ================= MOBILE BAR ================= */}
++      {/* Logo, notifications, profile, and the menu burger that opens the side nav */}
++
++      <div className="flex h-16 items-center justify-between px-4 lg:hidden">
++        <h1 className="text-lg font-extrabold text-primary">ResumeAI</h1>
++
++        <div className="flex items-center gap-2">
++          <NotificationDropdown />
++
++          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-background">
++            {initial}
++          </div>
++
++          <button
++            type="button"
++            onClick={onMenuClick}
++            className="rounded-lg p-2 text-primary transition hover:bg-background"
++            aria-label="Open menu"
++          >
++            <CiMenuBurger size={22} />
++          </button>
++        </div>
++      </div>
++
++      {/* ================= DESKTOP BAR ================= */}
++
++      <div className="hidden h-20 items-center justify-between gap-4 px-6 lg:flex xl:px-8">
++        {/* Left */}
+ 
+-      <div className="flex items-center gap-5">
+         <div className="relative">
+           <Search
+             size={18}
+@@ -66,73 +61,75 @@ export default function Navbar() {
+ 
+           <input
+             placeholder="Search resumes..."
+-            className="h-11 w-80 rounded-xl border border-primary/50 pl-11 pr-4 text-dark outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
++            className="h-11 w-64 rounded-xl border border-primary/50 pl-11 pr-4 text-sm text-dark outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 xl:w-80"
+           />
+         </div>
+-      </div>
+-
+-      {/* Right */}
+ 
+-      <div className="flex items-center gap-4">
+-        {/* Create Resume */}
+-
+-        <button
+-          onClick={handleCreateResume}
+-          className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
+-        >
+-          <Plus size={18} />
+-          Create Resume
+-        </button>
+-
+-        <button
+-          type="button"
+-          onClick={handleCheckATSScore}
+-          disabled={isCreatingAtsResume}
+-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+-        >
+-          {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
+-        </button>
+-
+-        {/* Upload Resume */}
+-
+-        <button
+-          type="button"
+-          onClick={handleOpenUploadResume}
+-          className="inline-flex items-center gap-2 rounded-xl border border-primary/50 px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
+-        >
+-          <Upload size={18} />
+-          Upload Resume
+-        </button>
+-
+-        {/* Notifications */}
+-
+-        <NotificationDropdown />
+-
+-        {/* User */}
+-
+-        <button className="flex items-center gap-3 rounded-xl border border-primary/50 px-3 py-2 transition hover:bg-background">
+-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-bold text-background">
+-            {user?.fullName?.charAt(0).toUpperCase() ?? "G"}
+-          </div>
+-
+-          <div className="text-left">
+-            <p className="text-sm font-semibold text-dark">
+-              {user?.fullName ?? "Guest"}
+-            </p>
+-
+-            <p className="text-xs text-primary/70">
+-              {user ? "Free Plan" : "Guest"}
+-            </p>
+-          </div>
+-
+-          <ChevronDown size={18} className="text-primary/70" />
+-        </button>
++        {/* Right */}
++
++        <div className="flex items-center gap-3">
++          {/* Create Resume */}
++
++          <button
++            onClick={handleCreateResume}
++            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
++          >
++            <Plus size={18} />
++            <span className="hidden xl:inline">Create Resume</span>
++          </button>
++
++          <button
++            type="button"
++            onClick={handleCheckATSScore}
++            disabled={isCreatingAtsResume}
++            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
++          >
++            {isCreatingAtsResume ? (
++              "Preparing..."
++            ) : (
++              <>
++                <span className="hidden xl:inline">Check ATS Score</span>
++                <span className="xl:hidden">ATS</span>
++              </>
++            )}
++          </button>
++
++          {/* Upload Resume */}
++
++          <button
++            type="button"
++            onClick={handleOpenUploadResume}
++            className="inline-flex items-center gap-2 rounded-xl border border-primary/50 px-4 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
++          >
++            <Upload size={18} />
++            <span className="hidden xl:inline">Upload Resume</span>
++          </button>
++
++          {/* Notifications */}
++
++          <NotificationDropdown />
++
++          {/* User */}
++
++          <button className="flex items-center gap-2 rounded-xl border border-primary/50 px-2.5 py-2 transition hover:bg-background">
++            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-background">
++              {initial}
++            </div>
++
++            <div className="hidden text-left xl:block">
++              <p className="text-sm font-semibold text-dark">
++                {user?.fullName ?? "Guest"}
++              </p>
++
++              <p className="text-xs text-primary/70">
++                {user ? "Free Plan" : "Guest"}
++              </p>
++            </div>
++
++            <ChevronDown size={16} className="hidden text-primary/70 xl:block" />
++          </button>
++        </div>
+       </div>
+-
+-      <UploadResumeModal
+-        open={isUploadModalOpen}
+-        onClose={() => setIsUploadModalOpen(false)}
+-      />
+     </header>
+   );
+ }
+diff --git a/builder/frontend/src/features/dashboard/components/Sidebar.tsx b/builder/frontend/src/features/dashboard/components/Sidebar.tsx
+index 628daae..0fdf18c 100644
+--- a/builder/frontend/src/features/dashboard/components/Sidebar.tsx
++++ b/builder/frontend/src/features/dashboard/components/Sidebar.tsx
+@@ -12,11 +12,15 @@ import {
+   Home,
+   CalendarCheck2,
+   Mail,
++  Plus,
++  Upload,
++  X,
+ } from "lucide-react";
+ import { BriefcaseBusiness } from "lucide-react";
+ import { NavLink } from "react-router-dom";
+ 
+ import { useAuthStore } from "../../../store/auth.store";
++import type { QuickActions } from "../hooks/useQuickActions";
+ 
+ type MenuRole = "public" | "user" | "admin";
+ 
+@@ -119,9 +123,22 @@ const menus: Menu[] = [
+   },
+ ];
+ 
+-export default function Sidebar() {
++interface SidebarProps {
++  isOpen: boolean;
++  onClose: () => void;
++  quickActions: QuickActions;
++}
++
++export default function Sidebar({ isOpen, onClose, quickActions }: SidebarProps) {
+   const user = useAuthStore((state) => state.user);
+ 
++  const {
++    handleCreateResume,
++    handleCheckATSScore,
++    handleOpenUploadResume,
++    isCreatingAtsResume,
++  } = quickActions;
++
+   /*
+    * If user exists:
+    *    role = "user" or "admin"
+@@ -136,59 +153,122 @@ export default function Sidebar() {
+    */
+   const visibleMenus = menus.filter((menu) => menu.roles.includes(currentRole));
+ 
++  // Run an action then close the mobile drawer (no-op on desktop).
++  const runAndClose = (action: () => void | Promise<void>) => () => {
++    void action();
++    onClose();
++  };
++
+   return (
+-    <aside className="fixed left-0 top-0 flex h-screen w-72 flex-col border-r border-primary/10 bg-card">
+-      {/* ================= LOGO ================= */}
+-
+-      <div className="flex h-20 items-center justify-center border-b border-primary/10">
+-        <h1 className="text-3xl font-extrabold text-primary">ResumeAI</h1>
+-      </div>
+-
+-      {/* ================= MENU ================= */}
+-
+-      <nav className="flex-1 space-y-2 p-5">
+-        {visibleMenus.map((menu) => {
+-          const Icon = menu.icon;
+-
+-          return (
+-            <NavLink
+-              key={menu.title}
+-              to={menu.path}
+-              className={({ isActive }) =>
+-                `flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition ${
+-                  isActive
+-                    ? "bg-primary text-background shadow-lg"
+-                    : "text-primary/70 hover:bg-background hover:text-primary"
+-                }`
+-              }
+-            >
+-              <Icon size={20} />
+-
+-              <span>{menu.title}</span>
+-            </NavLink>
+-          );
+-        })}
+-      </nav>
+-
+-      {/* ================= UPGRADE CARD ================= */}
+-
+-      {/* You can show this only for logged-in users if you want */}
+-      {user && (
+-        <div className="m-5 rounded-2xl bg-linear-to-r from-primary to-accent p-5 text-background">
+-          <Sparkles className="mb-3" />
+-
+-          <h3 className="font-bold">Upgrade to Pro</h3>
+-
+-          <p className="mt-2 text-sm opacity-90">
+-            Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
+-            Premium Templates.
+-          </p>
+-
+-          <button className="mt-5 w-full rounded-xl bg-background py-2 font-semibold text-primary">
+-            Upgrade
++    <>
++      {/* ================= MOBILE OVERLAY ================= */}
++
++      {isOpen && (
++        <div
++          className="fixed inset-0 z-40 bg-dark/50 lg:hidden"
++          onClick={onClose}
++          aria-hidden="true"
++        />
++      )}
++
++      <aside
++        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-primary/10 bg-card transition-transform duration-300 ease-in-out lg:translate-x-0 ${
++          isOpen ? "translate-x-0" : "-translate-x-full"
++        }`}
++      >
++        {/* ================= LOGO ================= */}
++
++        <div className="flex h-16 shrink-0 items-center justify-between border-b border-primary/10 px-5 lg:justify-center">
++          <h1 className="text-xl font-extrabold text-primary">ResumeAI</h1>
++
++          <button
++            type="button"
++            onClick={onClose}
++            className="rounded-lg p-1.5 text-primary/70 transition hover:bg-background lg:hidden"
++            aria-label="Close menu"
++          >
++            <X size={20} />
+           </button>
+         </div>
+-      )}
+-    </aside>
++
++        {/* ================= MOBILE QUICK ACTIONS ================= */}
++
++        <div className="space-y-2 border-b border-primary/10 p-4 lg:hidden">
++          <button
++            type="button"
++            onClick={runAndClose(handleCreateResume)}
++            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
++          >
++            <Plus size={16} />
++            Create Resume
++          </button>
++
++          <button
++            type="button"
++            onClick={runAndClose(handleCheckATSScore)}
++            disabled={isCreatingAtsResume}
++            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
++          >
++            {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
++          </button>
++
++          <button
++            type="button"
++            onClick={runAndClose(handleOpenUploadResume)}
++            className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 px-4 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
++          >
++            <Upload size={16} />
++            Upload Resume
++          </button>
++        </div>
++
++        {/* ================= MENU ================= */}
++
++        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
++          {visibleMenus.map((menu) => {
++            const Icon = menu.icon;
++
++            return (
++              <NavLink
++                key={menu.title}
++                to={menu.path}
++                onClick={onClose}
++                className={({ isActive }) =>
++                  `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
++                    isActive
++                      ? "bg-primary text-background shadow-lg"
++                      : "text-primary/70 hover:bg-background hover:text-primary"
++                  }`
++                }
++              >
++                <Icon size={18} />
++
++                <span>{menu.title}</span>
++              </NavLink>
++            );
++          })}
++        </nav>
++
++        {/* ================= UPGRADE CARD ================= */}
++
++        {/* You can show this only for logged-in users if you want */}
++        {user && (
++          <div className="m-4 shrink-0 rounded-2xl bg-linear-to-r from-primary to-accent p-4 text-background">
++            <Sparkles className="mb-2" size={20} />
++
++            <h3 className="text-sm font-bold">Upgrade to Pro</h3>
++
++            <p className="mt-1.5 text-xs opacity-90">
++              Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
++              Premium Templates.
++            </p>
++
++            <button className="mt-3 w-full rounded-xl bg-background py-2 text-sm font-semibold text-primary">
++              Upgrade
++            </button>
++          </div>
++        )}
++      </aside>
++    </>
+   );
+ }
+diff --git a/builder/frontend/src/features/dashboard/hooks/useQuickActions.ts b/builder/frontend/src/features/dashboard/hooks/useQuickActions.ts
+new file mode 100644
+index 0000000..36049cf
+--- /dev/null
++++ b/builder/frontend/src/features/dashboard/hooks/useQuickActions.ts
+@@ -0,0 +1,67 @@
++import { useState } from "react";
++import { useNavigate } from "react-router-dom";
++
++import { useAuthStore } from "../../../store/auth.store";
++import { useCreateResume } from "../../resume/hooks/useCreateResume";
++
++export function useQuickActions() {
++  const navigate = useNavigate();
++  const user = useAuthStore((state) => state.user);
++
++  const [isCreatingAtsResume, setIsCreatingAtsResume] = useState(false);
++  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
++  const createResumeMutation = useCreateResume();
++
++  const handleCreateResume = () => {
++    if (!user) {
++      navigate("/login");
++      return;
++    }
++
++    navigate("/templates");
++  };
++
++  const handleOpenUploadResume = () => {
++    if (!user) {
++      navigate("/login");
++      return;
++    }
++
++    setIsUploadModalOpen(true);
++  };
++
++  const handleCheckATSScore = async () => {
++    if (!user) {
++      navigate("/login");
++      return;
++    }
++
++    setIsCreatingAtsResume(true);
++
++    try {
++      const resume = await createResumeMutation.mutateAsync({
++        title: "Untitled Resume",
++      });
++
++      navigate(`/resume/${resume._id}/edit`, { state: { openAts: true } });
++    } catch (error) {
++      console.error("Failed to create resume for ATS check:", error);
++    } finally {
++      setIsCreatingAtsResume(false);
++    }
++  };
++
++  return {
++    handleCreateResume,
++    handleCheckATSScore,
++    handleOpenUploadResume,
++    isCreatingAtsResume,
++    isUploadModalOpen,
++    closeUploadModal: () => setIsUploadModalOpen(false),
++  };
++}
++
++export type QuickActions = Omit<
++  ReturnType<typeof useQuickActions>,
++  "isUploadModalOpen" | "closeUploadModal"
++>;
+diff --git a/builder/frontend/src/layouts/MainLayout.tsx b/builder/frontend/src/layouts/MainLayout.tsx
+index 2702dbc..39e9256 100644
+--- a/builder/frontend/src/layouts/MainLayout.tsx
++++ b/builder/frontend/src/layouts/MainLayout.tsx
+@@ -1,20 +1,36 @@
++import { useState } from "react";
+ import { Outlet } from "react-router-dom";
+ 
+ import Sidebar from "../features/dashboard/components/Sidebar";
+ import Navbar from "../features/dashboard/components/Navbar";
++import UploadResumeModal from "../features/resume/components/UploadResumeModal";
++import { useQuickActions } from "../features/dashboard/hooks/useQuickActions";
+ 
+ export default function MainLayout() {
++  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
++  const { isUploadModalOpen, closeUploadModal, ...quickActions } =
++    useQuickActions();
++
+   return (
+     <div className="min-h-screen bg-background">
+-      <Sidebar />
++      <Sidebar
++        isOpen={isSidebarOpen}
++        onClose={() => setIsSidebarOpen(false)}
++        quickActions={quickActions}
++      />
+ 
+-      <div className="ml-72 flex min-h-screen flex-col">
+-        <Navbar />
++      <div className="flex min-h-screen flex-col lg:ml-64">
++        <Navbar
++          onMenuClick={() => setIsSidebarOpen(true)}
++          quickActions={quickActions}
++        />
+ 
+-        <main className="flex-1 p-8">
++        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+           <Outlet />
+         </main>
+       </div>
++
++      <UploadResumeModal open={isUploadModalOpen} onClose={closeUploadModal} />
+     </div>
+   );
+ }
+diff --git a/builder/frontend/src/pages/HomePage.tsx b/builder/frontend/src/pages/HomePage.tsx
+index 3750657..b7198e0 100644
+--- a/builder/frontend/src/pages/HomePage.tsx
++++ b/builder/frontend/src/pages/HomePage.tsx
+@@ -118,14 +118,14 @@ export default function HomePage() {
+     <button
+       key={template.slug}
+       onClick={() => handleTemplateClick(template.id)}
+-      className={`relative text-left border border-primary/10 rounded-xl p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
++      className={`relative text-left border border-primary/10 rounded-xl p-1.5 sm:p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+     >
+       {template.featured && (
+-        <span className="absolute top-3 right-3 text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
++        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
+           Featured
+         </span>
+       )}
+-      <div className="mb-4 flex justify-center">
++      <div className="mb-3 sm:mb-4 flex justify-center">
+         <div className="overflow-hidden rounded-lg bg-modal shadow-md">
+           <img
+             src={template.image}
+@@ -134,9 +134,13 @@ export default function HomePage() {
+           />
+         </div>
+       </div>
+-      <h3 className="font-semibold text-lg text-dark">{template.name}</h3>
+-      <p className="text-sm text-primary/80 mt-1">{template.description}</p>
+-      <span className="inline-block mt-3 text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
++      <h3 className="font-semibold text-sm sm:text-base md:text-lg text-dark">
++        {template.name}
++      </h3>
++      <p className="text-xs sm:text-sm text-primary/80 mt-1 line-clamp-2">
++        {template.description}
++      </p>
++      <span className="inline-block mt-2 sm:mt-3 text-[10px] sm:text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+         {template.ats}
+       </span>
+     </button>
+@@ -144,13 +148,13 @@ export default function HomePage() {
+ 
+   return (
+     <div className="bg-background">
+-      <div className="h-screen flex flex-col justify-center px-6">
++      <div className="flex flex-col justify-center px-4 py-8 sm:px-6 lg:h-screen lg:py-0">
+         <div className="text-center mb-6">
+-          <h1 className="text-3xl font-extrabold text-dark">
++          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-dark">
+             Build Your Resume with{" "}
+             <span className="text-primary">ResumeAI</span>
+           </h1>
+-          <p className="text-primary/70 mt-2 max-w-xl mx-auto">
++          <p className="text-sm sm:text-base text-primary/70 mt-2 max-w-xl mx-auto">
+             Choose an ATS-friendly template matched to your experience level and
+             domain, then let our AI help you fill it in and land more
+             interviews.
+@@ -159,7 +163,7 @@ export default function HomePage() {
+ 
+         <div
+           ref={filterBarRef}
+-          className="relative z-10 flex items-center justify-center gap-4 mb-8"
++          className="relative z-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
+         >
+           {/* Level dropdown */}
+           <div className="relative">
+@@ -260,7 +264,7 @@ export default function HomePage() {
+             No templates match the selected filters.
+           </p>
+         ) : (
+-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto w-full">
++          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto w-full">
+             {heroTemplates.map(renderTemplateCard)}
+           </div>
+         )}
+@@ -273,8 +277,8 @@ export default function HomePage() {
+       </div>
+ 
+       {remainingTemplates.length > 0 && (
+-        <div className="px-6 pb-10">
+-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
++        <div className="px-4 sm:px-6 pb-10">
++          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto">
+             {remainingTemplates.map(renderTemplateCard)}
+           </div>
+         </div>

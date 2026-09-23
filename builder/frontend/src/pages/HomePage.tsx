@@ -118,14 +118,14 @@ export default function HomePage() {
     <button
       key={template.slug}
       onClick={() => handleTemplateClick(template.id)}
-      className={`relative text-left border border-primary/10 rounded-xl p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+      className={`relative text-left border border-primary/10 rounded-xl p-1.5 sm:p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
     >
       {template.featured && (
-        <span className="absolute top-3 right-3 text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
+        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
           Featured
         </span>
       )}
-      <div className="mb-4 flex justify-center">
+      <div className="mb-3 sm:mb-4 flex justify-center">
         <div className="overflow-hidden rounded-lg bg-modal shadow-md">
           <img
             src={template.image}
@@ -134,9 +134,13 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <h3 className="font-semibold text-lg text-dark">{template.name}</h3>
-      <p className="text-sm text-primary/80 mt-1">{template.description}</p>
-      <span className="inline-block mt-3 text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+      <h3 className="font-semibold text-sm sm:text-base md:text-lg text-dark">
+        {template.name}
+      </h3>
+      <p className="text-xs sm:text-sm text-primary/80 mt-1 line-clamp-2">
+        {template.description}
+      </p>
+      <span className="inline-block mt-2 sm:mt-3 text-[10px] sm:text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
         {template.ats}
       </span>
     </button>
@@ -144,13 +148,13 @@ export default function HomePage() {
 
   return (
     <div className="bg-background">
-      <div className="h-screen flex flex-col justify-center px-6">
+      <div className="flex flex-col justify-center px-4 py-8 sm:px-6 lg:h-screen lg:py-0">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-extrabold text-dark">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-dark">
             Build Your Resume with{" "}
             <span className="text-primary">ResumeAI</span>
           </h1>
-          <p className="text-primary/70 mt-2 max-w-xl mx-auto">
+          <p className="text-sm sm:text-base text-primary/70 mt-2 max-w-xl mx-auto">
             Choose an ATS-friendly template matched to your experience level and
             domain, then let our AI help you fill it in and land more
             interviews.
@@ -159,7 +163,7 @@ export default function HomePage() {
 
         <div
           ref={filterBarRef}
-          className="relative z-10 flex items-center justify-center gap-4 mb-8"
+          className="relative z-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
         >
           {/* Level dropdown */}
           <div className="relative">
@@ -260,7 +264,7 @@ export default function HomePage() {
             No templates match the selected filters.
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto w-full">
             {heroTemplates.map(renderTemplateCard)}
           </div>
         )}
@@ -273,8 +277,8 @@ export default function HomePage() {
       </div>
 
       {remainingTemplates.length > 0 && (
-        <div className="px-6 pb-10">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+        <div className="px-4 sm:px-6 pb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-7xl mx-auto">
             {remainingTemplates.map(renderTemplateCard)}
           </div>
         </div>

@@ -12,11 +12,15 @@ import {
   Home,
   CalendarCheck2,
   Mail,
+  Plus,
+  Upload,
+  X,
 } from "lucide-react";
 import { BriefcaseBusiness } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { useAuthStore } from "../../../store/auth.store";
+import type { QuickActions } from "../hooks/useQuickActions";
 
 type MenuRole = "public" | "user" | "admin";
 
@@ -119,8 +123,25 @@ const menus: Menu[] = [
   },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  quickActions: QuickActions;
+}
+
+export default function Sidebar({
+  isOpen,
+  onClose,
+  quickActions,
+}: SidebarProps) {
   const user = useAuthStore((state) => state.user);
+
+  const {
+    handleCreateResume,
+    handleCheckATSScore,
+    handleOpenUploadResume,
+    isCreatingAtsResume,
+  } = quickActions;
 
   /*
    * If user exists:
@@ -136,59 +157,122 @@ export default function Sidebar() {
    */
   const visibleMenus = menus.filter((menu) => menu.roles.includes(currentRole));
 
+  // Run an action then close the mobile drawer (no-op on desktop).
+  const runAndClose = (action: () => void | Promise<void>) => () => {
+    void action();
+    onClose();
+  };
+
   return (
-    <aside className="fixed left-0 top-0 flex h-screen w-72 flex-col border-r border-primary/10 bg-card">
-      {/* ================= LOGO ================= */}
+    <>
+      {/* ================= MOBILE OVERLAY ================= */}
 
-      <div className="flex h-20 items-center justify-center border-b border-primary/10">
-        <h1 className="text-3xl font-extrabold text-primary">ResumeAI</h1>
-      </div>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-dark/50 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* ================= MENU ================= */}
+      <aside
+        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-primary/10 bg-card transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* ================= LOGO ================= */}
 
-      <nav className="flex-1 space-y-2 p-5">
-        {visibleMenus.map((menu) => {
-          const Icon = menu.icon;
+        <div className="flex h-16 shrink-0 items-center justify-between  px-5 lg:justify-center">
+          <h1 className="text-xl font-extrabold text-primary">ResumeAI</h1>
 
-          return (
-            <NavLink
-              key={menu.title}
-              to={menu.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-4 py-3 font-medium transition ${
-                  isActive
-                    ? "bg-primary text-background shadow-lg"
-                    : "text-primary/70 hover:bg-background hover:text-primary"
-                }`
-              }
-            >
-              <Icon size={20} />
-
-              <span>{menu.title}</span>
-            </NavLink>
-          );
-        })}
-      </nav>
-
-      {/* ================= UPGRADE CARD ================= */}
-
-      {/* You can show this only for logged-in users if you want */}
-      {user && (
-        <div className="m-5 rounded-2xl bg-linear-to-r from-primary to-accent p-5 text-background">
-          <Sparkles className="mb-3" />
-
-          <h3 className="font-bold">Upgrade to Pro</h3>
-
-          <p className="mt-2 text-sm opacity-90">
-            Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
-            Premium Templates.
-          </p>
-
-          <button className="mt-5 w-full rounded-xl bg-background py-2 font-semibold text-primary">
-            Upgrade
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-primary/70 transition hover:bg-background lg:hidden"
+            aria-label="Close menu"
+          >
+            <X size={20} />
           </button>
         </div>
-      )}
-    </aside>
+
+        {/* ================= MOBILE QUICK ACTIONS ================= */}
+
+        <div className="space-y-2 border-b border-primary/10 p-4 lg:hidden">
+          <button
+            type="button"
+            onClick={runAndClose(handleCreateResume)}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
+          >
+            <Plus size={16} />
+            Create Resume
+          </button>
+
+          <button
+            type="button"
+            onClick={runAndClose(handleCheckATSScore)}
+            disabled={isCreatingAtsResume}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
+          </button>
+
+          <button
+            type="button"
+            onClick={runAndClose(handleOpenUploadResume)}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 px-4 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
+          >
+            <Upload size={16} />
+            Upload Resume
+          </button>
+        </div>
+
+        {/* ================= MENU ================= */}
+
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {visibleMenus.map((menu) => {
+            const Icon = menu.icon;
+
+            return (
+              <NavLink
+                key={menu.title}
+                to={menu.path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-primary text-background shadow-lg"
+                      : "text-primary/70 hover:bg-background hover:text-primary"
+                  }`
+                }
+              >
+                <Icon size={18} />
+
+                <span>{menu.title}</span>
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* ================= UPGRADE CARD ================= */}
+
+        {/* You can show this only for logged-in users if you want */}
+        {user && (
+          <div className="m-4 shrink-0 rounded-2xl bg-linear-to-r from-primary to-accent p-4 text-background">
+            <Sparkles className="mb-2" size={20} />
+
+            <h3 className="text-sm font-bold">Upgrade to Pro</h3>
+
+            <p className="mt-1.5 text-xs opacity-90">
+              Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
+              Premium Templates.
+            </p>
+
+            <button className="mt-3 w-full rounded-xl bg-background py-2 text-sm font-semibold text-primary">
+              Upgrade
+            </button>
+          </div>
+        )}
+      </aside>
+    </>
   );
 }

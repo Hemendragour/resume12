@@ -28,16 +28,16 @@ const formatTimeAgo = (dateString: string) => {
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (diffInSeconds < 60) return "Just now";
-  
+
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-  
+
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) return `${diffInHours}h ago`;
-  
+
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) return `${diffInDays}d ago`;
-  
+
   return date.toLocaleDateString();
 };
 
@@ -84,7 +84,7 @@ export default function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-xl border border-primary/50 p-3 transition hover:bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="relative rounded-xl  p-3 transition hover:bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
       >
         <Bell size={19} />
         {unreadCount > 0 && (

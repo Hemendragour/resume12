@@ -69,28 +69,30 @@ export default function InterviewHistoryPage() {
   ].sort((a, b) => b.date - a.date);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-10">
+    <section className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <button
         onClick={() => navigate("/interview")}
-        className="mb-6 flex items-center gap-1.5 text-sm font-medium text-primary/60 transition hover:text-dark"
+        className="mb-5 flex items-center gap-1.5 text-sm font-medium text-primary/60 transition hover:text-dark sm:mb-6"
       >
         <ArrowLeft size={16} />
         Back to Interview Prep
       </button>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dark">Interview History</h1>
-        <p className="mt-2 text-primary/70">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl font-bold text-dark sm:text-2xl lg:text-3xl">
+          Interview History
+        </h1>
+        <p className="mt-1.5 text-sm text-primary/70 sm:mt-2 sm:text-base">
           Your past AI interview sessions and live mock interviews.
         </p>
       </div>
 
       {mergedHistory.length === 0 ? (
-        <p className="text-center text-primary/60">
+        <p className="text-center text-sm text-primary/60 sm:text-base">
           You haven't taken any interviews or booked any sessions yet.
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5 sm:space-y-3">
           {mergedHistory.map((item) => {
             if (item.type === "ai") {
               const session = item.data;
@@ -104,10 +106,10 @@ export default function InterviewHistoryPage() {
                   onClick={() =>
                     navigate(`/interview/ai/session/${session._id}`)
                   }
-                  className="flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  className="flex w-full items-start gap-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
                 >
-                  <div>
-                    <div className="mb-1 flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1.5">
                       <h3 className="font-semibold text-dark">
                         {session.targetRole}
                       </h3>
@@ -124,7 +126,7 @@ export default function InterviewHistoryPage() {
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-primary/60">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-primary/60 sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {new Date(session.createdAt).toLocaleDateString(
@@ -145,7 +147,10 @@ export default function InterviewHistoryPage() {
                       )}
                     </div>
                   </div>
-                  <ChevronRight size={20} className="shrink-0 text-primary/40" />
+                  <ChevronRight
+                    size={20}
+                    className="mt-0.5 shrink-0 text-primary/40 sm:mt-0"
+                  />
                 </button>
               );
             } else {
@@ -155,10 +160,10 @@ export default function InterviewHistoryPage() {
                 <button
                   key={`live-${booking._id}`}
                   onClick={() => setSelectedLiveSession(booking)}
-                  className="flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  className="flex w-full items-start gap-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
                 >
-                  <div>
-                    <div className="mb-1 flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1.5">
                       <h3 className="font-semibold capitalize text-dark">
                         {booking.interviewType.replace("_", " ")}
                       </h3>
@@ -175,7 +180,7 @@ export default function InterviewHistoryPage() {
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-primary/60">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-primary/60 sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {new Date(booking.preferredDate).toLocaleDateString(
@@ -183,9 +188,7 @@ export default function InterviewHistoryPage() {
                           { year: "numeric", month: "short", day: "numeric" },
                         )}
                       </span>
-                      <span className="capitalize">
-                        {booking.timeSlot}
-                      </span>
+                      <span className="capitalize">{booking.timeSlot}</span>
                       {booking.status === "completed" && booking.feedback && (
                         <span className="flex items-center gap-1 font-semibold text-green-600">
                           <Star size={14} className="fill-green-600" />
@@ -194,7 +197,10 @@ export default function InterviewHistoryPage() {
                       )}
                     </div>
                   </div>
-                  <ChevronRight size={20} className="shrink-0 text-primary/40" />
+                  <ChevronRight
+                    size={20}
+                    className="mt-0.5 shrink-0 text-primary/40 sm:mt-0"
+                  />
                 </button>
               );
             }

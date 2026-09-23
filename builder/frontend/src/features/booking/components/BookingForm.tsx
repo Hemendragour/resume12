@@ -83,9 +83,9 @@ export default function BookingForm({
   const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
       {/* User Info (Read-only) */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-2 block text-sm font-semibold text-dark">
             Name
@@ -115,12 +115,12 @@ export default function BookingForm({
         <label className="mb-2 block text-sm font-semibold text-dark">
           Resume <span className="font-normal text-primary/50">(optional)</span>
         </label>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <select
             value={resumeId}
             onChange={(e) => setResumeId(e.target.value)}
             disabled={loadingResumes}
-            className="min-w-[220px] flex-1 rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent sm:min-w-[220px] sm:flex-1"
           >
             <option value="">
               {loadingResumes ? "Loading resumes..." : "None selected"}
@@ -131,12 +131,14 @@ export default function BookingForm({
               </option>
             ))}
           </select>
-          <span className="text-xs text-primary/50">or</span>
+          <span className="text-center text-xs text-primary/50 sm:shrink-0">
+            or
+          </span>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadAndParse.isPending}
-            className="flex items-center gap-2 rounded-xl border border-dashed border-primary/25 px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent hover:text-accent disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent hover:text-accent disabled:opacity-60 sm:w-auto sm:justify-start"
           >
             {uploadAndParse.isPending ? (
               <Loader2 size={16} className="animate-spin" />

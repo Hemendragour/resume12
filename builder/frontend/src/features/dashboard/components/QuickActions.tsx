@@ -95,9 +95,11 @@ const actions = [
 export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
   return (
     <section>
-      <h2 className="mb-5 text-2xl font-bold text-dark">⚡ Quick Actions</h2>
+      <h2 className="mb-4 text-xl font-bold text-dark sm:mb-5 sm:text-2xl">
+        ⚡ Quick Actions
+      </h2>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
         {actions.map((item) => {
           const Icon = item.icon;
 
@@ -116,15 +118,19 @@ export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
                   onAnalyseATS();
                 }
               }}
-              className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="min-w-0 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-6"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-                <Icon size={24} className="text-primary" />
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 sm:mb-4 sm:h-12 sm:w-12">
+                <Icon size={20} className="text-primary" />
               </div>
 
-              <h3 className="font-semibold text-dark">{item.title}</h3>
+              <h3 className="truncate text-sm font-semibold text-dark sm:text-base">
+                {item.title}
+              </h3>
 
-              <p className="mt-2 text-sm text-primary/70">{item.description}</p>
+              <p className="mt-1 line-clamp-2 text-xs text-primary/70 sm:mt-2 sm:text-sm">
+                {item.description}
+              </p>
             </button>
           );
         })}

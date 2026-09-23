@@ -100,48 +100,8 @@ export default function DashboardPage() {
   }
 
   return (
-    // <DashboardLayout>
-    //   <div className="space-y-8">
-    //     <DashboardHeader
-    //       total={total}
-    //       search={search}
-    //       filter={filter}
-    //       sort={sort}
-    //       onSearch={setSearch}
-    //       onFilter={setFilter}
-    //       onSort={setSort}
-    //       onCreate={() => setOpen(true)}
-    //     />
-
-    //     <DashboardStats
-    //       total={total}
-    //       draft={draft}
-    //       completed={completed}
-    //       lastUpdated={
-    //         recent.length
-    //           ? new Date(recent[0].updatedAt).toLocaleDateString()
-    //           : "--"
-    //       }
-    //     />
-
-    //     {/* Analytics Section - Show only if user has at least one resume */}
-    //     {resumes.length > 0 && (
-    //       <DashboardAnalytics resumeId={resumes[0]._id} />
-    //     )}
-
-    //     <ResumeGrid
-    //       resumes={sortedResumes}
-    //       loading={loading}
-    //       onCreate={() => setOpen(true)}
-    //       onRefresh={refetch}
-    //     />
-
-    //     <CreateResumeModal open={open} onClose={() => setOpen(false)} />
-    //   </div>
-    // </DashboardLayout>
-
     <>
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         <WelcomeBanner
           name="Hemendra"
           onCreate={() => setOpen(true)}
@@ -176,7 +136,7 @@ export default function DashboardPage() {
 
         {/* {resumes.length > 0 && <DashboardAnalytics resumeId={resumes[0]._id} />} */}
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
           <ResumeCompletionCard
             percentage={data.resumeCompletion.percentage}
             missing={data.resumeCompletion.missing}

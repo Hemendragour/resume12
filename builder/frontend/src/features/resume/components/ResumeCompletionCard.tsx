@@ -65,15 +65,21 @@ interface Props {
 
 export default function ResumeCompletionCard({ percentage, missing }: Props) {
   return (
-    <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-dark">Resume Completion</h2>
+    <section className="rounded-2xl border border-primary/10 bg-card p-5 shadow-sm sm:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold text-dark sm:text-2xl">
+            Resume Completion
+          </h2>
 
-          <p className="mt-2 text-primary/70">Improve your resume score.</p>
+          <p className="mt-2 text-sm text-primary/70 sm:text-base">
+            Improve your resume score.
+          </p>
         </div>
 
-        <div className="text-3xl font-bold text-primary">{percentage}%</div>
+        <div className="shrink-0 text-2xl font-bold text-primary sm:text-3xl">
+          {percentage}%
+        </div>
       </div>
 
       <div className="mt-6 h-3 overflow-hidden rounded-full bg-background">

@@ -36,20 +36,22 @@ interface Props {
 
 export default function EmptyResumeState({ onCreate }: Props) {
   return (
-    <div className="rounded-3xl border-2 border-dashed border-primary/15 bg-card py-20 text-center">
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-accent/15">
-        <FilePlus2 size={36} className="text-primary" />
+    <div className="rounded-2xl border-2 border-dashed border-primary/15 bg-card px-6 py-12 text-center sm:rounded-3xl sm:py-20">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/15 sm:h-20 sm:w-20">
+        <FilePlus2 size={32} className="text-primary" />
       </div>
 
-      <h2 className="mt-6 text-3xl font-bold text-dark">No Resume Yet</h2>
+      <h2 className="mt-5 text-2xl font-bold text-dark sm:mt-6 sm:text-3xl">
+        No Resume Yet
+      </h2>
 
-      <p className="mt-3 text-primary/70">
+      <p className="mt-3 text-sm text-primary/70 sm:text-base">
         Create your first ATS-friendly resume.
       </p>
 
       <button
         onClick={onCreate}
-        className="mt-8 rounded-xl bg-primary px-8 py-3 text-white hover:bg-dark"
+        className="mt-6 w-full rounded-xl bg-primary px-8 py-3 text-white hover:bg-dark sm:mt-8 sm:w-auto"
       >
         + Create Resume
       </button>

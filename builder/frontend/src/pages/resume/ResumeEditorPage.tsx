@@ -16,21 +16,18 @@ import type { QuickGenerateFormData } from "../../features/ai/services/generate-
 import { mapGeneratedResumeToResume } from "../../features/resume/editor/utils/mapGeneratedResume";
 import GenerateResumeLoader from "../../features/resume/editor/components/GenerateGeneralResumeLoader";
 import QuickGenerateForm from "../../features/resume/editor/components/GenerateGeneralResumeForm";
-import { Sparkles } from "lucide-react";
 import { mapResumeToQuickGenerateFormData } from "../../features/resume/editor/utils/mapResumeToGenerateForm";
 import { useLocation } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 export default function ResumeEditorPage() {
   const [activeSection, setActiveSection] = useState("personal");
 
   const { loading, resume, resumeId } = useResume();
-
   const saveStatus = useAutoSave();
-
   const setResume = useResumeStore((state) => state.setResume);
 
   const [isATSPanelOpen, setIsATSPanelOpen] = useState(false);
-
   const [showQuickGenerate, setShowQuickGenerate] = useState(false);
   const [formInitialData, setFormInitialData] = useState<
     QuickGenerateFormData | undefined
@@ -39,17 +36,18 @@ export default function ResumeEditorPage() {
   const hasGeneratedWithAI = resumeId
     ? localStorage.getItem(`ai-generated:${resumeId}`) === "true"
     : false;
+
   const { mutateAsync: generateResume, isPending: isGenerating } =
     useGenerateFullResume();
 
   const openGenerate = () => {
-    setFormInitialData(undefined); // start blank
+    setFormInitialData(undefined);
     setShowQuickGenerate(true);
   };
 
   const openEditWithAI = () => {
     if (!resume) return;
-    setFormInitialData(mapResumeToQuickGenerateFormData(resume)); // pre-filled
+    setFormInitialData(mapResumeToQuickGenerateFormData(resume));
     setShowQuickGenerate(true);
   };
 
@@ -79,90 +77,79 @@ export default function ResumeEditorPage() {
     }
   }, [location.state]);
 
+  // ── Loading state ─────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-112px)] items-center justify-center rounded-2xl bg-modal shadow-sm">
-        <p className="text-lg font-medium text-dark/70">Loading Resume...</p>
+      <div className="flex h-[calc(100vh-80px)] flex-col">
+        {/* Minimal header skeleton */}
+        <div className="h-14 border-b border-primary/10 bg-modal" />
+        <div className="flex flex-1 items-center justify-center bg-background">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 size={28} className="animate-spin text-primary/50" />
+            <p className="text-sm font-medium text-dark/50">
+              Loading your resume…
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
-  // ============================================================
-  // MAIN EDITOR
-  // ============================================================
-
+  // ── Main editor ───────────────────────────────────────────
   return (
-    <div className="flex min-h-[calc(100vh-112px)] flex-col rounded-2xl bg-modal shadow-sm">
+    /*
+     * Outer shell: fills everything below the global Navbar (h-20 desktop,
+     * h-16 mobile). We use a negative-margin trick to cancel out the
+     * MainLayout p-4/p-6/p-8 padding so the editor goes edge-to-edge.
+     */
+    <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8 flex flex-col overflow-hidden"
+      style={{ height: "calc(100vh - 80px)" }}>
+
+      {/* ── Overleaf-style topbar ───────────────────── */}
       <EditorHeader
         title={resume?.title ?? "Untitled Resume"}
         saveStatus={saveStatus}
+        onGenerateClick={openGenerate}
+        onEditWithAIClick={openEditWithAI}
+        onATSClick={() => setIsATSPanelOpen(true)}
+        hasGeneratedWithAI={hasGeneratedWithAI}
+        isGenerating={isGenerating}
+        showQuickGenerate={showQuickGenerate}
+        exportButton={resume ? <ExportPdfButton /> : undefined}
       />
 
-      <div className="border-b border-card bg-modal px-6 py-4">
-        <div className="flex flex-nowrap items-center justify-end gap-3 overflow-x-auto">
-          <button
-            type="button"
-            onClick={openGenerate}
-            disabled={showQuickGenerate || isGenerating}
-            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Sparkles size={16} />
-            Generate Resume in 2 Minutes
-          </button>
-
-          <button
-            type="button"
-            onClick={openEditWithAI}
-            disabled={!hasGeneratedWithAI || showQuickGenerate || isGenerating}
-            title={
-              !hasGeneratedWithAI
-                ? "Generate a resume with AI first"
-                : undefined
-            }
-            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-dark transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Sparkles size={16} />
-            Edit with AI
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsATSPanelOpen(true)}
-            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-dark"
-          >
-            Analyze ATS
-          </button>
-
-          {resume && <ExportPdfButton />}
-        </div>
-      </div>
-
+      {/* ── Body ─────────────────────────────────────── */}
       {showQuickGenerate ? (
-        <div className="flex-1 overflow-y-auto bg-background p-8">
-          <QuickGenerateForm
-            onGenerate={handleGenerate}
-            onCancel={() => setShowQuickGenerate(false)}
-            initialData={formInitialData}
-          />
+        /* Quick Generate takes over the full body */
+        <div className="flex-1 overflow-y-auto bg-background px-4 py-8 sm:px-8">
+          <div className="mx-auto max-w-3xl">
+            <QuickGenerateForm
+              onGenerate={handleGenerate}
+              onCancel={() => setShowQuickGenerate(false)}
+              initialData={formInitialData}
+            />
+          </div>
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
+          {/* ── Left sidebar (sections nav) ────────── */}
           <EditorSidebar
             activeSection={activeSection}
             onSectionChange={setActiveSection}
           />
 
-          <main className="flex-1 overflow-y-auto bg-background p-8">
-            <div className="mx-auto max-w-3xl">
-              <div className="rounded-2xl border border-card bg-modal p-8 shadow-sm">
+          {/* ── Center: editor form ────────────────── */}
+          <main className="flex-1 overflow-y-auto bg-background">
+            <div className="mx-auto max-w-2xl px-4 py-8 sm:px-8">
+              <div className="rounded-2xl border border-card bg-modal p-6 sm:p-8 shadow-sm">
                 {isGenerating ? (
                   <GenerateResumeLoader />
                 ) : (
                   <>
-                    <h2 className="mb-2 text-2xl font-bold capitalize text-dark">
+                    <h2 className="mb-1 text-xl font-bold capitalize text-dark">
                       {activeSection}
                     </h2>
-                    <p className="mb-8 text-dark/60">
+                    <p className="mb-7 text-sm text-dark/50">
                       Fill this section of your resume.
                     </p>
                     <DynamicEditorRenderer activeSection={activeSection} />
@@ -172,10 +159,12 @@ export default function ResumeEditorPage() {
             </div>
           </main>
 
+          {/* ── Right: live PDF preview ────────────── */}
           <PreviewPanel />
         </div>
       )}
 
+      {/* ── ATS Panel (slide-over) ───────────────── */}
       <ATSPanel
         key={resumeId}
         isOpen={isATSPanelOpen}

@@ -1,114 +1,103 @@
+// CoverLetterPreviewPanel.tsx
+import { useRef, useEffect, useState } from "react";
 import CoverLetterTemplateRenderer from "../../templates/CoverLetterTemplateRenderer";
 
 /*
  * ============================================================
  * A4 CONFIGURATION
- * (Same constants as the resume PreviewPanel, kept in sync
- * so cover letters and resumes export at identical page sizes.)
  * ============================================================
+ *
+ * Actual A4 at 96 dpi ≈ 794 × 1123 px.
+ * We render at full resolution then scale to fit the panel.
  */
 
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
-
-const MM_TO_PX = 3.7795275591;
-
-const A4_WIDTH_PX = Math.round(A4_WIDTH_MM * MM_TO_PX);
-const A4_HEIGHT_PX = Math.round(A4_HEIGHT_MM * MM_TO_PX);
-
-const PREVIEW_SCALE = 1;
+const A4_WIDTH_PX = 794;
+const A4_HEIGHT_PX = 1123;
 
 export default function CoverLetterPreviewPanel() {
-  const visualWidth = A4_WIDTH_PX * PREVIEW_SCALE;
-  const visualHeight = A4_HEIGHT_PX * PREVIEW_SCALE;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  /*
+   * Compute scale whenever the container resizes.
+   * 32 px = 16 px padding each side.
+   */
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const compute = () => {
+      const available = el.clientWidth - 32;
+      const s = Math.min(available / A4_WIDTH_PX, 1);
+      setScale(s);
+    };
+
+    compute();
+
+    const ro = new ResizeObserver(compute);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const scaledHeight = A4_HEIGHT_PX * scale;
 
   return (
     <aside
-      className="
-      hidden
-      xl:flex
-      w-[860px]
-      h-full
-      flex-col
-      border-l
-      border-slate-200
-      bg-slate-100
-    "
+      className="hidden xl:flex w-[420px] 2xl:w-[500px] h-full flex-col border-l border-slate-200/60 bg-[#f0ece7]"
+      style={{ minWidth: 0 }}
     >
-      {/* HEADER */}
-      <div
-        className="
-        shrink-0
-        h-[64px]
-        bg-white
-        border-b
-        border-slate-200
-        px-6
-        flex
-        items-center
-        justify-between
-        sticky
-        top-0
-        z-20
-      "
-      >
-        <h2 className="text-xl font-bold text-gray-800">Live Preview</h2>
-
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+      {/* ── Header ────────────────────────────────────── */}
+      <div className="shrink-0 h-14 bg-modal border-b border-primary/10 px-4 flex items-center justify-between">
+        <h2 className="text-sm font-bold text-dark">Live Preview</h2>
+        <div className="flex items-center gap-2 text-xs text-primary/50">
           <span>A4</span>
-          <span className="h-3 w-px bg-gray-300" />
-          <span>Real-time</span>
+          <span className="h-3 w-px bg-primary/20" />
+          <span className="font-medium text-success">
+            {Math.round(scale * 100)}%
+          </span>
         </div>
       </div>
 
-      {/* PREVIEW AREA */}
+      {/* ── Preview area ──────────────────────────────── */}
       <div
-        className="
-        flex-1
-        min-h-0
-        overflow-auto
-        bg-slate-100
-        px-4
-        py-6
-      "
+        ref={containerRef}
+        className="flex-1 min-h-0 overflow-y-auto py-5 px-4"
       >
+        {/*
+         * Outer wrapper reserves the visual height of the scaled page
+         * and centers it horizontally.
+         */}
         <div
-          className="mx-auto"
+          className="mx-auto relative"
           style={{
-            width: `${visualWidth}px`,
-            height: `${visualHeight}px`,
-            flexShrink: 0,
+            width: `${A4_WIDTH_PX * scale}px`,
+            height: `${scaledHeight}px`,
           }}
         >
+          {/*
+           * Inner wrapper: rendered at full A4, then scaled down.
+           * transform-origin "top left" keeps the corner pinned.
+           */}
           <div
             style={{
               width: `${A4_WIDTH_PX}px`,
               height: `${A4_HEIGHT_PX}px`,
-              transform: `scale(${PREVIEW_SCALE})`,
+              transform: `scale(${scale})`,
               transformOrigin: "top left",
             }}
           >
-            {/*
-              Actual A4 page — this is the element used by PDF export.
-            */}
+            {/* Actual A4 page — used by PDF export */}
             <div
               id="cover-letter-export"
+              className="relative overflow-hidden bg-white shadow-xl"
               style={{
                 width: `${A4_WIDTH_PX}px`,
                 height: `${A4_HEIGHT_PX}px`,
-
                 minWidth: `${A4_WIDTH_PX}px`,
                 maxWidth: `${A4_WIDTH_PX}px`,
-
                 minHeight: `${A4_HEIGHT_PX}px`,
                 maxHeight: `${A4_HEIGHT_PX}px`,
               }}
-              className="
-                relative
-                overflow-hidden
-                bg-white
-                shadow-2xl
-              "
             >
               <CoverLetterTemplateRenderer />
             </div>
@@ -116,24 +105,10 @@ export default function CoverLetterPreviewPanel() {
         </div>
       </div>
 
-      {/* FOOTER */}
-      <div
-        className="
-        shrink-0
-        h-[46px]
-        bg-white
-        border-t
-        border-slate-200
-        px-6
-        flex
-        items-center
-        justify-between
-        text-xs
-        text-gray-500
-      "
-      >
+      {/* ── Footer ────────────────────────────────────── */}
+      <div className="shrink-0 h-10 bg-modal border-t border-primary/10 px-4 flex items-center justify-between text-xs text-primary/50">
         <span>A4 Live Preview</span>
-        <span className="font-medium text-emerald-600">Ready for Export</span>
+        <span className="font-medium text-success">Ready for Export</span>
       </div>
     </aside>
   );

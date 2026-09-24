@@ -16,14 +16,14 @@ export default function SessionSummary({
   const navigate = useNavigate();
 
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card p-6 text-center shadow-sm">
+    <div className="rounded-2xl border border-primary/10 bg-card p-5 text-center shadow-sm sm:p-6">
       <p className="text-sm font-medium text-primary/60">
         You answered {answeredCount} of {totalQuestions} questions
       </p>
 
-      <div className="my-6 text-5xl font-bold text-accent">
+      <div className="my-5 text-4xl font-bold text-accent sm:my-6 sm:text-5xl">
         {summary.overallScore}
-        <span className="text-xl text-primary/40">/100</span>
+        <span className="text-lg text-primary/40 sm:text-xl">/100</span>
       </div>
 
       <p className="mx-auto mb-6 max-w-md text-sm text-primary/70">
@@ -60,7 +60,7 @@ export default function SessionSummary({
 
       <button
         onClick={() => navigate("/interview")}
-        className="mt-8 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90"
+        className="mt-8 w-full rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:w-auto sm:text-base"
       >
         Back to Interview Home
       </button>

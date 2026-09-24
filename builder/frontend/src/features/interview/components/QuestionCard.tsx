@@ -79,8 +79,8 @@ export default function QuestionCard({
   const isRecorderBusy = voiceRecorder.status !== "idle";
 
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-sm sm:p-6">
+      <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-4">
         {isFollowUp && (
           <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
             Follow-up
@@ -93,8 +93,10 @@ export default function QuestionCard({
         </div>
       </div>
 
-      <div className="mb-2 flex items-start gap-3">
-        <p className="flex-1 text-lg font-medium text-dark">{question}</p>
+      <div className="mb-2 flex items-start gap-2 sm:gap-3">
+        <p className="flex-1 text-base font-medium text-dark sm:text-lg">
+          {question}
+        </p>
 
         <button
           type="button"
@@ -126,7 +128,7 @@ export default function QuestionCard({
           rows={6}
           placeholder="Type your answer, or tap the mic to speak it — you can review and edit the transcript before submitting."
           disabled={submitting}
-          className="w-full resize-none rounded-xl border border-primary/15 bg-white px-4 py-3 pr-12 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full resize-none rounded-xl border border-primary/15 bg-white px-3 py-3 pr-12 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent sm:px-4"
         />
 
         {voiceRecorder.isSupported && (
@@ -177,7 +179,7 @@ export default function QuestionCard({
       <button
         onClick={handleSubmit}
         disabled={!answerText.trim() || submitting || isRecorderBusy}
-        className="mt-4 w-full rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-4 w-full rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-base"
       >
         {submitting ? "Evaluating your answer..." : "Submit Answer"}
       </button>

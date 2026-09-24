@@ -29,9 +29,11 @@ export default function FeedbackCard({
   onNext,
 }: FeedbackCardProps) {
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-dark">Feedback</h3>
+    <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-sm sm:p-6">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-base font-semibold text-dark sm:text-lg">
+          Feedback
+        </h3>
         <span className="rounded-full bg-accent/15 px-3 py-1 text-sm font-semibold text-accent">
           {feedback.overallScore}/100
         </span>
@@ -77,7 +79,7 @@ export default function FeedbackCard({
 
       <button
         onClick={onNext}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 sm:px-6 sm:text-base"
       >
         {isLastQuestion ? "See Summary" : "Next Question"}
         <ChevronRight size={18} />

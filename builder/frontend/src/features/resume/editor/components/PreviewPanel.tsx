@@ -18,10 +18,26 @@ const A4_HEIGHT_PX = 1123;
  * ============================================================
  * PREVIEW PANEL
  * ============================================================
+ *
+ * Two contexts:
+ *  - Desktop (lg+): always visible, docked to the right as a
+ *    fixed-width rail alongside the sidebar + form.
+ *  - Mobile/tablet (< lg): shown full-width when the "Preview"
+ *    tab is active, hidden otherwise.
+ *
+ * When not the active mobile tab, this is kept off-screen with
+ * opacity/pointer-events rather than `display:none` — PDF export
+ * reads #resume-export directly via html2canvas, which cannot
+ * capture a display:none element, so it must stay laid out even
+ * while visually hidden.
  */
 
-const PreviewPanel = forwardRef<HTMLElement, Record<string, never>>(
-  (_props, ref) => {
+interface Props {
+  mobileVisible: boolean;
+}
+
+const PreviewPanel = forwardRef<HTMLElement, Props>(
+  ({ mobileVisible }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
 
@@ -56,7 +72,11 @@ const PreviewPanel = forwardRef<HTMLElement, Record<string, never>>(
     return (
       <aside
         ref={ref}
-        className="hidden xl:flex w-[420px] 2xl:w-[500px] h-full flex-col border-l border-slate-200/60 bg-[#f0ece7]"
+        className={`flex h-full flex-col w-full lg:w-[320px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] lg:border-l border-slate-200/60 ${
+          mobileVisible
+            ? "static opacity-100 pointer-events-auto"
+            : "absolute inset-0 -z-10 opacity-0 pointer-events-none"
+        } lg:static lg:z-auto lg:opacity-100 lg:pointer-events-auto`}
         style={{ minWidth: 0 }}
       >
         {/* ── Header ────────────────────────────────────── */}

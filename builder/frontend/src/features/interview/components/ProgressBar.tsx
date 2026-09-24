@@ -13,7 +13,7 @@ export default function ProgressBar({
 
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-sm font-medium text-primary/70">
+      <div className="mb-1 flex items-center justify-between text-xs font-medium text-primary/70 sm:text-sm">
         <span>
           Question {Math.min(current, total)} / {total}
         </span>

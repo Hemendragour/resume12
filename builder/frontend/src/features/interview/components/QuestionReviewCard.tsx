@@ -14,8 +14,8 @@ export default function QuestionReviewCard({
   const feedback = question.feedback;
 
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-sm">
-      <div className="mb-2 flex items-center gap-2">
+    <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-sm sm:p-5">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary/70">
           {number}
         </span>

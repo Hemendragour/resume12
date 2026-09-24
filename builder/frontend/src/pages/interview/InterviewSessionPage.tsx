@@ -115,7 +115,7 @@ export default function InterviewSessionPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <Loader2 className="animate-spin text-accent" size={32} />
       </div>
     );
@@ -123,7 +123,7 @@ export default function InterviewSessionPage() {
 
   if (isError || !session || !sessionId) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+      <div className="mx-auto max-w-lg px-4 py-12 text-center sm:py-16">
         <XCircle className="mx-auto mb-3 text-red-500" size={32} />
         <p className="text-primary/70">
           We couldn't load this interview session.
@@ -134,7 +134,7 @@ export default function InterviewSessionPage() {
 
   if (session.status !== "in_progress" && !pendingFeedback) {
     return (
-      <section className="mx-auto max-w-2xl px-4 py-10">
+      <section className="mx-auto w-full max-w-2xl px-3 py-6 sm:px-4 sm:py-10">
         {session.summary ? (
           <>
             <SessionSummary
@@ -146,8 +146,8 @@ export default function InterviewSessionPage() {
             />
 
             {session.questions.length > 0 && (
-              <div className="mt-8 space-y-4">
-                <h2 className="text-lg font-semibold text-dark">
+              <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
+                <h2 className="text-base font-semibold text-dark sm:text-lg">
                   Question by Question
                 </h2>
 
@@ -236,8 +236,8 @@ export default function InterviewSessionPage() {
   };
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-10">
-      <div className="mb-6">
+    <section className="mx-auto w-full max-w-2xl px-3 py-6 sm:px-4 sm:py-10">
+      <div className="mb-4 sm:mb-6">
         <ProgressBar
           current={Math.min(currentIndex + 1, session.totalQuestions)}
           answered={session.questions.filter((q) => q.feedback).length}
@@ -261,7 +261,7 @@ export default function InterviewSessionPage() {
           submitting={submitAnswer.isPending}
         />
       ) : (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-primary/10 bg-card p-10 text-center">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-primary/10 bg-card p-6 text-center sm:p-10">
           <Loader2 className="animate-spin text-accent" size={28} />
           <p className="text-sm text-primary/60">
             Preparing your question...

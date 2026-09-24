@@ -104,13 +104,13 @@ export default function EducationForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
+      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-4 sm:p-6"
     >
       <h2 className="text-2xl font-bold text-dark">
         {editIndex !== undefined ? "Edit Education" : "Add Education"}
       </h2>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <input
           {...register("institution")}
           placeholder="College / University"

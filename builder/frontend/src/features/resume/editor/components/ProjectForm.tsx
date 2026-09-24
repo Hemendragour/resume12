@@ -290,7 +290,7 @@ export default function ProjectForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
+      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-4 sm:p-6"
     >
       {/* TITLE */}
 
@@ -356,7 +356,7 @@ export default function ProjectForm({
 
         <div className="mt-3 space-y-3">
           {descriptionFields.map((field, index) => (
-            <div key={field.id} className="flex gap-3">
+            <div key={field.id} className="flex items-center gap-3">
               <input
                 {...register(`description.${index}.value`, {
                   required: "Description is required",
@@ -370,7 +370,7 @@ export default function ProjectForm({
                     ? "Built a real-time chat application using Socket.IO"
                     : "Describe another achievement or feature"
                 }
-                className="h-11 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
 
               <Button
@@ -403,7 +403,7 @@ export default function ProjectForm({
       </div>
 
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* START DATE */}
           <div>
             <label className="text-sm font-medium text-dark">Start Date</label>

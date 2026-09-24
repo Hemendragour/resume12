@@ -25,7 +25,7 @@ export default function EducationSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold">Education</h2>
 
@@ -49,7 +49,7 @@ export default function EducationSection() {
         onChange={(e) => renameSectionDisplayTitle("education", e.target.value)}
       />
 
-      {resume?.education.length === 0 && (
+      {resume?.education.length === 0 && !showForm && (
         <div className="rounded-xl border-2 border-dashed p-12 text-center">
           <GraduationCap className="mx-auto mb-4" size={40} />
 

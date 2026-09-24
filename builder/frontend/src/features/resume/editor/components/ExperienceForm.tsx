@@ -1,4 +1,3 @@
-// ExperienceForm.tsx
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import MonthYearPicker from "./MonthYearPicker";
@@ -210,13 +209,13 @@ export default function ExperienceForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
+      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-4 sm:p-6"
     >
       <h2 className="text-2xl font-bold text-dark">
         {editIndex !== undefined ? "Edit Experience" : "Add Experience"}
       </h2>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <label className="font-medium text-dark">Company</label>
           <input
@@ -249,7 +248,7 @@ export default function ExperienceForm({
           )}
         </div>
 
-        <div className="col-span-2">
+        <div className="sm:col-span-2">
           <label className="font-medium text-dark">Location</label>
           <input
             {...register("location")}
@@ -316,9 +315,9 @@ export default function ExperienceForm({
 
       {/* Responsibilities with AI Button */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 className="font-semibold text-dark">Responsibilities</h3>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={handleGenerateClick}
@@ -340,7 +339,7 @@ export default function ExperienceForm({
 
         <div className="space-y-3 mt-3">
           {responsibilityFields.map((field, index) => (
-            <div key={field.id} className="flex gap-3">
+            <div key={field.id} className="flex items-start gap-3">
               {/* <input
                 {...register(`responsibilities.${index}.value`)}
                 placeholder="Built Resume Builder used by 5000+ students"
@@ -385,11 +384,11 @@ export default function ExperienceForm({
         <h3 className="font-semibold text-dark">Achievements</h3>
         <div className="space-y-3 mt-3">
           {achievementFields.map((field, index) => (
-            <div key={field.id} className="flex gap-3">
+            <div key={field.id} className="flex items-center gap-3">
               <input
                 {...register(`achievements.${index}.value`)}
                 placeholder="Reduced page load by 40%"
-                className="flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="min-w-0 flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
               <Button
                 type="button"

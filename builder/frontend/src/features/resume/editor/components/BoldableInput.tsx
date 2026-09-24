@@ -54,7 +54,7 @@ export default function BoldableInput({
   };
 
   return (
-    <div className="flex flex-1 gap-2 items-center">
+    <div className="flex min-w-0 flex-1 items-center gap-2">
       <input
         ref={inputRef}
         value={value}

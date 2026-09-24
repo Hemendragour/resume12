@@ -1938,7 +1938,7 @@ export default function PersonalInfoSection() {
           />
         </div>
 
-        <div className="col-span-2">
+        <div className="sm:col-span-2">
           <label className="font-medium">Address</label>
 
           <input
@@ -1983,7 +1983,7 @@ export default function PersonalInfoSection() {
           />
         </div>
 
-        <div className="col-span-2">
+        <div className="sm:col-span-2">
           <label className="font-medium">Portfolio</label>
 
           <input

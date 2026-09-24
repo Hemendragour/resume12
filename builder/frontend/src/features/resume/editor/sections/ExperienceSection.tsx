@@ -31,7 +31,7 @@ export default function ExperienceSection() {
           renameSectionDisplayTitle("experience", e.target.value)
         }
       />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-xl font-bold">Work Experience</h3>
 
@@ -40,12 +40,18 @@ export default function ExperienceSection() {
           </p>
         </div>
 
-        <Button leftIcon={<Plus size={18} />} onClick={() => setShowForm(true)}>
+        <Button
+          leftIcon={<Plus size={18} />}
+          onClick={() => {
+            setEditingIndex(null);
+            setShowForm(true);
+          }}
+        >
           Add Experience
         </Button>
       </div>
 
-      {resume?.experience.length === 0 && (
+      {resume?.experience.length === 0 && !showForm && (
         <div className="rounded-xl border-2 border-dashed p-12 text-center">
           <h4 className="text-lg font-semibold">No Experience Added</h4>
 

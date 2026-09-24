@@ -231,7 +231,7 @@ export default function ResumeEditorPage() {
             <div
               className={`${
                 showMobileSectionList ? "hidden lg:block" : "block"
-              } mx-auto max-w-2xl px-4 py-6 sm:px-8 sm:py-8`}
+              } mx-auto max-w-3xl px-3 py-5 sm:px-5 sm:py-6`}
             >
               {/* Mobile/tablet trigger to open the section list above —
                   lg+ never shows this, since the sidebar is already
@@ -248,7 +248,7 @@ export default function ResumeEditorPage() {
                 <ChevronRight size={16} className="shrink-0 text-primary/40" />
               </button>
 
-              <div className="rounded-2xl border border-card bg-modal p-6 sm:p-8 shadow-sm">
+              <div className="rounded-2xl border border-card bg-modal p-4 sm:p-6 shadow-sm overflow-hidden">
                 {isGenerating ? (
                   <GenerateResumeLoader />
                 ) : (

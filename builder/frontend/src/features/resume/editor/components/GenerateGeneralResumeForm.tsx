@@ -223,7 +223,7 @@ export default function QuickGenerateForm({
       {/* PERSONAL INFO */}
       <section>
         <h3 className="mb-3 text-lg font-semibold text-dark">Personal Info</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Full Name *</label>
             <input
@@ -420,7 +420,7 @@ export default function QuickGenerateForm({
                 className={inputClass}
                 placeholder="Project title"
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   {...register(`projects.${index}.role`)}
                   className={inputClass}
@@ -448,7 +448,7 @@ export default function QuickGenerateForm({
                 className={textAreaClass}
                 placeholder="What did you build, and what impact did it have? One point per line."
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   {...register(`projects.${index}.github`)}
                   className={inputClass}
@@ -488,7 +488,7 @@ export default function QuickGenerateForm({
               className="relative space-y-3 rounded-xl border border-primary/10 bg-card p-4"
             >
               <RemoveRowButton onClick={() => experience.remove(index)} />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   {...register(`experience.${index}.company`)}
                   className={inputClass}
@@ -606,7 +606,7 @@ export default function QuickGenerateForm({
               className="relative space-y-3 rounded-xl border border-primary/10 bg-card p-4"
             >
               <RemoveRowButton onClick={() => internships.remove(index)} />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   {...register(`internships.${index}.company`)}
                   className={inputClass}
@@ -699,7 +699,7 @@ export default function QuickGenerateForm({
           {education.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative grid grid-cols-2 gap-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-xl border border-primary/10 bg-card p-4"
             >
               {education.fields.length > 1 && (
                 <RemoveRowButton onClick={() => education.remove(index)} />
@@ -779,7 +779,7 @@ export default function QuickGenerateForm({
                 />
               </div> */}
 
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>
                     Relevant Coursework{" "}
@@ -876,7 +876,7 @@ export default function QuickGenerateForm({
       </section>
 
       {/* ACHIEVEMENTS + CERTIFICATIONS */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <section>
           <div className="flex items-center justify-between">
             <label className={labelClass}>Achievements</label>

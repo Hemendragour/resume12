@@ -1,4 +1,3 @@
-// EditorHeader.tsx
 import {
   CheckCircle,
   Loader2,
@@ -114,7 +113,9 @@ export default function EditorHeader({
             onClick={onEditWithAIClick}
             disabled={!hasGeneratedWithAI || showQuickGenerate || isGenerating}
             title={
-              !hasGeneratedWithAI ? "Generate a resume with AI first" : undefined
+              !hasGeneratedWithAI
+                ? "Generate a resume with AI first"
+                : undefined
             }
             className="inline-flex items-center gap-1.5 rounded-lg bg-accent/20 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-dark transition hover:bg-accent/40 disabled:cursor-not-allowed disabled:opacity-50"
           >

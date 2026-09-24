@@ -21,10 +21,18 @@ const sectionLabels: Record<CoverLetterSection, string> = {
   closing: "Closing",
 };
 
+const sectionOrder: CoverLetterSection[] = ["header", "body", "closing"];
+
+type MobileTab = "edit" | "preview";
+
 export default function CoverLetterEditorPage() {
   const [activeSection, setActiveSection] =
     useState<CoverLetterSection>("header");
   const [regenerateOpen, setRegenerateOpen] = useState(false);
+
+  // ── Mobile/tablet-only navigation state (ignored at lg+, where the
+  // sidebar + form + preview are all shown together) ──────────────
+  const [mobileTab, setMobileTab] = useState<MobileTab>("edit");
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -75,18 +83,67 @@ export default function CoverLetterEditorPage() {
         exportButton={coverLetter ? <ExportCoverLetterPdfButton /> : undefined}
       />
 
+      {/* ── Edit / Preview toggle — mobile/tablet only ── */}
+      <div className="flex lg:hidden items-center gap-1 border-b border-primary/10 bg-modal px-3 py-2">
+        <button
+          type="button"
+          onClick={() => setMobileTab("edit")}
+          className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+            mobileTab === "edit"
+              ? "bg-primary text-white shadow-sm"
+              : "text-dark/60 hover:bg-card"
+          }`}
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab("preview")}
+          className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+            mobileTab === "preview"
+              ? "bg-primary text-white shadow-sm"
+              : "text-dark/60 hover:bg-card"
+          }`}
+        >
+          Preview
+        </button>
+      </div>
+
       {/* ── Body ─────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* ── Left sidebar (section nav) ─────────────── */}
+      <div className="relative flex flex-1 overflow-hidden">
+        {/* ── Left sidebar (section nav) — lg+ only ───── */}
         <CoverLetterEditorSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
         />
 
         {/* ── Center: editor form ────────────────────── */}
-        <main className="flex-1 overflow-y-auto bg-background">
-          <div className="mx-auto max-w-2xl px-4 py-8 sm:px-8">
-            <div className="rounded-2xl border border-card bg-modal p-6 sm:p-8 shadow-sm">
+        <main
+          className={`flex-1 overflow-y-auto bg-background ${
+            mobileTab === "preview" ? "hidden" : "block"
+          } lg:block`}
+        >
+          <div className="mx-auto max-w-2xl px-4 py-6 sm:px-8 sm:py-8">
+            {/* Mobile/tablet section switcher — lg+ never shows this,
+                since the sidebar is already visible there. */}
+            <div className="lg:hidden mb-4 flex gap-1.5 rounded-xl border border-primary/15 bg-modal p-1">
+              {sectionOrder.map((section) => (
+                <button
+                  key={section}
+                  type="button"
+                  onClick={() => setActiveSection(section)}
+                  className={`flex-1 truncate rounded-lg px-2 py-1.5 text-xs font-semibold transition ${
+                    activeSection === section
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-dark/60 hover:bg-card"
+                  }`}
+                >
+                  {sectionLabels[section]}
+                </button>
+              ))}
+            </div>
+
+            <div className="@container rounded-2xl border border-card bg-modal p-6 sm:p-8 shadow-sm">
               <h2 className="mb-1 text-xl font-bold text-dark">
                 {sectionLabels[activeSection]}
               </h2>
@@ -99,7 +156,7 @@ export default function CoverLetterEditorPage() {
         </main>
 
         {/* ── Right: live PDF preview ────────────────── */}
-        <CoverLetterPreviewPanel />
+        <CoverLetterPreviewPanel mobileVisible={mobileTab === "preview"} />
       </div>
 
       {/* ── Regenerate modal ─────────────────────────── */}

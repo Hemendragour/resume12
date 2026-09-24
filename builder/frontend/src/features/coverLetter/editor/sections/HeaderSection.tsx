@@ -24,7 +24,7 @@ export default function HeaderSection() {
           Shown at the top of the letter, just like a resume header.
         </p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 @lg:grid-cols-2 gap-4">
           <Input
             label="Full Name"
             placeholder="Aarav Sharma"
@@ -79,7 +79,7 @@ export default function HeaderSection() {
           Who the letter is addressed to, and when.
         </p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 @lg:grid-cols-2 gap-4">
           <Input
             label="Date"
             placeholder="September 21, 2026"

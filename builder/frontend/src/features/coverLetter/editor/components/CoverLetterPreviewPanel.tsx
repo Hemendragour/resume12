@@ -14,7 +14,11 @@ import CoverLetterTemplateRenderer from "../../templates/CoverLetterTemplateRend
 const A4_WIDTH_PX = 794;
 const A4_HEIGHT_PX = 1123;
 
-export default function CoverLetterPreviewPanel() {
+interface Props {
+  mobileVisible: boolean;
+}
+
+export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -43,7 +47,11 @@ export default function CoverLetterPreviewPanel() {
 
   return (
     <aside
-      className="hidden xl:flex w-[420px] 2xl:w-[500px] h-full flex-col border-l border-slate-200/60 bg-[#f0ece7]"
+      className={`flex h-full flex-col w-full lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] lg:border-l border-slate-200/60 ${
+        mobileVisible
+          ? "static opacity-100 pointer-events-auto"
+          : "absolute inset-0 -z-10 opacity-0 pointer-events-none"
+      } lg:static lg:z-auto lg:opacity-100 lg:pointer-events-auto`}
       style={{ minWidth: 0 }}
     >
       {/* ── Header ────────────────────────────────────── */}

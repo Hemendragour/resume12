@@ -25,7 +25,7 @@ export default function CoverLetterEditorSidebar({
   onSectionChange,
 }: Props) {
   return (
-    <aside className="w-56 xl:w-64 bg-modal border-r border-primary/10 flex-shrink-0 flex flex-col overflow-hidden">
+    <aside className="hidden lg:flex w-56 xl:w-64 bg-modal border-r border-primary/10 flex-shrink-0 flex-col overflow-hidden">
       {/* Header label */}
       <div className="px-4 py-3 border-b border-primary/10">
         <p className="text-[11px] font-bold uppercase tracking-widest text-primary/50">

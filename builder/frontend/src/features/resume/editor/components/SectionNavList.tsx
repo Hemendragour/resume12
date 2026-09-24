@@ -1,9 +1,3 @@
-// SectionNavList.tsx
-//
-// Shared "sections" navigation content — used inside the desktop
-// sidebar (EditorSidebar) and, unchanged, inside the mobile/tablet
-// section-list overlay in ResumeEditorPage. Each caller wraps this
-// in its own header/frame.
 import SortableSectionList from "../dragdrop/SortableSectionList";
 import { useState } from "react";
 import { Plus, LayoutTemplate, Settings } from "lucide-react";
@@ -27,9 +21,9 @@ export default function SectionNavList({
   };
 
   return (
-    <div className="flex h-full flex-col">
-      {/* Section list — scrollable */}
-      <div className="flex-1 overflow-y-auto px-2 py-3">
+    <div className="flex h-full min-h-0 flex-col">
+      {/* Section list */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3">
         <SortableSectionList
           activeSection={activeSection}
           onSectionChange={onSectionChange}
@@ -64,7 +58,7 @@ export default function SectionNavList({
       </div>
 
       {/* Add section button */}
-      <div className="px-3 py-3 border-t border-primary/10">
+      <div className="shrink-0 px-3 py-3 border-t border-primary/10 bg-modal">
         <button
           onClick={() => setOpenAddSectionModal(true)}
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-accent/60 py-2 text-xs font-semibold text-primary/70 transition hover:border-accent hover:bg-accent/10 hover:text-dark"

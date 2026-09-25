@@ -41,7 +41,7 @@ export default function ResumeEditorPage() {
   const [mobileTab, setMobileTab] = useState<MobileTab>("edit");
   const [showMobileSectionList, setShowMobileSectionList] = useState(false);
 
-  // ── Sidebar toggle for 1020px–1250px band ───────────────────────
+  // ── Editor sidebar toggle for 1020px–1250px band ───────────────────────
   // At that width, sidebar + form + preview together don't fit
   // comfortably. So: show all three initially, then collapse the
   // sidebar down to a small arrow tab as soon as the user picks a
@@ -49,7 +49,7 @@ export default function ResumeEditorPage() {
   // it back. Ignored below 1020px (mobile section-list overlay is used
   // instead) and ignored at 1250px+ (sidebar is always shown, room
   // permitting — see EditorSidebar).
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isEditorSidebarOpen, setIsEditorSidebarOpen] = useState(true);
 
   const hasGeneratedWithAI = resumeId
     ? localStorage.getItem(`ai-generated:${resumeId}`) === "true"
@@ -117,7 +117,7 @@ export default function ResumeEditorPage() {
     // Collapse the sidebar back down in the 1020px–1250px band once a
     // section has actually been picked (see state comment above).
     // Has no effect below 1020px or at 1250px+.
-    setIsSidebarOpen(false);
+    setIsEditorSidebarOpen(false);
   };
 
   // ── Loading state ─────────────────────────────────────────
@@ -213,28 +213,27 @@ export default function ResumeEditorPage() {
         </div>
       ) : (
         <div className="relative flex flex-1 overflow-hidden min-h-0">
-          {/* ── Left sidebar (sections nav) — 1250px+ ── */}
+          {/* ── Left sidebar (sections nav) — 2xl+ ── */}
           <EditorSidebar
             activeSection={activeSection}
             onSectionChange={handleSectionChange}
-            isOpen={isSidebarOpen}
-            onCollapse={() => setIsSidebarOpen(false)}
+            isOpen={isEditorSidebarOpen}
+            onCollapse={() => setIsEditorSidebarOpen(false)}
           />
 
-          {/* ── 1020px–1250px "show sections" arrow tab ──────
-              Appears only in the 1020px–1250px band, only once the
-              sidebar has been collapsed. Hidden below 1020px (mobile
-              has its own "Sections" trigger inside the form) and
-              hidden at 1250px+ (sidebar is permanent there). ── */}
-          {!isSidebarOpen && (
+          {/* ── Top-left "show sections" button ──────
+              Positioned at top-left corner when sidebar is collapsed.
+              Hidden below md (mobile has its own "Sections" trigger)
+              and hidden at 2xl+ (sidebar is permanent there). ── */}
+          {!isEditorSidebarOpen && (
             <button
               type="button"
-              onClick={() => setIsSidebarOpen(true)}
-              className="hidden md:flex 2xl:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 h-16 w-6 items-center justify-center rounded-r-lg border border-l-0 border-primary/15 bg-modal text-primary/60 shadow-sm transition hover:bg-card hover:text-dark"
+              onClick={() => setIsEditorSidebarOpen(true)}
+              className="hidden md:flex 2xl:hidden absolute left-0 top-0 z-10 h-11 w-10 items-center justify-center rounded-br-lg border border-l-0 border-t-0 border-primary/30 bg-dark text-white shadow-md transition hover:bg-primary"
               aria-label="Show sections"
               title="Show sections"
             >
-              <PanelLeftOpen size={14} />
+              <PanelLeftOpen size={16} />
             </button>
           )}
 
@@ -274,32 +273,32 @@ export default function ResumeEditorPage() {
             <div
               className={`${
                 showMobileSectionList ? "hidden lg:block" : "block"
-              } mx-auto max-w-3xl px-3 py-5 sm:px-5 sm:py-6`}
+              } flex-1 min-w-0 flex flex-col px-2 sm:px-3 py-4 sm:py-5`}
             >
               {/* Mobile/tablet trigger to open the section list above —
-                  lg+ never shows this, since the sidebar is already
+                  md+ never shows this, since the sidebar is already
                   visible there. */}
               <button
                 type="button"
                 onClick={() => setShowMobileSectionList(true)}
-                className="lg:hidden mb-4 flex w-full items-center justify-between rounded-xl border border-primary/15 bg-modal px-4 py-2.5 text-sm font-medium text-dark transition hover:border-primary/30"
+                className="md:hidden mb-3 flex w-full items-center justify-between rounded-lg border border-primary/15 bg-modal px-3 py-2 text-sm font-medium text-dark transition hover:border-primary/30 shrink-0"
               >
                 <span className="flex items-center gap-2 truncate">
                   <List size={15} className="shrink-0 text-primary/50" />
-                  <span className="truncate">{activeSectionLabel}</span>
+                  <span className="truncate text-xs">{activeSectionLabel}</span>
                 </span>
-                <ChevronRight size={16} className="shrink-0 text-primary/40" />
+                <ChevronRight size={14} className="shrink-0 text-primary/40" />
               </button>
 
-              <div className="rounded-2xl border border-card bg-modal p-4 sm:p-6 shadow-sm">
+              <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-primary/10 bg-modal p-3 sm:p-4">
                 {isGenerating ? (
                   <GenerateResumeLoader />
                 ) : (
                   <>
-                    <h2 className="mb-1 text-xl font-bold text-dark">
+                    <h2 className="mb-1 text-lg sm:text-xl font-bold text-dark">
                       {activeSectionLabel}
                     </h2>
-                    <p className="mb-7 text-sm text-dark/50">
+                    <p className="mb-5 sm:mb-6 text-xs sm:text-sm text-dark/50">
                       Fill this section of your resume.
                     </p>
                     <DynamicEditorRenderer activeSection={activeSection} />

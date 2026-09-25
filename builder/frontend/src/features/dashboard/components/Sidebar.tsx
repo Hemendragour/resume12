@@ -169,26 +169,26 @@ export default function Sidebar({
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-dark/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-dark/50 [@media(min-width:1400px)]:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-primary/10 bg-card transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-primary/10 bg-card transition-transform duration-300 ease-in-out [@media(min-width:1400px)]:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* ================= LOGO ================= */}
 
-        <div className="flex h-16 shrink-0 items-center justify-between  px-5 lg:justify-center">
+        <div className="flex h-16 shrink-0 items-center justify-between  px-5 [@media(min-width:1400px)]:justify-center">
           <h1 className="text-xl font-extrabold text-primary">ResumeAI</h1>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-primary/70 transition hover:bg-background lg:hidden"
+            className="rounded-lg p-1.5 text-primary/70 transition hover:bg-background [@media(min-width:1400px)]:hidden"
             aria-label="Close menu"
           >
             <X size={20} />
@@ -197,7 +197,7 @@ export default function Sidebar({
 
         {/* ================= MOBILE QUICK ACTIONS ================= */}
 
-        <div className="space-y-2 border-b border-primary/10 p-4 lg:hidden">
+        <div className="space-y-2 border-b border-primary/10 p-4 [@media(min-width:1400px)]:hidden">
           <button
             type="button"
             onClick={runAndClose(handleCreateResume)}

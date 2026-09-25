@@ -49,7 +49,7 @@ export default function EditorHeader({
           </button>
 
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-dark leading-tight max-w-[160px] sm:max-w-[240px] lg:max-w-[320px]">
+            <h1 className="truncate text-sm font-semibold text-dark leading-tight max-w-40 sm:max-w-60 lg:max-w-80">
               {title}
             </h1>
             <div className="flex items-center gap-1.5">
@@ -75,7 +75,7 @@ export default function EditorHeader({
         </div>
 
         {/* Center: save status (lg+ only) */}
-        <div className="hidden lg:flex items-center justify-center min-w-[80px]">
+        <div className="hidden lg:flex items-center justify-center min-w-20">
           {saveStatus === "saving" && (
             <div className="flex items-center gap-1.5 text-xs text-primary/70 font-medium">
               <Loader2 size={14} className="animate-spin" />

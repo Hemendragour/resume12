@@ -27,7 +27,7 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
       {/* ================= MOBILE BAR ================= */}
       {/* Logo, notifications, profile, and the menu burger that opens the side nav */}
 
-      <div className="flex h-16 items-center justify-between px-4 lg:hidden">
+      <div className="flex h-16 items-center justify-between px-4 [@media(min-width:1400px)]:hidden">
         <h1 className="text-lg font-extrabold text-primary">ResumeAI</h1>
 
         <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
 
       {/* ================= DESKTOP BAR ================= */}
 
-      <div className="hidden h-20 items-center justify-between gap-4 px-6 lg:flex xl:px-8">
+      <div className="hidden h-20 items-center justify-between gap-4 px-6 [@media(min-width:1400px)]:flex xl:px-8">
         {/* Left */}
 
         <div className="relative">

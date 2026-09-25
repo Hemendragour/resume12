@@ -24,4 +24,8 @@
   --color-danger: #ef4444; /* red-500 */
   --color-reflective: #a855f7; /* purple-500 */
   --color-grateful: #ec4899; /* pink-500 */
+
+  /* Custom breakpoints */
+  --breakpoint-xl-custom: 1400px;
 }
+

@@ -26,10 +26,24 @@ const A4_HEIGHT_PX = 1123;
  *    tab is active, hidden otherwise.
  *
  * When not the active mobile tab, this is kept off-screen with
- * opacity/pointer-events rather than `display:none` — PDF export
- * reads #resume-export directly via html2canvas, which cannot
- * capture a display:none element, so it must stay laid out even
+ * opacity/pointer-events rather than `display:none` so it stays
+ * laid out (needed by ResizeObserver / general rendering) even
  * while visually hidden.
+ *
+ * PDF EXPORT NODE
+ * ----------------
+ * The on-screen page above is scaled with a CSS `transform: scale()`
+ * so it fits the panel at any screen width. html2canvas does not
+ * reliably capture an element that sits inside a scaled ancestor —
+ * depending on the current scale factor it can shrink, blur or
+ * duplicate/overlap the rendered text.
+ *
+ * To make export scale-independent, we render a second, completely
+ * separate copy of the resume at full, untransformed A4 size
+ * (`#resume-export`), positioned off-screen with `position: fixed`.
+ * It is never inside any transformed ancestor, so html2canvas always
+ * captures the same pixel-perfect page regardless of viewport width
+ * or the live-preview zoom level.
  */
 
 interface Props {
@@ -70,6 +84,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
     const scaledHeight = A4_HEIGHT_PX * scale;
 
     return (
+      <>
       <aside
         ref={ref}
         className={`flex h-full flex-col w-full lg:w-[320px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] lg:border-l border-slate-200/60 ${
@@ -121,10 +136,10 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
               }}
             >
               {/*
-               * Actual A4 page — used by PDF export.
+               * Visual-only A4 page. Not used for export — see
+               * #resume-export below.
                */}
               <div
-                id="resume-export"
                 className="relative overflow-hidden bg-white shadow-xl"
                 style={{
                   width: `${A4_WIDTH_PX}px`,
@@ -147,6 +162,43 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
           <span className="font-medium text-success">Ready for Export</span>
         </div>
       </aside>
+
+      {/*
+       * ── PDF export node ────────────────────────────────
+       * Full-resolution, untransformed A4 page kept off-screen.
+       * Deliberately NOT nested inside the scaled preview above so
+       * html2canvas never has to deal with an ancestor `transform`.
+       * `position: fixed` + a large negative `left` keeps it out of
+       * the viewport without `display: none` (which html2canvas
+       * cannot capture).
+       */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: "-10000px",
+          width: `${A4_WIDTH_PX}px`,
+          height: `${A4_HEIGHT_PX}px`,
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          id="resume-export"
+          className="relative overflow-hidden bg-white"
+          style={{
+            width: `${A4_WIDTH_PX}px`,
+            height: `${A4_HEIGHT_PX}px`,
+            minWidth: `${A4_WIDTH_PX}px`,
+            maxWidth: `${A4_WIDTH_PX}px`,
+            minHeight: `${A4_HEIGHT_PX}px`,
+            maxHeight: `${A4_HEIGHT_PX}px`,
+          }}
+        >
+          <TemplateRenderer />
+        </div>
+      </div>
+      </>
     );
   },
 );

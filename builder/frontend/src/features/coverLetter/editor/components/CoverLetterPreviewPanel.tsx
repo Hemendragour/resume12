@@ -14,6 +14,23 @@ import CoverLetterTemplateRenderer from "../../templates/CoverLetterTemplateRend
 const A4_WIDTH_PX = 794;
 const A4_HEIGHT_PX = 1123;
 
+/*
+ * PDF EXPORT NODE
+ * ----------------
+ * The on-screen page below is scaled with a CSS `transform: scale()`
+ * so it fits the panel at any screen width. html2canvas does not
+ * reliably capture an element that sits inside a scaled ancestor —
+ * depending on the current scale factor it can shrink, blur, or
+ * duplicate/overlap the rendered text.
+ *
+ * To make export scale-independent, we render a second, completely
+ * separate copy of the cover letter at full, untransformed A4 size
+ * (`#cover-letter-export`), positioned off-screen with `position: fixed`.
+ * It is never inside any transformed ancestor, so html2canvas always
+ * captures the same pixel-perfect page regardless of viewport width
+ * or the live-preview zoom level.
+ */
+
 interface Props {
   mobileVisible: boolean;
 }
@@ -46,6 +63,7 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
   const scaledHeight = A4_HEIGHT_PX * scale;
 
   return (
+    <>
     <aside
       className={`flex h-full flex-col w-full lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] lg:border-l border-slate-200/60 ${
         mobileVisible
@@ -94,9 +112,9 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
               transformOrigin: "top left",
             }}
           >
-            {/* Actual A4 page — used by PDF export */}
+            {/* Visual-only A4 page. Not used for export — see
+                #cover-letter-export below. */}
             <div
-              id="cover-letter-export"
               className="relative overflow-hidden bg-white shadow-xl"
               style={{
                 width: `${A4_WIDTH_PX}px`,
@@ -119,5 +137,41 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
         <span className="font-medium text-success">Ready for Export</span>
       </div>
     </aside>
+
+    {/*
+     * ── PDF export node ────────────────────────────────
+     * Full-resolution, untransformed A4 page kept off-screen.
+     * Deliberately NOT nested inside the scaled preview above so
+     * html2canvas never has to deal with an ancestor `transform`
+     * (which can shrink, blur, or duplicate/overlap the rendered
+     * text depending on the current zoom level).
+     */}
+    <div
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: "-10000px",
+        width: `${A4_WIDTH_PX}px`,
+        height: `${A4_HEIGHT_PX}px`,
+        pointerEvents: "none",
+      }}
+    >
+      <div
+        id="cover-letter-export"
+        className="relative overflow-hidden bg-white"
+        style={{
+          width: `${A4_WIDTH_PX}px`,
+          height: `${A4_HEIGHT_PX}px`,
+          minWidth: `${A4_WIDTH_PX}px`,
+          maxWidth: `${A4_WIDTH_PX}px`,
+          minHeight: `${A4_HEIGHT_PX}px`,
+          maxHeight: `${A4_HEIGHT_PX}px`,
+        }}
+      >
+        <CoverLetterTemplateRenderer />
+      </div>
+    </div>
+    </>
   );
 }

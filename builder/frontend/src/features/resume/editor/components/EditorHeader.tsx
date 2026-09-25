@@ -131,14 +131,7 @@ export default function EditorHeader({
             Analyze ATS
           </button>
 
-          {exportButton && (
-            <div
-              className="origin-right overflow-hidden"
-              style={{ transform: "scale(0.82)", marginRight: "-4px" }}
-            >
-              {exportButton}
-            </div>
-          )}
+          {exportButton}
         </div>
       </div>
 

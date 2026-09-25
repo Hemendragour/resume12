@@ -109,7 +109,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
         {/* ── Preview area ──────────────────────────────── */}
         <div
           ref={containerRef}
-          className="flex-1 min-h-0 overflow-y-auto py-5 px-4"
+          className="flex-1 min-h-0 overflow-y-auto py-5 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
         >
           {/*
            * Outer wrapper: reserves the visual height of the scaled page

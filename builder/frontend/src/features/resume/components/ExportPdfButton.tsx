@@ -1,9 +1,22 @@
+import { useState } from "react";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
-
-import Button from "../../../components/ui/Button";
+import { Download, Loader2 } from "lucide-react";
 
 export default function ExportPdfButton() {
+  /*
+   * Styled to match the other compact header action buttons
+   * (e.g. "Analyze ATS") exactly — same height, padding, font size
+   * and radius — at every breakpoint. Previously this used the
+   * shared <Button> component's default (much larger) size and had
+   * to be visually shrunk with a `transform: scale()` hack in
+   * EditorHeader, which made it look subtly off (blurry edges,
+   * mismatched spacing) compared to its neighbors. Rendering it at
+   * its natural, correctly-sized style removes the need for that
+   * hack entirely.
+   */
+  const [isExporting, setIsExporting] = useState(false);
+
   const handleExport = async () => {
     console.log("Export Clicked");
 
@@ -13,6 +26,8 @@ export default function ExportPdfButton() {
       alert("Resume preview not found");
       return;
     }
+
+    setIsExporting(true);
 
     try {
       /*
@@ -243,12 +258,24 @@ export default function ExportPdfButton() {
       console.error("PDF Export Error:", error);
 
       alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
-    <Button type="button" onClick={handleExport}>
+    <button
+      type="button"
+      onClick={handleExport}
+      disabled={isExporting}
+      className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {isExporting ? (
+        <Loader2 size={13} className="animate-spin" />
+      ) : (
+        <Download size={13} />
+      )}
       Download PDF
-    </Button>
+    </button>
   );
 }

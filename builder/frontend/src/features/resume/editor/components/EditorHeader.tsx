@@ -37,19 +37,19 @@ export default function EditorHeader({
   return (
     <header className="shrink-0 border-b border-primary/15 bg-modal shadow-sm z-20">
       {/* ── Row 1: back + title (all sizes); save status + actions (lg+) ── */}
-      <div className="flex h-14 items-center justify-between gap-2 px-3">
+      <div className="flex h-14 items-center justify-between gap-2 px-2 xs:px-3">
         {/* Left: back + title */}
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-1.5 xs:gap-2 min-w-0">
           <button
             onClick={() => navigate(-1)}
-            className="shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-primary/60 hover:bg-card hover:text-dark transition"
+            className="shrink-0 flex items-center justify-center h-7 w-7 xs:h-8 xs:w-8 rounded-lg text-primary/60 hover:bg-card hover:text-dark transition"
             aria-label="Go back"
           >
             <ChevronLeft size={18} />
           </button>
 
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-dark leading-tight max-w-40 sm:max-w-60 lg:max-w-80">
+            <h1 className="truncate text-xs xs:text-sm font-semibold text-dark leading-tight max-w-28 xs:max-w-40 sm:max-w-60 lg:max-w-80">
               {title}
             </h1>
             <div className="flex items-center gap-1.5">
@@ -136,7 +136,7 @@ export default function EditorHeader({
       </div>
 
       {/* ── Row 2: action buttons — mobile/tablet only (below lg) ── */}
-      <div className="flex lg:hidden items-center gap-2 overflow-x-auto px-3 pb-2.5 pt-0.5">
+      <div className="flex lg:hidden items-center gap-1.5 xs:gap-2 overflow-x-auto px-2 xs:px-3 pb-2 xs:pb-2.5 pt-0.5">
         {exportButton && <div className="shrink-0">{exportButton}</div>}
 
         <button

@@ -26,6 +26,7 @@
   --color-grateful: #ec4899; /* pink-500 */
 
   /* Custom breakpoints */
+  --breakpoint-xs: 480px;
   --breakpoint-xl-custom: 1400px;
 }
 

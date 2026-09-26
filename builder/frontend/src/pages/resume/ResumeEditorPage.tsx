@@ -36,19 +36,20 @@ export default function ResumeEditorPage() {
     QuickGenerateFormData | undefined
   >(undefined);
 
-  // ── Mobile/tablet-only navigation state (ignored at lg+, where the
-  // sidebar + form + preview are all shown together as before) ──────
+  // ── Mobile-only navigation state (ignored at md+/768px and up,
+  // where the sidebar + form + preview are all shown together) ──────
   const [mobileTab, setMobileTab] = useState<MobileTab>("edit");
   const [showMobileSectionList, setShowMobileSectionList] = useState(false);
 
-  // ── Editor sidebar toggle for 1020px–1250px band ───────────────────────
+  // ── Editor sidebar toggle for the 768px–1279px band ─────────────────
   // At that width, sidebar + form + preview together don't fit
-  // comfortably. So: show all three initially, then collapse the
-  // sidebar down to a small arrow tab as soon as the user picks a
-  // section, freeing space for the form + preview. The arrow brings
-  // it back. Ignored below 1020px (mobile section-list overlay is used
-  // instead) and ignored at 1250px+ (sidebar is always shown, room
-  // permitting — see EditorSidebar).
+  // comfortably as three permanent columns. So: show the sidebar
+  // (dropped down over the form, not squeezing it) initially, then
+  // collapse it away as soon as the user picks a section, freeing the
+  // full width for the form + preview. The arrow tab brings it back.
+  // Ignored below 768px (mobile section-list overlay is used instead)
+  // and ignored at 1280px+ (sidebar is permanently docked there — see
+  // EditorSidebar).
   const [isEditorSidebarOpen, setIsEditorSidebarOpen] = useState(true);
 
   const hasGeneratedWithAI = resumeId
@@ -114,16 +115,16 @@ export default function ResumeEditorPage() {
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
     setShowMobileSectionList(false);
-    // Collapse the sidebar back down in the 1020px–1250px band once a
+    // Collapse the sidebar back down in the 768px–1279px band once a
     // section has actually been picked (see state comment above).
-    // Has no effect below 1020px or at 1250px+.
+    // Has no effect below 768px or at 1280px+.
     setIsEditorSidebarOpen(false);
   };
 
   // ── Loading state ─────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-80px)] flex-col">
+      <div className="flex h-full flex-col">
         {/* Minimal header skeleton */}
         <div className="h-14 border-b border-primary/10 bg-modal" />
         <div className="flex flex-1 items-center justify-center bg-background">
@@ -141,22 +142,13 @@ export default function ResumeEditorPage() {
   // ── Main editor ───────────────────────────────────────────
   return (
     /*
-     * Outer shell: fills everything below the global Navbar (h-20 desktop,
-     * h-16 mobile). We use a negative-margin trick to cancel out the
-     * MainLayout p-4/p-6/p-8 padding so the editor goes edge-to-edge.
+     * Outer shell: MainLayout gives this route an exact, edge-to-edge
+     * `flex-1 min-h-0 overflow-hidden` slot below the (always-compact,
+     * hamburger-only) navbar — no page padding to cancel out and no
+     * viewport-height math to keep in sync with the navbar's height
+     * at each breakpoint. We just fill it.
      */
-    /*
-     * Height: matches the real Navbar height at each breakpoint
-     * (h-16 below lg, h-20 from lg up — see Navbar.tsx), using the
-     * dynamic viewport unit (dvh) rather than vh. Plain `100vh` is
-     * taller than what's actually visible on mobile browsers while
-     * their address bar is showing, which — combined with
-     * `overflow-hidden` here — was clipping the bottom of the page
-     * on phones instead of letting it scroll into view.
-     */
-    <div
-      className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8 flex flex-col h-[calc(100dvh-64px)] lg:h-[calc(100dvh-80px)]"
-    >
+    <div className="flex h-full min-h-0 flex-col">
 
       {/* ── Overleaf-style topbar ───────────────────── */}
       <EditorHeader
@@ -171,13 +163,14 @@ export default function ResumeEditorPage() {
         exportButton={resume ? <ExportPdfButton /> : undefined}
       />
 
-      {/* ── Edit / Preview toggle — mobile/tablet only ── */}
+      {/* ── Edit / Preview toggle — mobile only (<768px); from md up
+          the form and preview are always shown together ── */}
       {!showQuickGenerate && (
-        <div className="flex lg:hidden items-center gap-1 border-b border-primary/10 bg-modal px-3 py-2">
+        <div className="flex md:hidden items-center gap-1 border-b border-primary/10 bg-modal px-2 xs:px-3 py-1.5 xs:py-2">
           <button
             type="button"
             onClick={() => setMobileTab("edit")}
-            className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+            className={`flex-1 rounded-lg px-2 xs:px-3 py-1 xs:py-1.5 text-xs xs:text-sm font-semibold transition ${
               mobileTab === "edit"
                 ? "bg-primary text-white shadow-sm"
                 : "text-dark/60 hover:bg-card"
@@ -188,7 +181,7 @@ export default function ResumeEditorPage() {
           <button
             type="button"
             onClick={() => setMobileTab("preview")}
-            className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+            className={`flex-1 rounded-lg px-2 xs:px-3 py-1 xs:py-1.5 text-xs xs:text-sm font-semibold transition ${
               mobileTab === "preview"
                 ? "bg-primary text-white shadow-sm"
                 : "text-dark/60 hover:bg-card"
@@ -213,7 +206,8 @@ export default function ResumeEditorPage() {
         </div>
       ) : (
         <div className="relative flex flex-1 overflow-hidden min-h-0">
-          {/* ── Left sidebar (sections nav) — 2xl+ ── */}
+          {/* ── Left sidebar (sections nav) — permanent at 1280px+,
+              a floating overlay in the 768–1279px band ── */}
           <EditorSidebar
             activeSection={activeSection}
             onSectionChange={handleSectionChange}
@@ -224,12 +218,12 @@ export default function ResumeEditorPage() {
           {/* ── Top-left "show sections" button ──────
               Positioned at top-left corner when sidebar is collapsed.
               Hidden below md (mobile has its own "Sections" trigger)
-              and hidden at 2xl+ (sidebar is permanent there). ── */}
+              and hidden at 1280px+ (sidebar is permanent there). ── */}
           {!isEditorSidebarOpen && (
             <button
               type="button"
               onClick={() => setIsEditorSidebarOpen(true)}
-              className="hidden md:flex 2xl:hidden absolute left-0 top-0 z-10 h-11 w-10 items-center justify-center rounded-br-lg border border-l-0 border-t-0 border-primary/30 bg-dark text-white shadow-md transition hover:bg-primary"
+              className="hidden md:flex xl:hidden absolute left-0 top-0 z-10 h-11 w-10 items-center justify-center rounded-br-lg border border-l-0 border-t-0 border-primary/30 bg-dark text-white shadow-md transition hover:bg-primary"
               aria-label="Show sections"
               title="Show sections"
             >
@@ -237,18 +231,24 @@ export default function ResumeEditorPage() {
             </button>
           )}
 
-          {/* ── Center: editor form ────────────────── */}
+          {/* ── Center: editor form ──────────────────
+              1024px–1279px band: the sections sidebar never takes
+              layout space in this range (it's an overlay — see
+              EditorSidebar), which used to leave the form growing to
+              fill almost all the width while the preview stayed
+              pinned at a fixed pixel width and looked squeezed. Give
+              the form a fixed share instead so the two stay balanced. ── */}
           <main
             className={`flex-1 min-w-0 overflow-y-auto bg-background pb-[env(safe-area-inset-bottom)] ${
               mobileTab === "preview" ? "hidden" : "block"
-            } lg:block`}
+            } md:block [@media(min-width:1024px)_and_(max-width:1279px)]:flex-none [@media(min-width:1024px)_and_(max-width:1279px)]:w-[58%]`}
           >
-            {/* Mobile/tablet section-list overlay — replaces the form
-                until a section is picked, then hands back to it. Never
-                rendered at lg+, where the sidebar is always visible
-                instead. */}
+            {/* Mobile section-list overlay — replaces the form until a
+                section is picked, then hands back to it. Only ever
+                shown below 768px; from md up the sections sidebar
+                (EditorSidebar) is used instead. */}
             {showMobileSectionList && (
-              <div className="lg:hidden flex h-full flex-col bg-modal">
+              <div className="md:hidden flex h-full flex-col bg-modal">
                 <div className="flex shrink-0 items-center justify-between border-b border-primary/10 px-4 py-3">
                   <p className="text-[11px] font-bold uppercase tracking-widest text-primary/50">
                     Sections
@@ -273,7 +273,7 @@ export default function ResumeEditorPage() {
             <div
               className={`${
                 showMobileSectionList ? "hidden lg:block" : "block"
-              } flex-1 min-w-0 flex flex-col px-2 sm:px-3 py-4 sm:py-5`}
+              } flex-1 min-w-0 flex flex-col px-1.5 xs:px-2 sm:px-3 py-3 xs:py-4 sm:py-5`}
             >
               {/* Mobile/tablet trigger to open the section list above —
                   md+ never shows this, since the sidebar is already
@@ -281,24 +281,26 @@ export default function ResumeEditorPage() {
               <button
                 type="button"
                 onClick={() => setShowMobileSectionList(true)}
-                className="md:hidden mb-3 flex w-full items-center justify-between rounded-lg border border-primary/15 bg-modal px-3 py-2 text-sm font-medium text-dark transition hover:border-primary/30 shrink-0"
+                className="md:hidden mb-2 xs:mb-3 flex w-full items-center justify-between rounded-lg border border-primary/15 bg-modal px-2.5 xs:px-3 py-1.5 xs:py-2 text-xs xs:text-sm font-medium text-dark transition hover:border-primary/30 shrink-0"
               >
                 <span className="flex items-center gap-2 truncate">
                   <List size={15} className="shrink-0 text-primary/50" />
-                  <span className="truncate text-xs">{activeSectionLabel}</span>
+                  <span className="truncate text-[11px] xs:text-xs">
+                    {activeSectionLabel}
+                  </span>
                 </span>
                 <ChevronRight size={14} className="shrink-0 text-primary/40" />
               </button>
 
-              <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-primary/10 bg-modal p-3 sm:p-4">
+              <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-primary/10 bg-modal p-2.5 xs:p-3 sm:p-4">
                 {isGenerating ? (
                   <GenerateResumeLoader />
                 ) : (
                   <>
-                    <h2 className="mb-1 text-lg sm:text-xl font-bold text-dark">
+                    <h2 className="mb-1 text-base xs:text-lg sm:text-xl font-bold text-dark">
                       {activeSectionLabel}
                     </h2>
-                    <p className="mb-5 sm:mb-6 text-xs sm:text-sm text-dark/50">
+                    <p className="mb-4 xs:mb-5 sm:mb-6 text-[11px] xs:text-xs sm:text-sm text-dark/50">
                       Fill this section of your resume.
                     </p>
                     <DynamicEditorRenderer activeSection={activeSection} />

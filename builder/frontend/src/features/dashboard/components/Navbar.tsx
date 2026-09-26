@@ -8,9 +8,21 @@ import type { QuickActions } from "../hooks/useQuickActions";
 interface NavbarProps {
   onMenuClick: () => void;
   quickActions: QuickActions;
+  /*
+   * When true, always render the compact bar + hamburger, even at
+   * the 1400px+ breakpoint where the full desktop bar would normally
+   * take over. Used on pages whose own header already covers search
+   * and quick actions, so the dashboard nav just needs to offer a
+   * way to reach the sidebar without taking up permanent space.
+   */
+  forceCollapsed?: boolean;
 }
 
-export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
+export default function Navbar({
+  onMenuClick,
+  quickActions,
+  forceCollapsed = false,
+}: NavbarProps) {
   const user = useAuthStore((state) => state.user);
 
   const {
@@ -27,7 +39,11 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
       {/* ================= MOBILE BAR ================= */}
       {/* Logo, notifications, profile, and the menu burger that opens the side nav */}
 
-      <div className="flex h-16 items-center justify-between px-4 [@media(min-width:1400px)]:hidden">
+      <div
+        className={`flex h-16 items-center justify-between px-4 ${
+          forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
+        }`}
+      >
         <h1 className="text-lg font-extrabold text-primary">ResumeAI</h1>
 
         <div className="flex items-center gap-2">
@@ -50,7 +66,13 @@ export default function Navbar({ onMenuClick, quickActions }: NavbarProps) {
 
       {/* ================= DESKTOP BAR ================= */}
 
-      <div className="hidden h-20 items-center justify-between gap-4 px-6 [@media(min-width:1400px)]:flex xl:px-8">
+      <div
+        className={`${
+          forceCollapsed
+            ? "hidden"
+            : "hidden h-20 items-center justify-between gap-4 px-6 [@media(min-width:1400px)]:flex xl:px-8"
+        }`}
+      >
         {/* Left */}
 
         <div className="relative">

@@ -20,9 +20,14 @@ const A4_HEIGHT_PX = 1123;
  * ============================================================
  *
  * Two contexts:
- *  - Desktop (lg+): always visible, docked to the right as a
- *    fixed-width rail alongside the sidebar + form.
- *  - Mobile/tablet (< lg): shown full-width when the "Preview"
+ *  - Desktop (md+): always visible, docked to the right. Fixed pixel
+ *    widths at md (320px) and xl+ (384px, 500px from 2xl), but a
+ *    percentage width (42%) in the 1024–1279px band specifically —
+ *    that's the range where the sections sidebar floats as an
+ *    overlay instead of taking layout space (see EditorSidebar), so
+ *    without a percentage share here the form would grow to fill
+ *    nearly the whole row and dwarf a fixed-width preview.
+ *  - Mobile/tablet (< md): shown full-width when the "Preview"
  *    tab is active, hidden otherwise.
  *
  * When not the active mobile tab, this is kept off-screen with
@@ -87,7 +92,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
       <>
       <aside
         ref={ref}
-        className={`flex h-full flex-col w-full md:w-80 lg:w-96 2xl:w-125 bg-[#f0ece7] md:border-l border-slate-200/60 ${
+        className={`flex h-full flex-col w-full [@media(min-width:768px)_and_(max-width:1023px)]:w-80 [@media(min-width:1024px)_and_(max-width:1279px)]:w-[42%] xl:w-96 2xl:w-125 bg-[#f0ece7] md:border-l border-slate-200/60 ${
           mobileVisible
             ? "static opacity-100 pointer-events-auto"
             : "absolute inset-0 -z-10 opacity-0 pointer-events-none"

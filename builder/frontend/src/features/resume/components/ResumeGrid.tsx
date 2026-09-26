@@ -54,7 +54,7 @@ export default function ResumeGrid({
 }: Props) {
   if (loading) {
     return (
-      <div className="grid min-w-0 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid min-w-0 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
           <div
             key={index}
@@ -70,7 +70,7 @@ export default function ResumeGrid({
   }
 
   return (
-    <div className="grid min-w-0 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid min-w-0 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
       {resumes.map((resume) => (
         <div key={resume._id} className="min-w-0">
           <ResumeCard resume={resume} onRefresh={onRefresh} />

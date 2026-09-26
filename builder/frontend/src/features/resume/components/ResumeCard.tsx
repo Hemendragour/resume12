@@ -107,8 +107,10 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       {/* Body */}
       <div className="space-y-4 p-4">
         {/* Top Section */}
-        <div className="flex justify-between">
-          <h3 className="text-lg font-bold line-clamp-1 text-dark">{title}</h3>{" "}
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <h3 className="min-w-0 text-lg font-bold line-clamp-1 text-dark">
+            {title}
+          </h3>{" "}
           <ResumeCardMenu
             onRename={() => setRenameOpen(true)}
             onDuplicate={() => setDuplicateOpen(true)}
@@ -118,7 +120,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           />
         </div>
 
-        <div className="flex items-start justify-between gap-6">
+        <div className="grid min-w-0 gap-4 min-[480px]:grid-cols-2 md:grid-cols-1 min-[1050px]:grid-cols-2">
           {/* Left Side */}
           <div className="min-w-0 flex-1">
             {/* <h3 className="text-lg font-bold line-clamp-1 text-dark">
@@ -150,7 +152,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           </div>
 
           {/* Right Side */}
-          <div className="w-52 shrink-0 space-y-4 pt-1">
+          <div className="min-w-0 space-y-3 pt-1">
             {/* Target Role */}
             <div className="flex items-center gap-2 text-sm text-primary/70">
               <Briefcase size={16} className="shrink-0" />
@@ -162,7 +164,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
             {/* Last Updated */}
             <div className="flex items-center gap-2 text-sm text-primary/60">
               <Clock size={16} className="shrink-0" />
-              <span>
+              <span className="min-w-0 truncate">
                 Last Updated {new Date(resume.updatedAt).toLocaleDateString()}
               </span>
             </div>

@@ -114,21 +114,19 @@ export default function DashboardHeader({
   onAnalyseATS,
 }: Props) {
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-primary/10 bg-card p-5 shadow-sm sm:gap-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-primary/10 bg-card p-5 shadow-sm sm:gap-6 sm:p-8 xl:flex-row xl:items-center xl:justify-between">
       {/* Left Side - Title */}
-      <div>
-        <h1 className="text-2xl font-bold text-dark sm:text-3xl">
-          My Resumes
-        </h1>
+      <div className="min-w-0">
+        <h1 className="text-2xl font-bold text-dark sm:text-3xl">My Resumes</h1>
         <p className="mt-1 text-sm text-primary/70 sm:mt-2 sm:text-base">
           {total} resumes available
         </p>
       </div>
 
       {/* Right Side - Controls */}
-      <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-center">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center xl:flex xl:flex-1 xl:justify-end">
         {/* Search Input */}
-        <div className="w-full lg:w-64 xl:w-80">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1 lg:w-full xl:w-80">
           <Input
             value={search}
             onChange={(e) => onSearch(e.target.value)}
@@ -138,7 +136,7 @@ export default function DashboardHeader({
         </div>
 
         {/* Filter + Sort */}
-        <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3">
+        <div className="grid min-w-0 grid-cols-2 gap-3">
           <select
             value={filter}
             onChange={(e) =>
@@ -166,7 +164,7 @@ export default function DashboardHeader({
         </div>
 
         {/* Create / Analyse buttons */}
-        <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3">
+        <div className="grid min-w-0 grid-cols-2 gap-3">
           <Button
             leftIcon={<ScanSearch size={18} />}
             onClick={onAnalyseATS}

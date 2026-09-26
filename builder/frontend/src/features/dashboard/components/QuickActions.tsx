@@ -99,7 +99,7 @@ export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
         ⚡ Quick Actions
       </h2>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {actions.map((item) => {
           const Icon = item.icon;
 
@@ -118,9 +118,9 @@ export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
                   onAnalyseATS();
                 }
               }}
-              className="min-w-0 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-6"
+              className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg min-[420px]:block sm:p-6"
             >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 sm:mb-4 sm:h-12 sm:w-12">
+              <div className="row-span-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 min-[420px]:mb-3 sm:mb-4 sm:h-12 sm:w-12">
                 <Icon size={20} className="text-primary" />
               </div>
 

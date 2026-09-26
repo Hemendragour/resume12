@@ -11,7 +11,8 @@ import { useQuickActions } from "../features/dashboard/hooks/useQuickActions";
 // screens. It's always tucked behind the navbar's hamburger instead,
 // and the page manages its own internal scrolling rather than the
 // page-level padding/scroll every other route gets.
-const FULL_BLEED_EDITOR_PATTERN = /^\/(resume\/[^/]+\/edit|cover-letter\/[^/]+\/edit)/;
+const FULL_BLEED_EDITOR_PATTERN =
+  /^\/(resume\/[^/]+\/edit|cover-letter\/[^/]+\/edit)/;
 
 export default function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -35,7 +36,7 @@ export default function MainLayout() {
       />
 
       <div
-        className={`flex flex-col ${
+        className={`flex min-w-0 flex-col ${
           isFullBleedEditor
             ? "h-full"
             : "min-h-screen [@media(min-width:1400px)]:ml-64"
@@ -51,7 +52,7 @@ export default function MainLayout() {
           className={
             isFullBleedEditor
               ? "flex-1 min-h-0 overflow-hidden"
-              : "flex-1 p-4 sm:p-6 [@media(min-width:1400px)]:p-8"
+              : "min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 [@media(min-width:1400px)]:p-8"
           }
         >
           <Outlet />

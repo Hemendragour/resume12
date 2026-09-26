@@ -101,7 +101,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div className="space-y-6 sm:space-y-8">
+      <div className="min-w-0 space-y-6 sm:space-y-8">
         <WelcomeBanner
           name="Hemendra"
           onCreate={() => setOpen(true)}
@@ -136,7 +136,7 @@ export default function DashboardPage() {
 
         {/* {resumes.length > 0 && <DashboardAnalytics resumeId={resumes[0]._id} />} */}
 
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 gap-4 sm:gap-6 lg:grid-cols-2">
           <ResumeCompletionCard
             percentage={data.resumeCompletion.percentage}
             missing={data.resumeCompletion.missing}

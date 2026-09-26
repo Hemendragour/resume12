@@ -15,7 +15,7 @@ export default function DashboardStats({
   downloads,
 }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
+    <div className="grid min-w-0 grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:gap-6 lg:grid-cols-4">
       <StatCard
         title="Total Resumes"
         value={total}

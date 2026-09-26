@@ -9,22 +9,24 @@ interface Props {
    * Controls visibility in the 768px–1279px band (md but below xl).
    * Ignored below 768px (sidebar is never shown there — the mobile
    * section-list overlay takes over instead) and ignored at 1280px+
-   * (sidebar is always shown there — see PINNED_FROM below).
+   * (sidebar is always shown there — pinned unconditionally, see the
+   * "xl:flex" in both branches below).
    */
   isOpen: boolean;
   onCollapse: () => void;
 }
 
-// Pinned, non-collapsible from 1280px up: it's simply part of the row,
-// same as it always was.
-const PINNED_FROM = "xl";
-
-// Collapsible band: 768px–1279px. In this band the sidebar never takes
-// layout space — open or closed — so it can never squeeze the form.
-// When open it drops down as a floating panel over the top of the
-// form instead of pushing it sideways.
-const OVERLAY_QUERY = "[@media(min-width:768px)_and_(max-width:1279px)]";
-
+/*
+ * IMPORTANT: every class name below is written out as a full, literal
+ * string — never assembled from a JS variable (e.g. `${SOME_VAR}:absolute`).
+ * Tailwind's build step scans this file's raw text for complete class
+ * names; it does not execute the component to see what a variable
+ * resolves to. A class built from a variable never appears as literal
+ * text anywhere in the file, so Tailwind silently never generates the
+ * CSS for it — the class renders in the DOM but does nothing. That
+ * previously broke both the 768–1279px overlay behavior and the
+ * 1280px+ pin, even though the logic driving `isOpen` was correct.
+ */
 export default function EditorSidebar({
   activeSection,
   onSectionChange,
@@ -38,18 +40,22 @@ export default function EditorSidebar({
           Never rendered at 1280px+, where the sidebar is pinned. */}
       {isOpen && (
         <div
-          className={`hidden ${OVERLAY_QUERY}:block fixed inset-0 z-10 bg-dark/10`}
+          className="hidden [@media(min-width:768px)_and_(max-width:1279px)]:block fixed inset-0 z-10 bg-dark/10"
           onClick={onCollapse}
           aria-hidden="true"
         />
       )}
 
       <aside
-        className={`hidden ${isOpen ? "md:flex" : "md:hidden"} ${PINNED_FROM}:flex
+        className={`${isOpen ? "hidden md:flex xl:flex" : "hidden xl:flex"}
           h-full w-64 bg-modal border-r border-primary/10 flex-col overflow-hidden
-          ${OVERLAY_QUERY}:absolute ${OVERLAY_QUERY}:left-0 ${OVERLAY_QUERY}:top-0
-          ${OVERLAY_QUERY}:z-20 ${OVERLAY_QUERY}:border-r-0 ${OVERLAY_QUERY}:shadow-2xl
-          ${PINNED_FROM}:shrink-0 ${PINNED_FROM}:static ${PINNED_FROM}:shadow-none ${PINNED_FROM}:z-auto`}
+          [@media(min-width:768px)_and_(max-width:1279px)]:absolute
+          [@media(min-width:768px)_and_(max-width:1279px)]:left-0
+          [@media(min-width:768px)_and_(max-width:1279px)]:top-0
+          [@media(min-width:768px)_and_(max-width:1279px)]:z-20
+          [@media(min-width:768px)_and_(max-width:1279px)]:border-r-0
+          [@media(min-width:768px)_and_(max-width:1279px)]:shadow-2xl
+          xl:shrink-0 xl:static xl:shadow-none xl:z-auto`}
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-primary/10 shrink-0 flex items-center justify-between gap-2">
@@ -66,7 +72,7 @@ export default function EditorSidebar({
           <button
             type="button"
             onClick={onCollapse}
-            className={`hidden md:flex ${PINNED_FROM}:hidden shrink-0 h-6 w-6 items-center justify-center rounded-md text-primary/50 hover:bg-card hover:text-dark transition`}
+            className="hidden md:flex xl:hidden shrink-0 h-6 w-6 items-center justify-center rounded-md text-primary/50 hover:bg-card hover:text-dark transition"
             aria-label="Hide sections"
             title="Hide sections"
           >

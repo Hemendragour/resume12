@@ -11,7 +11,7 @@ import { useQuickActions } from "../features/dashboard/hooks/useQuickActions";
 // screens. It's always tucked behind the navbar's hamburger instead,
 // and the page manages its own internal scrolling rather than the
 // page-level padding/scroll every other route gets.
-const FULL_BLEED_EDITOR_PATTERN = /^\/resume\/[^/]+\/edit/;
+const FULL_BLEED_EDITOR_PATTERN = /^\/(resume\/[^/]+\/edit|cover-letter\/[^/]+\/edit)/;
 
 export default function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

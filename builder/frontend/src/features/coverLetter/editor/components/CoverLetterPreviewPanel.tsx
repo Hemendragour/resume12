@@ -65,11 +65,11 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
   return (
     <>
     <aside
-      className={`flex h-full flex-col w-full lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] lg:border-l border-slate-200/60 ${
+      className={`flex h-full flex-col w-full md:w-[360px] lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] md:border-l border-slate-200/60 ${
         mobileVisible
           ? "static opacity-100 pointer-events-auto"
           : "absolute inset-0 -z-10 opacity-0 pointer-events-none"
-      } lg:static lg:z-auto lg:opacity-100 lg:pointer-events-auto`}
+      } md:static md:z-auto md:opacity-100 md:pointer-events-auto`}
       style={{ minWidth: 0 }}
     >
       {/* ── Header ────────────────────────────────────── */}

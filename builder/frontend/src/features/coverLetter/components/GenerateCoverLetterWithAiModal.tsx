@@ -186,7 +186,7 @@ export default function GenerateCoverLetterWithAiModal({
         {/* Credits banner */}
         {!creditsLoading && credits && (
           <div
-            className={`rounded-xl border p-4 text-sm ${
+            className={`rounded-xl border p-3 xs:p-4 text-xs xs:text-sm ${
               outOfCredits
                 ? "border-red-200 bg-red-50 text-red-700"
                 : "border-emerald-200 bg-emerald-50 text-emerald-700"
@@ -194,7 +194,7 @@ export default function GenerateCoverLetterWithAiModal({
           >
             {outOfCredits ? (
               <div className="flex items-center gap-2">
-                <Lock size={16} />
+                <Lock size={16} className="shrink-0" />
                 <span>
                   You've used all {credits.limit} free AI generations. Buy
                   more credits to continue.
@@ -209,7 +209,7 @@ export default function GenerateCoverLetterWithAiModal({
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4">
           <Input
             label="Cover Letter Name"
             placeholder="Nexora Full Stack Cover Letter"
@@ -289,11 +289,11 @@ export default function GenerateCoverLetterWithAiModal({
             Base this on
           </label>
 
-          <div className="mb-3 flex gap-2">
+          <div className="mb-3 flex flex-col xs:flex-row gap-2">
             <button
               type="button"
               onClick={() => setResumeSource("existing")}
-              className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+              className={`flex-1 rounded-xl border px-3 xs:px-4 py-2 text-xs xs:text-sm font-semibold transition ${
                 resumeSource === "existing"
                   ? "border-blue-600 bg-blue-50 text-blue-700"
                   : "border-slate-300 text-slate-600"
@@ -305,7 +305,7 @@ export default function GenerateCoverLetterWithAiModal({
             <button
               type="button"
               onClick={() => setResumeSource("upload")}
-              className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+              className={`flex-1 rounded-xl border px-3 xs:px-4 py-2 text-xs xs:text-sm font-semibold transition ${
                 resumeSource === "upload"
                   ? "border-blue-600 bg-blue-50 text-blue-700"
                   : "border-slate-300 text-slate-600"
@@ -358,14 +358,15 @@ export default function GenerateCoverLetterWithAiModal({
           )}
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-xs xs:text-sm text-red-600">{error}</p>}
 
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col-reverse xs:flex-row justify-end gap-2 xs:gap-4">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={loading}
+            className="text-xs xs:text-sm"
           >
             Cancel
           </Button>
@@ -374,6 +375,7 @@ export default function GenerateCoverLetterWithAiModal({
             type="button"
             onClick={handleSubmit}
             disabled={loading || outOfCredits}
+            className="text-xs xs:text-sm"
           >
             <Sparkles size={16} className="mr-2 inline" />
             {loading

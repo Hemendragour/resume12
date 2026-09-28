@@ -91,8 +91,8 @@ export default function CoverLetterEditorSidebar({
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          <nav className="flex flex-col divide-y divide-heading/10">
+        <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3">
+          <nav className="space-y-2">
             {sections.map((section) => {
               const isActive = activeSection === section.id;
 
@@ -101,9 +101,9 @@ export default function CoverLetterEditorSidebar({
                   key={section.id}
                   type="button"
                   onClick={() => onSectionChange(section.id)}
-                  className={`text-left px-4 py-3 text-sm font-medium transition ${
+                  className={`w-full rounded-xl px-4 py-3 text-left transition ${
                     isActive
-                      ? "bg-btn text-btn-text"
+                      ? "bg-btn text-btn-text shadow-sm"
                       : "text-heading hover:bg-navbar/60"
                   }`}
                 >

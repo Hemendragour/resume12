@@ -183,16 +183,16 @@ export default function CoverLetterEditorPage() {
                   Done
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
-                <nav className="flex flex-col divide-y divide-heading/10">
+              <div className="flex-1 overflow-y-auto px-2 py-3 pb-[env(safe-area-inset-bottom)]">
+                <nav className="space-y-2">
                   {sectionOrder.map((section) => (
                     <button
                       key={section}
                       type="button"
                       onClick={() => handleSectionChange(section)}
-                      className={`text-left px-4 py-3 transition ${
+                      className={`w-full rounded-xl px-4 py-3 text-left transition ${
                         activeSection === section
-                          ? "bg-btn text-btn-text font-semibold"
+                          ? "bg-btn text-btn-text shadow-sm"
                           : "text-heading hover:bg-navbar/60"
                       }`}
                     >

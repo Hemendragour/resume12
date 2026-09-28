@@ -20,12 +20,12 @@ interface Props {
 }
 
 const inputClass =
-  "mt-1.5 h-11 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
+  "mt-1.5 h-11 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring";
 
 const textAreaClass =
-  "mt-1.5 w-full rounded-lg border border-primary/15 bg-card px-4 py-3 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
+  "mt-1.5 w-full rounded-lg border border-border bg-navbar px-4 py-3 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring";
 
-const labelClass = "text-sm font-medium text-dark";
+const labelClass = "text-sm font-medium text-heading";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from(
@@ -38,7 +38,7 @@ function RemoveRowButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="absolute right-3 top-3 text-dark/40 hover:text-danger"
+      className="absolute right-3 top-3 text-heading/40 hover:text-red-600"
     >
       <X size={16} />
     </button>
@@ -60,10 +60,10 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <h3 className="text-lg font-semibold text-dark">
+      <h3 className="text-lg font-semibold text-heading">
         {title}{" "}
         {optional && (
-          <span className="text-sm font-normal text-dark/50">(optional)</span>
+          <span className="text-sm font-normal text-heading/50">(optional)</span>
         )}
       </h3>
       <div className="flex items-center gap-3">
@@ -71,7 +71,7 @@ function SectionHeader({
           <button
             type="button"
             onClick={onCustomize}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-subheading hover:underline bg-btn-hover-bg px-4 py-2 rounded-2xl border border-border"
           >
             <Wand2 size={13} />
             customize
@@ -107,7 +107,7 @@ function CustomizeInstructionBox({
   placeholder: string;
 }) {
   return (
-    <div className="mt-3 rounded-xl border border-primary/15 bg-card p-4">
+    <div className="mt-3 rounded-xl border border-border bg-navbar p-4">
       <label className={labelClass}>
         How should this section be customized?
       </label>
@@ -192,13 +192,13 @@ export default function QuickGenerateForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto max-w-5xl space-y-8 rounded-2xl border border-primary/10 bg-modal p-8"
+      className="mx-auto max-w-5xl space-y-8 rounded-2xl border border-border bg-popup p-8"
     >
       <div>
-        <h2 className="text-2xl font-bold text-dark">
+        <h2 className="text-2xl font-bold text-heading">
           Generate Resume in 2 Minutes
         </h2>
-        <p className="mt-1 text-dark/60">
+        <p className="mt-1 text-heading/60">
           Drop in your details below and AI will turn them into a polished,
           ATS-friendly resume. Don't worry about grammar or formatting.
         </p>
@@ -208,7 +208,7 @@ export default function QuickGenerateForm({
       <section>
         <label className={labelClass}>
           Job Description{" "}
-          <span className="font-normal text-dark/50">
+          <span className="font-normal text-heading/50">
             (optional — tailors the resume to this role)
           </span>
         </label>
@@ -222,7 +222,7 @@ export default function QuickGenerateForm({
 
       {/* PERSONAL INFO */}
       <section>
-        <h3 className="mb-3 text-lg font-semibold text-dark">Personal Info</h3>
+        <h3 className="mb-3 text-lg font-semibold text-heading">Personal Info</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Full Name *</label>
@@ -289,14 +289,14 @@ export default function QuickGenerateForm({
         <div className="flex items-center justify-between">
           <label className={labelClass}>
             Summary{" "}
-            <span className="font-normal text-dark/50">
+            <span className="font-normal text-heading/50">
               (optional — a few rough lines is enough, AI will polish it)
             </span>
           </label>
           <button
             type="button"
             onClick={() => setShowSummaryCustomize((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-subheading hover:underline bg-btn-hover-bg px-4 py-2 rounded-2xl border border-border"
           >
             <Wand2 size={13} />
             customize
@@ -333,7 +333,7 @@ export default function QuickGenerateForm({
                 key={preset}
                 type="button"
                 onClick={() => skills.append({ title: preset, skillsText: "" })}
-                className="rounded-full border border-primary/15 px-3 py-1.5 text-xs font-medium text-dark/70 transition hover:border-accent hover:text-dark"
+                className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-heading/70 transition hover:border-border-strong hover:text-heading"
               >
                 + {preset}
               </button>
@@ -345,7 +345,7 @@ export default function QuickGenerateForm({
           {skills.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative grid grid-cols-[200px_1fr] items-start gap-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative grid grid-cols-[200px_1fr] items-start gap-3 rounded-xl border border-border bg-navbar p-4"
             >
               <RemoveRowButton onClick={() => skills.remove(index)} />
               <div>
@@ -378,7 +378,7 @@ export default function QuickGenerateForm({
         </div>
 
         {skills.fields.length === 0 && (
-          <p className="text-sm text-dark/40">
+          <p className="text-sm text-heading/40">
             Pick a category above, or use "Add Category" for a custom one.
           </p>
         )}
@@ -410,7 +410,7 @@ export default function QuickGenerateForm({
           {projects.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative space-y-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative space-y-3 rounded-xl border border-border bg-navbar p-4"
             >
               {projects.fields.length > 1 && (
                 <RemoveRowButton onClick={() => projects.remove(index)} />
@@ -485,7 +485,7 @@ export default function QuickGenerateForm({
           {experience.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative space-y-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative space-y-3 rounded-xl border border-border bg-navbar p-4"
             >
               <RemoveRowButton onClick={() => experience.remove(index)} />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -533,7 +533,7 @@ export default function QuickGenerateForm({
                   className={inputClass}
                   placeholder="Location"
                 />
-                <label className="flex items-center gap-2 text-sm text-dark">
+                <label className="flex items-center gap-2 text-sm text-heading">
                   <input
                     type="checkbox"
                     {...register(`experience.${index}.currentlyWorking`, {
@@ -551,7 +551,7 @@ export default function QuickGenerateForm({
               <div>
                 <label className={labelClass}>
                   Technologies{" "}
-                  <span className="font-normal text-dark/50">(optional)</span>
+                  <span className="font-normal text-heading/50">(optional)</span>
                 </label>
                 <Controller
                   name={`experience.${index}.technologies`}
@@ -603,7 +603,7 @@ export default function QuickGenerateForm({
           {internships.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative space-y-3 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative space-y-3 rounded-xl border border-border bg-navbar p-4"
             >
               <RemoveRowButton onClick={() => internships.remove(index)} />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -648,7 +648,7 @@ export default function QuickGenerateForm({
                     )}
                   />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-dark">
+                <label className="flex items-center gap-2 text-sm text-heading">
                   <input
                     type="checkbox"
                     {...register(`internships.${index}.currentlyInterning`, {
@@ -699,7 +699,7 @@ export default function QuickGenerateForm({
           {education.fields.map((field, index) => (
             <div
               key={field.id}
-              className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-xl border border-primary/10 bg-card p-4"
+              className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-xl border border-border bg-navbar p-4"
             >
               {education.fields.length > 1 && (
                 <RemoveRowButton onClick={() => education.remove(index)} />
@@ -783,7 +783,7 @@ export default function QuickGenerateForm({
                 <div className="flex items-center justify-between">
                   <label className={labelClass}>
                     Relevant Coursework{" "}
-                    <span className="font-normal text-dark/50">(optional)</span>
+                    <span className="font-normal text-heading/50">(optional)</span>
                   </label>
                   <button
                     type="button"
@@ -816,7 +816,7 @@ export default function QuickGenerateForm({
                         },
                       );
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-subheading hover:underline disabled:opacity-50"
                   >
                     {courseworkLoadingIndex === index ? (
                       <>
@@ -866,7 +866,7 @@ export default function QuickGenerateForm({
               <button
                 type="button"
                 onClick={() => languages.remove(index)}
-                className="shrink-0 text-dark/40 hover:text-danger"
+                className="shrink-0 text-heading/40 hover:text-red-600"
               >
                 <X size={18} />
               </button>
@@ -883,7 +883,7 @@ export default function QuickGenerateForm({
             <button
               type="button"
               onClick={() => setShowAchievementsCustomize((v) => !v)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 px-4 py-2 rounded-2xl border border-primary/50"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-subheading hover:underline bg-btn-hover-bg px-4 py-2 rounded-2xl border border-border"
             >
               <Wand2 size={13} />
               Customize
@@ -915,7 +915,7 @@ export default function QuickGenerateForm({
       </div>
 
       {/* ACTIONS */}
-      <div className="flex justify-end gap-3 border-t border-primary/10 pt-6">
+      <div className="flex justify-end gap-3 border-t border-border pt-6">
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>

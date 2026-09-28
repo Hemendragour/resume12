@@ -26,38 +26,38 @@ export default function CoverLetterEditorHeader({
   const navigate = useNavigate();
 
   return (
-    <header className="shrink-0 border-b border-primary/15 bg-modal shadow-sm z-20">
+    <header className="shrink-0 border-b border-border-navbar bg-navbar shadow-sm z-20">
       {/* ── Row 1: back + title (all sizes); save status + actions (lg+) ── */}
       <div className="flex h-14 items-center justify-between gap-2 px-3">
         {/* Left: back + title */}
         <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => navigate(-1)}
-            className="shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-primary/60 hover:bg-card hover:text-dark transition"
+            className="shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-heading/60 hover:bg-navbar hover:text-heading transition"
             aria-label="Go back"
           >
             <ChevronLeft size={18} />
           </button>
 
           <div className="min-w-0">
-            <h1 className="truncate text-sm font-semibold text-dark leading-tight max-w-[160px] sm:max-w-[260px] lg:max-w-[360px]">
+            <h1 className="truncate text-sm font-semibold text-heading leading-tight max-w-[160px] sm:max-w-[260px] lg:max-w-[360px]">
               {title}
             </h1>
             <div className="flex items-center gap-1.5">
-              <p className="hidden sm:block text-xs text-primary/60 leading-tight">
+              <p className="hidden sm:block text-xs text-heading/60 leading-tight">
                 Cover Letter Editor
               </p>
 
               {/* Compact save-status indicator — mobile/tablet only. */}
               <span className="lg:hidden flex items-center">
                 {saveStatus === "saving" && (
-                  <Loader2 size={12} className="animate-spin text-primary/50" />
+                  <Loader2 size={12} className="animate-spin text-heading/50" />
                 )}
                 {saveStatus === "saved" && (
-                  <CheckCircle size={12} className="text-success" />
+                  <CheckCircle size={12} className="text-green-700" />
                 )}
                 {saveStatus === "error" && (
-                  <AlertCircle size={12} className="text-danger" />
+                  <AlertCircle size={12} className="text-red-600" />
                 )}
               </span>
             </div>
@@ -67,19 +67,19 @@ export default function CoverLetterEditorHeader({
         {/* Center: save status (lg+ only) */}
         <div className="hidden lg:flex items-center justify-center min-w-[80px]">
           {saveStatus === "saving" && (
-            <div className="flex items-center gap-1.5 text-xs text-primary/70 font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-nav-text font-medium">
               <Loader2 size={14} className="animate-spin" />
               <span>Saving…</span>
             </div>
           )}
           {saveStatus === "saved" && (
-            <div className="flex items-center gap-1.5 text-xs text-success font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-green-700 font-medium">
               <CheckCircle size={14} />
               <span>Saved</span>
             </div>
           )}
           {saveStatus === "error" && (
-            <div className="flex items-center gap-1.5 text-xs text-danger font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-red-600 font-medium">
               <AlertCircle size={14} />
               <span>Save Failed</span>
             </div>
@@ -93,7 +93,7 @@ export default function CoverLetterEditorHeader({
             onClick={onRegenerateClick}
             disabled={!hasContent}
             title={!hasContent ? "Save your cover letter first" : undefined}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-accent/20 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-dark transition hover:bg-accent/40 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-btn-hover-bg border border-border px-3 py-1.5 text-xs font-semibold text-heading transition hover:bg-border-popup disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Sparkles size={13} />
             Regenerate with AI
@@ -112,7 +112,7 @@ export default function CoverLetterEditorHeader({
           onClick={onRegenerateClick}
           disabled={!hasContent}
           title={!hasContent ? "Save your cover letter first" : undefined}
-          className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-accent/20 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-dark transition hover:bg-accent/40 disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-btn-hover-bg border border-border px-3 py-1.5 text-xs font-semibold text-heading transition hover:bg-border-popup disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Sparkles size={13} />
           Regenerate

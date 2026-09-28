@@ -35,7 +35,7 @@ export default function ExperienceSection() {
         <div>
           <h3 className="text-xl font-bold">Work Experience</h3>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-nav-text">
             Add your professional experience.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function ExperienceSection() {
         <div className="rounded-xl border-2 border-dashed p-12 text-center">
           <h4 className="text-lg font-semibold">No Experience Added</h4>
 
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-nav-text">
             Click "Add Experience" to add your first job.
           </p>
         </div>
@@ -63,14 +63,14 @@ export default function ExperienceSection() {
 
       <div className="space-y-4">
         {resume?.experience.map((item, index) => (
-          <div key={index} className="rounded-xl border bg-white p-5 shadow-sm">
+          <div key={index} className="rounded-xl border border-border bg-popup p-5 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <h4 className="text-lg font-semibold">{item.position}</h4>
 
-                <p className="text-slate-600">{item.company}</p>
+                <p className="text-heading/80">{item.company}</p>
 
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-nav-text">
                   {item.startDate} -{" "}
                   {item.currentlyWorking ? "Present" : item.endDate}
                 </p>

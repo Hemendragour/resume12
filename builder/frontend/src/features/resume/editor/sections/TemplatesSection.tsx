@@ -115,7 +115,7 @@ export default function TemplatesSection() {
         Resume Templates
       </h2>
 
-      <p className="mt-2 max-w-2xl text-sm text-slate-500 sm:mt-3 sm:text-base lg:text-lg">
+      <p className="mt-2 max-w-2xl text-sm text-nav-text sm:mt-3 sm:text-base lg:text-lg">
         Select a template. Changes are applied instantly.
       </p>
 
@@ -126,14 +126,14 @@ export default function TemplatesSection() {
           return (
             <div
               key={template.id}
-              className={`group flex min-w-0 h-full flex-col overflow-hidden rounded-2xl border bg-white text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+              className={`group flex min-w-0 h-full flex-col overflow-hidden rounded-2xl border border-border bg-popup text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
                 active
-                  ? "border-blue-600 ring-2 ring-blue-200 shadow-xl"
-                  : "border-gray-200"
+                  ? "border-border-strong ring-2 ring-ring shadow-xl"
+                  : "border-border"
               }`}
             >
               {/* Thumbnail */}
-              <div className="h-44 bg-gradient-to-br from-slate-100 via-slate-50 to-white p-4 flex items-center justify-center overflow-hidden">
+              <div className="h-44 bg-gradient-to-br from-navbar-hover via-navbar to-popup p-4 flex items-center justify-center overflow-hidden">
                 <TemplateThumbnail templateId={template.id} />
               </div>
 
@@ -147,13 +147,13 @@ export default function TemplatesSection() {
                       </h3>
 
                       {template.popular && (
-                        <span className="shrink-0 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
+                        <span className="shrink-0 rounded-full bg-btn-hover-bg px-2 py-0.5 text-[10px] font-semibold text-heading">
                           Popular
                         </span>
                       )}
                     </div>
 
-                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-nav-text sm:text-sm">
                       {template.description}
                     </p>
                   </div>
@@ -168,18 +168,18 @@ export default function TemplatesSection() {
 
                 {/* Badge */}
                 <div className="mt-3">
-                  <span className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-medium">
+                  <span className="inline-block rounded-full bg-btn-hover-bg px-3 py-1 text-xs font-medium">
                     {template.badge}
                   </span>
                 </div>
 
                 {/* Best For */}
-                <div className="mt-3 rounded-xl bg-slate-50 p-3">
-                  <p className="text-[11px] font-semibold text-slate-500">
+                <div className="mt-3 rounded-xl bg-navbar p-3">
+                  <p className="text-[11px] font-semibold text-nav-text">
                     BEST FOR
                   </p>
 
-                  <p className="mt-0.5 text-xs font-medium text-slate-700 sm:text-sm">
+                  <p className="mt-0.5 text-xs font-medium text-heading/80 sm:text-sm">
                     {template.bestFor}
                   </p>
                 </div>
@@ -192,8 +192,8 @@ export default function TemplatesSection() {
                   onClick={() => updateTemplate(template.id)}
                   className={`mt-4 h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 ${
                     active
-                      ? "bg-green-600 text-white"
-                      : "border border-gray-300 hover:bg-slate-50"
+                      ? "bg-btn text-btn-text"
+                      : "border border-border hover:bg-btn-hover-bg"
                   }`}
                 >
                   {active ? "✓ Selected" : "Use Template"}

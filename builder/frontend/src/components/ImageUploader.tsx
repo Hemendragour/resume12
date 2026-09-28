@@ -62,9 +62,9 @@ export default function ImageUploader() {
           overflow-hidden
           rounded-full
           border-2
-          border-slate-300
+          border-border
           transition
-          hover:border-blue-500
+          hover:border-border-strong
         "
       >
         {personalInfo?.photo ? (
@@ -74,8 +74,8 @@ export default function ImageUploader() {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-slate-100">
-            <FaCamera className="text-3xl text-slate-500" />
+          <div className="flex h-full items-center justify-center bg-btn-hover-bg">
+            <FaCamera className="text-3xl text-nav-text" />
           </div>
         )}
 

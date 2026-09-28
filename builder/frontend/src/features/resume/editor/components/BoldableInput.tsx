@@ -60,13 +60,13 @@ export default function BoldableInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+        className="flex-1 rounded-lg border border-border bg-navbar px-4 h-11 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
       />
       <button
         type="button"
         onClick={toggleBold}
         title="Bold selected text"
-        className="h-11 w-11 shrink-0 flex items-center justify-center rounded-lg border border-primary/15 font-bold text-dark hover:bg-accent/20"
+        className="h-11 w-11 shrink-0 flex items-center justify-center rounded-lg border border-border font-bold text-heading hover:bg-border-popup"
       >
         B
       </button>

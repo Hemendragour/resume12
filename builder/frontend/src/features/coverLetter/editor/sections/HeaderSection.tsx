@@ -2,7 +2,7 @@ import { useCoverLetterStore } from "../../../../store/coverLetter.store";
 import Input from "../../../../components/ui/Input";
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600";
+  "h-12 w-full rounded-xl border border-border px-4 outline-none focus:border-border-strong";
 
 export default function HeaderSection() {
   const coverLetter = useCoverLetterStore((state) => state.coverLetter);
@@ -19,8 +19,8 @@ export default function HeaderSection() {
     <div className="space-y-10">
       {/* Your Details */}
       <div>
-        <h3 className="text-lg font-bold text-dark">Your Details</h3>
-        <p className="mt-1 mb-4 text-sm text-dark/60">
+        <h3 className="text-lg font-bold text-heading">Your Details</h3>
+        <p className="mt-1 mb-4 text-sm text-heading/60">
           Shown at the top of the letter, just like a resume header.
         </p>
 
@@ -72,10 +72,10 @@ export default function HeaderSection() {
 
       {/* Recipient & Letter Info */}
       <div>
-        <h3 className="text-lg font-bold text-dark">
+        <h3 className="text-lg font-bold text-heading">
           Recipient & Letter Info
         </h3>
-        <p className="mt-1 mb-4 text-sm text-dark/60">
+        <p className="mt-1 mb-4 text-sm text-heading/60">
           Who the letter is addressed to, and when.
         </p>
 
@@ -114,7 +114,7 @@ export default function HeaderSection() {
 
         <div className="mt-4 space-y-4">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-heading/80">
               Subject Line (optional)
             </label>
             <input
@@ -128,7 +128,7 @@ export default function HeaderSection() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-heading/80">
               Greeting
             </label>
             <input

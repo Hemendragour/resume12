@@ -37,16 +37,16 @@ export default function ATSKeywordMatch({
   return (
     <section
       id="ats-keyword-match"
-      className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm scroll-mt-24"
+      className="rounded-2xl border border-border bg-navbar p-6 shadow-sm scroll-mt-24"
     >
       {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-primary/10 pb-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <Tag className="h-5 w-5 text-accent" />
-            <h2 className="text-lg font-bold text-dark">Keyword Match Analysis</h2>
+            <Tag className="h-5 w-5 text-subheading" />
+            <h2 className="text-lg font-bold text-heading">Keyword Match Analysis</h2>
           </div>
-          <p className="mt-1 text-xs text-primary/70">
+          <p className="mt-1 text-xs text-nav-text">
             {hasJobDescription
               ? "Key skills and terminology compared against the provided job description."
               : "Standard role-specific keywords analyzed for this profile."}
@@ -54,10 +54,10 @@ export default function ATSKeywordMatch({
         </div>
 
         {totalKeywords > 0 && (
-          <div className="flex items-center gap-2 self-start sm:self-auto rounded-lg bg-background px-3 py-1.5 border border-primary/10">
-            <span className="text-xs text-primary/60">Match Rate:</span>
-            <span className="text-xs font-bold text-dark">{matchRate}%</span>
-            <span className="text-[11px] text-primary/40">
+          <div className="flex items-center gap-2 self-start sm:self-auto rounded-lg bg-navbar-hover px-3 py-1.5 border border-border">
+            <span className="text-xs text-heading/60">Match Rate:</span>
+            <span className="text-xs font-bold text-heading">{matchRate}%</span>
+            <span className="text-[11px] text-heading/40">
               ({matchedKeywords.length}/{totalKeywords})
             </span>
           </div>
@@ -67,22 +67,22 @@ export default function ATSKeywordMatch({
       {/* Two Columns Layout */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Matched Keywords Column */}
-        <div className="rounded-xl border border-success/20 bg-background p-4">
-          <div className="flex items-center justify-between border-b border-primary/10 pb-3">
+        <div className="rounded-xl border border-green-600/20 bg-navbar-hover p-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-success/20 text-success">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-600/20 text-green-700">
                 <Check className="h-3.5 w-3.5 stroke-[3]" />
               </div>
-              <h3 className="text-sm font-bold text-dark">Matched Keywords</h3>
+              <h3 className="text-sm font-bold text-heading">Matched Keywords</h3>
             </div>
-            <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-bold text-success">
+            <span className="rounded-full bg-green-600/15 px-2.5 py-0.5 text-xs font-bold text-green-700">
               {matchedKeywords.length}
             </span>
           </div>
 
           <div className="mt-3.5">
             {matchedKeywords.length === 0 ? (
-              <p className="text-xs text-primary/50 py-2">
+              <p className="text-xs text-heading/50 py-2">
                 No matching keywords detected in the resume.
               </p>
             ) : (
@@ -91,7 +91,7 @@ export default function ATSKeywordMatch({
                   {displayedMatched.map((kw, idx) => (
                     <span
                       key={`matched-${kw}-${idx}`}
-                      className="inline-flex items-center gap-1 rounded-lg border border-success/30 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success transition hover:bg-success/20"
+                      className="inline-flex items-center gap-1 rounded-lg border border-green-600/30 bg-green-700/10 px-2.5 py-1 text-xs font-semibold text-green-700 transition hover:bg-green-600/20"
                     >
                       <Check className="h-3 w-3 stroke-[2.5]" />
                       {kw}
@@ -103,7 +103,7 @@ export default function ATSKeywordMatch({
                   <button
                     type="button"
                     onClick={() => setShowAllMatched(!showAllMatched)}
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary/70 hover:text-dark transition"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-nav-text hover:text-heading transition"
                   >
                     {showAllMatched ? (
                       <>
@@ -123,22 +123,22 @@ export default function ATSKeywordMatch({
         </div>
 
         {/* Missing Keywords Column */}
-        <div className="rounded-xl border border-danger/20 bg-background p-4">
-          <div className="flex items-center justify-between border-b border-primary/10 pb-3">
+        <div className="rounded-xl border border-red-500/20 bg-navbar-hover p-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-danger/20 text-danger">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-600/20 text-red-600">
                 <X className="h-3.5 w-3.5 stroke-[3]" />
               </div>
-              <h3 className="text-sm font-bold text-dark">Missing Keywords</h3>
+              <h3 className="text-sm font-bold text-heading">Missing Keywords</h3>
             </div>
-            <span className="rounded-full bg-danger/15 px-2.5 py-0.5 text-xs font-bold text-danger">
+            <span className="rounded-full bg-red-600/15 px-2.5 py-0.5 text-xs font-bold text-red-600">
               {missingKeywords.length}
             </span>
           </div>
 
           <div className="mt-3.5">
             {missingKeywords.length === 0 ? (
-              <div className="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-xs font-medium text-success">
+              <div className="flex items-center gap-2 rounded-lg bg-green-700/10 p-3 text-xs font-medium text-green-700">
                 <Check className="h-4 w-4" />
                 <span>Great job! All high-priority keywords are present.</span>
               </div>
@@ -148,7 +148,7 @@ export default function ATSKeywordMatch({
                   {displayedMissing.map((kw, idx) => (
                     <span
                       key={`missing-${kw}-${idx}`}
-                      className="inline-flex items-center gap-1 rounded-lg border border-danger/30 bg-danger/10 px-2.5 py-1 text-xs font-semibold text-danger transition hover:bg-danger/20"
+                      className="inline-flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-600/10 px-2.5 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-600/20"
                     >
                       <X className="h-3 w-3 stroke-[2.5]" />
                       {kw}
@@ -160,7 +160,7 @@ export default function ATSKeywordMatch({
                   <button
                     type="button"
                     onClick={() => setShowAllMissing(!showAllMissing)}
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-danger/80 hover:text-danger transition"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-red-600/80 hover:text-red-600 transition"
                   >
                     {showAllMissing ? (
                       <>

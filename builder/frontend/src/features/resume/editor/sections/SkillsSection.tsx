@@ -246,8 +246,8 @@ export default function SkillsSection() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-dark">Skills</h2>
-        <p className="mt-1 text-sm text-primary/60">
+        <h2 className="text-2xl font-bold text-heading">Skills</h2>
+        <p className="mt-1 text-sm text-heading/60">
           Pick a category below, or choose Other to create your own.
         </p>
       </div>
@@ -260,7 +260,7 @@ export default function SkillsSection() {
 
       {/* Step 1: Choose a category — 4 presets + Other */}
       <div className="space-y-3">
-        <label className="block text-sm font-semibold text-dark">
+        <label className="block text-sm font-semibold text-heading">
           Select category
         </label>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
@@ -271,10 +271,10 @@ export default function SkillsSection() {
                 key={title}
                 type="button"
                 onClick={() => handlePresetClick(title)}
-                className={`rounded-lg border px-2 bg-green-400 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
+                className={`rounded-lg border border-border px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
                   isActive
-                    ? "border-primary bg-primary/10 text-primary font-semibold"
-                    : "border-primary/20 text-dark hover:border-primary/40 hover:bg-primary/5"
+                    ? "border-border-strong bg-btn-hover-bg text-subheading font-semibold"
+                    : "border-border text-heading hover:border-border hover:bg-btn-hover-bg/50"
                 }`}
               >
                 {title}
@@ -285,11 +285,11 @@ export default function SkillsSection() {
           <button
             type="button"
             onClick={handleOtherClick}
-            className={`rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
+            className={`rounded-lg border border-border px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
               showOtherInput ||
               (selectedCategory && !presetCategories.includes(selectedCategory))
-                ? "border-primary bg-primary/10 text-primary font-semibold"
-                : "border-primary/20 text-dark hover:border-primary/40 hover:bg-primary/5"
+                ? "border-border-strong bg-btn-hover-bg text-subheading font-semibold"
+                : "border-border text-heading hover:border-border hover:bg-btn-hover-bg/50"
             }`}
           >
             Other
@@ -303,7 +303,7 @@ export default function SkillsSection() {
               value={otherCategoryInput}
               onChange={(e) => setOtherCategoryInput(e.target.value)}
               placeholder="e.g. Soft Skills, Certifications"
-              className="flex-1 h-10 sm:h-11 rounded-lg border border-primary/20 px-3 sm:px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent"
+              className="flex-1 h-10 sm:h-11 rounded-lg border border-border px-3 sm:px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleAddOtherCategory();
                 if (e.key === "Escape") setShowOtherInput(false);
@@ -312,7 +312,7 @@ export default function SkillsSection() {
             <button
               type="button"
               onClick={handleAddOtherCategory}
-              className="rounded-lg bg-primary px-4 sm:px-6 py-2.5 sm:py-2 text-sm font-semibold text-white hover:bg-primary/90 transition whitespace-nowrap"
+              className="rounded-lg bg-btn px-4 sm:px-6 py-2.5 sm:py-2 text-sm font-semibold text-btn-text hover:bg-btn-hover/90 transition whitespace-nowrap"
             >
               Add
             </button>
@@ -323,7 +323,7 @@ export default function SkillsSection() {
       {/* Existing categories — with rename / delete / reorder */}
       {skills.length > 0 && (
         <div className="space-y-3">
-          <label className="block text-sm font-semibold text-dark">
+          <label className="block text-sm font-semibold text-heading">
             Your categories
           </label>
 
@@ -331,10 +331,10 @@ export default function SkillsSection() {
             {skills.map((category, index) => (
               <div
                 key={category.title}
-                className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-lg border px-2.5 sm:px-3 py-2 text-sm transition shrink-0 ${
+                className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-lg border border-border px-2.5 sm:px-3 py-2 text-sm transition shrink-0 ${
                   selectedCategory === category.title
-                    ? "border-primary bg-primary/10 text-dark font-medium"
-                    : "border-primary/20 text-dark/70 hover:border-primary/30"
+                    ? "border-border-strong bg-btn-hover-bg text-heading font-medium"
+                    : "border-border text-heading/70 hover:border-border"
                 }`}
               >
                 {/* Reorder arrows - mobile hidden */}
@@ -343,7 +343,7 @@ export default function SkillsSection() {
                     type="button"
                     onClick={() => moveCategory(category.title, "up")}
                     disabled={index === 0}
-                    className="h-3 w-3 flex items-center justify-center text-primary/40 hover:text-primary disabled:opacity-30 transition"
+                    className="h-3 w-3 flex items-center justify-center text-heading/40 hover:text-heading disabled:opacity-30 transition"
                     aria-label="Move up"
                   >
                     <ChevronUp size={11} />
@@ -352,7 +352,7 @@ export default function SkillsSection() {
                     type="button"
                     onClick={() => moveCategory(category.title, "down")}
                     disabled={index === skills.length - 1}
-                    className="h-3 w-3 flex items-center justify-center text-primary/40 hover:text-primary disabled:opacity-30 transition"
+                    className="h-3 w-3 flex items-center justify-center text-heading/40 hover:text-heading disabled:opacity-30 transition"
                     aria-label="Move down"
                   >
                     <ChevronDown size={11} />
@@ -370,7 +370,7 @@ export default function SkillsSection() {
                       if (e.key === "Enter") confirmRenameCategory();
                       if (e.key === "Escape") setEditingCategory(null);
                     }}
-                    className="w-20 sm:w-24 rounded px-2 py-0.5 text-xs sm:text-sm border border-primary/30 focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-20 sm:w-24 rounded px-2 py-0.5 text-xs sm:text-sm border border-border focus:outline-none focus:ring-1 focus:ring-ring"
                     autoFocus
                   />
                 ) : (
@@ -382,7 +382,7 @@ export default function SkillsSection() {
                     <span className="font-medium truncate text-xs sm:text-sm">
                       {category.title}
                     </span>
-                    <span className="text-xs text-primary/50 shrink-0">
+                    <span className="text-xs text-heading/50 shrink-0">
                       ({category.skills.length})
                     </span>
                   </button>
@@ -392,7 +392,7 @@ export default function SkillsSection() {
                 <button
                   type="button"
                   onClick={() => startRenameCategory(category.title)}
-                  className="text-primary/40 hover:text-primary transition p-0.5 shrink-0"
+                  className="text-heading/40 hover:text-heading transition p-0.5 shrink-0"
                   title="Rename"
                   aria-label={`Rename ${category.title}`}
                 >
@@ -403,7 +403,7 @@ export default function SkillsSection() {
                 <button
                   type="button"
                   onClick={() => handleDeleteCategory(category.title)}
-                  className="text-primary/40 hover:text-danger transition p-0.5 shrink-0"
+                  className="text-heading/40 hover:text-red-600 transition p-0.5 shrink-0"
                   title="Delete"
                   aria-label={`Delete ${category.title}`}
                 >
@@ -418,9 +418,9 @@ export default function SkillsSection() {
       {/* Add Skill Input */}
       {selectedCategory && (
         <div className="space-y-3">
-          <label className="block text-sm font-semibold text-dark">
+          <label className="block text-sm font-semibold text-heading">
             Add skill to:{" "}
-            <span className="font-bold text-primary">{selectedCategory}</span>
+            <span className="font-bold text-subheading">{selectedCategory}</span>
           </label>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <input
@@ -428,7 +428,7 @@ export default function SkillsSection() {
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
               placeholder="Type a skill"
-              className="flex-1 h-10 sm:h-11 rounded-lg border border-primary/20 px-3 sm:px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent"
+              className="flex-1 h-10 sm:h-11 rounded-lg border border-border px-3 sm:px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -438,7 +438,7 @@ export default function SkillsSection() {
             />
             <button
               onClick={handleAddSkill}
-              className="rounded-lg bg-primary px-4 sm:px-6 py-2.5 sm:py-2 text-sm font-semibold text-white hover:bg-primary/90 transition whitespace-nowrap"
+              className="rounded-lg bg-btn px-4 sm:px-6 py-2.5 sm:py-2 text-sm font-semibold text-btn-text hover:bg-btn-hover/90 transition whitespace-nowrap"
             >
               Add skill
             </button>
@@ -448,13 +448,13 @@ export default function SkillsSection() {
 
       {/* Selected Category Skills - with edit + delete */}
       {currentCategory && currentCategory.skills.length > 0 && (
-        <div className="rounded-xl border border-primary/15 bg-card p-4 sm:p-5">
+        <div className="rounded-xl border border-border bg-navbar p-4 sm:p-5">
           <div className="flex flex-wrap gap-2">
             {currentCategory.skills.map((skill) =>
               editingSkill === skill ? (
                 <div
                   key={skill}
-                  className="flex items-center gap-1.5 rounded-full border-2 border-primary bg-white px-3 py-1.5"
+                  className="flex items-center gap-1.5 rounded-full border-2 border-border-strong bg-popup px-3 py-1.5"
                 >
                   <input
                     ref={skillEditInputRef}
@@ -470,7 +470,7 @@ export default function SkillsSection() {
                   <button
                     type="button"
                     onClick={confirmEditSkill}
-                    className="text-success hover:text-success/80 transition"
+                    className="text-green-700 hover:text-green-700/80 transition"
                     aria-label="Save skill"
                   >
                     <Check size={16} />
@@ -479,7 +479,7 @@ export default function SkillsSection() {
               ) : (
                 <div
                   key={skill}
-                  className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-dark hover:bg-primary/15 transition group"
+                  className="flex items-center gap-2 rounded-full bg-btn-hover-bg px-4 py-2 text-sm font-medium text-heading hover:bg-btn-hover/15 transition group"
                 >
                   <button
                     type="button"
@@ -492,7 +492,7 @@ export default function SkillsSection() {
                   <button
                     type="button"
                     onClick={() => removeSkill(selectedCategory, skill)}
-                    className="text-primary/50 hover:text-danger transition p-0.5"
+                    className="text-heading/50 hover:text-red-600 transition p-0.5"
                     aria-label={`Remove ${skill}`}
                   >
                     <X size={16} />
@@ -510,7 +510,7 @@ export default function SkillsSection() {
           type="button"
           onClick={handleSuggestSkills}
           disabled={isPending || !resume?._id}
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 sm:px-5 py-2.5 sm:py-3 text-sm font-semibold text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 rounded-lg bg-btn px-4 sm:px-5 py-2.5 sm:py-3 text-sm font-semibold text-btn-text hover:bg-btn-hover/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Sparkles size={16} />
           <span>{isPending ? "AI is suggesting..." : "AI suggest skills"}</span>
@@ -520,7 +520,7 @@ export default function SkillsSection() {
       {/* Popular Skills — filtered by selected category */}
       {selectedCategory && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-dark">Popular skills</h3>
+          <h3 className="text-sm font-semibold text-heading">Popular skills</h3>
           <div className="flex flex-wrap gap-2">
             {(
               skillSuggestionsByCategory[selectedCategory] ?? skillSuggestions
@@ -534,7 +534,7 @@ export default function SkillsSection() {
                     return;
                   addSkill(selectedCategory, trimmed);
                 }}
-                className="rounded-full border border-primary/20 px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-dark hover:bg-primary/10 hover:border-primary/40 transition"
+                className="rounded-full border border-border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-heading hover:bg-btn-hover/10 hover:border-border transition"
               >
                 + {skill}
               </button>

@@ -22,10 +22,10 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 85 || grade === "A") {
     return {
       label: "Excellent ATS Match",
-      gradeBadgeClass: "bg-success/15 text-success border-success/30",
-      scoreTextClass: "text-success",
-      barClass: "bg-success",
-      trackClass: "bg-success/15",
+      gradeBadgeClass: "bg-green-600/15 text-green-700 border-green-600/30",
+      scoreTextClass: "text-green-700",
+      barClass: "bg-green-600",
+      trackClass: "bg-green-600/15",
       summaryText: "Your resume is highly optimized for ATS parsers and hiring managers.",
     };
   }
@@ -33,10 +33,10 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 70 || grade === "B") {
     return {
       label: "Good ATS Match",
-      gradeBadgeClass: "bg-accent/20 text-dark border-accent/40",
-      scoreTextClass: "text-dark",
-      barClass: "bg-accent",
-      trackClass: "bg-accent/15",
+      gradeBadgeClass: "bg-btn-hover-bg text-heading border-border",
+      scoreTextClass: "text-heading",
+      barClass: "bg-btn",
+      trackClass: "bg-btn-hover-bg",
       summaryText: "Your resume performs well, with a few targeted optimization opportunities.",
     };
   }
@@ -44,20 +44,20 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 50 || grade === "C") {
     return {
       label: "Needs Improvement",
-      gradeBadgeClass: "bg-warning/15 text-warning border-warning/30",
-      scoreTextClass: "text-warning",
-      barClass: "bg-warning",
-      trackClass: "bg-warning/15",
+      gradeBadgeClass: "bg-orange-500/15 text-orange-600 border-orange-500/30",
+      scoreTextClass: "text-orange-600",
+      barClass: "bg-orange-500",
+      trackClass: "bg-orange-500/15",
       summaryText: "Your resume has critical gaps in keywords, formatting, or quantifiable impact.",
     };
   }
 
   return {
     label: "Significant Revision Needed",
-    gradeBadgeClass: "bg-danger/15 text-danger border-danger/30",
-    scoreTextClass: "text-danger",
-    barClass: "bg-danger",
-    trackClass: "bg-danger/15",
+    gradeBadgeClass: "bg-red-600/15 text-red-600 border-red-500/30",
+    scoreTextClass: "text-red-600",
+    barClass: "bg-red-600",
+    trackClass: "bg-red-600/15",
     summaryText: "Your resume is at high risk of being filtered out by automated screening systems.",
   };
 }
@@ -84,32 +84,32 @@ export default function ATSOverallScore({
     : null;
 
   return (
-    <div className="w-full rounded-2xl border border-primary/10 bg-card p-6 shadow-sm transition-all">
+    <div className="w-full rounded-2xl border border-border bg-navbar p-6 shadow-sm transition-all">
       {/* Top Meta Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-primary/10 pb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
         <div className="flex flex-wrap items-center gap-2">
           {targetRole && (
-            <div className="inline-flex items-center gap-1.5 rounded-lg bg-background px-3 py-1 text-xs font-semibold text-dark border border-primary/10">
-              <Briefcase className="h-3.5 w-3.5 text-accent" />
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-navbar-hover px-3 py-1 text-xs font-semibold text-heading border border-border">
+              <Briefcase className="h-3.5 w-3.5 text-subheading" />
               <span>{targetRole}</span>
             </div>
           )}
 
           <div
-            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium border ${
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium border border-border ${
               hasJobDescription
-                ? "bg-accent/15 text-dark border-accent/30"
-                : "bg-primary/5 text-primary/70 border-primary/10"
+                ? "bg-btn-hover-bg text-heading border-border"
+                : "bg-btn-hover-bg/50 text-nav-text border-border"
             }`}
           >
             {hasJobDescription ? (
               <>
-                <Target className="h-3.5 w-3.5 text-accent" />
+                <Target className="h-3.5 w-3.5 text-subheading" />
                 <span>Scored against job description</span>
               </>
             ) : (
               <>
-                <Sparkles className="h-3.5 w-3.5 text-primary/60" />
+                <Sparkles className="h-3.5 w-3.5 text-heading/60" />
                 <span>General scoring — no JD provided</span>
               </>
             )}
@@ -117,7 +117,7 @@ export default function ATSOverallScore({
         </div>
 
         {formattedDate && (
-          <span className="text-[11px] text-primary/50">
+          <span className="text-[11px] text-heading/50">
             Analyzed {formattedDate}
           </span>
         )}
@@ -144,12 +144,12 @@ export default function ATSOverallScore({
               >
                 {roundedScore}
               </span>
-              <span className="text-base font-semibold text-primary/40">
+              <span className="text-base font-semibold text-heading/40">
                 / 100
               </span>
             </div>
             <div className="mt-1 flex items-center gap-2">
-              <span className="text-base font-bold text-dark">
+              <span className="text-base font-bold text-heading">
                 {tier.label}
               </span>
             </div>
@@ -157,12 +157,12 @@ export default function ATSOverallScore({
         </div>
 
         {/* Short Advice Callout */}
-        <div className="max-w-md rounded-xl bg-background p-3.5 border border-primary/10 text-xs text-primary/80">
+        <div className="max-w-md rounded-xl bg-navbar-hover p-3.5 border border-border text-xs text-heading/80">
           <p className="flex items-start gap-2">
             {roundedScore >= 70 ? (
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-success mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-700 mt-0.5" />
             ) : (
-              <AlertCircle className="h-4 w-4 shrink-0 text-warning mt-0.5" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-orange-600 mt-0.5" />
             )}
             <span>{tier.summaryText}</span>
           </p>
@@ -181,7 +181,7 @@ export default function ATSOverallScore({
         </div>
 
         {/* Milestone Scale */}
-        <div className="mt-2 flex justify-between text-[11px] font-medium text-primary/40">
+        <div className="mt-2 flex justify-between text-[11px] font-medium text-heading/40">
           <span>0 (Critical)</span>
           <span>50 (Needs Work)</span>
           <span>75 (Good)</span>

@@ -39,22 +39,22 @@ export default function AIQuickContextModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4">
+      <div className="w-full max-w-lg rounded-2xl bg-popup p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles size={20} className="text-violet-600" />
+            <Sparkles size={20} className="text-subheading" />
             <h3 className="text-lg font-bold">Quick Context</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-nav-text hover:text-heading/80"
           >
             <X size={20} />
           </button>
         </div>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-nav-text">
           Answer a few quick questions so AI can write specific, non-generic
           bullet points.
         </p>
@@ -68,7 +68,7 @@ export default function AIQuickContextModal({
               value={form.workedOn}
               onChange={(e) => handleChange("workedOn", e.target.value)}
               placeholder="e.g. E-commerce checkout flow, admin dashboard"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
@@ -80,7 +80,7 @@ export default function AIQuickContextModal({
               value={form.technologies}
               onChange={(e) => handleChange("technologies", e.target.value)}
               placeholder="e.g. React, Node.js, MongoDB"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
@@ -92,20 +92,20 @@ export default function AIQuickContextModal({
               value={form.scope}
               onChange={(e) => handleChange("scope", e.target.value)}
               placeholder="e.g. Solo project, team of 4, 50K+ users"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
           <div>
             <label className="text-sm font-medium">
               4. Koi specific result/impact?{" "}
-              <span className="text-slate-400">(optional)</span>
+              <span className="text-nav-text">(optional)</span>
             </label>
             <input
               value={form.impact}
               onChange={(e) => handleChange("impact", e.target.value)}
               placeholder="e.g. Reduced load time by 30%, N/A if unsure"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function AIQuickContextModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-navbar"
           >
             Cancel
           </button>
@@ -122,7 +122,7 @@ export default function AIQuickContextModal({
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-btn px-4 py-2 text-sm font-medium text-btn-text hover:bg-btn-hover disabled:opacity-50"
           >
             <Sparkles size={16} />
             {loading ? "Generating..." : "Generate Bullets"}

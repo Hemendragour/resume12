@@ -40,7 +40,7 @@ export default function InterestsSection() {
       <div>
         <h2 className="text-2xl font-bold">Interests</h2>
 
-        <p className="text-gray-500">
+        <p className="text-nav-text">
           Press Enter or click Add to add your interests.
         </p>
       </div>
@@ -52,7 +52,7 @@ export default function InterestsSection() {
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Open Source"
-          className="h-12 flex-1 rounded-xl border px-4 outline-none focus:border-blue-600"
+          className="h-12 flex-1 rounded-xl border px-4 outline-none focus:border-border-strong"
         />
 
         <Button
@@ -71,7 +71,7 @@ export default function InterestsSection() {
             key={interest}
             type="button"
             onClick={() => removeInterest(interest)}
-            className="flex items-center gap-2 rounded-full bg-pink-100 px-4 py-2 text-pink-700 transition hover:bg-pink-200"
+            className="flex items-center gap-2 rounded-full bg-btn-hover-bg px-4 py-2 text-heading transition hover:bg-border-popup"
           >
             <Heart size={16} />
 

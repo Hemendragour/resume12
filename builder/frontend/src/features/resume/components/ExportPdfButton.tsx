@@ -268,7 +268,7 @@ export default function ExportPdfButton() {
       type="button"
       onClick={handleExport}
       disabled={isExporting}
-      className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-60"
+      className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-btn px-3 py-1.5 text-xs font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {isExporting ? (
         <Loader2 size={13} className="animate-spin" />

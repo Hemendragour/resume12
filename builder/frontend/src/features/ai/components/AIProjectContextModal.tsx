@@ -35,22 +35,22 @@ export default function AIProjectContextModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4">
+      <div className="w-full max-w-lg rounded-2xl bg-popup p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles size={20} className="text-violet-600" />
+            <Sparkles size={20} className="text-subheading" />
             <h3 className="text-lg font-bold">Quick Context</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-nav-text hover:text-heading/80"
           >
             <X size={20} />
           </button>
         </div>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-nav-text">
           Answer a few quick questions so AI can write a specific, non-generic
           description.
         </p>
@@ -64,7 +64,7 @@ export default function AIProjectContextModal({
               value={form.whatBuilt}
               onChange={(e) => handleChange("whatBuilt", e.target.value)}
               placeholder="e.g. AI-powered resume builder with 50+ templates"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
@@ -76,7 +76,7 @@ export default function AIProjectContextModal({
               value={form.problemSolved}
               onChange={(e) => handleChange("problemSolved", e.target.value)}
               placeholder="e.g. Real-time ATS scoring, drag-and-drop editor"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
@@ -86,20 +86,20 @@ export default function AIProjectContextModal({
               value={form.teamSize}
               onChange={(e) => handleChange("teamSize", e.target.value)}
               placeholder="e.g. Solo project, team of 3"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
 
           <div>
             <label className="text-sm font-medium">
               4. Koi result/impact?{" "}
-              <span className="text-slate-400">(optional)</span>
+              <span className="text-nav-text">(optional)</span>
             </label>
             <input
               value={form.impact}
               onChange={(e) => handleChange("impact", e.target.value)}
               placeholder="e.g. 500+ users, reduced load time by 30%"
-              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-violet-500"
+              className="mt-1.5 h-11 w-full rounded-lg border px-3 outline-none focus:border-border-strong"
             />
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function AIProjectContextModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-navbar"
           >
             Cancel
           </button>
@@ -116,7 +116,7 @@ export default function AIProjectContextModal({
             type="button"
             onClick={() => onSubmit(form)}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-btn px-4 py-2 text-sm font-medium text-btn-text hover:bg-btn-hover disabled:opacity-50"
           >
             <Sparkles size={16} />
             {loading ? "Generating..." : "Generate Description"}

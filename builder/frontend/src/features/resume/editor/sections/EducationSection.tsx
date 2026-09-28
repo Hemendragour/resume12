@@ -29,7 +29,7 @@ export default function EducationSection() {
         <div>
           <h2 className="text-2xl font-bold">Education</h2>
 
-          <p className="text-gray-500">Add your education history.</p>
+          <p className="text-nav-text">Add your education history.</p>
         </div>
 
         <Button
@@ -55,22 +55,22 @@ export default function EducationSection() {
 
           <h3 className="text-xl font-semibold">No Education Added</h3>
 
-          <p className="mt-2 text-gray-500">Add your first education.</p>
+          <p className="mt-2 text-nav-text">Add your first education.</p>
         </div>
       )}
 
       <div className="space-y-4">
         {resume?.education.map((item, index) => (
-          <div key={index} className="rounded-xl border bg-white p-6 shadow-sm">
+          <div key={index} className="rounded-xl border border-border bg-popup p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold">{item.degree}</h3>
 
-                <p className="font-medium text-blue-600">{item.institution}</p>
+                <p className="font-medium text-subheading">{item.institution}</p>
 
-                <p className="text-gray-600">{item.fieldOfStudy}</p>
+                <p className="text-heading/80">{item.fieldOfStudy}</p>
 
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mt-2 text-sm text-nav-text">
                   {item.startYear} - {item.endYear}
                 </p>
 

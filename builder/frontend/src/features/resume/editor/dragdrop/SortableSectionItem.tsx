@@ -34,7 +34,7 @@ export default function SortableSectionItem({
       ref={setNodeRef}
       style={style}
       className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 transition
-      ${active ? "bg-primary text-white shadow-sm" : "text-dark/70 hover:bg-card hover:text-dark"}
+      ${active ? "bg-btn text-btn-text shadow-sm" : "text-heading hover:bg-navbar/60"}
       ${!enabled ? "opacity-50" : ""}`}
     >
       <div
@@ -55,7 +55,7 @@ export default function SortableSectionItem({
             e.stopPropagation();
             onToggle();
           }}
-          className="rounded p-1 hover:bg-white/20"
+          className="rounded p-1 hover:bg-heading/10"
         >
           {enabled ? <Eye size={18} /> : <EyeOff size={18} />}
         </button>

@@ -290,18 +290,18 @@ export default function ProjectForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-4 sm:p-6"
+      className="space-y-6 rounded-2xl border border-border bg-popup p-4 sm:p-6"
     >
       {/* TITLE */}
 
-      <h2 className="text-2xl font-bold text-dark">
+      <h2 className="text-2xl font-bold text-heading">
         {editIndex !== undefined ? "Edit Project" : "Add Project"}
       </h2>
 
       {/* PROJECT TITLE */}
 
       <div>
-        <label className="font-medium text-dark">Project Title</label>
+        <label className="font-medium text-heading">Project Title</label>
 
         <input
           {...register("title", {
@@ -312,11 +312,11 @@ export default function ProjectForm({
             },
           })}
           placeholder="AI Resume Builder using React, Node.js & MongoDB"
-          className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {errors.title && (
-          <p className="mt-1 text-sm text-danger">{errors.title.message}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
         )}
       </div>
 
@@ -342,13 +342,13 @@ export default function ProjectForm({
 
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <label className="font-medium text-dark">Description</label>
+          <label className="font-medium text-heading">Description</label>
 
           <button
             type="button"
             onClick={handleGenerateClick}
             disabled={isGenerating}
-            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm text-dark transition-colors hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-btn px-4 py-2 text-sm text-btn-text transition-colors hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isGenerating ? "Generating..." : "✨ Generate with AI"}
           </button>
@@ -370,7 +370,7 @@ export default function ProjectForm({
                     ? "Built a real-time chat application using Socket.IO"
                     : "Describe another achievement or feature"
                 }
-                className="h-11 min-w-0 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
               />
 
               <Button
@@ -387,7 +387,7 @@ export default function ProjectForm({
           {/* Description validation */}
 
           {errors.description?.message && (
-            <p className="text-sm text-danger">{errors.description.message}</p>
+            <p className="text-sm text-red-600">{errors.description.message}</p>
           )}
 
           {/* ADD DESCRIPTION */}
@@ -406,7 +406,7 @@ export default function ProjectForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* START DATE */}
           <div>
-            <label className="text-sm font-medium text-dark">Start Date</label>
+            <label className="text-sm font-medium text-heading">Start Date</label>
 
             <Controller
               name="startDate"
@@ -424,7 +424,7 @@ export default function ProjectForm({
 
           {/* END DATE */}
           <div>
-            <label className="text-sm font-medium text-dark">End Date</label>
+            <label className="text-sm font-medium text-heading">End Date</label>
 
             <Controller
               name="endDate"
@@ -443,7 +443,7 @@ export default function ProjectForm({
         </div>
 
         {/* CURRENTLY WORKING */}
-        <label className="flex items-center gap-2 text-dark">
+        <label className="flex items-center gap-2 text-heading">
           <input
             type="checkbox"
             {...register("currentlyWorking", {
@@ -461,7 +461,7 @@ export default function ProjectForm({
       {/* TECHNOLOGIES */}
 
       <div>
-        <label className="font-medium text-dark">Technologies</label>
+        <label className="font-medium text-heading">Technologies</label>
 
         <div className="mt-2 flex gap-3">
           <input
@@ -475,7 +475,7 @@ export default function ProjectForm({
               }
             }}
             placeholder="React"
-            className="h-12 flex-1 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="h-12 flex-1 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
 
           <Button type="button" onClick={addTechnology}>
@@ -491,7 +491,7 @@ export default function ProjectForm({
               key={tech}
               type="button"
               onClick={() => removeTechnology(tech)}
-              className="rounded-full bg-accent/15 px-4 py-2 text-sm text-primary transition-colors hover:bg-accent/25"
+              className="rounded-full bg-btn-hover-bg px-4 py-2 text-sm text-subheading transition-colors hover:bg-border-popup"
             >
               {tech} ✕
             </button>
@@ -502,7 +502,7 @@ export default function ProjectForm({
       {/* GITHUB */}
 
       <div>
-        <label className="font-medium text-dark">GitHub URL (Optional)</label>
+        <label className="font-medium text-heading">GitHub URL (Optional)</label>
 
         <input
           type="text"
@@ -521,18 +521,18 @@ export default function ProjectForm({
             },
           })}
           placeholder="https://github.com/username/project"
-          className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {errors.github && (
-          <p className="mt-1 text-sm text-danger">{errors.github.message}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.github.message}</p>
         )}
       </div>
 
       {/* LIVE DEMO */}
 
       <div>
-        <label className="font-medium text-dark">
+        <label className="font-medium text-heading">
           Live Demo URL (Optional)
         </label>
 
@@ -553,11 +553,11 @@ export default function ProjectForm({
             },
           })}
           placeholder="https://project.vercel.app"
-          className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {errors.link && (
-          <p className="mt-1 text-sm text-danger">{errors.link.message}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.link.message}</p>
         )}
       </div>
 

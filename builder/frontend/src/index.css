@@ -6,6 +6,7 @@
   --color-navbar: #f6ede8;
   --color-background: #d4c9bc;
   --color-popup: #ffffff;
+  --color-section-panel: #bfae9a; /* editor "Sections" list - a little darker than the page background */
 
   /* Text */
   --color-heading: #4a3728;

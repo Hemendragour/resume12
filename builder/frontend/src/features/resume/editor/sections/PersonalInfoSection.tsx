@@ -56,7 +56,7 @@
 // //   return (
 // //     <div className="space-y-8">
 // //       <label className="cursor-pointer">
-// //         <div className="flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-300 hover:bg-slate-50">
+// //         <div className="flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-border hover:bg-navbar">
 // //           Upload
 // //         </div>
 
@@ -75,7 +75,7 @@
 // //                   fullName: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Hemendra Gour"
 // //           />
 // //         </div>
@@ -90,7 +90,7 @@
 // //                   title: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Frontend Developer"
 // //           />
 // //         </div>
@@ -106,7 +106,7 @@
 // //                   email: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="hemendra@gmail.com"
 // //           />
 // //         </div>
@@ -122,7 +122,7 @@
 // //                   phone: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="+91 9876543210"
 // //           />
 // //         </div>
@@ -137,7 +137,7 @@
 // //                   address: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Bhopal, India"
 // //           />
 // //         </div>
@@ -152,7 +152,7 @@
 // //                   linkedIn: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://linkedin.com/in/..."
 // //           />
 // //         </div>
@@ -167,7 +167,7 @@
 // //                   github: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://github.com/..."
 // //           />
 // //         </div>
@@ -183,7 +183,7 @@
 // //                   portfolio: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://portfolio.com"
 // //           />
 // //         </div>
@@ -314,7 +314,7 @@
 // //     const { personalInfo } = resume;
 
 // //     return (
-// //       <div className="space-y-6 rounded-2xl border bg-white p-8">
+// //       <div className="space-y-6 rounded-2xl border border-border bg-popup p-8">
 // //         <div className="flex items-start justify-between">
 // //           <h2 className="text-2xl font-bold">Personal Info</h2>
 // //           <Button
@@ -334,7 +334,7 @@
 // //               className="h-20 w-20 rounded-full object-cover"
 // //             />
 // //           ) : (
-// //             <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-slate-300 text-xs text-slate-400">
+// //             <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-border text-xs text-nav-text">
 // //               No photo
 // //             </div>
 // //           )}
@@ -343,13 +343,13 @@
 // //             <p className="text-lg font-semibold">
 // //               {personalInfo.fullName || "Your Name"}
 // //             </p>
-// //             <p className="text-slate-600">
+// //             <p className="text-heading/80">
 // //               {personalInfo.title || "Professional Title"}
 // //             </p>
 // //           </div>
 // //         </div>
 
-// //         <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
+// //         <div className="grid grid-cols-2 gap-4 text-sm text-heading/80">
 // //           <p>
 // //             <span className="font-medium text-slate-800">Email: </span>
 // //             {personalInfo.email || "—"}
@@ -383,7 +383,7 @@
 // //   return (
 // //     <form
 // //       onSubmit={handleSubmit(onSubmit)}
-// //       className="space-y-8 rounded-2xl border bg-white p-8"
+// //       className="space-y-8 rounded-2xl border border-border bg-popup p-8"
 // //     >
 // //       <h2 className="text-2xl font-bold">Edit Personal Info</h2>
 
@@ -395,7 +395,7 @@
 // //             className="h-32 w-32 rounded-full object-cover"
 // //           />
 // //         ) : (
-// //           <div className="flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-300 hover:bg-slate-50">
+// //           <div className="flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-border hover:bg-navbar">
 // //             Upload
 // //           </div>
 // //         )}
@@ -423,7 +423,7 @@
 // //                 message: "Minimum 2 characters required",
 // //               },
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Hemendra Gour"
 // //           />
 // //           {errors.fullName && (
@@ -439,7 +439,7 @@
 // //             {...register("title", {
 // //               required: "Title is required",
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Frontend Developer"
 // //           />
 // //           {errors.title && (
@@ -460,7 +460,7 @@
 // //                 message: "Enter a valid email, e.g. name@example.com",
 // //               },
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="hemendra@gmail.com"
 // //           />
 // //           {errors.email && (
@@ -475,7 +475,7 @@
 // //           <input
 // //             type="tel"
 // //             {...register("phone")}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="+91 9876543210"
 // //           />
 // //         </div>
@@ -484,7 +484,7 @@
 // //           <label className="font-medium">Address</label>
 // //           <input
 // //             {...register("address")}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Bhopal, India"
 // //           />
 // //         </div>
@@ -497,7 +497,7 @@
 // //                 isValidUrlLike(value) ||
 // //                 "Invalid link. Correct format: linkedin.com/in/your-username",
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="linkedin.com/in/hemendra-gour"
 // //           />
 // //           {errors.linkedIn && (
@@ -515,7 +515,7 @@
 // //                 isValidUrlLike(value) ||
 // //                 "Invalid link. Correct format: github.com/your-username",
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="github.com/hemendragour"
 // //           />
 // //           {errors.github && (
@@ -533,7 +533,7 @@
 // //                 isValidUrlLike(value) ||
 // //                 "Invalid link. Correct format: yourportfolio.dev",
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="hemendragour.dev"
 // //           />
 // //           {errors.portfolio && (
@@ -657,7 +657,7 @@
 // //       <div className="flex flex-col gap-2">
 // //         <div className="group relative h-32 w-32">
 // //           <label className="cursor-pointer">
-// //             <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-slate-300 hover:bg-slate-50">
+// //             <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-border hover:bg-navbar">
 // //               {photoPreview ? (
 // //                 <img
 // //   src={photoPreview}
@@ -665,7 +665,7 @@
 // //   className="h-full w-full object-cover object-top"
 // // />
 // //               ) : (
-// //                 <span className="text-sm text-slate-500">Upload</span>
+// //                 <span className="text-sm text-nav-text">Upload</span>
 // //               )}
 // //             </div>
 
@@ -680,8 +680,8 @@
 // //           {photoPreview && (
 // //             <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
 // //               {/* EDIT: reuses the same hidden input to replace the photo */}
-// //               <label className="cursor-pointer rounded-full bg-white p-2 hover:bg-slate-100">
-// //                 <Pencil className="h-4 w-4 text-slate-700" />
+// //               <label className="cursor-pointer rounded-full bg-popup p-2 hover:bg-btn-hover-bg">
+// //                 <Pencil className="h-4 w-4 text-heading/80" />
 // //                 <input
 // //                   type="file"
 // //                   accept="image/*"
@@ -694,9 +694,9 @@
 // //               <button
 // //                 type="button"
 // //                 onClick={handleRemovePhoto}
-// //                 className="rounded-full bg-white p-2 hover:bg-slate-100"
+// //                 className="rounded-full bg-popup p-2 hover:bg-btn-hover-bg"
 // //               >
-// //                 <X className="h-4 w-4 text-slate-700" />
+// //                 <X className="h-4 w-4 text-heading/80" />
 // //               </button>
 // //             </div>
 // //           )}
@@ -717,7 +717,7 @@
 // //                   fullName: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Hemendra Gour"
 // //           />
 // //         </div>
@@ -732,7 +732,7 @@
 // //                   title: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Frontend Developer"
 // //           />
 // //         </div>
@@ -748,7 +748,7 @@
 // //                   email: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="hemendra@gmail.com"
 // //           />
 // //         </div>
@@ -764,7 +764,7 @@
 // //                   phone: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="+91 9876543210"
 // //           />
 // //         </div>
@@ -779,7 +779,7 @@
 // //                   address: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Bhopal, India"
 // //           />
 // //         </div>
@@ -794,7 +794,7 @@
 // //                   linkedIn: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://linkedin.com/in/..."
 // //           />
 // //         </div>
@@ -809,7 +809,7 @@
 // //                   github: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://github.com/..."
 // //           />
 // //         </div>
@@ -825,7 +825,7 @@
 // //                   portfolio: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://portfolio.com"
 // //           />
 // //         </div>
@@ -1025,7 +1025,7 @@
 // //             ref={containerRef}
 // //             onMouseDown={handleMouseDown}
 // //             onWheel={handleWheel}
-// //             className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-slate-300 hover:bg-slate-50"
+// //             className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-border hover:bg-navbar"
 // //             style={{ cursor: photoPreview ? "move" : "default" }}
 // //           >
 // //             {photoPreview ? (
@@ -1040,7 +1040,7 @@
 // //               />
 // //             ) : (
 // //               <label className="flex h-full w-full cursor-pointer items-center justify-center">
-// //                 <span className="text-sm text-slate-500">Upload</span>
+// //                 <span className="text-sm text-nav-text">Upload</span>
 // //                 <input
 // //                   type="file"
 // //                   accept="image/*"
@@ -1054,8 +1054,8 @@
 // //           {photoPreview && (
 // //             <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
 // //               {/* EDIT: reuses the same hidden input to replace the photo */}
-// //               <label className="pointer-events-auto cursor-pointer rounded-full bg-white p-2 hover:bg-slate-100">
-// //                 <Pencil className="h-4 w-4 text-slate-700" />
+// //               <label className="pointer-events-auto cursor-pointer rounded-full bg-popup p-2 hover:bg-btn-hover-bg">
+// //                 <Pencil className="h-4 w-4 text-heading/80" />
 // //                 <input
 // //                   type="file"
 // //                   accept="image/*"
@@ -1068,9 +1068,9 @@
 // //               <button
 // //                 type="button"
 // //                 onClick={handleRemovePhoto}
-// //                 className="pointer-events-auto rounded-full bg-white p-2 hover:bg-slate-100"
+// //                 className="pointer-events-auto rounded-full bg-popup p-2 hover:bg-btn-hover-bg"
 // //               >
-// //                 <X className="h-4 w-4 text-slate-700" />
+// //                 <X className="h-4 w-4 text-heading/80" />
 // //               </button>
 // //             </div>
 // //           )}
@@ -1084,7 +1084,7 @@
 // //             step={0.05}
 // //             value={zoom}
 // //             onChange={(e) => handleZoomSlider(parseFloat(e.target.value))}
-// //             className="w-36 accent-slate-600"
+// //             className="w-36 accent-[#4a3728]"
 // //           />
 // //         )}
 
@@ -1103,7 +1103,7 @@
 // //                   fullName: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Hemendra Gour"
 // //           />
 // //         </div>
@@ -1118,7 +1118,7 @@
 // //                   title: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Frontend Developer"
 // //           />
 // //         </div>
@@ -1134,7 +1134,7 @@
 // //                   email: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="hemendra@gmail.com"
 // //           />
 // //         </div>
@@ -1150,7 +1150,7 @@
 // //                   phone: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="+91 9876543210"
 // //           />
 // //         </div>
@@ -1165,7 +1165,7 @@
 // //                   address: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="Bhopal, India"
 // //           />
 // //         </div>
@@ -1180,7 +1180,7 @@
 // //                   linkedIn: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://linkedin.com/in/..."
 // //           />
 // //         </div>
@@ -1195,7 +1195,7 @@
 // //                   github: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://github.com/..."
 // //           />
 // //         </div>
@@ -1211,7 +1211,7 @@
 // //                   portfolio: e.target.value,
 // //                 }),
 // //             })}
-// //             className="mt-2 h-12 w-full rounded-lg border px-4"
+// //             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 // //             placeholder="https://portfolio.com"
 // //           />
 // //         </div>
@@ -1408,7 +1408,7 @@
 //             ref={containerRef}
 //             onMouseDown={handleMouseDown}
 //             onWheel={handleWheel}
-//             className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-slate-300 hover:bg-slate-50"
+//             className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-border hover:bg-navbar"
 //             style={{ cursor: photoPreview ? "move" : "default" }}
 //           >
 //             {photoPreview ? (
@@ -1423,7 +1423,7 @@
 //               />
 //             ) : (
 //               <label className="flex h-full w-full cursor-pointer items-center justify-center">
-//                 <span className="text-sm text-slate-500">Upload</span>
+//                 <span className="text-sm text-nav-text">Upload</span>
 //                 <input
 //                   type="file"
 //                   accept="image/*"
@@ -1437,8 +1437,8 @@
 //           {photoPreview && (
 //             <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
 //               {/* EDIT: reuses the same hidden input to replace the photo */}
-//               <label className="pointer-events-auto cursor-pointer rounded-full bg-white p-2 hover:bg-slate-100">
-//                 <Pencil className="h-4 w-4 text-slate-700" />
+//               <label className="pointer-events-auto cursor-pointer rounded-full bg-popup p-2 hover:bg-btn-hover-bg">
+//                 <Pencil className="h-4 w-4 text-heading/80" />
 //                 <input
 //                   type="file"
 //                   accept="image/*"
@@ -1451,9 +1451,9 @@
 //               <button
 //                 type="button"
 //                 onClick={handleRemovePhoto}
-//                 className="pointer-events-auto rounded-full bg-white p-2 hover:bg-slate-100"
+//                 className="pointer-events-auto rounded-full bg-popup p-2 hover:bg-btn-hover-bg"
 //               >
-//                 <X className="h-4 w-4 text-slate-700" />
+//                 <X className="h-4 w-4 text-heading/80" />
 //               </button>
 //             </div>
 //           )}
@@ -1467,7 +1467,7 @@
 //             step={0.05}
 //             value={zoom}
 //             onChange={(e) => handleZoomSlider(parseFloat(e.target.value))}
-//             className="w-36 accent-slate-600"
+//             className="w-36 accent-[#4a3728]"
 //           />
 //         )}
 
@@ -1486,7 +1486,7 @@
 //                   fullName: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="Hemendra Gour"
 //           />
 //         </div>
@@ -1501,7 +1501,7 @@
 //                   title: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="Frontend Developer"
 //           />
 //         </div>
@@ -1517,7 +1517,7 @@
 //                   email: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="hemendra@gmail.com"
 //           />
 //         </div>
@@ -1533,7 +1533,7 @@
 //                   phone: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="+91 9876543210"
 //           />
 //         </div>
@@ -1548,7 +1548,7 @@
 //                   address: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="Bhopal, India"
 //           />
 //         </div>
@@ -1563,7 +1563,7 @@
 //                   linkedIn: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="https://linkedin.com/in/..."
 //           />
 //         </div>
@@ -1578,7 +1578,7 @@
 //                   github: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="https://github.com/..."
 //           />
 //         </div>
@@ -1594,7 +1594,7 @@
 //                   portfolio: e.target.value,
 //                 }),
 //             })}
-//             className="mt-2 h-12 w-full rounded-lg border px-4"
+//             className="mt-2 h-12 w-full rounded-lg border border-border px-4"
 //             placeholder="https://portfolio.com"
 //           />
 //         </div>
@@ -1804,7 +1804,7 @@ export default function PersonalInfoSection() {
             ref={containerRef}
             onMouseDown={handleMouseDown}
             onWheel={handleWheel}
-            className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-slate-300 bg-slate-100"
+            className="h-36 w-36 select-none overflow-hidden rounded-full border-2 border-dashed border-border bg-btn-hover-bg"
             style={{ cursor: photoPreview ? "move" : "default" }}
           >
             {photoPreview ? (
@@ -1819,7 +1819,7 @@ export default function PersonalInfoSection() {
               />
             ) : (
               <label className="flex h-full w-full cursor-pointer items-center justify-center">
-                <span className="text-sm text-slate-500">Upload</span>
+                <span className="text-sm text-nav-text">Upload</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -1833,8 +1833,8 @@ export default function PersonalInfoSection() {
           {photoPreview && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
               {/* EDIT: reuses the same hidden input to replace the photo */}
-              <label className="pointer-events-auto cursor-pointer rounded-full bg-white p-2 hover:bg-slate-100">
-                <Pencil className="h-4 w-4 text-slate-700" />
+              <label className="pointer-events-auto cursor-pointer rounded-full bg-popup p-2 hover:bg-btn-hover-bg">
+                <Pencil className="h-4 w-4 text-heading/80" />
                 <input
                   type="file"
                   accept="image/*"
@@ -1847,9 +1847,9 @@ export default function PersonalInfoSection() {
               <button
                 type="button"
                 onClick={handleRemovePhoto}
-                className="pointer-events-auto rounded-full bg-white p-2 hover:bg-slate-100"
+                className="pointer-events-auto rounded-full bg-popup p-2 hover:bg-btn-hover-bg"
               >
-                <X className="h-4 w-4 text-slate-700" />
+                <X className="h-4 w-4 text-heading/80" />
               </button>
             </div>
           )}
@@ -1863,12 +1863,12 @@ export default function PersonalInfoSection() {
             step={0.05}
             value={zoom}
             onChange={(e) => handleZoomSlider(parseFloat(e.target.value))}
-            className="w-36 accent-slate-600"
+            className="w-36 accent-[#4a3728]"
           />
         )}
 
         {photoUploading && (
-          <p className="text-sm text-slate-500">Uploading photo…</p>
+          <p className="text-sm text-nav-text">Uploading photo…</p>
         )}
 
         {photoError && <p className="text-sm text-red-500">{photoError}</p>}
@@ -1886,7 +1886,7 @@ export default function PersonalInfoSection() {
                   fullName: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="Hemendra Gour"
           />
         </div>
@@ -1901,7 +1901,7 @@ export default function PersonalInfoSection() {
                   title: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="Frontend Developer"
           />
         </div>
@@ -1917,7 +1917,7 @@ export default function PersonalInfoSection() {
                   email: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="hemendra@gmail.com"
           />
         </div>
@@ -1933,7 +1933,7 @@ export default function PersonalInfoSection() {
                   phone: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="+91 9876543210"
           />
         </div>
@@ -1948,7 +1948,7 @@ export default function PersonalInfoSection() {
                   address: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="Bhopal, India"
           />
         </div>
@@ -1963,7 +1963,7 @@ export default function PersonalInfoSection() {
                   linkedIn: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="https://linkedin.com/in/..."
           />
         </div>
@@ -1978,7 +1978,7 @@ export default function PersonalInfoSection() {
                   github: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="https://github.com/..."
           />
         </div>
@@ -1994,7 +1994,7 @@ export default function PersonalInfoSection() {
                   portfolio: e.target.value,
                 }),
             })}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
             placeholder="https://portfolio.com"
           />
         </div>

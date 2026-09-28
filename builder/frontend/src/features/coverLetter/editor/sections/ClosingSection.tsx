@@ -12,8 +12,8 @@ export default function ClosingSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-dark">Sign Off</h3>
-        <p className="mt-1 mb-4 text-sm text-dark/60">
+        <h3 className="text-lg font-bold text-heading">Sign Off</h3>
+        <p className="mt-1 mb-4 text-sm text-heading/60">
           How you close the letter, followed by your name.
         </p>
       </div>

@@ -38,7 +38,7 @@ export default function CustomSection({ sectionId }: Props) {
         <div>
           <h2 className="text-2xl font-bold">{section.title}</h2>
 
-          <p className="text-gray-500">Add unlimited items.</p>
+          <p className="text-nav-text">Add unlimited items.</p>
         </div>
 
         <div className="flex gap-2">
@@ -51,7 +51,7 @@ export default function CustomSection({ sectionId }: Props) {
 
               renameCustomSection(section.id, title.trim());
             }}
-            className="rounded-lg border p-2 hover:bg-gray-100"
+            className="rounded-lg border border-border p-2 hover:bg-btn-hover-bg"
           >
             <Pencil size={18} />
           </button>
@@ -71,7 +71,7 @@ export default function CustomSection({ sectionId }: Props) {
           </button>
           <button
             onClick={() => addCustomSectionItem(section.id)}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white"
+            className="flex items-center gap-2 rounded-lg bg-btn px-4 py-2 text-btn-text"
           >
             <Plus size={18} />
             Add Item
@@ -81,7 +81,7 @@ export default function CustomSection({ sectionId }: Props) {
 
       {/* Items */}
       {section.items.length === 0 ? (
-        <div className="rounded-xl border-2 border-dashed p-10 text-center text-gray-500">
+        <div className="rounded-xl border-2 border-dashed p-10 text-center text-nav-text">
           No items added yet.
         </div>
       ) : (

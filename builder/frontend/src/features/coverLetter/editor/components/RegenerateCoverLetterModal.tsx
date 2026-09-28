@@ -133,7 +133,7 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
       <div className="space-y-5">
         {!creditsLoading && credits && (
           <div
-            className={`rounded-xl border p-3 text-sm ${
+            className={`rounded-xl border border-border p-3 text-sm ${
               outOfCredits
                 ? "border-red-200 bg-red-50 text-red-700"
                 : "border-emerald-200 bg-emerald-50 text-emerald-700"
@@ -157,7 +157,7 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
         )}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-heading/80">
             What should be regenerated?
           </label>
           <select
@@ -165,7 +165,7 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
             onChange={(e) =>
               setTarget(e.target.value as RegenerateCoverLetterTarget)
             }
-            className="h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+            className="h-12 w-full rounded-xl border border-border px-4 outline-none focus:border-border-strong"
           >
             <option value="full">Whole Letter</option>
             <option value="opening">Opening Paragraph</option>
@@ -179,14 +179,14 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-heading/80">
             What would you like different? (required)
           </label>
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="e.g. Make it shorter, sound less formal, focus more on leadership experience..."
-            className="w-full min-h-[100px] rounded-xl border border-slate-300 p-4 outline-none focus:border-blue-600 resize-y"
+            className="w-full min-h-[100px] rounded-xl border border-border p-4 outline-none focus:border-border-strong resize-y"
           />
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </div>

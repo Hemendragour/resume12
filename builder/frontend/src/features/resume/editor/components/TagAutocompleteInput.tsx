@@ -54,17 +54,17 @@ export default function TagAutocompleteInput({
 
   return (
     <div>
-      {/* <div className="mt-1.5 flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg border border-primary/15 bg-card px-3 py-2 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20">
+      {/* <div className="mt-1.5 flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg border border-border bg-navbar px-3 py-2 focus-within:border-border-strong focus-within:ring-2 focus-within:ring-ring">
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 rounded-md bg-accent/20 px-2 py-1 text-xs font-medium text-dark"
+            className="inline-flex items-center gap-1 rounded-md bg-btn-hover-bg px-2 py-1 text-xs font-medium text-heading"
           >
             {tag}
             <button
               type="button"
               onClick={() => removeTag(tag)}
-              className="text-dark/50 hover:text-danger"
+              className="text-heading/50 hover:text-red-600"
             >
               <X size={12} />
             </button>
@@ -76,29 +76,29 @@ export default function TagAutocompleteInput({
           onKeyDown={handleKeyDown}
           onBlur={() => commitTag(inputValue)}
           placeholder={tags.length ? "" : placeholder}
-          className="min-w-30 flex-1 bg-transparent text-sm text-dark outline-none"
+          className="min-w-30 flex-1 bg-transparent text-sm text-heading outline-none"
         />
       </div> */}
 
-      <div className="mt-1.5 flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg border border-primary/15 bg-card px-3 py-2 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20">
+      <div className="mt-1.5 flex min-h-11 w-full flex-wrap items-center gap-2 rounded-lg border border-border bg-navbar px-3 py-2 focus-within:border-border-strong focus-within:ring-2 focus-within:ring-ring">
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={() => commitTag(inputValue)}
           placeholder={placeholder}
-          className="min-w-40 flex-1 bg-transparent text-sm text-dark outline-none"
+          className="min-w-40 flex-1 bg-transparent text-sm text-heading outline-none"
         />
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 rounded-md bg-accent/20 px-2 py-1 text-xs font-medium text-dark"
+            className="inline-flex items-center gap-1 rounded-md bg-btn-hover-bg px-2 py-1 text-xs font-medium text-heading"
           >
             {tag}
             <button
               type="button"
               onClick={() => removeTag(tag)}
-              className="text-dark/50 hover:text-danger"
+              className="text-heading/50 hover:text-red-600"
             >
               <X size={12} />
             </button>
@@ -113,7 +113,7 @@ export default function TagAutocompleteInput({
               key={s}
               type="button"
               onClick={() => commitTag(s)}
-              className="rounded-full border border-primary/15 px-2.5 py-1 text-xs text-dark/70 transition hover:border-accent hover:text-dark"
+              className="rounded-full border border-border px-2.5 py-1 text-xs text-heading/70 transition hover:border-border-strong hover:text-heading"
             >
               + {s}
             </button>

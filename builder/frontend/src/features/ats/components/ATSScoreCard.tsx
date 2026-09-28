@@ -10,35 +10,35 @@ function getStatus(score: number) {
   if (score >= 90) {
     return {
       label: "Excellent",
-      textClass: "text-success",
-      barClass: "bg-success",
-      trackClass: "bg-success/15",
+      textClass: "text-green-700",
+      barClass: "bg-green-600",
+      trackClass: "bg-green-600/15",
     };
   }
 
   if (score >= 75) {
     return {
       label: "Good",
-      textClass: "text-primary",
-      barClass: "bg-accent",
-      trackClass: "bg-accent/15",
+      textClass: "text-subheading",
+      barClass: "bg-btn",
+      trackClass: "bg-btn-hover-bg",
     };
   }
 
   if (score >= 50) {
     return {
       label: "Needs Improvement",
-      textClass: "text-warning",
-      barClass: "bg-warning",
-      trackClass: "bg-warning/15",
+      textClass: "text-orange-600",
+      barClass: "bg-orange-500",
+      trackClass: "bg-orange-500/15",
     };
   }
 
   return {
     label: "Poor",
-    textClass: "text-danger",
-    barClass: "bg-danger",
-    trackClass: "bg-danger/15",
+    textClass: "text-red-600",
+    barClass: "bg-red-600",
+    trackClass: "bg-red-600/15",
   };
 }
 
@@ -48,32 +48,32 @@ export default function ATSScoreCard({ score, grade }: Props) {
   const status = getStatus(safeScore);
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-primary/10 bg-card p-5 shadow-sm">
+    <div className="w-full max-w-md rounded-2xl border border-border bg-navbar p-5 shadow-sm">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-primary/70">
+          <p className="text-sm font-medium text-nav-text">
             ATS Resume Score
           </p>
 
-          <p className="mt-1 text-xs text-primary/40">
+          <p className="mt-1 text-xs text-heading/40">
             Based on your latest ATS analysis
           </p>
         </div>
 
         {/* Grade */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/10 bg-background">
-          <span className="text-xl font-bold text-dark">{grade}</span>
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-navbar-hover">
+          <span className="text-xl font-bold text-heading">{grade}</span>
         </div>
       </div>
 
       {/* Score */}
       <div className="mt-6 flex items-end gap-2">
-        <span className="text-4xl font-bold tracking-tight text-dark">
+        <span className="text-4xl font-bold tracking-tight text-heading">
           {Math.round(safeScore)}
         </span>
 
-        <span className="mb-1 text-sm font-medium text-primary/40">/ 100</span>
+        <span className="mb-1 text-sm font-medium text-heading/40">/ 100</span>
       </div>
 
       {/* Status */}
@@ -98,7 +98,7 @@ export default function ATSScoreCard({ score, grade }: Props) {
       </div>
 
       {/* Scale */}
-      <div className="mt-3 flex justify-between text-[11px] text-primary/40">
+      <div className="mt-3 flex justify-between text-[11px] text-heading/40">
         <span>0</span>
         <span>50</span>
         <span>75</span>

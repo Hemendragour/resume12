@@ -42,7 +42,7 @@
 //         {strengths.map((strength, index) => (
 //           <div
 //             key={index}
-//             className="rounded-lg border p-4 space-y-3"
+//             className="rounded-lg border border-border p-4 space-y-3"
 //           >
 //             <Input
 //               label="Strength"
@@ -57,7 +57,7 @@
 //             />
 
 //             <textarea
-//               className="w-full rounded-lg border p-3 outline-none focus:border-blue-600"
+//               className="w-full rounded-lg border p-3 outline-none focus:border-border-strong"
 //               rows={3}
 //               placeholder="Describe your strength..."
 //               value={strength.description}
@@ -88,7 +88,7 @@
 //             description: "",
 //           })
 //         }
-//         className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+//         className="rounded-lg bg-btn px-4 py-2 text-btn-text hover:bg-btn-hover"
 //       >
 //         + Add Strength
 //       </button>
@@ -131,7 +131,7 @@ export default function StrengthsSection() {
         {strengths.map((strength, index) => (
           <div
             key={index}
-            className="rounded-lg border border-primary/10 bg-modal p-4 space-y-3"
+            className="rounded-lg border border-border bg-popup p-4 space-y-3"
           >
             <Input
               label="Strength"
@@ -146,7 +146,7 @@ export default function StrengthsSection() {
             />
 
             <textarea
-              className="w-full rounded-lg border border-primary/15 bg-card p-3 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full rounded-lg border border-border bg-navbar p-3 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
               rows={3}
               placeholder="Describe your strength..."
               value={strength.description}
@@ -161,7 +161,7 @@ export default function StrengthsSection() {
             <button
               type="button"
               onClick={() => deleteStrength(index)}
-              className="rounded-lg bg-danger px-4 py-2 text-white hover:opacity-90"
+              className="rounded-lg bg-red-600 px-4 py-2 text-white hover:opacity-90"
             >
               Delete
             </button>
@@ -177,7 +177,7 @@ export default function StrengthsSection() {
             description: "",
           })
         }
-        className="rounded-lg bg-primary px-4 py-2 text-white hover:bg-dark"
+        className="rounded-lg bg-btn px-4 py-2 text-btn-text hover:bg-btn-hover"
       >
         + Add Strength
       </button>

@@ -43,7 +43,7 @@ export default function ProjectsSection() {
             }
           />
 
-          <p className="text-gray-500">Showcase your best work.</p>
+          <p className="text-nav-text">Showcase your best work.</p>
         </div>
 
         <Button
@@ -61,11 +61,11 @@ export default function ProjectsSection() {
       {/* Empty State */}
       {resume?.projects.length === 0 && !showForm && (
         <div className="rounded-2xl border-2 border-dashed p-12 text-center">
-          <FolderGit2 size={44} className="mx-auto mb-4 text-slate-400" />
+          <FolderGit2 size={44} className="mx-auto mb-4 text-nav-text" />
 
           <h3 className="text-xl font-semibold">No Projects Added</h3>
 
-          <p className="mt-2 text-gray-500">Add your portfolio projects.</p>
+          <p className="mt-2 text-nav-text">Add your portfolio projects.</p>
         </div>
       )}
 
@@ -86,7 +86,7 @@ export default function ProjectsSection() {
               /* ============================= */
               /* PROJECT CARD */
               /* ============================= */
-              <div className="rounded-2xl border bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-border bg-popup p-6 shadow-sm">
                 <div className="flex items-start justify-between gap-6">
                   {/* Project Information */}
                   <div className="min-w-0 flex-1 space-y-2">
@@ -95,13 +95,13 @@ export default function ProjectsSection() {
 
                     {/* Role */}
                     {project.role && (
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-sm font-medium text-heading/80">
                         {project.role}
                       </p>
                     )}
 
                     {/* Description */}
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-gray-700">
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-heading/80">
                       {project.description
 
                         .filter((line) => line.trim() !== "")
@@ -116,7 +116,7 @@ export default function ProjectsSection() {
                         {project.technologies.map((tech) => (
                           <span
                             key={tech}
-                            className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+                            className="rounded-full bg-btn-hover-bg px-3 py-1 text-sm text-subheading"
                           >
                             {tech}
                           </span>
@@ -128,7 +128,7 @@ export default function ProjectsSection() {
                     {(project.startDate ||
                       project.endDate ||
                       project.currentlyWorking) && (
-                      <div className="pt-2 text-sm text-gray-500">
+                      <div className="pt-2 text-sm text-nav-text">
                         {project.startDate && <span>{project.startDate}</span>}
 
                         {project.startDate &&
@@ -152,7 +152,7 @@ export default function ProjectsSection() {
                             href={project.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="font-medium text-blue-600 hover:underline"
+                            className="font-medium text-subheading hover:underline"
                           >
                             Live Demo
                           </a>
@@ -163,7 +163,7 @@ export default function ProjectsSection() {
                             href={project.github}
                             target="_blank"
                             rel="noreferrer"
-                            className="font-medium text-blue-600 hover:underline"
+                            className="font-medium text-subheading hover:underline"
                           >
                             GitHub
                           </a>

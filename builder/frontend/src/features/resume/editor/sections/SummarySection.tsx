@@ -166,7 +166,7 @@ export default function SummarySection() {
               type="button"
               onClick={handleGenerateClick}
               disabled={isPending || !resume?._id}
-              className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-violet-600 px-3 py-2 text-sm text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+              className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-btn px-3 py-2 text-sm text-btn-text transition-colors hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
             >
               <Sparkles size={18} />
 
@@ -186,24 +186,24 @@ export default function SummarySection() {
           {...register("summary")}
           rows={8}
           placeholder="Write a short professional summary..."
-          className="box-border min-h-[180px] w-full min-w-0 resize-y rounded-xl border p-3 text-sm outline-none transition-colors focus:border-blue-600 sm:p-4 sm:text-base"
+          className="box-border min-h-[180px] w-full min-w-0 resize-y rounded-xl border p-3 text-sm outline-none transition-colors focus:border-border-strong sm:p-4 sm:text-base"
           onBlur={handleBlur}
         />
       </div>
 
       {/* Tip */}
-      <p className="text-sm leading-5 text-slate-500">
+      <p className="text-sm leading-5 text-nav-text">
         💡 Tip: Write 3–5 lines highlighting your experience, skills and career
         goals.
       </p>
 
       {/* Confirm Dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl sm:p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-popup p-5 shadow-xl sm:p-6">
             <h3 className="text-lg font-bold">Resume looks a bit empty</h3>
 
-            <p className="mt-2 text-sm leading-5 text-slate-600">
+            <p className="mt-2 text-sm leading-5 text-heading/80">
               Add Experience, Skills, Projects, Education, Certifications, or
               Achievements to help AI generate a stronger, ATS-friendly summary.
               You can regenerate it anytime.
@@ -213,7 +213,7 @@ export default function SummarySection() {
               <button
                 type="button"
                 onClick={() => setShowConfirm(false)}
-                className="w-full rounded-lg border px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-50 sm:w-auto"
+                className="w-full rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-navbar sm:w-auto"
               >
                 Go Fill Sections
               </button>
@@ -224,7 +224,7 @@ export default function SummarySection() {
                   setShowConfirm(false);
                   runGenerate();
                 }}
-                className="w-full rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700 sm:w-auto"
+                className="w-full rounded-lg bg-btn px-4 py-2 text-sm font-medium text-btn-text transition-colors hover:bg-btn-hover sm:w-auto"
               >
                 Generate Anyway
               </button>

@@ -104,9 +104,9 @@ export default function EducationForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-4 sm:p-6"
+      className="space-y-6 rounded-2xl border border-border bg-popup p-4 sm:p-6"
     >
-      <h2 className="text-2xl font-bold text-dark">
+      <h2 className="text-2xl font-bold text-heading">
         {editIndex !== undefined ? "Edit Education" : "Add Education"}
       </h2>
 
@@ -114,32 +114,32 @@ export default function EducationForm({
         <input
           {...register("institution")}
           placeholder="College / University"
-          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         <input
           {...register("location")}
           placeholder="Location (e.g. Hyderabad, India)"
-          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         <input
           {...register("degree")}
           placeholder="Degree (e.g. B.E., B.Tech)"
-          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         <input
           {...register("fieldOfStudy")}
           placeholder="Field of Study (e.g. Computer Science)"
-          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {/* Start date */}
         <div className="flex gap-2">
           <select
             {...register("startMonth")}
-            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent"
+            className="h-12 w-1/2 rounded-lg border border-border bg-navbar px-2 text-heading outline-none focus:border-border-strong"
           >
             {MONTHS.map((m) => (
               <option key={m} value={m}>
@@ -152,7 +152,7 @@ export default function EducationForm({
             type="number"
             {...register("startYear", { valueAsNumber: true })}
             placeholder="Start Year"
-            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="h-12 w-1/2 rounded-lg border border-border bg-navbar px-2 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
         </div>
 
@@ -161,7 +161,7 @@ export default function EducationForm({
           <select
             {...register("endMonth")}
             disabled={isCurrent}
-            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent disabled:bg-background"
+            className="h-12 w-1/2 rounded-lg border border-border bg-navbar px-2 text-heading outline-none focus:border-border-strong disabled:bg-navbar-hover"
           >
             {MONTHS.map((m) => (
               <option key={m} value={m}>
@@ -175,17 +175,17 @@ export default function EducationForm({
             {...register("endYear", { valueAsNumber: true })}
             disabled={isCurrent}
             placeholder="End Year"
-            className="h-12 w-1/2 rounded-lg border border-primary/15 bg-card px-2 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:bg-background"
+            className="h-12 w-1/2 rounded-lg border border-border bg-navbar px-2 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring disabled:bg-navbar-hover"
           />
         </div>
 
         <input
           {...register("cgpa")}
           placeholder="CGPA / GPA (e.g. 7.96/10)"
-          className="h-12 rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
-        <label className="flex items-center gap-2 text-sm text-primary/70">
+        <label className="flex items-center gap-2 text-sm text-nav-text">
           <input type="checkbox" {...register("current")} />
           Currently studying here
         </label>
@@ -193,14 +193,14 @@ export default function EducationForm({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-dark">
+          <label className="text-sm font-medium text-heading">
             Relevant Coursework
           </label>
           <button
             type="button"
             onClick={handleGenerateCoursework}
             disabled={isGeneratingCoursework}
-            className="rounded-lg bg-accent px-3 py-1.5 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-lg bg-btn px-3 py-1.5 text-btn-text text-sm flex items-center gap-2 hover:bg-btn-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isGeneratingCoursework ? "Generating..." : "✨ Generate with AI"}
           </button>
@@ -208,7 +208,7 @@ export default function EducationForm({
         <textarea
           {...register("coursework")}
           placeholder="Relevant Coursework (comma-separated, e.g. OOP, DBMS, DSA, Machine Learning)"
-          className="min-h-[80px] w-full rounded-lg border border-primary/15 bg-card px-4 py-3 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="min-h-[80px] w-full rounded-lg border border-border bg-navbar px-4 py-3 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
       </div>
 

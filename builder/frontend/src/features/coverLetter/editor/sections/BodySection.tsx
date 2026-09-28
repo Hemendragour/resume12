@@ -3,7 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useCoverLetterStore } from "../../../../store/coverLetter.store";
 
 const textareaClass =
-  "w-full rounded-xl border border-slate-300 p-4 outline-none focus:border-blue-600 resize-y min-h-[120px]";
+  "w-full rounded-xl border border-border p-4 outline-none focus:border-border-strong resize-y min-h-[120px]";
 
 export default function BodySection() {
   const coverLetter = useCoverLetterStore((state) => state.coverLetter);
@@ -19,8 +19,8 @@ export default function BodySection() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-bold text-dark">Opening Paragraph</h3>
-        <p className="mt-1 mb-3 text-sm text-dark/60">
+        <h3 className="text-lg font-bold text-heading">Opening Paragraph</h3>
+        <p className="mt-1 mb-3 text-sm text-heading/60">
           Who you are, the role you're applying for, and a hook.
         </p>
         <textarea
@@ -34,8 +34,8 @@ export default function BodySection() {
       <div>
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-bold text-dark">Body Paragraphs</h3>
-            <p className="mt-1 text-sm text-dark/60">
+            <h3 className="text-lg font-bold text-heading">Body Paragraphs</h3>
+            <p className="mt-1 text-sm text-heading/60">
               Your relevant experience, projects, and why you're a fit.
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function BodySection() {
           <button
             type="button"
             onClick={addParagraph}
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-dark"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-btn px-4 py-2 text-sm font-semibold text-btn-text transition hover:bg-btn-hover"
           >
             <Plus size={16} />
             Add Paragraph
@@ -52,7 +52,7 @@ export default function BodySection() {
 
         <div className="space-y-4">
           {body.paragraphs.length === 0 && (
-            <p className="text-sm text-dark/50 italic">
+            <p className="text-sm text-heading/50 italic">
               No paragraphs yet — click "Add Paragraph" to start writing.
             </p>
           )}
@@ -68,7 +68,7 @@ export default function BodySection() {
               <button
                 type="button"
                 onClick={() => removeParagraph(index)}
-                className="absolute right-3 top-3 rounded-lg bg-white/90 p-1.5 text-red-500 shadow hover:bg-red-50"
+                className="absolute right-3 top-3 rounded-lg bg-popup/90 p-1.5 text-red-500 shadow hover:bg-red-50"
                 title="Remove paragraph"
               >
                 <Trash2 size={16} />
@@ -79,8 +79,8 @@ export default function BodySection() {
       </div>
 
       <div>
-        <h3 className="text-lg font-bold text-dark">Closing Paragraph</h3>
-        <p className="mt-1 mb-3 text-sm text-dark/60">
+        <h3 className="text-lg font-bold text-heading">Closing Paragraph</h3>
+        <p className="mt-1 mb-3 text-sm text-heading/60">
           A call to action and thanks for their time.
         </p>
         <textarea

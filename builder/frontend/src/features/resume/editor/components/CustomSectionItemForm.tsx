@@ -78,7 +78,7 @@ export default function CustomSectionItemForm({
     (state) => state.deleteCustomSectionItem,
   );
   return (
-    <div className="space-y-4 rounded-xl border border-primary/10 bg-modal p-5">
+    <div className="space-y-4 rounded-xl border border-border bg-popup p-5">
       <Input
         label={config.fields.title}
         placeholder={config.fields.title}
@@ -104,7 +104,7 @@ export default function CustomSectionItemForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="font-medium text-dark">
+          <label className="font-medium text-heading">
             {config.fields.startDate}
           </label>
           <MonthYearPicker
@@ -117,7 +117,7 @@ export default function CustomSectionItemForm({
         </div>
 
         <div>
-          <label className="font-medium text-dark">
+          <label className="font-medium text-heading">
             {config.fields.endDate}
           </label>
           <MonthYearPicker
@@ -132,14 +132,14 @@ export default function CustomSectionItemForm({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-dark">
+          <label className="text-sm font-medium text-heading">
             {config.fields.description}
           </label>
           <button
             type="button"
             onClick={handleGenerateClick}
             disabled={isGenerating}
-            className="rounded-lg bg-accent px-3 py-1.5 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-lg bg-btn px-3 py-1.5 text-btn-text text-sm flex items-center gap-2 hover:bg-btn-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isGenerating ? "Generating..." : "✨ Generate with AI"}
           </button>
@@ -162,7 +162,7 @@ export default function CustomSectionItemForm({
         <button
           type="button"
           onClick={() => deleteCustomSectionItem(sectionId, item.id)}
-          className="flex items-center gap-2 rounded-lg bg-danger px-4 py-2 text-white hover:opacity-90"
+          className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white hover:opacity-90"
         >
           <Trash2 size={18} />
           Delete Item

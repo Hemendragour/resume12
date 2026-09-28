@@ -56,7 +56,7 @@ export default function SettingsSection() {
           Resume Settings
         </h2>
 
-        <p className="text-gray-500">
+        <p className="text-nav-text">
           Manage your resume configuration.
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function SettingsSection() {
 
           <input
             {...register("title")}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
           />
         </div>
 
@@ -80,7 +80,7 @@ export default function SettingsSection() {
 
           <input
             {...register("targetRole")}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
           />
         </div>
 
@@ -91,7 +91,7 @@ export default function SettingsSection() {
 
           <select
             {...register("templateId")}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
           >
             <option value="technical-developer">
               Technical Developer
@@ -118,7 +118,7 @@ export default function SettingsSection() {
 
           <select
             {...register("status")}
-            className="mt-2 h-12 w-full rounded-lg border px-4"
+            className="mt-2 h-12 w-full rounded-lg border border-border px-4"
           >
             <option value="draft">
               Draft

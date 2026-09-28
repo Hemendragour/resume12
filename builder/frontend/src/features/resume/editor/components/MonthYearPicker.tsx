@@ -70,28 +70,28 @@ export default function MonthYearPicker({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen((v) => !v)}
-        className="mt-1.5 flex h-11 w-full items-center justify-between rounded-lg border border-primary/15 bg-card px-4 text-left text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-1.5 flex h-11 w-full items-center justify-between rounded-lg border border-border bg-navbar px-4 text-left text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <span className={value ? "text-dark" : "text-dark/40"}>{label}</span>
-        <Calendar size={16} className="text-dark/40" />
+        <span className={value ? "text-heading" : "text-heading/40"}>{label}</span>
+        <Calendar size={16} className="text-heading/40" />
       </button>
 
       {isOpen && !disabled && (
-        <div className="absolute z-20 mt-2 w-64 rounded-xl border border-primary/15 bg-modal p-3 shadow-lg">
+        <div className="absolute z-20 mt-2 w-64 rounded-xl border border-border bg-popup p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
             <button
               type="button"
               onClick={() => setViewYear((y) => y - 1)}
-              className="rounded-lg p-1.5 text-dark/60 hover:bg-card"
+              className="rounded-lg p-1.5 text-heading/60 hover:bg-navbar"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="text-sm font-semibold text-dark">{viewYear}</span>
+            <span className="text-sm font-semibold text-heading">{viewYear}</span>
             <button
               type="button"
               onClick={() => setViewYear((y) => Math.min(y + 1, yearCap))}
               disabled={viewYear >= yearCap}
-              className="rounded-lg p-1.5 text-dark/60 hover:bg-card disabled:cursor-not-allowed disabled:opacity-30"
+              className="rounded-lg p-1.5 text-heading/60 hover:bg-navbar disabled:cursor-not-allowed disabled:opacity-30"
             >
               <ChevronRight size={16} />
             </button>
@@ -117,8 +117,8 @@ export default function MonthYearPicker({
                   }}
                   className={`rounded-lg px-2 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-30 ${
                     isSelected
-                      ? "bg-accent text-dark"
-                      : "text-dark/70 hover:bg-card"
+                      ? "bg-btn text-btn-text"
+                      : "text-heading/70 hover:bg-navbar"
                   }`}
                 >
                   {m}
@@ -134,7 +134,7 @@ export default function MonthYearPicker({
                 onChange("");
                 setIsOpen(false);
               }}
-              className="mt-2 w-full rounded-lg py-1.5 text-xs font-medium text-dark/50 hover:bg-card"
+              className="mt-2 w-full rounded-lg py-1.5 text-xs font-medium text-heading/50 hover:bg-navbar"
             >
               Clear
             </button>

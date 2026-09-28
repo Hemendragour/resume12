@@ -30,13 +30,13 @@ export default function SectionNavList({
         />
 
         {/* Utility section nav */}
-        <div className="mt-4 border-t border-primary/10 pt-3 space-y-0.5">
+        <div className="mt-4 border-t border-heading/15 pt-3 space-y-0.5">
           <button
             onClick={() => onSectionChange("templates")}
             className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
               activeSection === "templates"
-                ? "bg-primary text-white shadow-sm"
-                : "text-dark/70 hover:bg-card hover:text-dark"
+                ? "bg-btn text-btn-text shadow-sm"
+                : "text-heading hover:bg-navbar/60"
             }`}
           >
             <LayoutTemplate size={15} className="shrink-0" />
@@ -47,8 +47,8 @@ export default function SectionNavList({
             onClick={() => onSectionChange("settings")}
             className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
               activeSection === "settings"
-                ? "bg-primary text-white shadow-sm"
-                : "text-dark/70 hover:bg-card hover:text-dark"
+                ? "bg-btn text-btn-text shadow-sm"
+                : "text-heading hover:bg-navbar/60"
             }`}
           >
             <Settings size={15} className="shrink-0" />
@@ -58,10 +58,10 @@ export default function SectionNavList({
       </div>
 
       {/* Add section button */}
-      <div className="shrink-0 px-3 py-3 border-t border-primary/10 bg-modal">
+      <div className="shrink-0 px-3 py-3 border-t border-heading/15 bg-section-panel">
         <button
           onClick={() => setOpenAddSectionModal(true)}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-accent/60 py-2 text-xs font-semibold text-primary/70 transition hover:border-accent hover:bg-accent/10 hover:text-dark"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-heading/40 py-2 text-xs font-semibold text-heading transition hover:border-heading hover:bg-navbar/60"
         >
           <Plus size={14} />
           Add Section

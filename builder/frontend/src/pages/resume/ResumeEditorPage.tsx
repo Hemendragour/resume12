@@ -126,11 +126,11 @@ export default function ResumeEditorPage() {
     return (
       <div className="flex h-full flex-col">
         {/* Minimal header skeleton */}
-        <div className="h-14 border-b border-primary/10 bg-modal" />
+        <div className="h-14 border-b border-border-navbar bg-navbar" />
         <div className="flex flex-1 items-center justify-center bg-background">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 size={28} className="animate-spin text-primary/50" />
-            <p className="text-sm font-medium text-dark/50">
+            <Loader2 size={28} className="animate-spin text-heading/50" />
+            <p className="text-sm font-medium text-heading/50">
               Loading your resume…
             </p>
           </div>
@@ -166,14 +166,14 @@ export default function ResumeEditorPage() {
       {/* ── Edit / Preview toggle — mobile only (<768px); from md up
           the form and preview are always shown together ── */}
       {!showQuickGenerate && (
-        <div className="flex md:hidden items-center gap-1 border-b border-primary/10 bg-modal px-2 xs:px-3 py-1.5 xs:py-2">
+        <div className="flex md:hidden items-center gap-1 border-b border-border-navbar bg-navbar px-2 xs:px-3 py-1.5 xs:py-2">
           <button
             type="button"
             onClick={() => setMobileTab("edit")}
             className={`flex-1 rounded-lg px-2 xs:px-3 py-1 xs:py-1.5 text-xs xs:text-sm font-semibold transition ${
               mobileTab === "edit"
-                ? "bg-primary text-white shadow-sm"
-                : "text-dark/60 hover:bg-card"
+                ? "bg-btn text-btn-text shadow-sm"
+                : "text-heading/60 hover:bg-navbar"
             }`}
           >
             Edit
@@ -183,8 +183,8 @@ export default function ResumeEditorPage() {
             onClick={() => setMobileTab("preview")}
             className={`flex-1 rounded-lg px-2 xs:px-3 py-1 xs:py-1.5 text-xs xs:text-sm font-semibold transition ${
               mobileTab === "preview"
-                ? "bg-primary text-white shadow-sm"
-                : "text-dark/60 hover:bg-card"
+                ? "bg-btn text-btn-text shadow-sm"
+                : "text-heading/60 hover:bg-navbar"
             }`}
           >
             Preview
@@ -223,7 +223,7 @@ export default function ResumeEditorPage() {
             <button
               type="button"
               onClick={() => setIsEditorSidebarOpen(true)}
-              className="hidden md:flex xl:hidden absolute left-0 top-0 z-10 h-11 w-10 items-center justify-center rounded-br-lg border border-l-0 border-t-0 border-primary/30 bg-dark text-white shadow-md transition hover:bg-primary"
+              className="hidden md:flex xl:hidden absolute left-0 top-0 z-10 h-11 w-10 items-center justify-center rounded-br-lg border border-l-0 border-t-0 border-border bg-btn text-btn-text shadow-md transition hover:bg-btn-hover"
               aria-label="Show sections"
               title="Show sections"
             >
@@ -248,15 +248,15 @@ export default function ResumeEditorPage() {
                 shown below 768px; from md up the sections sidebar
                 (EditorSidebar) is used instead. */}
             {showMobileSectionList && (
-              <div className="md:hidden flex h-full flex-col bg-modal">
-                <div className="flex shrink-0 items-center justify-between border-b border-primary/10 px-4 py-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-primary/50">
+              <div className="md:hidden flex h-full flex-col bg-section-panel">
+                <div className="flex shrink-0 items-center justify-between border-b border-heading/15 px-4 py-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-heading/70">
                     Sections
                   </p>
                   <button
                     type="button"
                     onClick={() => setShowMobileSectionList(false)}
-                    className="text-sm font-semibold text-primary hover:text-dark"
+                    className="text-sm font-semibold text-subheading hover:text-heading"
                   >
                     Done
                   </button>
@@ -281,26 +281,26 @@ export default function ResumeEditorPage() {
               <button
                 type="button"
                 onClick={() => setShowMobileSectionList(true)}
-                className="md:hidden mb-2 xs:mb-3 flex w-full items-center justify-between rounded-lg border border-primary/15 bg-modal px-2.5 xs:px-3 py-1.5 xs:py-2 text-xs xs:text-sm font-medium text-dark transition hover:border-primary/30 shrink-0"
+                className="md:hidden mb-2 xs:mb-3 flex w-full items-center justify-between rounded-lg border border-border bg-navbar px-2.5 xs:px-3 py-1.5 xs:py-2 text-xs xs:text-sm font-medium text-heading transition hover:border-border shrink-0"
               >
                 <span className="flex items-center gap-2 truncate">
-                  <List size={15} className="shrink-0 text-primary/50" />
+                  <List size={15} className="shrink-0 text-heading/50" />
                   <span className="truncate text-[11px] xs:text-xs">
                     {activeSectionLabel}
                   </span>
                 </span>
-                <ChevronRight size={14} className="shrink-0 text-primary/40" />
+                <ChevronRight size={14} className="shrink-0 text-heading/40" />
               </button>
 
-              <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-primary/10 bg-modal p-2.5 xs:p-3 sm:p-4">
+              <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-border bg-popup p-2.5 xs:p-3 sm:p-4">
                 {isGenerating ? (
                   <GenerateResumeLoader />
                 ) : (
                   <>
-                    <h2 className="mb-1 text-base xs:text-lg sm:text-xl font-bold text-dark">
+                    <h2 className="mb-1 text-base xs:text-lg sm:text-xl font-bold text-heading">
                       {activeSectionLabel}
                     </h2>
-                    <p className="mb-4 xs:mb-5 sm:mb-6 text-[11px] xs:text-xs sm:text-sm text-dark/50">
+                    <p className="mb-4 xs:mb-5 sm:mb-6 text-[11px] xs:text-xs sm:text-sm text-heading/50">
                       Fill this section of your resume.
                     </p>
                     <DynamicEditorRenderer activeSection={activeSection} />

@@ -65,7 +65,7 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
   return (
     <>
     <aside
-      className={`flex h-full flex-col w-full md:w-[360px] lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-[#f0ece7] md:border-l border-slate-200/60 ${
+      className={`flex h-full flex-col w-full md:w-[360px] lg:w-[360px] xl:w-[420px] 2xl:w-[500px] bg-background md:border-l border-border ${
         mobileVisible
           ? "static opacity-100 pointer-events-auto"
           : "absolute inset-0 -z-10 opacity-0 pointer-events-none"
@@ -73,12 +73,12 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
       style={{ minWidth: 0 }}
     >
       {/* ── Header ────────────────────────────────────── */}
-      <div className="shrink-0 h-14 bg-modal border-b border-primary/10 px-4 flex items-center justify-between">
-        <h2 className="text-sm font-bold text-dark">Live Preview</h2>
-        <div className="flex items-center gap-2 text-xs text-primary/50">
+      <div className="shrink-0 h-14 bg-navbar border-b border-border-navbar px-4 flex items-center justify-between">
+        <h2 className="text-sm font-bold text-heading">Live Preview</h2>
+        <div className="flex items-center gap-2 text-xs text-heading/50">
           <span>A4</span>
-          <span className="h-3 w-px bg-primary/20" />
-          <span className="font-medium text-success">
+          <span className="h-3 w-px bg-btn/20" />
+          <span className="font-medium text-green-700">
             {Math.round(scale * 100)}%
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
             {/* Visual-only A4 page. Not used for export — see
                 #cover-letter-export below. */}
             <div
-              className="relative overflow-hidden bg-white shadow-xl"
+              className="relative overflow-hidden bg-popup shadow-xl"
               style={{
                 width: `${A4_WIDTH_PX}px`,
                 height: `${A4_HEIGHT_PX}px`,
@@ -132,9 +132,9 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
       </div>
 
       {/* ── Footer ────────────────────────────────────── */}
-      <div className="shrink-0 h-10 bg-modal border-t border-primary/10 px-4 flex items-center justify-between text-xs text-primary/50">
+      <div className="shrink-0 h-10 bg-navbar border-t border-border-navbar px-4 flex items-center justify-between text-xs text-heading/50">
         <span>A4 Live Preview</span>
-        <span className="font-medium text-success">Ready for Export</span>
+        <span className="font-medium text-green-700">Ready for Export</span>
       </div>
     </aside>
 
@@ -159,7 +159,7 @@ export default function CoverLetterPreviewPanel({ mobileVisible }: Props) {
     >
       <div
         id="cover-letter-export"
-        className="relative overflow-hidden bg-white"
+        className="relative overflow-hidden bg-popup"
         style={{
           width: `${A4_WIDTH_PX}px`,
           height: `${A4_HEIGHT_PX}px`,

@@ -51,7 +51,7 @@ export default function CoverLetterEditorSidebar({
           Never rendered at 1280px+, where the sidebar is pinned. */}
       {isOpen && (
         <div
-          className="hidden [@media(min-width:768px)_and_(max-width:1279px)]:block fixed inset-0 z-10 bg-dark/10"
+          className="hidden [@media(min-width:768px)_and_(max-width:1279px)]:block fixed inset-0 z-10 bg-btn/10"
           onClick={onCollapse}
           aria-hidden="true"
         />
@@ -59,7 +59,7 @@ export default function CoverLetterEditorSidebar({
 
       <aside
         className={`${isOpen ? "hidden md:flex xl:flex" : "hidden xl:flex"}
-          h-full w-64 bg-modal border-r border-primary/10 flex-col overflow-hidden
+          h-full w-64 bg-section-panel border-r border-heading/15 flex-col overflow-hidden
           [@media(min-width:768px)_and_(max-width:1279px)]:absolute
           [@media(min-width:768px)_and_(max-width:1279px)]:left-0
           [@media(min-width:768px)_and_(max-width:1279px)]:top-0
@@ -69,8 +69,8 @@ export default function CoverLetterEditorSidebar({
           xl:shrink-0 xl:static xl:shadow-none xl:z-auto`}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b border-primary/10 shrink-0 flex items-center justify-between gap-2">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-primary/50">
+        <div className="px-4 py-3 border-b border-heading/15 shrink-0 flex items-center justify-between gap-2">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-heading/70">
             Sections
           </p>
 
@@ -83,7 +83,7 @@ export default function CoverLetterEditorSidebar({
           <button
             type="button"
             onClick={onCollapse}
-            className="hidden md:flex xl:hidden shrink-0 h-6 w-6 items-center justify-center rounded-md text-primary/50 hover:bg-card hover:text-dark transition"
+            className="hidden md:flex xl:hidden shrink-0 h-6 w-6 items-center justify-center rounded-md text-heading/70 hover:bg-navbar hover:text-heading transition"
             aria-label="Hide sections"
             title="Hide sections"
           >
@@ -92,7 +92,7 @@ export default function CoverLetterEditorSidebar({
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto">
-          <nav className="flex flex-col divide-y divide-primary/10">
+          <nav className="flex flex-col divide-y divide-heading/10">
             {sections.map((section) => {
               const isActive = activeSection === section.id;
 
@@ -103,8 +103,8 @@ export default function CoverLetterEditorSidebar({
                   onClick={() => onSectionChange(section.id)}
                   className={`text-left px-4 py-3 text-sm font-medium transition ${
                     isActive
-                      ? "bg-primary/5 text-primary"
-                      : "text-dark/70 hover:bg-card/50"
+                      ? "bg-btn text-btn-text"
+                      : "text-heading hover:bg-navbar/60"
                   }`}
                 >
                   {section.label}

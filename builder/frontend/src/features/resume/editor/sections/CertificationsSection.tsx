@@ -62,7 +62,7 @@ export default function CertificationsSection() {
       <div>
         <h2 className="text-2xl font-bold">Certifications</h2>
 
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-nav-text">
           Press Enter or click Add to add a certification. Add a link if you
           want it to show up as a clickable, underlined link on your resume.
         </p>
@@ -86,7 +86,7 @@ export default function CertificationsSection() {
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="AWS Certified Cloud Practitioner"
-            className="h-12 flex-1 rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+            className="h-12 flex-1 rounded-xl border border-border px-4 outline-none focus:border-border-strong"
           />
 
           <Button
@@ -103,7 +103,7 @@ export default function CertificationsSection() {
           onChange={(e) => setLink(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Certificate link (optional) — e.g. https://coursera.org/verify/xxxx"
-          className="h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+          className="h-12 w-full rounded-xl border border-border px-4 outline-none focus:border-border-strong"
         />
       </div>
 
@@ -114,7 +114,7 @@ export default function CertificationsSection() {
             key={certification}
             type="button"
             onClick={() => removeCertification(certification)}
-            className="flex items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-yellow-700 transition hover:bg-yellow-200"
+            className="flex items-center gap-2 rounded-full bg-btn-hover-bg px-4 py-2 text-heading transition hover:bg-border-popup"
           >
             <Award size={16} />
 

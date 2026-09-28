@@ -167,46 +167,46 @@ export default function InternshipForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-primary/10 bg-modal p-8"
+      className="space-y-6 rounded-2xl border border-border bg-popup p-8"
     >
-      <h2 className="text-2xl font-bold text-dark">
+      <h2 className="text-2xl font-bold text-heading">
         {editIndex !== undefined ? "Edit Internship" : "Add Internship"}
       </h2>
 
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <label className="font-medium text-dark">Company</label>
+          <label className="font-medium text-heading">Company</label>
           <input
             {...register("company", {
               required: "Company is required",
               minLength: { value: 2, message: "Minimum 2 characters required" },
             })}
             placeholder="Throne8"
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
           {errors.company && (
-            <p className="mt-1 text-sm text-danger">{errors.company.message}</p>
+            <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
           )}
         </div>
 
         <div>
-          <label className="font-medium text-dark">Role</label>
+          <label className="font-medium text-heading">Role</label>
           <input
             {...register("role", {
               required: "Role is required",
               minLength: { value: 2, message: "Minimum 2 characters required" },
             })}
             placeholder="Software Development Intern"
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
           {errors.role && (
-            <p className="mt-1 text-sm text-danger">{errors.role.message}</p>
+            <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
           )}
         </div>
 
         {/* location added -------------*/}
         <div className="col-span-2">
-          <label className="font-medium text-dark">Location</label>
+          <label className="font-medium text-heading">Location</label>
 
           <input
             {...register("location", {
@@ -217,27 +217,27 @@ export default function InternshipForm({
               },
             })}
             placeholder="Bhopal.."
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
 
           {errors.location && (
-            <p className="mt-1 text-sm text-danger">
+            <p className="mt-1 text-sm text-red-600">
               {errors.location.message}
             </p>
           )}
         </div>
 
         {/* <div>
-          <label className="font-medium text-dark">Start Date</label>
+          <label className="font-medium text-heading">Start Date</label>
           <input
             type="month"
             {...register("startDate")}
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
         </div> */}
 
         <div>
-          <label className="font-medium text-dark">Start Date</label>
+          <label className="font-medium text-heading">Start Date</label>
 
           <Controller
             name="startDate"
@@ -254,22 +254,22 @@ export default function InternshipForm({
         </div>
 
         {/* <div>
-          <label className="font-medium text-dark">End Date</label>
+          <label className="font-medium text-heading">End Date</label>
           <input
             disabled={watch("currentlyInterning")}
             type="month"
             {...register("endDate")}
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:bg-background"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring disabled:bg-navbar-hover"
           />
           {watch("currentlyInterning") && (
-            <p className="mt-1 text-xs text-primary">
+            <p className="mt-1 text-xs text-subheading">
               Present will be shown on resume.
             </p>
           )}
         </div> */}
 
         <div>
-          <label className="font-medium text-dark">End Date</label>
+          <label className="font-medium text-heading">End Date</label>
 
           <Controller
             name="endDate"
@@ -286,14 +286,14 @@ export default function InternshipForm({
           />
 
           {watch("currentlyInterning") && (
-            <p className="mt-1 text-xs text-primary">
+            <p className="mt-1 text-xs text-subheading">
               Present will be shown on resume.
             </p>
           )}
         </div>
       </div>
 
-      <label className="flex items-center gap-3 text-dark">
+      <label className="flex items-center gap-3 text-heading">
         <input
           type="checkbox"
           {...register("currentlyInterning", {
@@ -309,12 +309,12 @@ export default function InternshipForm({
 
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-dark">Responsibilities</h3>
+          <h3 className="font-semibold text-heading">Responsibilities</h3>
           <button
             type="button"
             onClick={handleGenerateClick}
             disabled={isGenerating}
-            className="rounded-lg bg-accent px-4 py-2 text-dark text-sm flex items-center gap-2 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-lg bg-btn px-4 py-2 text-btn-text text-sm flex items-center gap-2 hover:bg-btn-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isGenerating ? "Generating..." : "✨ Generate with AI"}
           </button>
@@ -326,7 +326,7 @@ export default function InternshipForm({
               <input
                 {...register(`responsibilities.${index}.value`)}
                 placeholder="Assisted in building REST APIs for the resume builder"
-                className="flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="flex-1 rounded-lg border border-border bg-navbar px-4 h-11 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
               />
               <Button
                 type="button"
@@ -350,14 +350,14 @@ export default function InternshipForm({
       </div>
 
       <div>
-        <h3 className="font-semibold text-dark">Achievements</h3>
+        <h3 className="font-semibold text-heading">Achievements</h3>
         <div className="space-y-3 mt-3">
           {achievementFields.map((field, index) => (
             <div key={field.id} className="flex gap-3">
               <input
                 {...register(`achievements.${index}.value`)}
                 placeholder="Received a Letter of Recommendation for performance"
-                className="flex-1 rounded-lg border border-primary/15 bg-card px-4 h-11 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="flex-1 rounded-lg border border-border bg-navbar px-4 h-11 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
               />
               <Button
                 type="button"

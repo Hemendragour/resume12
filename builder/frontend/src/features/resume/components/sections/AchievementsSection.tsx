@@ -63,9 +63,9 @@
 //     <div className="space-y-6">
 //       {/* Header */}
 //       <div>
-//         <h2 className="text-xl font-semibold text-slate-900">Achievements</h2>
+//         <h2 className="text-xl font-semibold text-heading">Achievements</h2>
 
-//         <p className="mt-1 text-sm text-slate-500">
+//         <p className="mt-1 text-sm text-nav-text">
 //           Add your important achievements, accomplishments and milestones.
 //         </p>
 //       </div>
@@ -78,8 +78,8 @@
 //             className="
 //                 rounded-xl
 //                 border
-//                 border-slate-200
-//                 bg-white
+//                 border-border
+//                 bg-popup
 //                 p-4
 //               "
 //           >
@@ -96,12 +96,12 @@
 //                       resize-none
 //                       rounded-lg
 //                       border
-//                       border-slate-300
+//                       border-border
 //                       px-4
 //                       py-3
 //                       text-sm
 //                       outline-none
-//                       focus:border-blue-500
+//                       focus:border-border-strong
 //                       focus:ring-2
 //                       focus:ring-blue-100
 //                     "
@@ -117,12 +117,12 @@
 //                     className="
 //                         rounded-lg
 //                         border
-//                         border-slate-300
+//                         border-border
 //                         px-4
 //                         py-2
 //                         text-sm
-//                         text-slate-600
-//                         hover:bg-slate-50
+//                         text-heading/80
+//                         hover:bg-navbar
 //                       "
 //                   >
 //                     Cancel
@@ -136,13 +136,13 @@
 //                         items-center
 //                         gap-2
 //                         rounded-lg
-//                         bg-blue-600
+//                         bg-btn
 //                         px-4
 //                         py-2
 //                         text-sm
 //                         font-medium
 //                         text-white
-//                         hover:bg-blue-700
+//                         hover:bg-btn-hover
 //                       "
 //                   >
 //                     <FaCheck size={12} />
@@ -158,7 +158,7 @@
 //                     className="
 //                         text-sm
 //                         leading-6
-//                         text-slate-700
+//                         text-heading/80
 //                       "
 //                   >
 //                     {achievement}
@@ -175,7 +175,7 @@
 //                         px-3
 //                         py-2
 //                         text-sm
-//                         text-blue-600
+//                         text-subheading
 //                         hover:bg-blue-50
 //                       "
 //                   >
@@ -213,16 +213,16 @@
 //               rounded-xl
 //               border
 //               border-dashed
-//               border-slate-300
-//               bg-slate-50
+//               border-border
+//               bg-navbar
 //               px-6
 //               py-10
 //               text-center
 //             "
 //           >
-//             <p className="text-sm text-slate-500">No achievements added yet.</p>
+//             <p className="text-sm text-nav-text">No achievements added yet.</p>
 
-//             <p className="mt-1 text-xs text-slate-400">
+//             <p className="mt-1 text-xs text-nav-text">
 //               Add your first achievement below.
 //             </p>
 //           </div>
@@ -230,8 +230,8 @@
 //       </div>
 
 //       {/* Add Achievement */}
-//       <div className="rounded-xl border border-slate-200 bg-white p-4">
-//         <label className="mb-2 block text-sm font-medium text-slate-700">
+//       <div className="rounded-xl border border-border bg-popup p-4">
+//         <label className="mb-2 block text-sm font-medium text-heading/80">
 //           New Achievement
 //         </label>
 
@@ -245,12 +245,12 @@
 //             resize-none
 //             rounded-lg
 //             border
-//             border-slate-300
+//             border-border
 //             px-4
 //             py-3
 //             text-sm
 //             outline-none
-//             focus:border-blue-500
+//             focus:border-border-strong
 //             focus:ring-2
 //             focus:ring-blue-100
 //           "
@@ -266,14 +266,14 @@
 //               items-center
 //               gap-2
 //               rounded-lg
-//               bg-blue-600
+//               bg-btn
 //               px-4
 //               py-2.5
 //               text-sm
 //               font-medium
 //               text-white
 //               transition
-//               hover:bg-blue-700
+//               hover:bg-btn-hover
 //               disabled:cursor-not-allowed
 //               disabled:opacity-50
 //             "
@@ -354,9 +354,9 @@ export default function AchievementsSection() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-dark">Achievements</h2>
+        <h2 className="text-xl font-semibold text-heading">Achievements</h2>
 
-        <p className="mt-1 text-sm text-primary/70">
+        <p className="mt-1 text-sm text-nav-text">
           Add your important achievements, accomplishments and milestones.
         </p>
       </div>
@@ -369,8 +369,8 @@ export default function AchievementsSection() {
             className="
                 rounded-xl
                 border
-                border-primary/10
-                bg-modal
+                border-border
+                bg-popup
                 p-4
               "
           >
@@ -387,16 +387,16 @@ export default function AchievementsSection() {
                       resize-none
                       rounded-lg
                       border
-                      border-primary/15
-                      bg-card
+                      border-border
+                      bg-navbar
                       px-4
                       py-3
                       text-sm
-                      text-dark
+                      text-heading
                       outline-none
-                      focus:border-accent
+                      focus:border-border-strong
                       focus:ring-2
-                      focus:ring-accent/20
+                      focus:ring-ring
                     "
                 />
 
@@ -410,12 +410,12 @@ export default function AchievementsSection() {
                     className="
                         rounded-lg
                         border
-                        border-primary/15
+                        border-border
                         px-4
                         py-2
                         text-sm
-                        text-dark
-                        hover:bg-background
+                        text-heading
+                        hover:bg-navbar-hover
                       "
                   >
                     Cancel
@@ -429,13 +429,13 @@ export default function AchievementsSection() {
                         items-center
                         gap-2
                         rounded-lg
-                        bg-primary
+                        bg-btn
                         px-4
                         py-2
                         text-sm
                         font-medium
-                        text-white
-                        hover:bg-dark
+                        text-btn-text
+                        hover:bg-btn-hover
                       "
                   >
                     <FaCheck size={12} />
@@ -451,7 +451,7 @@ export default function AchievementsSection() {
                     className="
                         text-sm
                         leading-6
-                        text-dark
+                        text-heading
                       "
                   >
                     {achievement}
@@ -468,8 +468,8 @@ export default function AchievementsSection() {
                         px-3
                         py-2
                         text-sm
-                        text-primary
-                        hover:bg-accent/10
+                        text-subheading
+                        hover:bg-border-popup
                       "
                   >
                     Edit
@@ -486,8 +486,8 @@ export default function AchievementsSection() {
                         items-center
                         justify-center
                         rounded-lg
-                        text-danger
-                        hover:bg-danger/10
+                        text-red-600
+                        hover:bg-red-600/10
                       "
                     title="Delete achievement"
                   >
@@ -506,18 +506,18 @@ export default function AchievementsSection() {
               rounded-xl
               border
               border-dashed
-              border-primary/15
-              bg-background
+              border-border
+              bg-navbar-hover
               px-6
               py-10
               text-center
             "
           >
-            <p className="text-sm text-primary/70">
+            <p className="text-sm text-nav-text">
               No achievements added yet.
             </p>
 
-            <p className="mt-1 text-xs text-primary/40">
+            <p className="mt-1 text-xs text-heading/40">
               Add your first achievement below.
             </p>
           </div>
@@ -525,8 +525,8 @@ export default function AchievementsSection() {
       </div>
 
       {/* Add Achievement */}
-      <div className="rounded-xl border border-primary/10 bg-modal p-4">
-        <label className="mb-2 block text-sm font-medium text-dark">
+      <div className="rounded-xl border border-border bg-popup p-4">
+        <label className="mb-2 block text-sm font-medium text-heading">
           New Achievement
         </label>
 
@@ -540,16 +540,16 @@ export default function AchievementsSection() {
             resize-none
             rounded-lg
             border
-            border-primary/15
-            bg-card
+            border-border
+            bg-navbar
             px-4
             py-3
             text-sm
-            text-dark
+            text-heading
             outline-none
-            focus:border-accent
+            focus:border-border-strong
             focus:ring-2
-            focus:ring-accent/20
+            focus:ring-ring
           "
         />
 
@@ -563,14 +563,14 @@ export default function AchievementsSection() {
               items-center
               gap-2
               rounded-lg
-              bg-primary
+              bg-btn
               px-4
               py-2.5
               text-sm
               font-medium
-              text-white
+              text-btn-text
               transition
-              hover:bg-dark
+              hover:bg-btn-hover
               disabled:cursor-not-allowed
               disabled:opacity-50
             "

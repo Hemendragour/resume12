@@ -73,7 +73,7 @@ export default function DynamicEditorRenderer({ activeSection }: Props) {
   // Section not found
   if (!Component) {
     return (
-      <div className="py-10 text-center text-gray-500">Section not found</div>
+      <div className="py-10 text-center text-nav-text">Section not found</div>
     );
   }
 

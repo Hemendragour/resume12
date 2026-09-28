@@ -39,7 +39,7 @@ export default function AwardsSection() {
       <div>
         <h2 className="text-2xl font-bold">Awards</h2>
 
-        <p className="text-gray-500">
+        <p className="text-nav-text">
           Press Enter or click Add to add an award.
         </p>
       </div>
@@ -51,7 +51,7 @@ export default function AwardsSection() {
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Winner - Smart India Hackathon"
-          className="h-12 flex-1 rounded-xl border px-4 outline-none focus:border-blue-600"
+          className="h-12 flex-1 rounded-xl border px-4 outline-none focus:border-border-strong"
         />
 
         <Button
@@ -70,7 +70,7 @@ export default function AwardsSection() {
             key={award}
             type="button"
             onClick={() => removeAward(award)}
-            className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700"
+            className="flex items-center gap-2 rounded-full bg-btn-hover-bg px-4 py-2 text-heading"
           >
             {award}
             <X size={16} />

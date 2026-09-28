@@ -100,28 +100,28 @@ export default function ATSPanel({
       {/* backdrop */}
       <div
         onClick={onClose}
-        className={`fixed inset-0 z-40 bg-dark/40 transition-opacity ${
+        className={`fixed inset-0 z-40 bg-btn/40 transition-opacity ${
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
 
       {/* panel */}
       <aside
-        className={`fixed right-0 top-0 z-50 h-full w-full overflow-y-auto bg-modal shadow-2xl transition-transform duration-300 sm:w-1/2 sm:min-w-[480px] ${
+        className={`fixed right-0 top-0 z-50 h-full w-full overflow-y-auto bg-popup shadow-2xl transition-transform duration-300 sm:w-1/2 sm:min-w-[480px] ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Top sticky bar */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-primary/10 bg-modal/95 px-6 py-4 backdrop-blur-xs">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-popup/95 px-6 py-4 backdrop-blur-xs">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-accent" />
-            <h2 className="text-lg font-bold text-dark">
+            <Sparkles className="h-5 w-5 text-subheading" />
+            <h2 className="text-lg font-bold text-heading">
               ATS Scanner & Deep Dive
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-dark/60 hover:bg-card hover:text-dark transition"
+            className="rounded-lg p-2 text-heading/60 hover:bg-navbar hover:text-heading transition"
             aria-label="Close ATS Panel"
           >
             <X className="h-5 w-5" />
@@ -130,17 +130,17 @@ export default function ATSPanel({
 
         <div className="space-y-6 p-6">
           {/* Analysis Form Header Card */}
-          <div className="rounded-2xl border border-primary/10 bg-card p-5 shadow-sm space-y-4">
+          <div className="rounded-2xl border border-border bg-navbar p-5 shadow-sm space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-dark mb-1.5">
-                Target Role <span className="text-danger">*</span>
+              <label className="block text-xs font-bold uppercase tracking-wider text-heading mb-1.5">
+                Target Role <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
                 placeholder="e.g. Senior Frontend Engineer, Full Stack Developer..."
-                className="w-full rounded-xl border border-primary/10 bg-background px-4 py-2.5 text-sm text-dark placeholder:text-primary/40 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+                className="w-full rounded-xl border border-border bg-navbar-hover px-4 py-2.5 text-sm text-heading placeholder:text-heading/40 outline-none focus:border-border-strong focus:ring-2 focus:ring-ring transition"
               />
             </div>
 
@@ -149,10 +149,10 @@ export default function ATSPanel({
               onChange={setJobDescription}
             />
             {isResumeEmpty && (
-              <div className="rounded-xl border border-dashed border-primary/20 bg-background/60 p-4">
+              <div className="rounded-xl border border-dashed border-border bg-navbar-hover/60 p-4">
                 <label className="flex cursor-pointer flex-col items-center gap-2 text-center">
-                  <Upload className="h-5 w-5 text-primary/60" />
-                  <span className="text-xs font-semibold text-dark">
+                  <Upload className="h-5 w-5 text-heading/60" />
+                  <span className="text-xs font-semibold text-heading">
                     {isParsingUpload
                       ? "Parsing your resume..."
                       : "Upload a PDF to autofill this resume"}
@@ -166,7 +166,7 @@ export default function ATSPanel({
                   />
                 </label>
                 {uploadError && (
-                  <p className="mt-2 text-xs font-semibold text-danger">
+                  <p className="mt-2 text-xs font-semibold text-red-600">
                     {uploadError}
                   </p>
                 )}
@@ -176,7 +176,7 @@ export default function ATSPanel({
               type="button"
               onClick={handleAnalyze}
               disabled={!resumeId || !targetRole.trim() || isAnalyzingATS}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-5 py-3 text-sm font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
             >
               {isAnalyzingATS ? (
                 <>
@@ -192,13 +192,13 @@ export default function ATSPanel({
             </button>
 
             {isAnalyzeError && (
-              <p className="text-xs font-semibold text-danger">
+              <p className="text-xs font-semibold text-red-600">
                 ATS analysis failed to complete. Please check the backend
                 connection and try again.
               </p>
             )}
             {isAnalyzeSuccess && (
-              <p className="text-xs font-semibold text-success">
+              <p className="text-xs font-semibold text-green-700">
                 ATS analysis generated and up to date!
               </p>
             )}
@@ -218,14 +218,14 @@ export default function ATSPanel({
             ) : ats ? (
               <ATSResultsView result={ats} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-primary/20 bg-background/60 p-8 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <div className="rounded-2xl border border-dashed border-border bg-navbar-hover/60 p-8 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-btn-hover-bg text-subheading">
                   <Sparkles className="h-6 w-6" />
                 </div>
-                <h3 className="mt-3 text-sm font-bold text-dark">
+                <h3 className="mt-3 text-sm font-bold text-heading">
                   Ready to scan your resume
                 </h3>
-                <p className="mt-1 text-xs text-primary/60 max-w-sm mx-auto">
+                <p className="mt-1 text-xs text-heading/60 max-w-sm mx-auto">
                   Provide your target role above and optionally paste a job
                   description, then click "Run ATS Deep Scan" to receive scores,
                   deep-dive line fixes, and keyword matching.

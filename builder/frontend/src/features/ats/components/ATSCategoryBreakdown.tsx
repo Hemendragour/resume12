@@ -12,31 +12,31 @@ function getStatusBadge(status: ATSCategoryStatus) {
     case "excellent":
       return {
         label: "Excellent",
-        badgeClass: "bg-success/15 text-success border-success/30",
-        barClass: "bg-success",
-        trackClass: "bg-success/15",
+        badgeClass: "bg-green-600/15 text-green-700 border-green-600/30",
+        barClass: "bg-green-600",
+        trackClass: "bg-green-600/15",
       };
     case "good":
       return {
         label: "Good",
-        badgeClass: "bg-accent/20 text-dark border-accent/40",
-        barClass: "bg-accent",
-        trackClass: "bg-accent/15",
+        badgeClass: "bg-btn-hover-bg text-heading border-border",
+        barClass: "bg-btn",
+        trackClass: "bg-btn-hover-bg",
       };
     case "needs-improvement":
       return {
         label: "Needs Improvement",
-        badgeClass: "bg-warning/15 text-warning border-warning/30",
-        barClass: "bg-warning",
-        trackClass: "bg-warning/15",
+        badgeClass: "bg-orange-500/15 text-orange-600 border-orange-500/30",
+        barClass: "bg-orange-500",
+        trackClass: "bg-orange-500/15",
       };
     case "poor":
     default:
       return {
         label: "Poor",
-        badgeClass: "bg-danger/15 text-danger border-danger/30",
-        barClass: "bg-danger",
-        trackClass: "bg-danger/15",
+        badgeClass: "bg-red-600/15 text-red-600 border-red-500/30",
+        barClass: "bg-red-600",
+        trackClass: "bg-red-600/15",
       };
   }
 }
@@ -53,14 +53,14 @@ export default function ATSCategoryBreakdown({ categories, onCategorySelect }: P
   }, [categories]);
 
   return (
-    <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+    <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
       {/* Header */}
-      <div className="border-b border-primary/10 pb-4">
+      <div className="border-b border-border pb-4">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-5 w-5 text-accent" />
-          <h2 className="text-lg font-bold text-dark">Category Breakdown</h2>
+          <SlidersHorizontal className="h-5 w-5 text-subheading" />
+          <h2 className="text-lg font-bold text-heading">Category Breakdown</h2>
         </div>
-        <p className="mt-1 text-xs text-primary/70">
+        <p className="mt-1 text-xs text-nav-text">
           Score breakdown across essential ATS evaluation criteria. Tap a category to jump to its
           detailed review below.
         </p>
@@ -76,13 +76,13 @@ export default function ATSCategoryBreakdown({ categories, onCategorySelect }: P
               key={cat.category}
               type="button"
               onClick={() => onCategorySelect?.(cat.category)}
-              className="group w-full overflow-hidden rounded-xl border border-primary/10 bg-background p-4 text-left transition-all hover:border-accent/40 hover:bg-card/30"
+              className="group w-full overflow-hidden rounded-xl border border-border bg-navbar-hover p-4 text-left transition-all hover:border-border hover:bg-navbar/30"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-dark">{cat.title}</span>
+                  <span className="text-sm font-bold text-heading">{cat.title}</span>
                   <span
-                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${statusInfo.badgeClass}`}
+                    className={`inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-[11px] font-semibold ${statusInfo.badgeClass}`}
                   >
                     {statusInfo.label}
                   </span>
@@ -90,17 +90,17 @@ export default function ATSCategoryBreakdown({ categories, onCategorySelect }: P
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="text-sm font-bold text-dark">{cat.score}</span>
-                    <span className="text-xs font-medium text-primary/50">
+                    <span className="text-sm font-bold text-heading">{cat.score}</span>
+                    <span className="text-xs font-medium text-heading/50">
                       {" "}
                       / {cat.maxScore} pts
                     </span>
-                    <span className="ml-2 text-xs font-bold text-primary/70">
+                    <span className="ml-2 text-xs font-bold text-nav-text">
                       ({Math.round(cat.percentage)}%)
                     </span>
                   </div>
 
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-card text-primary/50 transition group-hover:bg-accent/20 group-hover:text-dark">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-navbar text-heading/50 transition group-hover:bg-border-popup group-hover:text-heading">
                     <ArrowUpRight className="h-4 w-4" />
                   </div>
                 </div>

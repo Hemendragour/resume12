@@ -42,35 +42,35 @@ function LoadingSkeleton() {
       aria-label="Loading ATS analysis"
     >
       {/* 1. Overall Score Skeleton */}
-      <div className="h-56 rounded-2xl bg-card/60 p-6 border border-primary/10">
-        <div className="flex justify-between items-center pb-4 border-b border-primary/10">
-          <div className="h-6 w-40 rounded-lg bg-primary/15" />
-          <div className="h-4 w-28 rounded-lg bg-primary/10" />
+      <div className="h-56 rounded-2xl bg-navbar/60 p-6 border border-border">
+        <div className="flex justify-between items-center pb-4 border-b border-border">
+          <div className="h-6 w-40 rounded-lg bg-btn/15" />
+          <div className="h-4 w-28 rounded-lg bg-btn-hover-bg" />
         </div>
         <div className="mt-6 flex items-center gap-6">
-          <div className="h-20 w-20 rounded-2xl bg-primary/20" />
+          <div className="h-20 w-20 rounded-2xl bg-btn/20" />
           <div className="space-y-2">
-            <div className="h-9 w-24 rounded-lg bg-primary/20" />
-            <div className="h-4 w-36 rounded-lg bg-primary/10" />
+            <div className="h-9 w-24 rounded-lg bg-btn/20" />
+            <div className="h-4 w-36 rounded-lg bg-btn-hover-bg" />
           </div>
         </div>
-        <div className="mt-6 h-3 w-full rounded-full bg-primary/15" />
+        <div className="mt-6 h-3 w-full rounded-full bg-btn/15" />
       </div>
 
       {/* 2. Category Breakdown Skeleton */}
-      <div className="h-64 rounded-2xl bg-card/60 p-6 border border-primary/10 space-y-3">
-        <div className="h-6 w-48 rounded-lg bg-primary/20" />
-        <div className="h-12 w-full rounded-xl bg-background/70" />
-        <div className="h-12 w-full rounded-xl bg-background/70" />
-        <div className="h-12 w-full rounded-xl bg-background/70" />
+      <div className="h-64 rounded-2xl bg-navbar/60 p-6 border border-border space-y-3">
+        <div className="h-6 w-48 rounded-lg bg-btn/20" />
+        <div className="h-12 w-full rounded-xl bg-navbar-hover/70" />
+        <div className="h-12 w-full rounded-xl bg-navbar-hover/70" />
+        <div className="h-12 w-full rounded-xl bg-navbar-hover/70" />
       </div>
 
       {/* 3. Keywords Skeleton */}
-      <div className="h-48 rounded-2xl bg-card/60 p-6 border border-primary/10 space-y-3">
-        <div className="h-6 w-44 rounded-lg bg-primary/20" />
+      <div className="h-48 rounded-2xl bg-navbar/60 p-6 border border-border space-y-3">
+        <div className="h-6 w-44 rounded-lg bg-btn/20" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div className="h-24 rounded-xl bg-background/70" />
-          <div className="h-24 rounded-xl bg-background/70" />
+          <div className="h-24 rounded-xl bg-navbar-hover/70" />
+          <div className="h-24 rounded-xl bg-navbar-hover/70" />
         </div>
       </div>
     </div>
@@ -110,21 +110,21 @@ export default function ATSResultsView({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border border-danger/30 bg-card p-8 text-center shadow-sm">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/15 text-danger">
+      <div className="rounded-2xl border border-red-500/30 bg-navbar p-8 text-center shadow-sm">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600/15 text-red-600">
           <AlertOctagon className="h-7 w-7" />
         </div>
-        <h3 className="mt-4 text-base font-bold text-dark">
+        <h3 className="mt-4 text-base font-bold text-heading">
           Analysis Unavailable
         </h3>
-        <p className="mt-1 text-xs text-primary/70 max-w-md mx-auto">
+        <p className="mt-1 text-xs text-nav-text max-w-md mx-auto">
           {errorMessage}
         </p>
         {onRetry && (
           <button
             type="button"
             onClick={onRetry}
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-dark transition"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-btn px-4 py-2 text-xs font-semibold text-btn-text hover:bg-btn-hover transition"
           >
             <RotateCw className="h-3.5 w-3.5" />
             <span>Try Again</span>

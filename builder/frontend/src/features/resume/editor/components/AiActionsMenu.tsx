@@ -95,7 +95,7 @@ export default function AiActionsMenu({
         type="button"
         onClick={toggleOpen}
         disabled={disabledAll}
-        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent/20 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-dark transition hover:bg-accent/40 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-btn-hover-bg border border-border px-3 py-1.5 text-xs font-semibold text-heading transition hover:bg-border-popup disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Sparkles size={13} />
         AI Tools
@@ -111,7 +111,7 @@ export default function AiActionsMenu({
           <div
             ref={menuRef}
             style={{ position: "fixed", top: menuPos.top, right: menuPos.right }}
-            className="z-50 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-1.5"
+            className="z-50 w-48 rounded-lg border border-border bg-navbar shadow-lg py-1.5"
           >
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function AiActionsMenu({
                 onGenerateClick();
               }}
               disabled={disabledAll}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-dark/80 transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-heading/80 transition hover:bg-navbar-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Sparkles size={14} />
               Generate with AI
@@ -137,7 +137,7 @@ export default function AiActionsMenu({
                   ? "Generate a resume with AI first"
                   : undefined
               }
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-dark/80 transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-heading/80 transition hover:bg-navbar-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Sparkles size={14} />
               Edit with AI

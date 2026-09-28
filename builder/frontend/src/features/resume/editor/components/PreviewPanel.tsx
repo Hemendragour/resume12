@@ -92,7 +92,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
       <>
       <aside
         ref={ref}
-        className={`flex h-full flex-col w-full [@media(min-width:768px)_and_(max-width:1023px)]:w-80 [@media(min-width:1024px)_and_(max-width:1279px)]:w-[42%] xl:w-96 2xl:w-125 bg-[#f0ece7] md:border-l border-slate-200/60 ${
+        className={`flex h-full flex-col w-full [@media(min-width:768px)_and_(max-width:1023px)]:w-80 [@media(min-width:1024px)_and_(max-width:1279px)]:w-[42%] xl:w-96 2xl:w-125 bg-background md:border-l border-border ${
           mobileVisible
             ? "static opacity-100 pointer-events-auto"
             : "absolute inset-0 -z-10 opacity-0 pointer-events-none"
@@ -100,12 +100,12 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
         style={{ minWidth: 0 }}
       >
         {/* ── Header ────────────────────────────────────── */}
-        <div className="shrink-0 h-14 bg-modal border-b border-primary/10 px-4 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-dark">Live Preview</h2>
-          <div className="flex items-center gap-2 text-xs text-primary/50">
+        <div className="shrink-0 h-14 bg-navbar border-b border-border-navbar px-4 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-heading">Live Preview</h2>
+          <div className="flex items-center gap-2 text-xs text-heading/50">
             <span>A4</span>
-            <span className="h-3 w-px bg-primary/20" />
-            <span className="font-medium text-success">
+            <span className="h-3 w-px bg-btn/20" />
+            <span className="font-medium text-green-700">
               {Math.round(scale * 100)}%
             </span>
           </div>
@@ -145,7 +145,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
                * #resume-export below.
                */}
               <div
-                className="relative overflow-hidden bg-white shadow-xl"
+                className="relative overflow-hidden bg-popup shadow-xl"
                 style={{
                   width: `${A4_WIDTH_PX}px`,
                   height: `${A4_HEIGHT_PX}px`,
@@ -162,9 +162,9 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
         </div>
 
         {/* ── Footer ────────────────────────────────────── */}
-        <div className="shrink-0 h-10 bg-modal border-t border-primary/10 px-4 flex items-center justify-between text-xs text-primary/50">
+        <div className="shrink-0 h-10 bg-navbar border-t border-border-navbar px-4 flex items-center justify-between text-xs text-heading/50">
           <span>A4 Live Preview</span>
-          <span className="font-medium text-success">Ready for Export</span>
+          <span className="font-medium text-green-700">Ready for Export</span>
         </div>
       </aside>
 
@@ -190,7 +190,7 @@ const PreviewPanel = forwardRef<HTMLElement, Props>(
       >
         <div
           id="resume-export"
-          className="relative overflow-hidden bg-white"
+          className="relative overflow-hidden bg-popup"
           style={{
             width: `${A4_WIDTH_PX}px`,
             height: `${A4_HEIGHT_PX}px`,

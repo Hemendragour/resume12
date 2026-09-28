@@ -12,19 +12,19 @@ interface Props {
 function getPriorityClass(priority: ATSRecommendation["priority"]) {
   switch (priority) {
     case "critical":
-      return "bg-danger/15 text-danger";
+      return "bg-red-600/15 text-red-600";
 
     case "high":
-      return "bg-warning/15 text-warning";
+      return "bg-orange-500/15 text-orange-600";
 
     case "medium":
-      return "bg-accent/20 text-dark";
+      return "bg-btn-hover-bg text-heading";
 
     case "low":
-      return "bg-primary/10 text-primary/70";
+      return "bg-btn-hover-bg text-nav-text";
 
     default:
-      return "bg-primary/10 text-primary/70";
+      return "bg-btn-hover-bg text-nav-text";
   }
 }
 
@@ -41,19 +41,19 @@ export default function ATSSuggestions({
       {/* RECOMMENDATIONS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold text-dark">ATS Improvements</h2>
+          <h2 className="text-xl font-bold text-heading">ATS Improvements</h2>
 
-          <p className="mt-1 text-sm text-primary/70">
+          <p className="mt-1 text-sm text-nav-text">
             Actionable recommendations to improve your resume.
           </p>
         </div>
 
         <div className="mt-6 space-y-4">
           {recommendations.length === 0 ? (
-            <div className="rounded-xl bg-success/10 p-4">
-              <p className="text-sm font-medium text-success">
+            <div className="rounded-xl bg-green-700/10 p-4">
+              <p className="text-sm font-medium text-green-700">
                 No major ATS improvements detected.
               </p>
             </div>
@@ -61,15 +61,15 @@ export default function ATSSuggestions({
             recommendations.map((recommendation, index) => (
               <div
                 key={recommendation.id ?? `${recommendation.title}-${index}`}
-                className="rounded-xl border border-primary/10 p-4"
+                className="rounded-xl border border-border p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-semibold text-dark">
+                    <h3 className="font-semibold text-heading">
                       {recommendation.title}
                     </h3>
 
-                    <p className="mt-1 text-sm text-primary/70">
+                    <p className="mt-1 text-sm text-nav-text">
                       {recommendation.description}
                     </p>
                   </div>
@@ -86,12 +86,12 @@ export default function ATSSuggestions({
                 {/* Category */}
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary/70">
+                  <span className="rounded-md bg-btn-hover-bg px-2 py-1 text-xs font-medium text-nav-text">
                     {recommendation.category}
                   </span>
 
                   {typeof recommendation.impact === "number" && (
-                    <span className="rounded-md bg-accent/15 px-2 py-1 text-xs font-medium text-primary">
+                    <span className="rounded-md bg-btn-hover-bg px-2 py-1 text-xs font-medium text-subheading">
                       Impact: {recommendation.impact}/100
                     </span>
                   )}
@@ -100,12 +100,12 @@ export default function ATSSuggestions({
                 {/* Evidence */}
 
                 {recommendation.evidence && (
-                  <div className="mt-4 rounded-lg bg-background p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-primary/40">
+                  <div className="mt-4 rounded-lg bg-navbar-hover p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-heading/40">
                       Evidence
                     </p>
 
-                    <p className="mt-1 text-sm text-primary/70">
+                    <p className="mt-1 text-sm text-nav-text">
                       {recommendation.evidence}
                     </p>
                   </div>
@@ -114,12 +114,12 @@ export default function ATSSuggestions({
                 {/* Suggested Fix */}
 
                 {recommendation.suggestedFix && (
-                  <div className="mt-3 rounded-lg bg-accent/10 p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                  <div className="mt-3 rounded-lg bg-btn-hover-bg p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-subheading">
                       Suggested Fix
                     </p>
 
-                    <p className="mt-1 text-sm text-dark">
+                    <p className="mt-1 text-sm text-heading">
                       {recommendation.suggestedFix}
                     </p>
                   </div>
@@ -134,12 +134,12 @@ export default function ATSSuggestions({
       {/* STRENGTHS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-dark">Resume Strengths</h2>
+      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-heading">Resume Strengths</h2>
 
         <div className="mt-4">
           {strengths.length === 0 ? (
-            <p className="text-sm text-primary/60">
+            <p className="text-sm text-heading/60">
               No strengths identified yet.
             </p>
           ) : (
@@ -147,9 +147,9 @@ export default function ATSSuggestions({
               {strengths.map((strength, index) => (
                 <li
                   key={`${strength}-${index}`}
-                  className="flex gap-3 text-sm text-primary/70"
+                  className="flex gap-3 text-sm text-nav-text"
                 >
-                  <span className="font-semibold text-success">✓</span>
+                  <span className="font-semibold text-green-700">✓</span>
 
                   <span>{strength}</span>
                 </li>
@@ -163,12 +163,12 @@ export default function ATSSuggestions({
       {/* WEAKNESSES */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-dark">Areas to Improve</h2>
+      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-heading">Areas to Improve</h2>
 
         <div className="mt-4">
           {weaknesses.length === 0 ? (
-            <p className="text-sm text-success">
+            <p className="text-sm text-green-700">
               No major weaknesses identified.
             </p>
           ) : (
@@ -176,9 +176,9 @@ export default function ATSSuggestions({
               {weaknesses.map((weakness, index) => (
                 <li
                   key={`${weakness}-${index}`}
-                  className="flex gap-3 text-sm text-primary/70"
+                  className="flex gap-3 text-sm text-nav-text"
                 >
-                  <span className="font-semibold text-danger">!</span>
+                  <span className="font-semibold text-red-600">!</span>
 
                   <span>{weakness}</span>
                 </li>
@@ -192,26 +192,26 @@ export default function ATSSuggestions({
       {/* KEYWORDS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-dark">Keyword Analysis</h2>
+      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-heading">Keyword Analysis</h2>
 
         {/* Matched */}
 
         <div className="mt-5">
-          <h3 className="text-sm font-semibold text-success">
+          <h3 className="text-sm font-semibold text-green-700">
             Matched Keywords
           </h3>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {matchedKeywords.length === 0 ? (
-              <p className="text-sm text-primary/60">
+              <p className="text-sm text-heading/60">
                 No matched keywords available.
               </p>
             ) : (
               matchedKeywords.map((keyword) => (
                 <span
                   key={keyword}
-                  className="rounded-full bg-success/10 px-3 py-1 text-xs font-medium text-success"
+                  className="rounded-full bg-green-700/10 px-3 py-1 text-xs font-medium text-green-700"
                 >
                   {keyword}
                 </span>
@@ -223,20 +223,20 @@ export default function ATSSuggestions({
         {/* Missing */}
 
         <div className="mt-6">
-          <h3 className="text-sm font-semibold text-danger">
+          <h3 className="text-sm font-semibold text-red-600">
             Missing Keywords
           </h3>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {missingKeywords.length === 0 ? (
-              <p className="text-sm text-success">
+              <p className="text-sm text-green-700">
                 No important missing keywords detected.
               </p>
             ) : (
               missingKeywords.map((keyword) => (
                 <span
                   key={keyword}
-                  className="rounded-full bg-danger/10 px-3 py-1 text-xs font-medium text-danger"
+                  className="rounded-full bg-red-600/10 px-3 py-1 text-xs font-medium text-red-600"
                 >
                   {keyword}
                 </span>

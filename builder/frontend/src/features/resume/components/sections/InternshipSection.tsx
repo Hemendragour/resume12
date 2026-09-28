@@ -47,19 +47,19 @@ export default function InternshipSection() {
       </div>
 
       {resume.internships.length === 0 ? (
-        <p className="text-sm text-gray-500">No internships added yet.</p>
+        <p className="text-sm text-nav-text">No internships added yet.</p>
       ) : (
         <div className="space-y-3">
           {resume.internships.map((intern, index) => (
             <div
               key={index}
-              className="flex items-center justify-between rounded-xl border p-4"
+              className="flex items-center justify-between rounded-xl border border-border p-4"
             >
               <div>
                 <p className="font-semibold">{intern.role}</p>
-                <p className="text-sm text-gray-500">{intern.company}</p>
+                <p className="text-sm text-nav-text">{intern.company}</p>
                 {intern.location && (
-                  <p className="text-sm text-gray-400">{intern.location}</p>
+                  <p className="text-sm text-nav-text">{intern.location}</p>
                 )}
               </div>
               <div className="flex gap-2">

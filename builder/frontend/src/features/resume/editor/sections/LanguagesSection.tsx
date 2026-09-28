@@ -37,7 +37,7 @@
 //     <div className="space-y-8">
 //       <div>
 //         <h2 className="text-2xl font-bold">Languages</h2>
-//         <p className="text-gray-500">
+//         <p className="text-nav-text">
 //           Add a language name and proficiency level, then press Enter or click
 //           Add.
 //         </p>
@@ -49,13 +49,13 @@
 //           onChange={(e) => setName(e.target.value)}
 //           onKeyDown={handleKeyDown}
 //           placeholder="English"
-//           className="h-12 flex-1 rounded-xl border px-4"
+//           className="h-12 flex-1 rounded-xl border border-border px-4"
 //         />
 
 //         <select
 //           value={level}
 //           onChange={(e) => setLevel(e.target.value)}
-//           className="h-12 rounded-xl border px-4"
+//           className="h-12 rounded-xl border border-border px-4"
 //         >
 //           {PROFICIENCY_LEVELS.map((lvl) => (
 //             <option key={lvl} value={lvl}>
@@ -152,8 +152,8 @@ export default function LanguagesSection() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-dark">Languages</h2>
-        <p className="text-primary/70">
+        <h2 className="text-2xl font-bold text-heading">Languages</h2>
+        <p className="text-nav-text">
           Add a language name and proficiency level, then press Enter or click
           Add.
         </p>
@@ -165,13 +165,13 @@ export default function LanguagesSection() {
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="English"
-          className="h-12 flex-1 rounded-xl border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-12 flex-1 rounded-xl border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         <select
           value={level}
           onChange={(e) => setLevel(e.target.value)}
-          className="h-12 rounded-xl border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent"
+          className="h-12 rounded-xl border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong"
         >
           {PROFICIENCY_LEVELS.map((lvl) => (
             <option key={lvl} value={lvl}>
@@ -183,7 +183,7 @@ export default function LanguagesSection() {
         <button
           type="button"
           onClick={handleAdd}
-          className="h-12 rounded-xl bg-primary px-6 font-medium text-white hover:bg-dark"
+          className="h-12 rounded-xl bg-btn px-6 font-medium text-btn-text hover:bg-btn-hover"
         >
           Add
         </button>
@@ -193,7 +193,7 @@ export default function LanguagesSection() {
         {languages.map((language) => (
           <div
             key={language.name}
-            className="flex items-center gap-2 rounded-full bg-accent/15 px-4 py-2 text-sm text-primary"
+            className="flex items-center gap-2 rounded-full bg-btn-hover-bg px-4 py-2 text-sm text-subheading"
           >
             {/* Language name */}
             <span className="font-medium">{language.name}</span>
@@ -204,7 +204,7 @@ export default function LanguagesSection() {
               onChange={(e) =>
                 updateLanguageLevel(language.name, e.target.value)
               }
-              className="cursor-pointer appearance-none border-0 bg-transparent p-0 text-xs text-primary outline-none focus:ring-0"
+              className="cursor-pointer appearance-none border-0 bg-transparent p-0 text-xs text-subheading outline-none focus:ring-0"
             >
               {PROFICIENCY_LEVELS.map((lvl) => (
                 <option key={lvl} value={lvl}>
@@ -217,7 +217,7 @@ export default function LanguagesSection() {
             <button
               type="button"
               onClick={() => removeLanguage(language.name)}
-              className="ml-1 flex items-center justify-center rounded-full hover:bg-accent/25"
+              className="ml-1 flex items-center justify-center rounded-full hover:bg-border-popup"
             >
               <X size={15} />
             </button>

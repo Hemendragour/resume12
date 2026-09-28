@@ -1,31 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand */
-  --color-primary: #6b5643;
-  --color-dark: #4a3728;
-  --color-tan: #8b7355; /* new: lighter brown, used in gradients */
-  --color-accent: #c49a6c;
+  /* Base surfaces */
+  --color-sidebar: #6b5643;
+  --color-navbar: #f6ede8;
+  --color-background: #d4c9bc;
+  --color-popup: #ffffff;
 
-  /* Backgrounds */
-  --color-background: #f5f0eb; /* or #d4c9bc if you want the deeper tone used in Home */
-  --color-card: #e0d8cf;
-  --color-modal: #f6ede8;
+  /* Text */
+  --color-heading: #4a3728;
+  --color-subheading: #6b5643;
+  --color-nav-text: rgb(74 55 40 / 0.7);
+  --color-sidebar-text: #f6ede8;
 
-  /* Dark mode */
-  --color-dark-bg: #0f172a; /* slate-900 */
-  --color-dark-card: #1e293b; /* slate-800 */
-  --color-dark-border: #334155; /* slate-700 */
+  /* Buttons */
+  --color-btn: #4a3728;
+  --color-btn-text: #f6ede8;
+  --color-btn-hover: #5e4633; /* primary button hover (slightly lighter) */
+  --color-btn-hover-bg: #efe3d8; /* your hover BG for ghost/nav buttons */
 
-  /* Status/mood (keep as Tailwind defaults, or alias them) */
-  --color-success: #22c55e; /* green-500 */
-  --color-info: #3b82f6; /* blue-500 */
-  --color-warning: #f97316; /* orange-500 */
-  --color-danger: #ef4444; /* red-500 */
-  --color-reflective: #a855f7; /* purple-500 */
-  --color-grateful: #ec4899; /* pink-500 */
+  /* Hover states */
+  --color-sidebar-hover: #7d6650; /* sidebar item hover */
+  --color-sidebar-active: #4a3728; /* sidebar active item */
+  --color-navbar-hover: #efe3d8; /* nav item hover */
+  --color-row-hover: #cdc0b1; /* table rows / list items on background */
 
-  /* Custom breakpoints */
-  --breakpoint-xs: 480px;
-  --breakpoint-xl-custom: 1400px;
+  /* Borders */
+  --color-border: #bfb1a2; /* default, on background */
+  --color-border-navbar: #e3d5c8; /* navbar bottom border */
+  --color-border-popup: #e8dccf; /* popups, cards, dropdowns */
+  --color-border-sidebar: #5a4635; /* dividers inside sidebar */
+  --color-border-strong: #6b5643; /* inputs on focus, emphasized outlines */
+
+  /* Focus ring */
+  --color-ring: rgb(74 55 40 / 0.4);
 }

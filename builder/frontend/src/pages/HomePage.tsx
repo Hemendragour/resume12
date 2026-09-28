@@ -119,15 +119,15 @@ export default function HomePage() {
     <button
       key={template.slug}
       onClick={() => handleTemplateClick(template.id)}
-      className={`relative text-left border border-primary/10 rounded-xl p-1.5 sm:p-2 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+      className={`relative text-left border border-section-light-border rounded-xl p-1.5 sm:p-2 bg-section-light transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
     >
       {template.featured && (
-        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-medium bg-dark text-background px-2 py-0.5 rounded-full">
+        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-2xs sm:text-xs-plus font-medium bg-btn-dark text-on-dark-heading px-2 py-0.5 rounded-full">
           Featured
         </span>
       )}
       <div className="mb-3 sm:mb-4 flex justify-center">
-        <div className="overflow-hidden rounded-lg bg-modal shadow-md">
+        <div className="overflow-hidden rounded-lg bg-btn-utility-bg shadow-md">
           <img
             src={template.image}
             alt={template.name}
@@ -135,33 +135,32 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <h3 className="font-semibold text-sm sm:text-base md:text-lg text-dark">
+      <h3 className="font-semibold text-14 sm:text-15 md:text-lg text-heading">
         {template.name}
       </h3>
-      <p className="text-xs sm:text-sm text-primary/80 mt-1 line-clamp-2">
+      <p className="text-13 sm:text-14 text-body mt-1 line-clamp-2">
         {template.description}
       </p>
-      <span className="inline-block mt-2 sm:mt-3 text-[10px] sm:text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+      <span className="inline-block mt-2 sm:mt-3 text-2xs sm:text-xs-plus font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
         {template.ats}
       </span>
     </button>
   );
 
   return (
-    <div className="bg-background">
+    <div className="bg-section-light">
       <div className="flex flex-col justify-center px-4 py-8 sm:px-6 lg:h-screen lg:py-0">
         <div className="text-center mb-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-dark">
+          <h1 className="text-2xl sm:text-44 lg:text-54 xl:text-58 font-extrabold text-heading">
             Build Your Resume with{" "}
-            <span className="text-primary">ResumeAI</span>
+            <span className="text-accent-text">ResumeAI</span>
           </h1>
-          <p className="text-sm sm:text-base text-primary/70 mt-2 max-w-xl mx-auto">
+          <p className="text-15 text-body mt-2 max-w-xl mx-auto">
             Choose an ATS-friendly template matched to your experience level and
             domain, then let our AI help you fill it in and land more
             interviews.
           </p>
         </div>
-
         <div
           ref={filterBarRef}
           className="relative z-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8"
@@ -170,10 +169,10 @@ export default function HomePage() {
           <div className="relative">
             <button
               onClick={() => toggleMenu("level")}
-              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-15 font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "level" || experienceFilter !== "all"
-                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
-                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
+                  ? "border-badge-border bg-badge-bg text-eyebrow sm:bg-transparent sm:border-eyebrow"
+                  : "border-section-light-border bg-section-light text-heading hover:text-body sm:bg-transparent sm:border-transparent"
               }`}
             >
               {levelLabel === "All levels" ? "Level" : levelLabel}
@@ -186,7 +185,7 @@ export default function HomePage() {
             </button>
 
             {openMenu === "level" && (
-              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-section-light-border bg-section-light shadow-lg py-2">
                 {EXPERIENCE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
@@ -194,10 +193,10 @@ export default function HomePage() {
                       setExperienceFilter(opt.value);
                       setOpenMenu(null);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                    className={`w-full text-left px-4 py-2 text-15 transition-colors ${
                       experienceFilter === opt.value
-                        ? "text-primary font-medium"
-                        : "text-dark/80 hover:bg-background"
+                        ? "text-eyebrow font-medium"
+                        : "text-body hover:bg-btn-utility-bg"
                     }`}
                   >
                     {opt.label}
@@ -211,10 +210,10 @@ export default function HomePage() {
           <div className="relative">
             <button
               onClick={() => toggleMenu("domain")}
-              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-15 font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "domain" || domainFilter.length > 0
-                  ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
-                  : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
+                  ? "border-badge-border bg-badge-bg text-eyebrow sm:bg-transparent sm:border-eyebrow"
+                  : "border-section-light-border bg-section-light text-heading hover:text-body sm:bg-transparent sm:border-transparent"
               }`}
             >
               {domainLabel}
@@ -227,17 +226,17 @@ export default function HomePage() {
             </button>
 
             {openMenu === "domain" && (
-              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-section-light-border bg-section-light shadow-lg py-2">
                 {DOMAIN_OPTIONS.map((opt) => {
                   const active = domainFilter.includes(opt.value);
                   return (
                     <button
                       key={opt.value}
                       onClick={() => toggleDomain(opt.value)}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                      className={`w-full text-left px-4 py-2 text-15 transition-colors ${
                         active
-                          ? "text-primary font-medium"
-                          : "text-dark/80 hover:bg-background"
+                          ? "text-eyebrow font-medium"
+                          : "text-body hover:bg-btn-utility-bg"
                       }`}
                     >
                       {opt.label}
@@ -246,10 +245,10 @@ export default function HomePage() {
                 })}
                 {domainFilter.length > 0 && (
                   <>
-                    <div className="my-1 h-px bg-primary/10" />
+                    <div className="my-1 h-px bg-section-light-border" />
                     <button
                       onClick={() => setDomainFilter([])}
-                      className="w-full text-left px-4 py-2 text-sm text-dark/50 hover:bg-background"
+                      className="w-full text-left px-4 py-2 text-15 text-caption hover:bg-btn-utility-bg"
                     >
                       Clear domain
                     </button>
@@ -260,12 +259,11 @@ export default function HomePage() {
           </div>
         </div>
 
-        <p className="text-center text-xs sm:text-sm text-dark/40 mb-4 sm:mb-6">
+        <p className="text-center text-2xs sm:text-13 text-caption mb-4 sm:mb-6">
           {filteredTemplates.length} of {templates.length} templates
         </p>
-
         {filteredTemplates.length === 0 ? (
-          <p className="text-center text-sm text-dark/50">
+          <p className="text-center text-15 text-caption">
             No templates match the selected filters.
           </p>
         ) : (
@@ -273,9 +271,8 @@ export default function HomePage() {
             {heroTemplates.map(renderTemplateCard)}
           </div>
         )}
-
         {remainingTemplates.length > 0 && (
-          <p className="text-center text-xs text-dark/40 mt-6">
+          <p className="text-center text-2xs text-caption mt-6">
             Scroll down for more templates ↓
           </p>
         )}

@@ -178,7 +178,7 @@ export default function Sidebar({
 
       {isOpen && (
         <div
-          className={`fixed inset-0 z-40 bg-dark/50 ${
+          className={`fixed inset-0 z-40 bg-heading/50 ${
             forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
           }`}
           onClick={onClose}
@@ -187,7 +187,7 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-primary/10 bg-card transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-section-light-border bg-section-light transition-transform duration-300 ease-in-out ${
           forceCollapsed ? "" : "[@media(min-width:1400px)]:translate-x-0"
         } ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -198,12 +198,12 @@ export default function Sidebar({
             forceCollapsed ? "" : "[@media(min-width:1400px)]:justify-center"
           }`}
         >
-          <h1 className="text-xl font-extrabold text-primary">ResumeAI</h1>
+          <h1 className="text-xl font-extrabold text-heading">ResumeAI</h1>
 
           <button
             type="button"
             onClick={onClose}
-            className={`rounded-lg p-1.5 text-primary/70 transition hover:bg-background ${
+            className={`rounded-lg p-1.5 text-caption transition hover:bg-btn-utility-bg ${
               forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
             }`}
             aria-label="Close menu"
@@ -215,14 +215,14 @@ export default function Sidebar({
         {/* ================= MOBILE QUICK ACTIONS ================= */}
 
         <div
-          className={`space-y-2 border-b border-primary/10 p-4 ${
+          className={`space-y-2 border-b border-section-light-border p-4 ${
             forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
           }`}
         >
           <button
             type="button"
             onClick={runAndClose(handleCreateResume)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn-dark px-4 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover"
           >
             <Plus size={16} />
             Create Resume
@@ -232,7 +232,7 @@ export default function Sidebar({
             type="button"
             onClick={runAndClose(handleCheckATSScore)}
             disabled={isCreatingAtsResume}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-background transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn-dark px-4 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
           </button>
@@ -240,7 +240,7 @@ export default function Sidebar({
           <button
             type="button"
             onClick={runAndClose(handleOpenUploadResume)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 px-4 py-2.5 text-sm font-semibold text-dark transition hover:bg-background"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-btn-utility-border bg-btn-utility-bg px-4 py-2.5 text-15 font-semibold text-heading-alt transition hover:bg-section-light"
           >
             <Upload size={16} />
             Upload Resume
@@ -259,10 +259,10 @@ export default function Sidebar({
                 to={menu.path}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
+                  `flex items-center gap-3 rounded-xl px-4 py-2.5 text-15 font-medium transition ${
                     isActive
-                      ? "bg-primary text-background shadow-lg"
-                      : "text-primary/70 hover:bg-background hover:text-primary"
+                      ? "bg-btn-dark text-on-dark-heading shadow-lg"
+                      : "text-caption hover:bg-btn-utility-bg hover:text-heading"
                   }`
                 }
               >
@@ -278,17 +278,17 @@ export default function Sidebar({
 
         {/* You can show this only for logged-in users if you want */}
         {user && (
-          <div className="m-4 shrink-0 rounded-2xl bg-linear-to-r from-primary to-accent p-4 text-background">
-            <Sparkles className="mb-2" size={20} />
+          <div className="m-4 shrink-0 rounded-2xl bg-linear-to-r from-surface-dark-1 to-surface-dark-3 p-4 text-on-dark-heading">
+            <Sparkles className="mb-2 text-on-dark-accent" size={20} />
 
-            <h3 className="text-sm font-bold">Upgrade to Pro</h3>
+            <h3 className="text-15 font-bold">Upgrade to Pro</h3>
 
-            <p className="mt-1.5 text-xs opacity-90">
+            <p className="mt-1.5 text-13 opacity-90">
               Unlock AI Resume Builder, ATS Pro, Unlimited Resume Downloads and
               Premium Templates.
             </p>
 
-            <button className="mt-3 w-full rounded-xl bg-background py-2 text-sm font-semibold text-primary">
+            <button className="mt-3 w-full rounded-xl bg-section-light py-2 text-15 font-semibold text-heading-alt">
               Upgrade
             </button>
           </div>

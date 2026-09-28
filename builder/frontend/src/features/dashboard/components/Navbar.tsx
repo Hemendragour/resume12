@@ -35,7 +35,7 @@ export default function Navbar({
   const initial = user?.fullName?.charAt(0).toUpperCase() ?? "G";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-primary/10 bg-card">
+    <header className="sticky top-0 z-30 border-b border-section-light-border bg-section-light">
       {/* ================= MOBILE BAR ================= */}
       {/* Logo, notifications, profile, and the menu burger that opens the side nav */}
 
@@ -44,19 +44,19 @@ export default function Navbar({
           forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
         }`}
       >
-        <h1 className="text-lg font-extrabold text-primary">ResumeAI</h1>
+        <h1 className="text-lg font-extrabold text-heading">ResumeAI</h1>
 
         <div className="flex items-center gap-2">
           <NotificationDropdown />
 
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-background">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-btn-dark text-15 font-bold text-on-dark-heading">
             {initial}
           </div>
 
           <button
             type="button"
             onClick={onMenuClick}
-            className="rounded-lg p-2 text-primary transition hover:bg-background"
+            className="rounded-lg p-2 text-heading transition hover:bg-btn-utility-bg"
             aria-label="Open menu"
           >
             <CiMenuBurger size={22} />
@@ -78,12 +78,12 @@ export default function Navbar({
         <div className="relative">
           <Search
             size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/50"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-caption"
           />
 
           <input
             placeholder="Search resumes..."
-            className="h-11 w-40 rounded-xl border border-primary/50 pl-11 pr-4 text-sm text-dark outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 xl:w-80"
+            className="h-11 w-40 rounded-xl border border-btn-utility-border pl-11 pr-4 text-15 text-heading outline-none transition focus:border-eyebrow focus:ring-2 focus:ring-eyebrow/20 xl:w-80"
           />
         </div>
 
@@ -94,7 +94,7 @@ export default function Navbar({
 
           <button
             onClick={handleCreateResume}
-            className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-background transition hover:bg-dark xl:px-4"
+            className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-btn-dark px-3 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover xl:px-4"
           >
             <Plus size={18} />
             <span>Create Resume</span>
@@ -104,7 +104,7 @@ export default function Navbar({
             type="button"
             onClick={handleCheckATSScore}
             disabled={isCreatingAtsResume}
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50 xl:px-4"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-btn-dark px-3 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover disabled:cursor-not-allowed disabled:opacity-50 xl:px-4"
           >
             {isCreatingAtsResume ? (
               "Preparing..."
@@ -121,7 +121,7 @@ export default function Navbar({
           <button
             type="button"
             onClick={handleOpenUploadResume}
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl border border-primary/50 px-3 py-2.5 text-sm font-semibold text-dark transition hover:bg-background xl:px-4"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl border border-btn-utility-border bg-btn-utility-bg px-3 py-2.5 text-15 font-semibold text-heading-alt transition hover:bg-section-light xl:px-4"
           >
             <Upload size={18} />
             <span>Upload Resume</span>
@@ -133,24 +133,24 @@ export default function Navbar({
 
           {/* User */}
 
-          <button className="flex items-center gap-2 rounded-xl px-2.5 py-2 transition hover:bg-background">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-background">
+          <button className="flex items-center gap-2 rounded-xl px-2.5 py-2 transition hover:bg-btn-utility-bg">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-btn-dark text-15 font-bold text-on-dark-heading">
               {initial}
             </div>
 
             <div className="hidden text-left xl:block">
-              <p className="text-sm font-semibold text-dark">
+              <p className="text-15 font-semibold text-heading">
                 {user?.fullName ?? "Guest"}
               </p>
 
-              <p className="text-xs text-primary/70">
+              <p className="text-13 text-caption">
                 {user ? "Free Plan" : "Guest"}
               </p>
             </div>
 
             <ChevronDown
               size={16}
-              className="hidden text-primary/70 xl:block"
+              className="hidden text-caption xl:block"
             />
           </button>
         </div>

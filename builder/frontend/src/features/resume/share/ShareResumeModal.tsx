@@ -25,16 +25,16 @@ export default function ShareResumeModal({ open, onClose, shareId }: Props) {
 
   return (
     <ModalPortal>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-        <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
-          <h2 className="text-2xl font-bold">Share Resume</h2>
-          <p className="mt-2 text-slate-500">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/60 p-4">
+        <div className="w-full max-w-lg rounded-2xl bg-navbar p-8 shadow-xl">
+          <h2 className="text-2xl font-bold text-heading">Share Resume</h2>
+          <p className="mt-2 text-nav-text">
             Anyone with this link can view your resume.
           </p>
           <input
             readOnly
             value={url}
-            className="mt-6 h-12 w-full rounded-lg border px-4"
+            className="mt-6 h-12 w-full rounded-xl border border-border-navbar bg-navbar-hover px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
           <div className="mt-6 flex justify-end gap-3">
             <Button variant="outline" onClick={onClose}>

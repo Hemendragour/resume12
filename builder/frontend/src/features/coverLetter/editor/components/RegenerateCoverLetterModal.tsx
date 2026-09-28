@@ -133,10 +133,10 @@ export default function RegenerateCoverLetterModal({ open, onClose }: Props) {
       <div className="space-y-5">
         {!creditsLoading && credits && (
           <div
-            className={`rounded-xl border border-border p-3 text-sm ${
+            className={`rounded-xl p-3 text-sm ${
               outOfCredits
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                ? "bg-red-600/10 text-red-600"
+                : "bg-green-700/10 text-green-700"
             }`}
           >
             {outOfCredits ? (

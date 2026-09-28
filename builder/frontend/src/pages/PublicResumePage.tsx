@@ -38,19 +38,19 @@ export default function PublicResumePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 py-10">
+    <div className="min-h-screen bg-background py-10">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Public Resume</h1>
+          <h1 className="text-3xl font-bold text-heading">Public Resume</h1>
 
-          <p className="text-slate-500">Shared using Throne8 Resume Builder</p>
+          <p className="text-nav-text">Shared using Throne8 Resume Builder</p>
         </div>
       </div>
 
       <div className="mx-auto w-[850px] bg-white shadow-2xl">
         <TemplateRenderer />
       </div>
-      <div className="border-t p-6 text-center text-sm text-slate-500">
+      <div className="border-t border-border p-6 text-center text-sm text-nav-text">
         Powered by
         <span className="font-semibold">Throne8</span>
       </div>

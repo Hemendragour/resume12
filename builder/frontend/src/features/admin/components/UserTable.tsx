@@ -206,36 +206,36 @@ export default function UserTable() {
   const { mutate: deleteUser } = useDeleteUser();
 
   if (isLoading) {
-    return <p className="text-primary/70">Loading...</p>;
+    return <p className="text-nav-text">Loading...</p>;
   }
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-primary/10 bg-card">
+    <div className="w-full overflow-x-auto rounded-xl bg-navbar shadow-sm">
       <table className="min-w-[1000px] w-full">
         <thead>
-          <tr className="border-b border-primary/10 bg-background">
-            <th className="p-4 text-left text-dark">Name</th>
-            <th className="p-4 text-left text-dark">Email</th>
-            <th className="p-4 text-left text-dark">Role</th>
-            <th className="p-4 text-left text-dark">Status</th>
-            <th className="p-4 text-left text-dark">Joined</th>
-            <th className="p-4 text-center text-dark">Actions</th>
+          <tr className="border-b border-border-popup bg-background">
+            <th className="p-4 text-left text-heading">Name</th>
+            <th className="p-4 text-left text-heading">Email</th>
+            <th className="p-4 text-left text-heading">Role</th>
+            <th className="p-4 text-left text-heading">Status</th>
+            <th className="p-4 text-left text-heading">Joined</th>
+            <th className="p-4 text-center text-heading">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {data.map((user: any) => (
-            <tr key={user._id} className="border-b border-primary/10">
-              <td className="p-4 text-dark">{user.fullName}</td>
+            <tr key={user._id} className="border-b border-border-popup">
+              <td className="p-4 text-heading">{user.fullName}</td>
 
-              <td className="p-4 text-primary/70">{user.email}</td>
+              <td className="p-4 text-nav-text">{user.email}</td>
 
               <td className="p-4">
                 <span
                   className={`rounded-full px-3 py-1 text-sm ${
                     user.role === "admin"
-                      ? "bg-primary/15 text-primary"
-                      : "bg-accent/15 text-dark"
+                      ? "bg-btn/15 text-heading"
+                      : "bg-btn-hover-bg text-heading"
                   }`}
                 >
                   {user.role}
@@ -247,15 +247,15 @@ export default function UserTable() {
                 <span
                   className={`rounded-full px-3 py-1 text-xs ${
                     user.status === "active"
-                      ? "bg-success/10 text-success"
-                      : "bg-danger/10 text-danger"
+                      ? "bg-green-700/10 text-green-700"
+                      : "bg-red-600/10 text-red-600"
                   }`}
                 >
                   {user.status ?? "active"}
                 </span>
               </td>
 
-              <td className="p-4 text-primary/70">
+              <td className="p-4 text-nav-text">
                 {new Date(user.createdAt).toLocaleDateString()}
               </td>
 
@@ -266,7 +266,7 @@ export default function UserTable() {
                       setSelectedId(user._id);
                       setOpen(true);
                     }}
-                    className="rounded bg-primary px-3 py-1 text-sm text-white hover:bg-dark"
+                    className="rounded bg-btn px-3 py-1 text-sm text-btn-text hover:bg-btn-hover"
                   >
                     👁 View
                   </button>
@@ -281,7 +281,7 @@ export default function UserTable() {
                     }
                     className={`rounded px-3 py-1 text-sm text-white ${
                       user.status === "active"
-                        ? "bg-yellow-500 hover:bg-yellow-600"
+                        ? "bg-orange-500 hover:bg-orange-600"
                         : "bg-green-600 hover:bg-green-700"
                     }`}
                   >
@@ -311,8 +311,8 @@ export default function UserTable() {
                     }}
                     className={`rounded px-3 py-1 text-sm text-white ${
                       user.status === "active"
-                        ? "bg-warning hover:opacity-90"
-                        : "bg-success hover:opacity-90"
+                        ? "bg-orange-500 hover:opacity-90"
+                        : "bg-green-600 hover:opacity-90"
                     }`}
                   >
                     {user.status === "active" ? "🚫 Suspend" : "✅ Activate"}
@@ -321,7 +321,7 @@ export default function UserTable() {
                   {user.role === "admin" ? (
                     <button
                       disabled
-                      className="cursor-not-allowed rounded bg-primary/30 px-3 py-1 text-sm text-white"
+                      className="cursor-not-allowed rounded bg-btn/30 px-3 py-1 text-sm text-btn-text"
                     >
                       🔒 Admin
                     </button>
@@ -331,7 +331,7 @@ export default function UserTable() {
                         setDeleteId(user._id);
                         setDeleteOpen(true);
                       }}
-                      className="rounded bg-danger px-3 py-1 text-sm text-white hover:opacity-90"
+                      className="rounded bg-red-600 px-3 py-1 text-sm text-white hover:opacity-90"
                     >
                       🗑 Delete
                     </button>

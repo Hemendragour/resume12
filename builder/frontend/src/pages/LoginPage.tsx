@@ -49,23 +49,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded-xl shadow-lg w-100"
+        className="bg-navbar p-8 rounded-xl shadow-lg w-100"
       >
-        <h2 className="text-3xl font-bold mb-6">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-heading">Login</h2>
 
         <input
           {...register("email")}
           type="email"
           autoComplete="email"
           placeholder="Email"
-          className="w-full border p-3 rounded mb-1"
+          className="mb-1 w-full rounded-xl border border-border-navbar bg-navbar-hover p-3 text-heading outline-none placeholder:text-heading/40 focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {errors.email && (
-          <p className="text-red-500 text-sm mb-3">{errors.email.message}</p>
+          <p className="text-red-600 text-sm mb-3">{errors.email.message}</p>
         )}
 
         <input
@@ -73,17 +73,17 @@ export default function LoginPage() {
           type="password"
           autoComplete="current-password"
           placeholder="Password"
-          className="w-full border p-3 rounded mb-1"
+          className="mb-1 w-full rounded-xl border border-border-navbar bg-navbar-hover p-3 text-heading outline-none placeholder:text-heading/40 focus:border-border-strong focus:ring-2 focus:ring-ring"
         />
 
         {errors.password && (
-          <p className="text-red-500 text-sm mb-3">{errors.password.message}</p>
+          <p className="text-red-600 text-sm mb-3">{errors.password.message}</p>
         )}
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white p-3 rounded mt-3"
+          className="w-full rounded-xl bg-btn p-3 mt-3 text-btn-text transition hover:bg-btn-hover disabled:opacity-50"
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </button>

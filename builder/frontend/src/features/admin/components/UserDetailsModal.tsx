@@ -66,11 +66,11 @@ export default function UserDetailsModal({ open, onClose, data }: Props) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/40">
-      <div className="w-[500px] rounded-xl border border-primary/10 bg-modal p-6 shadow-sm">
-        <h2 className="mb-6 text-2xl font-bold text-dark">User Details</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/60">
+      <div className="w-[500px] rounded-xl bg-navbar p-6 shadow-xl">
+        <h2 className="mb-6 text-2xl font-bold text-heading">User Details</h2>
 
-        <div className="space-y-3 text-dark">
+        <div className="space-y-3 text-heading">
           <p>
             <b>Name:</b> {data?.user?.fullName}
           </p>
@@ -87,7 +87,7 @@ export default function UserDetailsModal({ open, onClose, data }: Props) {
             <b>Status:</b> {data?.user?.status}
           </p>
 
-          <hr className="border-primary/10" />
+          <hr className="border-border-popup" />
 
           <p>
             <b>Resumes:</b> {data?.stats?.resumes}
@@ -104,7 +104,7 @@ export default function UserDetailsModal({ open, onClose, data }: Props) {
 
         <button
           onClick={onClose}
-          className="mt-8 rounded bg-primary px-5 py-2 text-white hover:bg-dark"
+          className="mt-8 rounded bg-btn px-5 py-2 text-btn-text hover:bg-btn-hover"
         >
           Close
         </button>

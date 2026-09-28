@@ -14,8 +14,8 @@ export default function EndTestModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border-popup bg-popup p-5 shadow-xl sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/60 px-4">
+      <div className="w-full max-w-sm rounded-2xl bg-navbar p-5 shadow-xl sm:p-6">
         <h3 className="mb-2 text-base font-semibold text-heading sm:text-lg">
           End this interview?
         </h3>

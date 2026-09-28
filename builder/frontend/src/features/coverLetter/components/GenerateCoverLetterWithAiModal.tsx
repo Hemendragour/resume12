@@ -186,10 +186,10 @@ export default function GenerateCoverLetterWithAiModal({
         {/* Credits banner */}
         {!creditsLoading && credits && (
           <div
-            className={`rounded-xl border p-3 xs:p-4 text-xs xs:text-sm ${
+            className={`rounded-xl p-3 xs:p-4 text-xs xs:text-sm ${
               outOfCredits
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                ? "bg-red-600/10 text-red-600"
+                : "bg-green-700/10 text-green-700"
             }`}
           >
             {outOfCredits ? (
@@ -226,7 +226,7 @@ export default function GenerateCoverLetterWithAiModal({
 
         {/* Template (optional) */}
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-heading">
             Template (optional)
           </label>
           <select
@@ -234,7 +234,7 @@ export default function GenerateCoverLetterWithAiModal({
             onChange={(e) =>
               setTemplateId(e.target.value as CoverLetterTemplate)
             }
-            className="h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+            className="h-12 w-full rounded-xl border border-border-navbar bg-navbar-hover px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           >
             {coverLetterTemplates.map((t) => (
               <option key={t.id} value={t.id}>
@@ -246,14 +246,14 @@ export default function GenerateCoverLetterWithAiModal({
 
         {/* Job Description */}
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-heading">
             Job Description
           </label>
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             placeholder="Paste the job description here..."
-            className="w-full min-h-[120px] rounded-xl border border-slate-300 p-4 outline-none focus:border-blue-600 resize-y"
+            className="w-full min-h-[120px] rounded-xl border border-border-navbar bg-navbar-hover p-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring resize-y"
           />
         </div>
 
@@ -270,14 +270,14 @@ export default function GenerateCoverLetterWithAiModal({
               onChange={(e) => setCompanyName(e.target.value)}
             />
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
+              <label className="mb-2 block text-sm font-semibold text-heading">
                 Company Info (optional)
               </label>
               <textarea
                 value={companyInfo}
                 onChange={(e) => setCompanyInfo(e.target.value)}
                 placeholder="What the company does, its mission, etc."
-                className="w-full min-h-[80px] rounded-xl border border-slate-300 p-4 outline-none focus:border-blue-600 resize-y"
+                className="w-full min-h-[80px] rounded-xl border border-border-navbar bg-navbar-hover p-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring resize-y"
               />
             </div>
           </div>
@@ -285,7 +285,7 @@ export default function GenerateCoverLetterWithAiModal({
 
         {/* Resume source */}
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-heading">
             Base this on
           </label>
 
@@ -295,8 +295,8 @@ export default function GenerateCoverLetterWithAiModal({
               onClick={() => setResumeSource("existing")}
               className={`flex-1 rounded-xl border px-3 xs:px-4 py-2 text-xs xs:text-sm font-semibold transition ${
                 resumeSource === "existing"
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-300 text-slate-600"
+                  ? "border-border-strong bg-btn-hover-bg text-heading"
+                  : "border-border-navbar text-nav-text"
               }`}
             >
               <FileText size={16} className="mr-2 inline" />
@@ -307,8 +307,8 @@ export default function GenerateCoverLetterWithAiModal({
               onClick={() => setResumeSource("upload")}
               className={`flex-1 rounded-xl border px-3 xs:px-4 py-2 text-xs xs:text-sm font-semibold transition ${
                 resumeSource === "upload"
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-300 text-slate-600"
+                  ? "border-border-strong bg-btn-hover-bg text-heading"
+                  : "border-border-navbar text-nav-text"
               }`}
             >
               <UploadCloud size={16} className="mr-2 inline" />
@@ -320,7 +320,7 @@ export default function GenerateCoverLetterWithAiModal({
             <select
               value={resumeId}
               onChange={(e) => setResumeId(e.target.value)}
-              className="h-12 w-full rounded-xl border border-slate-300 px-4 outline-none focus:border-blue-600"
+              className="h-12 w-full rounded-xl border border-border-navbar bg-navbar-hover px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
             >
               <option value="">
                 {resumesLoading ? "Loading resumes..." : "Select a resume"}
@@ -345,12 +345,12 @@ export default function GenerateCoverLetterWithAiModal({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 px-4 py-6 text-sm text-slate-600 hover:border-blue-600"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border px-4 py-6 text-sm text-nav-text hover:border-border-strong"
               >
                 <UploadCloud size={18} />
                 {resumeFile ? resumeFile.name : "Click to upload a PDF resume"}
               </button>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-nav-text">
                 Used only to generate this letter — it won't be saved as a
                 resume.
               </p>

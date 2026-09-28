@@ -27,10 +27,10 @@ export default function BookSessionPage() {
             <CheckCircle2 size={44} className="text-green-600" />
           </div>
         </div>
-        <h1 className="mb-3 text-xl font-bold text-dark sm:mb-4 sm:text-2xl lg:text-3xl">
+        <h1 className="mb-3 text-xl font-bold text-heading sm:mb-4 sm:text-2xl lg:text-3xl">
           Session Request Sent!
         </h1>
-        <p className="mb-6 text-sm text-primary/70 sm:mb-8 sm:text-base">
+        <p className="mb-6 text-sm text-nav-text sm:mb-8 sm:text-base">
           We've received your request to book a live session. Our experts will
           review your request and confirm the date and time. We'll notify you
           once this is confirmed.
@@ -38,13 +38,13 @@ export default function BookSessionPage() {
         <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
           <button
             onClick={() => navigate("/interview")}
-            className="rounded-xl border border-primary/20 px-6 py-2.5 text-sm font-semibold text-dark transition hover:bg-card sm:text-base"
+            className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-heading transition hover:bg-navbar sm:text-base"
           >
             Back to Interview Prep
           </button>
           <button
             onClick={() => navigate("/interview/history")}
-            className="rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 sm:text-base"
+            className="rounded-xl bg-btn px-6 py-2.5 text-sm font-semibold text-btn-text transition hover:bg-btn-hover sm:text-base"
           >
             View History
           </button>
@@ -57,22 +57,22 @@ export default function BookSessionPage() {
     <section className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <button
         onClick={() => navigate(-1)}
-        className="mb-5 flex items-center gap-2 text-sm font-medium text-primary/70 transition hover:text-dark sm:mb-6"
+        className="mb-5 flex items-center gap-2 text-sm font-medium text-nav-text transition hover:text-heading sm:mb-6"
       >
         <ArrowLeft size={16} />
         Back
       </button>
 
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl font-bold text-dark sm:text-2xl lg:text-3xl">
+        <h1 className="text-xl font-bold text-heading sm:text-2xl lg:text-3xl">
           Book a Live Session
         </h1>
-        <p className="mt-1.5 text-sm text-primary/70 sm:mt-2 sm:text-base">
+        <p className="mt-1.5 text-sm text-nav-text sm:mt-2 sm:text-base">
           Talk to a placement expert for 1:1 mock interviews and career guidance.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-sm sm:p-6 lg:p-8">
+      <div className="rounded-2xl border border-border bg-navbar p-4 shadow-sm sm:p-6 lg:p-8">
         <BookingForm
           onSubmit={handleSubmit}
           submitting={createBooking.isPending}

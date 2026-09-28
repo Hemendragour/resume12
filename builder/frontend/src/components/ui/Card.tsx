@@ -13,8 +13,8 @@ export default function Card({ children, className = "" }: CardProps) {
        
       rounded-2xl
       border
-      border-primary/10
-      bg-card
+      border-border-popup
+      bg-navbar
       shadow-sm
       transition-all
       duration-200

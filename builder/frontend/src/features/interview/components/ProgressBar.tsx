@@ -13,16 +13,16 @@ export default function ProgressBar({
 
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-xs font-medium text-primary/70 sm:text-sm">
+      <div className="mb-1 flex items-center justify-between text-xs font-medium text-nav-text sm:text-sm">
         <span>
           Question {Math.min(current, total)} / {total}
         </span>
         <span>{percentage}%</span>
       </div>
 
-      <div className="h-2 w-full overflow-hidden rounded-full bg-primary/10">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-border-popup">
         <div
-          className="h-full rounded-full bg-accent transition-all duration-500"
+          className="h-full rounded-full bg-btn transition-all duration-500"
           style={{ width: `${percentage}%` }}
         />
       </div>

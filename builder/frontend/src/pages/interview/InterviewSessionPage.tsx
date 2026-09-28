@@ -116,7 +116,7 @@ export default function InterviewSessionPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center px-4">
-        <Loader2 className="animate-spin text-accent" size={32} />
+        <Loader2 className="animate-spin text-subheading" size={32} />
       </div>
     );
   }
@@ -125,7 +125,7 @@ export default function InterviewSessionPage() {
     return (
       <div className="mx-auto max-w-lg px-4 py-12 text-center sm:py-16">
         <XCircle className="mx-auto mb-3 text-red-500" size={32} />
-        <p className="text-primary/70">
+        <p className="text-nav-text">
           We couldn't load this interview session.
         </p>
       </div>
@@ -147,7 +147,7 @@ export default function InterviewSessionPage() {
 
             {session.questions.length > 0 && (
               <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
-                <h2 className="text-base font-semibold text-dark sm:text-lg">
+                <h2 className="text-base font-semibold text-heading sm:text-lg">
                   Question by Question
                 </h2>
 
@@ -162,7 +162,7 @@ export default function InterviewSessionPage() {
             )}
           </>
         ) : (
-          <p className="text-center text-primary/70">
+          <p className="text-center text-nav-text">
             This interview session has ended.
           </p>
         )}
@@ -261,9 +261,9 @@ export default function InterviewSessionPage() {
           submitting={submitAnswer.isPending}
         />
       ) : (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-primary/10 bg-card p-6 text-center sm:p-10">
-          <Loader2 className="animate-spin text-accent" size={28} />
-          <p className="text-sm text-primary/60">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-navbar p-6 text-center sm:p-10">
+          <Loader2 className="animate-spin text-subheading" size={28} />
+          <p className="text-sm text-heading/60">
             Preparing your question...
           </p>
           {audioFetchError && (
@@ -274,7 +274,7 @@ export default function InterviewSessionPage() {
               <button
                 type="button"
                 onClick={() => setAudioRetryTick((t) => t + 1)}
-                className="text-xs font-medium text-accent underline-offset-2 hover:underline"
+                className="text-xs font-medium text-subheading underline-offset-2 hover:underline"
               >
                 Try again
               </button>
@@ -292,7 +292,7 @@ export default function InterviewSessionPage() {
       <div className="mt-6 text-center">
         <button
           onClick={() => setShowEndModal(true)}
-          className="text-sm font-medium text-primary/50 underline-offset-2 hover:text-red-500 hover:underline"
+          className="text-sm font-medium text-heading/50 underline-offset-2 hover:text-red-500 hover:underline"
         >
           End Test
         </button>

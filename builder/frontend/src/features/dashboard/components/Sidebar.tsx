@@ -187,7 +187,7 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-section-light-border bg-section-light transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-border-sidebar bg-sidebar text-sidebar-text transition-transform duration-300 ease-in-out ${
           forceCollapsed ? "" : "[@media(min-width:1400px)]:translate-x-0"
         } ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -198,12 +198,12 @@ export default function Sidebar({
             forceCollapsed ? "" : "[@media(min-width:1400px)]:justify-center"
           }`}
         >
-          <h1 className="text-xl font-extrabold text-heading">ResumeAI</h1>
+          <h1 className="text-xl font-extrabold text-sidebar-text">ResumeAI</h1>
 
           <button
             type="button"
             onClick={onClose}
-            className={`rounded-lg p-1.5 text-caption transition hover:bg-btn-utility-bg ${
+            className={`rounded-lg p-1.5 text-sidebar-text/70 transition hover:bg-sidebar-hover ${
               forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
             }`}
             aria-label="Close menu"
@@ -215,14 +215,14 @@ export default function Sidebar({
         {/* ================= MOBILE QUICK ACTIONS ================= */}
 
         <div
-          className={`space-y-2 border-b border-section-light-border p-4 ${
+          className={`space-y-2 border-b border-border-sidebar p-4 ${
             forceCollapsed ? "" : "[@media(min-width:1400px)]:hidden"
           }`}
         >
           <button
             type="button"
             onClick={runAndClose(handleCreateResume)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn-dark px-4 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-4 py-2.5 text-15 font-semibold text-btn-text transition hover:bg-btn-hover"
           >
             <Plus size={16} />
             Create Resume
@@ -232,7 +232,7 @@ export default function Sidebar({
             type="button"
             onClick={runAndClose(handleCheckATSScore)}
             disabled={isCreatingAtsResume}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn-dark px-4 py-2.5 text-15 font-semibold text-on-dark-heading transition hover:bg-btn-dark-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-4 py-2.5 text-15 font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCreatingAtsResume ? "Preparing..." : "Check ATS Score"}
           </button>
@@ -240,7 +240,7 @@ export default function Sidebar({
           <button
             type="button"
             onClick={runAndClose(handleOpenUploadResume)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-btn-utility-border bg-btn-utility-bg px-4 py-2.5 text-15 font-semibold text-heading-alt transition hover:bg-section-light"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border-sidebar px-4 py-2.5 text-15 font-semibold text-sidebar-text transition hover:bg-sidebar-hover"
           >
             <Upload size={16} />
             Upload Resume
@@ -261,8 +261,8 @@ export default function Sidebar({
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-xl px-4 py-2.5 text-15 font-medium transition ${
                     isActive
-                      ? "bg-btn-dark text-on-dark-heading shadow-lg"
-                      : "text-caption hover:bg-btn-utility-bg hover:text-heading"
+                      ? "bg-sidebar-active text-sidebar-text shadow-lg"
+                      : "text-sidebar-text/80 hover:bg-sidebar-hover hover:text-sidebar-text"
                   }`
                 }
               >
@@ -278,8 +278,8 @@ export default function Sidebar({
 
         {/* You can show this only for logged-in users if you want */}
         {user && (
-          <div className="m-4 shrink-0 rounded-2xl bg-linear-to-r from-surface-dark-1 to-surface-dark-3 p-4 text-on-dark-heading">
-            <Sparkles className="mb-2 text-on-dark-accent" size={20} />
+          <div className="m-4 shrink-0 rounded-2xl bg-btn p-4 text-btn-text">
+            <Sparkles className="mb-2 text-btn-hover-bg" size={20} />
 
             <h3 className="text-15 font-bold">Upgrade to Pro</h3>
 
@@ -288,7 +288,7 @@ export default function Sidebar({
               Premium Templates.
             </p>
 
-            <button className="mt-3 w-full rounded-xl bg-section-light py-2 text-15 font-semibold text-heading-alt">
+            <button className="mt-3 w-full rounded-xl bg-navbar py-2 text-15 font-semibold text-heading transition hover:bg-btn-hover-bg">
               Upgrade
             </button>
           </div>

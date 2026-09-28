@@ -22,8 +22,8 @@ export default function GenerateInterviewPage() {
   return (
     <section className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dark">Generate Questions</h1>
-        <p className="mt-2 text-primary/70">
+        <h1 className="text-3xl font-bold text-heading">Generate Questions</h1>
+        <p className="mt-2 text-nav-text">
           Tell us what you're preparing for and we'll build a mock interview
           around it.
         </p>

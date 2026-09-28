@@ -70,7 +70,7 @@ export default function DuplicateResumeModal({
       size="xl"
     >
       {error && (
-        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="mb-4 rounded-lg bg-red-600/10 px-3 py-2 text-sm text-red-600">
           {error}
         </p>
       )}
@@ -89,19 +89,19 @@ export default function DuplicateResumeModal({
               onClick={() => handleSelect(template.id)}
               className={`relative text-left border rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70 ${template.color} ${
                 isCurrent
-                  ? "border-accent ring-2 ring-accent/30"
-                  : "border-primary/10"
+                  ? "border-border-strong ring-2 ring-ring"
+                  : "border-border-popup"
               }`}
             >
               {isCurrent && (
-                <span className="absolute top-3 right-3 text-xs font-medium bg-primary text-white px-2 py-0.5 rounded-full">
+                <span className="absolute top-3 right-3 text-xs font-medium bg-btn text-btn-text px-2 py-0.5 rounded-full">
                   Current template
                 </span>
               )}
 
               {isLoading && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-modal/70">
-                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-popup/70">
+                  <Loader2 className="h-8 w-8 animate-spin text-subheading" />
                 </div>
               )}
 

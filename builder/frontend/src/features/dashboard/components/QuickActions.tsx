@@ -30,7 +30,7 @@
 // export default function QuickActions({ onCreate }: Props) {
 //   return (
 //     <section>
-//       <h2 className="mb-5 text-2xl font-bold text-dark">⚡ Quick Actions</h2>
+//       <h2 className="mb-5 text-2xl font-bold text-heading">⚡ Quick Actions</h2>
 
 //       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
 //         {actions.map((item) => {
@@ -44,15 +44,15 @@
 //                   onCreate();
 //                 }
 //               }}
-//               className="rounded-2xl border border-dark-border bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+//               className="rounded-2xl border border-border bg-navbar p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
 //             >
-//               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-info/10">
-//                 <Icon size={24} className="text-info" />
+//               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-btn-hover-bg">
+//                 <Icon size={24} className="text-subheading" />
 //               </div>
 
-//               <h3 className="font-semibold text-dark">{item.title}</h3>
+//               <h3 className="font-semibold text-heading">{item.title}</h3>
 
-//               <p className="mt-2 text-sm text-primary/70">{item.description}</p>
+//               <p className="mt-2 text-sm text-nav-text">{item.description}</p>
 //             </button>
 //           );
 //         })}
@@ -95,7 +95,7 @@ const actions = [
 export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
   return (
     <section>
-      <h2 className="mb-4 text-xl font-bold text-dark sm:mb-5 sm:text-2xl">
+      <h2 className="mb-4 text-xl font-bold text-heading sm:mb-5 sm:text-2xl">
         ⚡ Quick Actions
       </h2>
 
@@ -118,17 +118,17 @@ export default function QuickActions({ onCreate, onAnalyseATS }: Props) {
                   onAnalyseATS();
                 }
               }}
-              className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg min-[420px]:block sm:p-6"
+              className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 rounded-2xl border border-border-popup bg-navbar p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg min-[420px]:block sm:p-6"
             >
-              <div className="row-span-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 min-[420px]:mb-3 sm:mb-4 sm:h-12 sm:w-12">
-                <Icon size={20} className="text-primary" />
+              <div className="row-span-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-btn-hover-bg min-[420px]:mb-3 sm:mb-4 sm:h-12 sm:w-12">
+                <Icon size={20} className="text-subheading" />
               </div>
 
-              <h3 className="truncate text-sm font-semibold text-dark sm:text-base">
+              <h3 className="truncate text-sm font-semibold text-heading sm:text-base">
                 {item.title}
               </h3>
 
-              <p className="mt-1 line-clamp-2 text-xs text-primary/70 sm:mt-2 sm:text-sm">
+              <p className="mt-1 line-clamp-2 text-xs text-nav-text sm:mt-2 sm:text-sm">
                 {item.description}
               </p>
             </button>

@@ -39,7 +39,7 @@ export default function InterviewHistoryPage() {
   if (loadingAi || loadingLive) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="animate-spin text-accent" size={32} />
+        <Loader2 className="animate-spin text-subheading" size={32} />
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function InterviewHistoryPage() {
   if (aiError || liveError) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-primary/70">
+        <p className="text-nav-text">
           We couldn't load your interview history. Please try again.
         </p>
       </div>
@@ -72,23 +72,23 @@ export default function InterviewHistoryPage() {
     <section className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <button
         onClick={() => navigate("/interview")}
-        className="mb-5 flex items-center gap-1.5 text-sm font-medium text-primary/60 transition hover:text-dark sm:mb-6"
+        className="mb-5 flex items-center gap-1.5 text-sm font-medium text-heading/60 transition hover:text-heading sm:mb-6"
       >
         <ArrowLeft size={16} />
         Back to Interview Prep
       </button>
 
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl font-bold text-dark sm:text-2xl lg:text-3xl">
+        <h1 className="text-xl font-bold text-heading sm:text-2xl lg:text-3xl">
           Interview History
         </h1>
-        <p className="mt-1.5 text-sm text-primary/70 sm:mt-2 sm:text-base">
+        <p className="mt-1.5 text-sm text-nav-text sm:mt-2 sm:text-base">
           Your past AI interview sessions and live mock interviews.
         </p>
       </div>
 
       {mergedHistory.length === 0 ? (
-        <p className="text-center text-sm text-primary/60 sm:text-base">
+        <p className="text-center text-sm text-heading/60 sm:text-base">
           You haven't taken any interviews or booked any sessions yet.
         </p>
       ) : (
@@ -106,11 +106,11 @@ export default function InterviewHistoryPage() {
                   onClick={() =>
                     navigate(`/interview/ai/session/${session._id}`)
                   }
-                  className="flex w-full items-start gap-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
+                  className="flex w-full items-start gap-3 rounded-2xl border border-border bg-navbar p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                      <h3 className="font-semibold text-dark">
+                      <h3 className="font-semibold text-heading">
                         {session.targetRole}
                       </h3>
                       <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-purple-700">
@@ -119,14 +119,14 @@ export default function InterviewHistoryPage() {
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           STATUS_STYLES[session.status] ??
-                          "bg-primary/10 text-primary/60"
+                          "bg-btn-hover-bg text-heading/60"
                         }`}
                       >
                         {STATUS_LABELS[session.status] ?? session.status}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-primary/60 sm:text-sm">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-heading/60 sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {new Date(session.createdAt).toLocaleDateString(
@@ -141,7 +141,7 @@ export default function InterviewHistoryPage() {
                         {answeredCount}/{session.totalQuestions} answered
                       </span>
                       {session.summary && (
-                        <span className="font-semibold text-accent">
+                        <span className="font-semibold text-subheading">
                           {session.summary.overallScore}/100
                         </span>
                       )}
@@ -149,7 +149,7 @@ export default function InterviewHistoryPage() {
                   </div>
                   <ChevronRight
                     size={20}
-                    className="mt-0.5 shrink-0 text-primary/40 sm:mt-0"
+                    className="mt-0.5 shrink-0 text-heading/40 sm:mt-0"
                   />
                 </button>
               );
@@ -160,11 +160,11 @@ export default function InterviewHistoryPage() {
                 <button
                   key={`live-${booking._id}`}
                   onClick={() => setSelectedLiveSession(booking)}
-                  className="flex w-full items-start gap-3 rounded-2xl border border-primary/10 bg-card p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
+                  className="flex w-full items-start gap-3 rounded-2xl border border-border bg-navbar p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:items-center sm:p-5"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                      <h3 className="font-semibold capitalize text-dark">
+                      <h3 className="font-semibold capitalize text-heading">
                         {booking.interviewType.replace("_", " ")}
                       </h3>
                       <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700">
@@ -173,14 +173,14 @@ export default function InterviewHistoryPage() {
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           STATUS_STYLES[booking.status] ??
-                          "bg-primary/10 text-primary/60"
+                          "bg-btn-hover-bg text-heading/60"
                         }`}
                       >
                         {STATUS_LABELS[booking.status] ?? booking.status}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-primary/60 sm:text-sm">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-heading/60 sm:text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {new Date(booking.preferredDate).toLocaleDateString(
@@ -199,7 +199,7 @@ export default function InterviewHistoryPage() {
                   </div>
                   <ChevronRight
                     size={20}
-                    className="mt-0.5 shrink-0 text-primary/40 sm:mt-0"
+                    className="mt-0.5 shrink-0 text-heading/40 sm:mt-0"
                   />
                 </button>
               );

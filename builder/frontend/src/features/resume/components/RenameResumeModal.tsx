@@ -40,13 +40,13 @@ export default function RenameResumeModal({
     <Modal open={open} onClose={onClose} title="Rename Resume">
       <form onSubmit={handleSubmit(submit)} className="space-y-6">
         <div>
-          <label className="font-medium text-dark">Resume Name</label>
+          <label className="font-medium text-heading">Resume Name</label>
 
           <input
             {...register("title", {
               required: true,
             })}
-            className="mt-2 h-12 w-full rounded-lg border border-primary/15 bg-card px-4 text-dark outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="mt-2 h-12 w-full rounded-lg border border-border bg-navbar px-4 text-heading outline-none focus:border-border-strong focus:ring-2 focus:ring-ring"
           />
         </div>
 

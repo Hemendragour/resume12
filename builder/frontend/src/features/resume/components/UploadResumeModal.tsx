@@ -111,7 +111,7 @@ export default function UploadResumeModal({ open, onClose }: Props) {
       size={step === "template" ? "xl" : "md"}
     >
       {error && (
-        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="mb-4 rounded-lg bg-red-600/10 px-3 py-2 text-sm text-red-600">
           {error}
         </p>
       )}
@@ -123,7 +123,7 @@ export default function UploadResumeModal({ open, onClose }: Props) {
               key={template.id}
               type="button"
               onClick={() => handleSelectTemplate(template.id)}
-              className={`relative text-left border rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 border-primary/10 ${template.color}`}
+              className={`relative text-left border rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 border-border-popup ${template.color}`}
             >
               <div className="mb-4 flex justify-center">
                 <div className="overflow-hidden rounded-lg bg-white shadow-md">
@@ -152,7 +152,7 @@ export default function UploadResumeModal({ open, onClose }: Props) {
               setError(null);
             }}
             disabled={uploadMutation.isPending}
-            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary/70 hover:text-primary disabled:opacity-50"
+            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-nav-text hover:text-heading disabled:opacity-50"
           >
             <ArrowLeft size={16} />
             Choose a different template
@@ -176,27 +176,27 @@ export default function UploadResumeModal({ open, onClose }: Props) {
             onDrop={handleDrop}
             className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition ${
               isDragging
-                ? "border-accent bg-accent/5"
-                : "border-primary/20 hover:border-primary/40"
+                ? "border-border-strong bg-btn-hover-bg/50"
+                : "border-border hover:border-border-strong"
             }`}
           >
             {selectedFile ? (
               <>
-                <FileText size={32} className="text-accent" />
-                <p className="text-sm font-medium text-dark">
+                <FileText size={32} className="text-subheading" />
+                <p className="text-sm font-medium text-heading">
                   {selectedFile.name}
                 </p>
-                <p className="text-xs text-primary/60">
+                <p className="text-xs text-heading/60">
                   Click or drop another file to replace it
                 </p>
               </>
             ) : (
               <>
-                <UploadCloud size={32} className="text-primary/50" />
-                <p className="text-sm font-medium text-dark">
+                <UploadCloud size={32} className="text-heading/50" />
+                <p className="text-sm font-medium text-heading">
                   Click to browse or drag & drop your resume
                 </p>
-                <p className="text-xs text-primary/60">PDF only, up to 5MB</p>
+                <p className="text-xs text-heading/60">PDF only, up to 5MB</p>
               </>
             )}
           </div>
@@ -205,7 +205,7 @@ export default function UploadResumeModal({ open, onClose }: Props) {
             type="button"
             onClick={handleUpload}
             disabled={!selectedFile || uploadMutation.isPending}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-background transition hover:bg-dark disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-5 py-3 text-sm font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {uploadMutation.isPending ? (
               <>

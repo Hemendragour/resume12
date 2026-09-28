@@ -83,14 +83,14 @@ export default function MyResumePage() {
             Failed to load resumes
           </h2>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-nav-text">
             Something went wrong while fetching your resumes.
           </p>
 
           <button
             type="button"
             onClick={() => refetch()}
-            className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white"
+            className="mt-4 rounded-lg bg-btn px-4 py-2 text-sm font-medium text-btn-text"
           >
             Try Again
           </button>
@@ -178,16 +178,16 @@ export default function MyResumePage() {
 
       <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-            <FileText size={22} className="text-primary" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-btn-hover-bg">
+            <FileText size={22} className="text-subheading" />
           </div>
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+            <h1 className="text-xl sm:text-2xl font-bold text-heading">
               My Resumes
             </h1>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-nav-text">
               Create, edit and manage all your resumes
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function MyResumePage() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-white transition hover:opacity-90"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-btn px-5 text-sm font-semibold text-btn-text transition hover:bg-btn-hover"
         >
           <Plus size={18} />
           Create Resume
@@ -207,14 +207,14 @@ export default function MyResumePage() {
           SEARCH + FILTER
       ====================================== */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-border bg-popup p-4 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* SEARCH */}
 
           <div className="relative w-full lg:max-w-md">
             <Search
               size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-nav-text"
             />
 
             <input
@@ -222,7 +222,7 @@ export default function MyResumePage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search resumes or target roles..."
-              className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+              className="h-11 w-full rounded-xl border border-border bg-navbar pl-10 pr-4 text-sm outline-none transition focus:border-border-strong focus:ring-2 focus:ring-ring"
             />
           </div>
 
@@ -236,7 +236,7 @@ export default function MyResumePage() {
               onChange={(e) =>
                 setFilter(e.target.value as "all" | "draft" | "completed")
               }
-              className="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-primary"
+              className="h-11 rounded-xl border border-border bg-popup px-4 text-sm font-medium text-heading outline-none focus:border-border-strong"
             >
               <option value="all">All Resumes</option>
 
@@ -254,7 +254,7 @@ export default function MyResumePage() {
                   e.target.value as "updated" | "newest" | "oldest" | "az",
                 )
               }
-              className="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus:border-primary"
+              className="h-11 rounded-xl border border-border bg-popup px-4 text-sm font-medium text-heading outline-none focus:border-border-strong"
             >
               <option value="updated">Recently Updated</option>
 
@@ -273,9 +273,9 @@ export default function MyResumePage() {
       ====================================== */}
 
       <div>
-        <h2 className="text-lg font-semibold text-slate-900">Your Resumes</h2>
+        <h2 className="text-lg font-semibold text-heading">Your Resumes</h2>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-nav-text">
           Showing {sortedResumes.length} of{" "}
           {pagination?.totalResumes ?? resumes.length} resumes
         </p>
@@ -300,16 +300,16 @@ export default function MyResumePage() {
         resumes.length === 0 ? (
           <EmptyResumeState onCreate={() => setOpen(true)} />
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-              <Search size={24} className="text-slate-400" />
+          <div className="rounded-2xl border border-dashed border-border bg-popup p-12 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-btn-hover-bg">
+              <Search size={24} className="text-nav-text" />
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+            <h3 className="mt-4 text-lg font-semibold text-heading">
               No resumes found
             </h3>
 
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-nav-text">
               Try changing your search or filter.
             </p>
 
@@ -319,7 +319,7 @@ export default function MyResumePage() {
                 setSearch("");
                 setFilter("all");
               }}
-              className="mt-5 text-sm font-semibold text-primary hover:underline"
+              className="mt-5 text-sm font-semibold text-subheading hover:underline"
             >
               Clear filters
             </button>
@@ -348,14 +348,14 @@ export default function MyResumePage() {
           className="flex min-h-20 items-center justify-center"
         >
           {loadingMore && (
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-primary" />
+            <div className="flex items-center gap-2 text-sm text-nav-text">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-btn" />
               Loading more resumes...
             </div>
           )}
 
           {!hasNextPage && !loadingMore && (
-            <p className="text-sm text-slate-400">You have reached the end.</p>
+            <p className="text-sm text-nav-text">You have reached the end.</p>
           )}
         </div>
       )}

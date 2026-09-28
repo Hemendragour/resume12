@@ -119,15 +119,15 @@ export default function HomePage() {
     <button
       key={template.slug}
       onClick={() => handleTemplateClick(template.id)}
-      className={`relative text-left border border-section-light-border rounded-xl p-1.5 sm:p-2 bg-section-light transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+      className={`relative text-left border border-border-popup rounded-xl p-1.5 sm:p-2 bg-navbar transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
     >
       {template.featured && (
-        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-2xs sm:text-xs-plus font-medium bg-btn-dark text-on-dark-heading px-2 py-0.5 rounded-full">
+        <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-2xs sm:text-xs-plus font-medium bg-btn text-btn-text px-2 py-0.5 rounded-full">
           Featured
         </span>
       )}
       <div className="mb-3 sm:mb-4 flex justify-center">
-        <div className="overflow-hidden rounded-lg bg-btn-utility-bg shadow-md">
+        <div className="overflow-hidden rounded-lg bg-navbar-hover shadow-md">
           <img
             src={template.image}
             alt={template.name}
@@ -138,24 +138,24 @@ export default function HomePage() {
       <h3 className="font-semibold text-14 sm:text-15 md:text-lg text-heading">
         {template.name}
       </h3>
-      <p className="text-13 sm:text-14 text-body mt-1 line-clamp-2">
+      <p className="text-13 sm:text-14 text-subheading mt-1 line-clamp-2">
         {template.description}
       </p>
-      <span className="inline-block mt-2 sm:mt-3 text-2xs sm:text-xs-plus font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+      <span className="inline-block mt-2 sm:mt-3 text-2xs sm:text-xs-plus font-medium text-green-700 bg-green-700/10 px-2 py-0.5 rounded-full">
         {template.ats}
       </span>
     </button>
   );
 
   return (
-    <div className="bg-section-light">
+    <div className="bg-background">
       <div className="flex flex-col justify-center px-4 py-8 sm:px-6 lg:h-screen lg:py-0">
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-44 lg:text-54 xl:text-58 font-extrabold text-heading">
             Build Your Resume with{" "}
-            <span className="text-accent-text">ResumeAI</span>
+            <span className="text-subheading">ResumeAI</span>
           </h1>
-          <p className="text-15 text-body mt-2 max-w-xl mx-auto">
+          <p className="text-15 text-subheading mt-2 max-w-xl mx-auto">
             Choose an ATS-friendly template matched to your experience level and
             domain, then let our AI help you fill it in and land more
             interviews.
@@ -171,8 +171,8 @@ export default function HomePage() {
               onClick={() => toggleMenu("level")}
               className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-15 font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "level" || experienceFilter !== "all"
-                  ? "border-badge-border bg-badge-bg text-eyebrow sm:bg-transparent sm:border-eyebrow"
-                  : "border-section-light-border bg-section-light text-heading hover:text-body sm:bg-transparent sm:border-transparent"
+                  ? "border-border-strong bg-navbar-hover text-heading sm:bg-transparent sm:border-heading"
+                  : "border-border bg-navbar text-heading hover:text-subheading sm:bg-transparent sm:border-transparent"
               }`}
             >
               {levelLabel === "All levels" ? "Level" : levelLabel}
@@ -185,7 +185,7 @@ export default function HomePage() {
             </button>
 
             {openMenu === "level" && (
-              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-section-light-border bg-section-light shadow-lg py-2">
+              <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-border-popup bg-popup shadow-lg py-2">
                 {EXPERIENCE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
@@ -195,8 +195,8 @@ export default function HomePage() {
                     }}
                     className={`w-full text-left px-4 py-2 text-15 transition-colors ${
                       experienceFilter === opt.value
-                        ? "text-eyebrow font-medium"
-                        : "text-body hover:bg-btn-utility-bg"
+                        ? "text-heading font-medium"
+                        : "text-subheading hover:bg-btn-hover-bg"
                     }`}
                   >
                     {opt.label}
@@ -212,8 +212,8 @@ export default function HomePage() {
               onClick={() => toggleMenu("domain")}
               className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-15 font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
                 openMenu === "domain" || domainFilter.length > 0
-                  ? "border-badge-border bg-badge-bg text-eyebrow sm:bg-transparent sm:border-eyebrow"
-                  : "border-section-light-border bg-section-light text-heading hover:text-body sm:bg-transparent sm:border-transparent"
+                  ? "border-border-strong bg-navbar-hover text-heading sm:bg-transparent sm:border-heading"
+                  : "border-border bg-navbar text-heading hover:text-subheading sm:bg-transparent sm:border-transparent"
               }`}
             >
               {domainLabel}
@@ -226,7 +226,7 @@ export default function HomePage() {
             </button>
 
             {openMenu === "domain" && (
-              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-section-light-border bg-section-light shadow-lg py-2">
+              <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-border-popup bg-popup shadow-lg py-2">
                 {DOMAIN_OPTIONS.map((opt) => {
                   const active = domainFilter.includes(opt.value);
                   return (
@@ -235,8 +235,8 @@ export default function HomePage() {
                       onClick={() => toggleDomain(opt.value)}
                       className={`w-full text-left px-4 py-2 text-15 transition-colors ${
                         active
-                          ? "text-eyebrow font-medium"
-                          : "text-body hover:bg-btn-utility-bg"
+                          ? "text-heading font-medium"
+                          : "text-subheading hover:bg-btn-hover-bg"
                       }`}
                     >
                       {opt.label}
@@ -245,10 +245,10 @@ export default function HomePage() {
                 })}
                 {domainFilter.length > 0 && (
                   <>
-                    <div className="my-1 h-px bg-section-light-border" />
+                    <div className="my-1 h-px bg-border-popup" />
                     <button
                       onClick={() => setDomainFilter([])}
-                      className="w-full text-left px-4 py-2 text-15 text-caption hover:bg-btn-utility-bg"
+                      className="w-full text-left px-4 py-2 text-15 text-nav-text hover:bg-btn-hover-bg"
                     >
                       Clear domain
                     </button>
@@ -259,11 +259,11 @@ export default function HomePage() {
           </div>
         </div>
 
-        <p className="text-center text-2xs sm:text-13 text-caption mb-4 sm:mb-6">
+        <p className="text-center text-2xs sm:text-13 text-nav-text mb-4 sm:mb-6">
           {filteredTemplates.length} of {templates.length} templates
         </p>
         {filteredTemplates.length === 0 ? (
-          <p className="text-center text-15 text-caption">
+          <p className="text-center text-15 text-nav-text">
             No templates match the selected filters.
           </p>
         ) : (
@@ -272,7 +272,7 @@ export default function HomePage() {
           </div>
         )}
         {remainingTemplates.length > 0 && (
-          <p className="text-center text-2xs text-caption mt-6">
+          <p className="text-center text-2xs text-nav-text mt-6">
             Scroll down for more templates ↓
           </p>
         )}

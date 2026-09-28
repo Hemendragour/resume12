@@ -24,7 +24,7 @@ interface Props {
 //         {Array.from({ length: 6 }).map((_, index) => (
 //           <div
 //             key={index}
-//             className="h-96 animate-pulse rounded-3xl bg-slate-200"
+//             className="h-96 animate-pulse rounded-3xl bg-border-popup"
 //           />
 //         ))}
 //       </div>
@@ -58,7 +58,7 @@ export default function ResumeGrid({
         {Array.from({ length: 6 }).map((_, index) => (
           <div
             key={index}
-            className="h-96 min-w-0 animate-pulse rounded-3xl bg-slate-200"
+            className="h-96 min-w-0 animate-pulse rounded-3xl bg-border-popup"
           />
         ))}
       </div>

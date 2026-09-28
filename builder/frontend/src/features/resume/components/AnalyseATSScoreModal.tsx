@@ -93,7 +93,7 @@ export default function AnalyseATSScoreModal({ open, onClose }: Props) {
         />
 
         {loading && (
-          <p className="text-sm text-primary/70">Parsing your resume...</p>
+          <p className="text-sm text-nav-text">Parsing your resume...</p>
         )}
 
         <div className="flex justify-end gap-4">

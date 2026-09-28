@@ -87,7 +87,7 @@ export default function InterviewConfigForm({
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Resume */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Resume
         </label>
 
@@ -96,7 +96,7 @@ export default function InterviewConfigForm({
             value={resumeId}
             onChange={(e) => setResumeId(e.target.value)}
             disabled={loadingResumes}
-            className="min-w-[220px] flex-1 rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+            className="min-w-[220px] flex-1 rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">
               {loadingResumes ? "Loading resumes..." : "Select a saved resume"}
@@ -109,13 +109,13 @@ export default function InterviewConfigForm({
             ))}
           </select>
 
-          <span className="text-xs text-primary/50">or</span>
+          <span className="text-xs text-heading/50">or</span>
 
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadAndParse.isPending}
-            className="flex items-center gap-2 rounded-xl border border-dashed border-primary/25 px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent hover:text-accent disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-subheading transition hover:border-border-strong hover:text-heading disabled:opacity-60"
           >
             {uploadAndParse.isPending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -143,7 +143,7 @@ export default function InterviewConfigForm({
 
       {/* Target role */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Target role
         </label>
 
@@ -152,15 +152,15 @@ export default function InterviewConfigForm({
           value={targetRole}
           onChange={(e) => setTargetRole(e.target.value)}
           placeholder="e.g. Frontend Developer, Data Analyst"
-          className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       {/* Job description (optional) */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Job description{" "}
-          <span className="font-normal text-primary/50">(optional)</span>
+          <span className="font-normal text-heading/50">(optional)</span>
         </label>
 
         <textarea
@@ -168,13 +168,13 @@ export default function InterviewConfigForm({
           onChange={(e) => setJobDescription(e.target.value)}
           rows={4}
           placeholder="Paste the job description here for more relevant questions"
-          className="w-full resize-none rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       {/* Preparation notes */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           What are you preparing for?
         </label>
 
@@ -183,13 +183,13 @@ export default function InterviewConfigForm({
           onChange={(e) => setPreparationNotes(e.target.value)}
           rows={3}
           placeholder="e.g. I want more system design questions, I'm weak in SQL..."
-          className="w-full resize-none rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       {/* Question type */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Question type
         </label>
 
@@ -201,8 +201,8 @@ export default function InterviewConfigForm({
               onClick={() => setQuestionType(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                 questionType === option.value
-                  ? "bg-accent text-white"
-                  : "border border-primary/15 text-primary/70 hover:border-accent"
+                  ? "bg-btn text-btn-text"
+                  : "border border-border text-nav-text hover:border-border-strong"
               }`}
             >
               {option.label}
@@ -213,7 +213,7 @@ export default function InterviewConfigForm({
 
       {/* Difficulty */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Difficulty
         </label>
 
@@ -225,8 +225,8 @@ export default function InterviewConfigForm({
               onClick={() => setDifficulty(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
                 difficulty === option.value
-                  ? "bg-accent text-white"
-                  : "border border-primary/15 text-primary/70 hover:border-accent"
+                  ? "bg-btn text-btn-text"
+                  : "border border-border text-nav-text hover:border-border-strong"
               }`}
             >
               {option.label}
@@ -237,7 +237,7 @@ export default function InterviewConfigForm({
 
       {/* Question count */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Number of questions
         </label>
 
@@ -249,8 +249,8 @@ export default function InterviewConfigForm({
               onClick={() => setTotalQuestions(count)}
               className={`h-11 w-11 rounded-full text-sm font-semibold transition ${
                 totalQuestions === count
-                  ? "bg-accent text-white"
-                  : "border border-primary/15 text-primary/70 hover:border-accent"
+                  ? "bg-btn text-btn-text"
+                  : "border border-border text-nav-text hover:border-border-strong"
               }`}
             >
               {count}
@@ -262,7 +262,7 @@ export default function InterviewConfigForm({
       <button
         type="submit"
         disabled={!canSubmit}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-6 py-3 font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? (
           <>

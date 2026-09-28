@@ -51,15 +51,15 @@ interface BadgeProps {
 }
 
 const colors = {
-  blue: "bg-accent/15 text-primary",
+  blue: "bg-btn-hover-bg text-subheading",
 
-  green: "bg-success/10 text-success",
+  green: "bg-green-700/10 text-green-700",
 
-  red: "bg-danger/10 text-danger",
+  red: "bg-red-600/10 text-red-600",
 
-  yellow: "bg-warning/10 text-warning",
+  yellow: "bg-orange-500/10 text-orange-600",
 
-  gray: "bg-primary/10 text-primary/70",
+  gray: "bg-btn-hover-bg text-nav-text",
 };
 
 export default function Badge({

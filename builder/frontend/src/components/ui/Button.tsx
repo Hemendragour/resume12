@@ -21,15 +21,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-primary text-background hover:bg-dark",
+  primary: "bg-btn text-btn-text hover:bg-btn-hover",
 
-  secondary: "bg-dark text-white hover:bg-primary",
+  secondary: "bg-sidebar text-btn-text hover:bg-sidebar-hover",
 
-  outline: "border border-primary/15 bg-card text-dark hover:bg-background",
+  outline: "border border-border bg-navbar text-heading hover:bg-btn-hover-bg",
 
-  danger: "bg-danger text-white hover:opacity-90",
+  danger: "bg-red-600 text-white hover:opacity-90",
 
-  ghost: "text-dark hover:bg-background",
+  ghost: "text-heading hover:bg-btn-hover-bg",
 };
 
 const sizeClasses: Record<Size, string> = {

@@ -25,11 +25,11 @@
 //   onCreate,
 // }: Props) {
 //   return (
-//     <div className="flex flex-col gap-6 rounded-2xl border border-dark-border bg-card p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+//     <div className="flex flex-col gap-6 rounded-2xl border border-border bg-navbar p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between">
 //       {/* Left Side - Title */}
 //       <div>
-//         <h1 className="text-3xl font-bold text-dark">My Resumes</h1>
-//         <p className="mt-2 text-primary/70">{total} resumes available</p>
+//         <h1 className="text-3xl font-bold text-heading">My Resumes</h1>
+//         <p className="mt-2 text-nav-text">{total} resumes available</p>
 //       </div>
 
 //       {/* Right Side - Controls */}
@@ -50,7 +50,7 @@
 //           onChange={(e) =>
 //             onFilter(e.target.value as "all" | "draft" | "completed")
 //           }
-//           className="h-12 w-full rounded-xl border border-primary/10 bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
+//           className="h-12 w-full rounded-xl border border-border-popup bg-navbar px-4 text-sm text-heading focus:border-border-strong focus:outline-none lg:w-auto"
 //         >
 //           <option value="all">All</option>
 //           <option value="draft">Draft</option>
@@ -63,7 +63,7 @@
 //           onChange={(e) =>
 //             onSort(e.target.value as "updated" | "newest" | "oldest" | "az")
 //           }
-//           className="h-12 w-full rounded-xl border border-dark-border bg-card px-4 text-sm text-dark focus:border-primary focus:outline-none lg:w-auto"
+//           className="h-12 w-full rounded-xl border border-border bg-navbar px-4 text-sm text-heading focus:border-border-strong focus:outline-none lg:w-auto"
 //         >
 //           <option value="updated">Recently Updated</option>
 //           <option value="newest">Newest</option>
@@ -114,11 +114,11 @@ export default function DashboardHeader({
   onAnalyseATS,
 }: Props) {
   return (
-    <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-primary/10 bg-card p-5 shadow-sm sm:gap-6 sm:p-8 xl:flex-row xl:items-center xl:justify-between">
+    <div className="flex min-w-0 flex-col gap-5 rounded-2xl border border-border-popup bg-navbar p-5 shadow-sm sm:gap-6 sm:p-8 xl:flex-row xl:items-center xl:justify-between">
       {/* Left Side - Title */}
       <div className="min-w-0">
-        <h1 className="text-2xl font-bold text-dark sm:text-3xl">My Resumes</h1>
-        <p className="mt-1 text-sm text-primary/70 sm:mt-2 sm:text-base">
+        <h1 className="text-2xl font-bold text-heading sm:text-3xl">My Resumes</h1>
+        <p className="mt-1 text-sm text-nav-text sm:mt-2 sm:text-base">
           {total} resumes available
         </p>
       </div>
@@ -142,7 +142,7 @@ export default function DashboardHeader({
             onChange={(e) =>
               onFilter(e.target.value as "all" | "draft" | "completed")
             }
-            className="h-11 w-full min-w-0 rounded-xl border border-primary/10 bg-card px-3 text-sm text-dark focus:border-primary focus:outline-none sm:h-12 sm:w-auto sm:px-4"
+            className="h-11 w-full min-w-0 rounded-xl border border-border-popup bg-navbar px-3 text-sm text-heading focus:border-border-strong focus:outline-none sm:h-12 sm:w-auto sm:px-4"
           >
             <option value="all">All</option>
             <option value="draft">Draft</option>
@@ -154,7 +154,7 @@ export default function DashboardHeader({
             onChange={(e) =>
               onSort(e.target.value as "updated" | "newest" | "oldest" | "az")
             }
-            className="h-11 w-full min-w-0 rounded-xl border border-primary/10 bg-card px-3 text-sm text-dark focus:border-primary focus:outline-none sm:h-12 sm:w-auto sm:px-4"
+            className="h-11 w-full min-w-0 rounded-xl border border-border-popup bg-navbar px-3 text-sm text-heading focus:border-border-strong focus:outline-none sm:h-12 sm:w-auto sm:px-4"
           >
             <option value="updated">Recently Updated</option>
             <option value="newest">Newest</option>

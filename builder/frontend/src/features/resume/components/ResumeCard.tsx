@@ -58,10 +58,10 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   const progressColor =
     completion >= 80
-      ? "bg-success"
+      ? "bg-green-600"
       : completion >= 50
-        ? "bg-warning"
-        : "bg-danger";
+        ? "bg-orange-500"
+        : "bg-red-600";
 
   const handleRename = async (newTitle: string) => {
     await renameMutation.mutateAsync({
@@ -98,7 +98,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   return (
     <Card className="group overflow-visible transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="h-64 overflow-hidden rounded-t-xl bg-linear-to-br from-card to-background">
+      <div className="h-64 overflow-hidden rounded-t-xl bg-linear-to-br from-navbar to-navbar-hover">
         <div className="flex h-full items-center justify-center">
           <ResumeThumbnail resume={resume} />
         </div>
@@ -108,7 +108,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       <div className="space-y-4 p-4">
         {/* Top Section */}
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-          <h3 className="min-w-0 text-lg font-bold line-clamp-1 text-dark">
+          <h3 className="min-w-0 text-lg font-bold line-clamp-1 text-heading">
             {title}
           </h3>{" "}
           <ResumeCardMenu
@@ -123,7 +123,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         <div className="grid min-w-0 gap-4 min-[480px]:grid-cols-2 md:grid-cols-1 min-[1050px]:grid-cols-2">
           {/* Left Side */}
           <div className="min-w-0 flex-1">
-            {/* <h3 className="text-lg font-bold line-clamp-1 text-dark">
+            {/* <h3 className="text-lg font-bold line-clamp-1 text-heading">
               {title}
             </h3> */}
 
@@ -137,12 +137,12 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
             {/* Progress Bar */}
             <div className="mt-4">
-              <div className="flex justify-between text-xs text-primary/60">
+              <div className="flex justify-between text-xs text-heading/60">
                 <span>Profile Completion</span>
                 <span>{completion}%</span>
               </div>
 
-              <div className="mt-2 h-2 rounded-full bg-background">
+              <div className="mt-2 h-2 rounded-full bg-border-popup">
                 <div
                   className={`${progressColor} h-2 rounded-full transition-all duration-500`}
                   style={{ width: `${completion}%` }}
@@ -154,7 +154,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           {/* Right Side */}
           <div className="min-w-0 space-y-3 pt-1">
             {/* Target Role */}
-            <div className="flex items-center gap-2 text-sm text-primary/70">
+            <div className="flex items-center gap-2 text-sm text-nav-text">
               <Briefcase size={16} className="shrink-0" />
               <span className="truncate">
                 {resume.targetRole || "Target role not selected"}
@@ -162,7 +162,7 @@ export default function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
             </div>
 
             {/* Last Updated */}
-            <div className="flex items-center gap-2 text-sm text-primary/60">
+            <div className="flex items-center gap-2 text-sm text-heading/60">
               <Clock size={16} className="shrink-0" />
               <span className="min-w-0 truncate">
                 Last Updated {new Date(resume.updatedAt).toLocaleDateString()}

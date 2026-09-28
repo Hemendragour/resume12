@@ -30,8 +30,8 @@
 
 // export default function RecentActivity() {
 //   return (
-//     <section className="rounded-2xl border border-dark-border bg-card p-6 shadow-sm">
-//       <h2 className="mb-6 text-2xl font-bold text-dark">Recent Activity</h2>
+//     <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+//       <h2 className="mb-6 text-2xl font-bold text-heading">Recent Activity</h2>
 
 //       <div className="space-y-5">
 //         {activities.map((item) => {
@@ -39,14 +39,14 @@
 
 //           return (
 //             <div key={item.title} className="flex items-center gap-4">
-//               <div className="rounded-xl bg-info/10 p-3">
-//                 <Icon size={20} className="text-info" />
+//               <div className="rounded-xl bg-btn-hover-bg p-3">
+//                 <Icon size={20} className="text-subheading" />
 //               </div>
 
 //               <div className="flex-1">
-//                 <p className="font-medium text-dark">{item.title}</p>
+//                 <p className="font-medium text-heading">{item.title}</p>
 
-//                 <p className="text-sm text-primary/70">{item.time}</p>
+//                 <p className="text-sm text-nav-text">{item.time}</p>
 //               </div>
 //             </div>
 //           );
@@ -89,8 +89,8 @@ const activities = [
 
 export default function RecentActivity() {
   return (
-    <section className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
-      <h2 className="mb-6 text-2xl font-bold text-dark">Recent Activity</h2>
+    <section className="rounded-2xl border border-border-popup bg-navbar p-6 shadow-sm">
+      <h2 className="mb-6 text-2xl font-bold text-heading">Recent Activity</h2>
 
       <div className="space-y-5">
         {activities.map((item) => {
@@ -98,14 +98,14 @@ export default function RecentActivity() {
 
           return (
             <div key={item.title} className="flex items-center gap-4">
-              <div className="rounded-xl bg-accent/15 p-3">
-                <Icon size={20} className="text-primary" />
+              <div className="rounded-xl bg-btn-hover-bg p-3">
+                <Icon size={20} className="text-subheading" />
               </div>
 
               <div className="flex-1">
-                <p className="font-medium text-dark">{item.title}</p>
+                <p className="font-medium text-heading">{item.title}</p>
 
-                <p className="text-sm text-primary/70">{item.time}</p>
+                <p className="text-sm text-nav-text">{item.time}</p>
               </div>
             </div>
           );

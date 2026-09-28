@@ -79,22 +79,22 @@ export default function QuestionCard({
   const isRecorderBusy = voiceRecorder.status !== "idle";
 
   return (
-    <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-sm sm:p-6">
+    <div className="rounded-2xl border border-border bg-navbar p-4 shadow-sm sm:p-6">
       <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-4">
         {isFollowUp && (
-          <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
+          <span className="rounded-full bg-btn-hover-bg px-3 py-1 text-xs font-semibold text-subheading">
             Follow-up
           </span>
         )}
 
-        <div className="ml-auto flex items-center gap-1.5 text-sm font-medium text-primary/60">
+        <div className="ml-auto flex items-center gap-1.5 text-sm font-medium text-heading/60">
           <Timer size={16} />
           {formatTime(seconds)}
         </div>
       </div>
 
       <div className="mb-2 flex items-start gap-2 sm:gap-3">
-        <p className="flex-1 text-base font-medium text-dark sm:text-lg">
+        <p className="flex-1 text-base font-medium text-heading sm:text-lg">
           {question}
         </p>
 
@@ -107,7 +107,7 @@ export default function QuestionCard({
               ? "Stop reading question aloud"
               : "Replay question"
           }
-          className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary/60 transition hover:bg-accent/15 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-btn-hover-bg text-heading/60 transition hover:bg-btn-hover-bg hover:text-heading disabled:cursor-not-allowed disabled:opacity-50"
         >
           {questionAudio.isPlaying ? (
             <Volume2 size={16} />
@@ -128,7 +128,7 @@ export default function QuestionCard({
           rows={6}
           placeholder="Type your answer, or tap the mic to speak it — you can review and edit the transcript before submitting."
           disabled={submitting}
-          className="w-full resize-none rounded-xl border border-primary/15 bg-white px-3 py-3 pr-12 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent sm:px-4"
+          className="w-full resize-none rounded-xl border border-border bg-popup px-3 py-3 pr-12 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring sm:px-4"
         />
 
         {voiceRecorder.isSupported && (
@@ -146,7 +146,7 @@ export default function QuestionCard({
             className={`absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-50 ${
               voiceRecorder.status === "recording"
                 ? "bg-red-500 text-white"
-                : "bg-primary/10 text-primary/60 hover:bg-accent/15 hover:text-accent"
+                : "bg-btn-hover-bg text-heading/60 hover:bg-btn-hover-bg hover:text-heading"
             }`}
           >
             {voiceRecorder.status === "transcribing" ? (
@@ -167,7 +167,7 @@ export default function QuestionCard({
       )}
 
       {voiceRecorder.status === "transcribing" && (
-        <p className="mt-2 text-xs font-medium text-primary/60">
+        <p className="mt-2 text-xs font-medium text-heading/60">
           Transcribing your answer...
         </p>
       )}
@@ -179,7 +179,7 @@ export default function QuestionCard({
       <button
         onClick={handleSubmit}
         disabled={!answerText.trim() || submitting || isRecorderBusy}
-        className="mt-4 w-full rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-base"
+        className="mt-4 w-full rounded-xl bg-btn px-4 py-3 text-sm font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-base"
       >
         {submitting ? "Evaluating your answer..." : "Submit Answer"}
       </button>

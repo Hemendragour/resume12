@@ -47,7 +47,7 @@ export default function CoverLetterGalleryPage() {
           <h1 className="text-xl sm:text-2xl font-semibold mb-1">
             Choose a Cover Letter Template
           </h1>
-          <p className="text-sm sm:text-base text-gray-500">
+          <p className="text-sm sm:text-base text-subheading">
             Pick a template to start writing your cover letter
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function CoverLetterGalleryPage() {
         <button
           type="button"
           onClick={() => setAiModalOpen(true)}
-          className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm sm:text-base font-semibold text-white transition hover:bg-dark"
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-btn px-5 py-3 text-sm sm:text-base font-semibold text-btn-text transition hover:bg-btn-hover"
         >
           <Sparkles size={18} />
           Create Cover Letter with AI
@@ -67,7 +67,7 @@ export default function CoverLetterGalleryPage() {
           <button
             key={template.id}
             onClick={() => setSelectedTemplateId(template.id)}
-            className={`relative text-left border border-primary/10 rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+            className={`relative text-left border border-border-popup rounded-xl p-5 transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
           >
             <div className="mb-4 flex justify-center">
               <div className="overflow-hidden rounded-lg bg-white shadow-md">
@@ -75,7 +75,7 @@ export default function CoverLetterGalleryPage() {
               </div>
             </div>
             <h3 className="font-semibold text-lg">{template.name}</h3>
-            <p className="text-sm text-gray-600 mt-1">{template.description}</p>
+            <p className="text-sm text-subheading mt-1">{template.description}</p>
           </button>
         ))}
       </div>

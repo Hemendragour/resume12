@@ -21,6 +21,6 @@ export const coverLetterTemplates: CoverLetterTemplateOption[] = [
     name: "Classic Formal",
     description:
       "Clean, ATS-friendly business letter layout with a bold header and accent rule",
-    color: "bg-card",
+    color: "bg-navbar",
   },
 ];

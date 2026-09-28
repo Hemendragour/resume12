@@ -94,33 +94,33 @@ export default function Input({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-semibold text-dark">
+        <label className="block text-sm font-semibold text-heading">
           {label}
 
-          {required && <span className="ml-1 text-danger">*</span>}
+          {required && <span className="ml-1 text-red-600">*</span>}
         </label>
       )}
 
       <div
-        className={`flex h-12 items-center rounded-xl border bg-card px-4 transition
+        className={`flex h-12 items-center rounded-xl border bg-navbar px-4 transition
 
         ${
           error
-            ? "border-danger"
-            : "border-primary/15 focus-within:border-accent"
+            ? "border-red-500"
+            : "border-border focus-within:border-border-strong"
         }`}
       >
-        {leftIcon && <div className="mr-3 text-primary/50">{leftIcon}</div>}
+        {leftIcon && <div className="mr-3 text-heading/50">{leftIcon}</div>}
 
         <input
-          className={`flex-1 bg-transparent text-dark outline-none placeholder:text-primary/40 ${className}`}
+          className={`flex-1 bg-transparent text-heading outline-none placeholder:text-heading/40 ${className}`}
           {...props}
         />
 
-        {rightIcon && <div className="ml-3 text-primary/50">{rightIcon}</div>}
+        {rightIcon && <div className="ml-3 text-heading/50">{rightIcon}</div>}
       </div>
 
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   );
 }

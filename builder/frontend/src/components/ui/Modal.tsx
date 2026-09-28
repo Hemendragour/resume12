@@ -32,27 +32,27 @@ export default function Modal({
   return (
     <ModalPortal>
       <div
-        className="fixed inset-0 z-100 flex items-center justify-center bg-dark/60 p-2 xs:p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-100 flex items-center justify-center bg-heading/60 p-2 xs:p-4 backdrop-blur-sm"
         onClick={onClose}
       >
         <div
-          className={`w-full ${sizes[size]} rounded-2xl border border-primary/10 bg-modal shadow-2xl animate-in zoom-in-95 max-h-[90vh] overflow-y-auto`}
+          className={`w-full ${sizes[size]} rounded-2xl border border-border-popup bg-popup shadow-2xl animate-in zoom-in-95 max-h-[90vh] overflow-y-auto`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-start justify-between border-b border-primary/10 p-3 xs:p-4 sm:p-6 sticky top-0 bg-modal">
+          <div className="flex items-start justify-between border-b border-border-popup p-3 xs:p-4 sm:p-6 sticky top-0 bg-popup">
             <div className="pr-4">
-              <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-dark">{title}</h2>
+              <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-heading">{title}</h2>
 
               {description && (
-                <p className="mt-1 text-xs xs:text-sm text-primary/70">{description}</p>
+                <p className="mt-1 text-xs xs:text-sm text-nav-text">{description}</p>
               )}
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg p-2 text-primary/60 hover:bg-background shrink-0"
+              className="rounded-lg p-2 text-heading/60 hover:bg-navbar-hover shrink-0"
             >
               <X size={20} />
             </button>

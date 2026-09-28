@@ -15,12 +15,12 @@ export default function EndTestModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-xl sm:p-6">
-        <h3 className="mb-2 text-base font-semibold text-dark sm:text-lg">
+      <div className="w-full max-w-sm rounded-2xl border border-border-popup bg-popup p-5 shadow-xl sm:p-6">
+        <h3 className="mb-2 text-base font-semibold text-heading sm:text-lg">
           End this interview?
         </h3>
 
-        <p className="mb-6 text-sm text-primary/70">
+        <p className="mb-6 text-sm text-nav-text">
           You'll get a summary based on the questions you've answered so far.
           You won't be able to resume this session afterwards.
         </p>
@@ -29,7 +29,7 @@ export default function EndTestModal({
           <button
             onClick={onCancel}
             disabled={ending}
-            className="flex-1 rounded-xl border border-primary/15 px-4 py-2.5 text-sm font-semibold text-primary/70 transition hover:bg-primary/5 disabled:opacity-50"
+            className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-nav-text transition hover:bg-btn-hover-bg/50 disabled:opacity-50"
           >
             Keep going
           </button>

@@ -19,8 +19,8 @@ export default function InterviewPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dark">Interview Prep</h1>
-        <p className="mt-2 text-primary/70">
+        <h1 className="text-3xl font-bold text-heading">Interview Prep</h1>
+        <p className="mt-2 text-nav-text">
           Practice with AI-generated questions or book a session with a
           placement expert — the choice is yours.
         </p>
@@ -31,17 +31,17 @@ export default function InterviewPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <button
           onClick={() => navigate("/interview/ai")}
-          className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-2xl border border-border bg-navbar p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
         >
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-            <Bot size={24} className="text-primary" />
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-btn-hover-bg">
+            <Bot size={24} className="text-subheading" />
           </div>
 
-          <h3 className="text-lg font-semibold text-dark">
+          <h3 className="text-lg font-semibold text-heading">
             Give Interview with AI
           </h3>
 
-          <p className="mt-2 text-sm text-primary/70">
+          <p className="mt-2 text-sm text-nav-text">
             Get personalised interview questions and instant feedback based on
             your resume and target role.
           </p>
@@ -49,17 +49,17 @@ export default function InterviewPage() {
 
         <button
           onClick={() => navigate("/interview/book")}
-          className="rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-2xl border border-border bg-navbar p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
         >
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-            <CalendarCheck2 size={24} className="text-primary" />
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-btn-hover-bg">
+            <CalendarCheck2 size={24} className="text-subheading" />
           </div>
 
-          <h3 className="text-lg font-semibold text-dark">
+          <h3 className="text-lg font-semibold text-heading">
             Book a Session
           </h3>
 
-          <p className="mt-2 text-sm text-primary/70">
+          <p className="mt-2 text-sm text-nav-text">
             Talk to a placement expert for 1:1 mock interviews and career
             guidance.
           </p>

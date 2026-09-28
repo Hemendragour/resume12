@@ -20,12 +20,12 @@ export default function DeleteResumeModal({
   return (
     <Modal open={open} onClose={onClose} title="Delete Resume">
       <div className="space-y-6">
-        <p className="text-primary/70">Are you sure you want to delete</p>
+        <p className="text-nav-text">Are you sure you want to delete</p>
 
-        <div className="rounded-xl bg-danger/10 p-4">
-          <h3 className="font-bold text-dark">{title}</h3>
+        <div className="rounded-xl bg-red-600/10 p-4">
+          <h3 className="font-bold text-heading">{title}</h3>
 
-          <p className="mt-2 text-sm text-danger">
+          <p className="mt-2 text-sm text-red-600">
             This action cannot be undone.
           </p>
         </div>

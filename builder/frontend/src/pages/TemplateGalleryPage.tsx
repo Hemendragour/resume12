@@ -99,10 +99,10 @@ export default function TemplateGalleryPage() {
   return (
     <div className="p-4 sm:p-6">
       <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl font-semibold text-dark mb-1">
+        <h1 className="text-xl sm:text-2xl font-semibold text-heading mb-1">
           Choose a Template
         </h1>
-        <p className="text-sm text-primary/70">
+        <p className="text-sm text-nav-text">
           Pick a template to start building your resume
         </p>
       </div>
@@ -117,8 +117,8 @@ export default function TemplateGalleryPage() {
             onClick={() => toggleMenu("level")}
             className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
               openMenu === "level" || experienceFilter !== "all"
-                ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
-                : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
+                ? "border-border-strong bg-btn-hover-bg text-subheading sm:bg-transparent sm:border-heading"
+                : "border-border bg-navbar text-heading hover:text-heading/70 sm:bg-transparent sm:border-transparent"
             }`}
           >
             {levelLabel === "All levels" ? "Level" : levelLabel}
@@ -131,7 +131,7 @@ export default function TemplateGalleryPage() {
           </button>
 
           {openMenu === "level" && (
-            <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+            <div className="absolute left-0 top-full mt-2 w-48 rounded-lg border border-border-popup bg-navbar shadow-lg py-2">
               {EXPERIENCE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -141,8 +141,8 @@ export default function TemplateGalleryPage() {
                   }}
                   className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                     experienceFilter === opt.value
-                      ? "text-primary font-medium"
-                      : "text-dark/80 hover:bg-background"
+                      ? "text-subheading font-medium"
+                      : "text-heading/80 hover:bg-navbar-hover"
                   }`}
                 >
                   {opt.label}
@@ -158,8 +158,8 @@ export default function TemplateGalleryPage() {
             onClick={() => toggleMenu("domain")}
             className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors sm:rounded-none sm:border-0 sm:border-b-2 sm:px-0 sm:py-0 sm:pb-1 ${
               openMenu === "domain" || domainFilter.length > 0
-                ? "border-primary/30 bg-primary/10 text-primary sm:bg-transparent sm:border-primary"
-                : "border-primary/15 bg-card text-dark hover:text-dark/70 sm:bg-transparent sm:border-transparent"
+                ? "border-border-strong bg-btn-hover-bg text-subheading sm:bg-transparent sm:border-heading"
+                : "border-border bg-navbar text-heading hover:text-heading/70 sm:bg-transparent sm:border-transparent"
             }`}
           >
             {domainLabel}
@@ -172,7 +172,7 @@ export default function TemplateGalleryPage() {
           </button>
 
           {openMenu === "domain" && (
-            <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-primary/10 bg-card shadow-lg py-2">
+            <div className="absolute left-0 top-full mt-2 w-56 rounded-lg border border-border-popup bg-navbar shadow-lg py-2">
               {DOMAIN_OPTIONS.map((opt) => {
                 const active = domainFilter.includes(opt.value);
                 return (
@@ -181,8 +181,8 @@ export default function TemplateGalleryPage() {
                     onClick={() => toggleDomain(opt.value)}
                     className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                       active
-                        ? "text-primary font-medium"
-                        : "text-dark/80 hover:bg-background"
+                        ? "text-subheading font-medium"
+                        : "text-heading/80 hover:bg-navbar-hover"
                     }`}
                   >
                     {opt.label}
@@ -191,10 +191,10 @@ export default function TemplateGalleryPage() {
               })}
               {domainFilter.length > 0 && (
                 <>
-                  <div className="my-1 h-px bg-primary/10" />
+                  <div className="my-1 h-px bg-btn-hover-bg" />
                   <button
                     onClick={() => setDomainFilter([])}
-                    className="w-full text-left px-4 py-2 text-sm text-dark/50 hover:bg-background"
+                    className="w-full text-left px-4 py-2 text-sm text-heading/50 hover:bg-navbar-hover"
                   >
                     Clear domain
                   </button>
@@ -207,7 +207,7 @@ export default function TemplateGalleryPage() {
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex items-center gap-1.5 rounded-lg border border-primary/15 bg-card px-3 py-2 text-sm font-medium text-dark/60 transition-colors hover:text-dark sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
+            className="flex items-center gap-1.5 rounded-lg border border-border bg-navbar px-3 py-2 text-sm font-medium text-heading/60 transition-colors hover:text-heading sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
           >
             <X size={14} />
             Clear filters
@@ -215,18 +215,18 @@ export default function TemplateGalleryPage() {
         )}
       </div>
 
-      <p className="text-center text-xs sm:text-sm text-dark/40 mb-4 sm:mb-6">
+      <p className="text-center text-xs sm:text-sm text-heading/40 mb-4 sm:mb-6">
         {filteredTemplates.length} of {templates.length} templates
       </p>
 
       {filteredTemplates.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-primary/15 py-12 sm:py-16 text-center">
-          <p className="text-sm text-dark/50">
+        <div className="rounded-xl border border-dashed border-border py-12 sm:py-16 text-center">
+          <p className="text-sm text-heading/50">
             No templates match the selected filters.
           </p>
           <button
             onClick={clearFilters}
-            className="mt-2 text-sm font-medium text-primary hover:underline"
+            className="mt-2 text-sm font-medium text-subheading hover:underline"
           >
             Clear filters
           </button>
@@ -237,16 +237,16 @@ export default function TemplateGalleryPage() {
             <button
               key={template.slug}
               onClick={() => handleTemplateClick(template.id)}
-              className={`relative text-left border border-primary/10 rounded-xl p-2 sm:p-2 lg:p-3 bg-card transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
+              className={`relative text-left border border-border-popup rounded-xl p-2 sm:p-2 lg:p-3 bg-navbar transition hover:shadow-lg hover:-translate-y-0.5 ${template.color}`}
             >
               {template.featured && (
-                <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-medium bg-primary text-white px-2 py-0.5 rounded-full">
+                <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-medium bg-btn text-btn-text px-2 py-0.5 rounded-full">
                   Featured
                 </span>
               )}
 
               <div className="mb-3 sm:mb-4 flex justify-center">
-                <div className="overflow-hidden rounded-lg bg-modal shadow-md">
+                <div className="overflow-hidden rounded-lg bg-popup shadow-md">
                   <img
                     src={template.image}
                     alt={template.name}
@@ -254,13 +254,13 @@ export default function TemplateGalleryPage() {
                   />
                 </div>
               </div>
-              <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-dark">
+              <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-heading">
                 {template.name}
               </h3>
-              <p className="text-xs sm:text-sm text-primary/70 mt-1 line-clamp-2">
+              <p className="text-xs sm:text-sm text-nav-text mt-1 line-clamp-2">
                 {template.description}
               </p>
-              <span className="inline-block mt-2 sm:mt-3 text-[10px] sm:text-xs font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+              <span className="inline-block mt-2 sm:mt-3 text-[10px] sm:text-xs font-medium text-green-700 bg-green-700/10 px-2 py-0.5 rounded-full">
                 {template.ats}
               </span>
             </button>

@@ -51,13 +51,13 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-border-popup bg-popup p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-dark">Confirm Session</h2>
+          <h2 className="text-xl font-bold text-heading">Confirm Session</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-primary/50 transition hover:bg-primary/5 hover:text-dark"
+            className="rounded-full p-2 text-heading/50 transition hover:bg-btn-hover-bg/50 hover:text-heading"
           >
             <X size={20} />
           </button>
@@ -65,20 +65,20 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Confirmed Date & Time
             </label>
             <input
               type="datetime-local"
               value={confirmedDateTime}
               onChange={(e) => setConfirmedDateTime(e.target.value)}
-              className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Meeting Link (Zoom/Meet)
             </label>
             <input
@@ -86,13 +86,13 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
               value={meetingLink}
               onChange={(e) => setMeetingLink(e.target.value)}
               placeholder="https://..."
-              className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Admin Notes (Optional)
             </label>
             <textarea
@@ -100,7 +100,7 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
               onChange={(e) => setAdminNotes(e.target.value)}
               rows={3}
               placeholder="Internal notes..."
-              className="w-full resize-none rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-dark transition hover:bg-primary/5"
+              className="rounded-xl px-4 py-2 text-sm font-semibold text-heading transition hover:bg-btn-hover-bg/50"
             >
               Cancel
             </button>
@@ -117,7 +117,7 @@ export function ConfirmBookingModal({ open, onClose, booking }: ModalProps) {
               disabled={
                 !confirmedDateTime || !meetingLink || confirmBooking.isPending
               }
-              className="flex items-center gap-2 rounded-xl bg-accent px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-btn px-6 py-2 text-sm font-semibold text-btn-text transition hover:bg-btn-hover disabled:opacity-50"
             >
               {confirmBooking.isPending && (
                 <Loader2 size={16} className="animate-spin" />
@@ -178,13 +178,13 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-border-popup bg-popup p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-dark">Cancel Session</h2>
+          <h2 className="text-xl font-bold text-heading">Cancel Session</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-primary/50 transition hover:bg-primary/5 hover:text-dark"
+            className="rounded-full p-2 text-heading/50 transition hover:bg-btn-hover-bg/50 hover:text-heading"
           >
             <X size={20} />
           </button>
@@ -192,7 +192,7 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Reason for Cancellation <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -200,30 +200,30 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
               onChange={(e) => setCancelReason(e.target.value)}
               rows={2}
               placeholder="e.g., Expert unavailable..."
-              className="w-full resize-none rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
 
-          <div className="border-t border-primary/10 pt-4">
-            <h3 className="mb-3 text-sm font-semibold text-dark">
+          <div className="border-t border-border pt-4">
+            <h3 className="mb-3 text-sm font-semibold text-heading">
               Reschedule Suggestion (Optional)
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="mb-1 block text-xs font-semibold text-primary/70">
+                <label className="mb-1 block text-xs font-semibold text-nav-text">
                   Suggested Date & Time
                 </label>
                 <input
                   type="datetime-local"
                   value={suggestedDate}
                   onChange={(e) => setSuggestedDate(e.target.value)}
-                  className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-semibold text-primary/70">
+                <label className="mb-1 block text-xs font-semibold text-nav-text">
                   Or Custom Time Text
                 </label>
                 <input
@@ -231,12 +231,12 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
                   value={suggestedTimeText}
                   onChange={(e) => setSuggestedTimeText(e.target.value)}
                   placeholder="e.g., Any time next week"
-                  className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-semibold text-primary/70">
+                <label className="mb-1 block text-xs font-semibold text-nav-text">
                   Contact Note
                 </label>
                 <input
@@ -244,7 +244,7 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
                   value={contactNote}
                   onChange={(e) => setContactNote(e.target.value)}
                   placeholder="e.g., Reply to this email or call 555-1234"
-                  className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
                 />
               </div>
             </div>
@@ -254,7 +254,7 @@ export function CancelBookingModal({ open, onClose, booking }: ModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-dark transition hover:bg-primary/5"
+              className="rounded-xl px-4 py-2 text-sm font-semibold text-heading transition hover:bg-btn-hover-bg/50"
             >
               Close
             </button>
@@ -314,19 +314,19 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-border-popup bg-popup p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-dark">Complete Session</h2>
+          <h2 className="text-xl font-bold text-heading">Complete Session</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-primary/50 transition hover:bg-primary/5 hover:text-dark"
+            className="rounded-full p-2 text-heading/50 transition hover:bg-btn-hover-bg/50 hover:text-heading"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="mb-4 rounded-lg bg-primary/5 p-3 text-sm text-primary/70">
+        <div className="mb-4 rounded-lg bg-btn-hover-bg/50 p-3 text-sm text-nav-text">
           <p>
             <strong>Date:</strong>{" "}
             {booking.confirmedDateTime &&
@@ -339,7 +339,7 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Interview Focus
             </label>
             <input
@@ -347,13 +347,13 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
               value={interviewFocus}
               onChange={(e) => setInterviewFocus(e.target.value)}
               placeholder="e.g. React, System Design"
-              className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Score (0-10)
             </label>
             <input
@@ -363,13 +363,13 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
               step="0.5"
               value={score}
               onChange={(e) => setScore(Number(e.target.value))}
-              className="w-full rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-semibold text-dark">
+            <label className="mb-1 block text-sm font-semibold text-heading">
               Feedback (Good & Needs Improvement)
             </label>
             <textarea
@@ -377,7 +377,7 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Provide constructive feedback here..."
-              className="w-full resize-none rounded-xl border border-primary/15 bg-background px-4 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
               required
             />
           </div>
@@ -386,7 +386,7 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl px-4 py-2 text-sm font-semibold text-dark transition hover:bg-primary/5"
+              className="rounded-xl px-4 py-2 text-sm font-semibold text-heading transition hover:bg-btn-hover-bg/50"
             >
               Cancel
             </button>
@@ -395,7 +395,7 @@ export function CompleteBookingModal({ open, onClose, booking }: ModalProps) {
               disabled={
                 !interviewFocus || score === "" || !comment || completeBooking.isPending
               }
-              className="flex items-center gap-2 rounded-xl bg-accent px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-btn px-6 py-2 text-sm font-semibold text-btn-text transition hover:bg-btn-hover disabled:opacity-50"
             >
               {completeBooking.isPending && (
                 <Loader2 size={16} className="animate-spin" />

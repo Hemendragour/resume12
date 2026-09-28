@@ -19,9 +19,9 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_STYLES: Record<string, string> = {
   completed: "bg-green-100 text-green-700",
   ended_early: "bg-amber-100 text-amber-700",
-  in_progress: "bg-blue-100 text-blue-700",
+  in_progress: "bg-sidebar/15 text-sidebar",
   pending: "bg-amber-100 text-amber-700",
-  confirmed: "bg-blue-100 text-blue-700",
+  confirmed: "bg-sidebar/15 text-sidebar",
   cancelled: "bg-red-100 text-red-700",
 };
 
@@ -113,7 +113,7 @@ export default function InterviewHistoryPage() {
                       <h3 className="font-semibold text-heading">
                         {session.targetRole}
                       </h3>
-                      <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-purple-700">
+                      <span className="rounded-full bg-btn px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-btn-text">
                         AI Practice
                       </span>
                       <span
@@ -167,7 +167,7 @@ export default function InterviewHistoryPage() {
                       <h3 className="font-semibold capitalize text-heading">
                         {booking.interviewType.replace("_", " ")}
                       </h3>
-                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700">
+                      <span className="rounded-full border border-border bg-btn-hover-bg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-heading">
                         Live Session
                       </span>
                       <span

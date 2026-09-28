@@ -17,7 +17,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
-  confirmed: "bg-blue-100 text-blue-700",
+  confirmed: "bg-sidebar/15 text-sidebar",
   cancelled: "bg-red-100 text-red-700",
   completed: "bg-green-100 text-green-700",
 };
@@ -50,7 +50,7 @@ export default function BookingRequestsPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="animate-spin text-accent" size={32} />
+        <Loader2 className="animate-spin text-subheading" size={32} />
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function BookingRequestsPage() {
   if (isError) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-primary/70">
+        <p className="text-nav-text">
           We couldn't load booking requests. Please try again.
         </p>
       </div>
@@ -68,16 +68,16 @@ export default function BookingRequestsPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dark">
+        <h1 className="text-3xl font-bold text-heading">
           Interview Session Requests
         </h1>
-        <p className="mt-2 text-primary/70">
+        <p className="mt-2 text-nav-text">
           Manage and respond to user requests for live mock interviews.
         </p>
       </div>
 
       {bookings.length === 0 ? (
-        <p className="text-center text-primary/60">No booking requests found.</p>
+        <p className="text-center text-heading/60">No booking requests found.</p>
       ) : (
         <div className="space-y-4">
           {bookings.map((booking) => {
@@ -97,24 +97,24 @@ export default function BookingRequestsPage() {
             return (
               <div
                 key={booking._id}
-                className="flex flex-col justify-between gap-4 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm md:flex-row md:items-start"
+                className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-navbar p-6 shadow-sm md:flex-row md:items-start"
               >
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-bold text-dark">{userName}</h3>
+                    <h3 className="text-lg font-bold text-heading">{userName}</h3>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         STATUS_STYLES[booking.status] ||
-                        "bg-primary/10 text-primary/60"
+                        "bg-btn-hover-bg text-heading/60"
                       }`}
                     >
                       {STATUS_LABELS[booking.status] || booking.status}
                     </span>
                   </div>
 
-                  <p className="text-sm text-primary/70">{userEmail}</p>
+                  <p className="text-sm text-nav-text">{userEmail}</p>
 
-                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-primary/60">
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-heading/60">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
                       {new Date(booking.preferredDate).toLocaleDateString(
@@ -130,15 +130,15 @@ export default function BookingRequestsPage() {
                     </span>
                   </div>
                   {booking.customTimeText && (
-                    <p className="text-sm text-primary/60">
+                    <p className="text-sm text-heading/60">
                       Custom Time: {booking.customTimeText}
                     </p>
                   )}
-                  <p className="text-sm text-primary/60">
+                  <p className="text-sm text-heading/60">
                     Resume: {resumeTitle}
                   </p>
                   {booking.notes && (
-                    <p className="mt-2 text-sm italic text-primary/80">
+                    <p className="mt-2 text-sm italic text-heading/80">
                       "{booking.notes}"
                     </p>
                   )}
@@ -149,7 +149,7 @@ export default function BookingRequestsPage() {
                     <>
                       <button
                         onClick={() => openConfirm(booking)}
-                        className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                        className="rounded-xl bg-btn px-4 py-2 text-sm font-semibold text-btn-text transition hover:bg-btn-hover"
                       >
                         Confirm Session
                       </button>
@@ -174,7 +174,7 @@ export default function BookingRequestsPage() {
                       <p className="font-semibold text-green-600">
                         Score: {booking.feedback.score}/10
                       </p>
-                      <p className="text-primary/60">
+                      <p className="text-heading/60">
                         by {booking.feedback.interviewerName}
                       </p>
                     </div>

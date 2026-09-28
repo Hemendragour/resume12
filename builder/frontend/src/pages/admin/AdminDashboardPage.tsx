@@ -63,22 +63,22 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 p-8">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold text-heading">Admin Dashboard</h1>
 
       {/* Interview Session Requests quick access */}
       <button
         onClick={() => navigate("/admin/bookings")}
-        className="flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-card p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+        className="flex w-full items-center justify-between rounded-2xl border border-border bg-navbar p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
       >
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-            <CalendarCheck2 size={24} className="text-primary" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-btn-hover-bg">
+            <CalendarCheck2 size={24} className="text-subheading" />
           </div>
           <div>
-            <p className="font-semibold text-dark">
+            <p className="font-semibold text-heading">
               Interview Session Requests
             </p>
-            <p className="text-sm text-primary/60">
+            <p className="text-sm text-heading/60">
               {pendingCount > 0
                 ? `${pendingCount} pending request${pendingCount === 1 ? "" : "s"} awaiting review`
                 : "No pending requests"}
@@ -92,7 +92,7 @@ export default function AdminDashboardPage() {
               {pendingCount}
             </span>
           )}
-          <ChevronRight size={20} className="text-primary/40" />
+          <ChevronRight size={20} className="text-heading/40" />
         </div>
       </button>
 
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
 
       {/* Users Table */}
       <div>
-        <h2 className="mb-4 text-2xl font-bold">Users</h2>
+        <h2 className="mb-4 text-2xl font-bold text-heading">Users</h2>
 
         <UserTable />
       </div>

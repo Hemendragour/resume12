@@ -77,7 +77,7 @@ export default function DateTimePicker({
 
   return (
     <div>
-      <label className="mb-1 block text-sm font-semibold text-dark">
+      <label className="mb-1 block text-sm font-semibold text-heading">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -91,7 +91,7 @@ export default function DateTimePicker({
             emit(e.target.value, hour, minute, period);
           }}
           required={required}
-          className="rounded-xl border border-primary/15 bg-background px-3 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="rounded-xl border border-border bg-navbar px-3 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
         />
 
         <select
@@ -101,7 +101,7 @@ export default function DateTimePicker({
             setHour(h);
             emit(date, h, minute, period);
           }}
-          className="rounded-xl border border-primary/15 bg-background px-2 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="rounded-xl border border-border bg-navbar px-2 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
         >
           {HOURS.map((h) => (
             <option key={h} value={h}>
@@ -110,7 +110,7 @@ export default function DateTimePicker({
           ))}
         </select>
 
-        <span className="text-primary/50">:</span>
+        <span className="text-heading/50">:</span>
 
         <select
           value={minute}
@@ -119,7 +119,7 @@ export default function DateTimePicker({
             setMinute(min);
             emit(date, hour, min, period);
           }}
-          className="rounded-xl border border-primary/15 bg-background px-2 py-2 text-sm text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="rounded-xl border border-border bg-navbar px-2 py-2 text-sm text-heading focus:border-border-strong focus:outline-none focus:ring-1 focus:ring-ring"
         >
           {MINUTES.map((m) => (
             <option key={m} value={m}>
@@ -128,7 +128,7 @@ export default function DateTimePicker({
           ))}
         </select>
 
-        <div className="flex overflow-hidden rounded-xl border border-primary/15">
+        <div className="flex overflow-hidden rounded-xl border border-border">
           {(["AM", "PM"] as const).map((p) => (
             <button
               key={p}
@@ -139,8 +139,8 @@ export default function DateTimePicker({
               }}
               className={`px-3 py-2 text-sm font-semibold transition ${
                 period === p
-                  ? "bg-accent text-white"
-                  : "bg-background text-primary/70 hover:bg-primary/5"
+                  ? "bg-btn text-btn-text"
+                  : "bg-navbar-hover text-nav-text hover:bg-btn-hover-bg/50"
               }`}
             >
               {p}
@@ -150,7 +150,7 @@ export default function DateTimePicker({
       </div>
 
       {date && (
-        <p className="mt-1.5 text-xs text-primary/50">
+        <p className="mt-1.5 text-xs text-heading/50">
           Setting: {date} at {hour}:{String(minute).padStart(2, "0")} {period}{" "}
           (your local time)
         </p>

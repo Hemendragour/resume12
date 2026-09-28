@@ -87,40 +87,40 @@ export default function BookingForm({
       {/* User Info (Read-only) */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-2 block text-sm font-semibold text-dark">
+          <label className="mb-2 block text-sm font-semibold text-heading">
             Name
           </label>
           <input
             type="text"
             value={user?.fullName || ""}
             disabled
-            className="w-full rounded-xl border border-primary/15 bg-card/50 px-4 py-2.5 text-sm text-dark opacity-70"
+            className="w-full rounded-xl border border-border bg-btn-hover-bg/60 px-4 py-2.5 text-sm text-heading opacity-70"
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-semibold text-dark">
+          <label className="mb-2 block text-sm font-semibold text-heading">
             Email
           </label>
           <input
             type="text"
             value={user?.email || ""}
             disabled
-            className="w-full rounded-xl border border-primary/15 bg-card/50 px-4 py-2.5 text-sm text-dark opacity-70"
+            className="w-full rounded-xl border border-border bg-btn-hover-bg/60 px-4 py-2.5 text-sm text-heading opacity-70"
           />
         </div>
       </div>
 
       {/* Resume */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
-          Resume <span className="font-normal text-primary/50">(optional)</span>
+        <label className="mb-2 block text-sm font-semibold text-heading">
+          Resume <span className="font-normal text-heading/50">(optional)</span>
         </label>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <select
             value={resumeId}
             onChange={(e) => setResumeId(e.target.value)}
             disabled={loadingResumes}
-            className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent sm:min-w-[220px] sm:flex-1"
+            className="w-full rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring sm:min-w-[220px] sm:flex-1"
           >
             <option value="">
               {loadingResumes ? "Loading resumes..." : "None selected"}
@@ -131,14 +131,14 @@ export default function BookingForm({
               </option>
             ))}
           </select>
-          <span className="text-center text-xs text-primary/50 sm:shrink-0">
+          <span className="text-center text-xs text-heading/50 sm:shrink-0">
             or
           </span>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadAndParse.isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent hover:text-accent disabled:opacity-60 sm:w-auto sm:justify-start"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-subheading transition hover:border-border-strong hover:text-heading disabled:opacity-60 sm:w-auto sm:justify-start"
           >
             {uploadAndParse.isPending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -164,7 +164,7 @@ export default function BookingForm({
 
       {/* Date */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Preferred Date
         </label>
         <input
@@ -172,14 +172,14 @@ export default function BookingForm({
           min={minDate}
           value={preferredDate}
           onChange={(e) => setPreferredDate(e.target.value)}
-          className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
           required
         />
       </div>
 
       {/* Time Slot */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Preferred Time
         </label>
         <div className="flex flex-wrap gap-2">
@@ -190,8 +190,8 @@ export default function BookingForm({
               onClick={() => setTimeSlot(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                 timeSlot === option.value
-                  ? "bg-accent text-white"
-                  : "border border-primary/15 text-primary/70 hover:border-accent"
+                  ? "bg-btn text-btn-text"
+                  : "border border-border text-nav-text hover:border-border-strong"
               }`}
             >
               {option.label}
@@ -205,7 +205,7 @@ export default function BookingForm({
               value={customTimeText}
               onChange={(e) => setCustomTimeText(e.target.value)}
               placeholder="e.g. 10am to 11am IST"
-              className="w-full rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
               required
             />
           </div>
@@ -214,7 +214,7 @@ export default function BookingForm({
 
       {/* Interview Type */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           Session Type
         </label>
         <div className="flex flex-wrap gap-2">
@@ -225,8 +225,8 @@ export default function BookingForm({
               onClick={() => setInterviewType(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                 interviewType === option.value
-                  ? "bg-accent text-white"
-                  : "border border-primary/15 text-primary/70 hover:border-accent"
+                  ? "bg-btn text-btn-text"
+                  : "border border-border text-nav-text hover:border-border-strong"
               }`}
             >
               {option.label}
@@ -237,23 +237,23 @@ export default function BookingForm({
 
       {/* Notes */}
       <div>
-        <label className="mb-2 block text-sm font-semibold text-dark">
+        <label className="mb-2 block text-sm font-semibold text-heading">
           What are you preparing for?{" "}
-          <span className="font-normal text-primary/50">(optional)</span>
+          <span className="font-normal text-heading/50">(optional)</span>
         </label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
           placeholder="e.g. I have an interview in 3 days, want to test my core subject knowledge for Google..."
-          className="w-full resize-none rounded-xl border border-primary/15 bg-card px-4 py-2.5 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full resize-none rounded-xl border border-border bg-navbar px-4 py-2.5 text-sm text-heading focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       <button
         type="submit"
         disabled={!canSubmit}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-btn px-6 py-3 font-semibold text-btn-text transition hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? (
           <>

@@ -16,7 +16,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
-  confirmed: "bg-blue-100 text-blue-700",
+  confirmed: "bg-sidebar/15 text-sidebar",
   cancelled: "bg-red-100 text-red-700",
   completed: "bg-green-100 text-green-700",
 };
@@ -34,13 +34,13 @@ export default function LiveSessionDetailModal({
       : "No Resume Selected";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-dark/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-heading/50 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-border-popup bg-popup p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-dark">Session Details</h2>
+          <h2 className="text-xl font-bold text-heading">Session Details</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-primary/50 transition hover:bg-primary/5 hover:text-dark"
+            className="rounded-full p-2 text-heading/50 transition hover:bg-btn-hover-bg/50 hover:text-heading"
           >
             <X size={20} />
           </button>
@@ -48,12 +48,12 @@ export default function LiveSessionDetailModal({
 
         <div className="space-y-6">
           {/* Header Info */}
-          <div className="flex items-center justify-between rounded-xl bg-primary/5 p-4">
+          <div className="flex items-center justify-between rounded-xl bg-btn-hover-bg/50 p-4">
             <div>
-              <p className="font-semibold capitalize text-dark">
+              <p className="font-semibold capitalize text-heading">
                 {booking.interviewType.replace("_", " ")}
               </p>
-              <div className="mt-1 flex items-center gap-2 text-sm text-primary/70">
+              <div className="mt-1 flex items-center gap-2 text-sm text-nav-text">
                 <Calendar size={14} />
                 <span>
                   {new Date(booking.preferredDate).toLocaleDateString()} ·{" "}
@@ -63,7 +63,7 @@ export default function LiveSessionDetailModal({
             </div>
             <span
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                STATUS_STYLES[booking.status] || "bg-primary/10 text-primary/60"
+                STATUS_STYLES[booking.status] || "bg-btn-hover-bg text-heading/60"
               }`}
             >
               {STATUS_LABELS[booking.status] || booking.status}
@@ -72,10 +72,10 @@ export default function LiveSessionDetailModal({
 
           {/* General Details */}
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-primary/80">
+            <h3 className="mb-2 text-sm font-semibold text-heading/80">
               Request Details
             </h3>
-            <ul className="space-y-2 text-sm text-dark">
+            <ul className="space-y-2 text-sm text-heading">
               <li>
                 <span className="font-medium">Resume:</span> {resumeTitle}
               </li>
@@ -95,11 +95,11 @@ export default function LiveSessionDetailModal({
 
           {/* Status Specific Details */}
           {booking.status === "confirmed" && booking.confirmedDateTime && (
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-              <h3 className="mb-2 flex items-center gap-2 font-semibold text-blue-900">
+            <div className="rounded-xl border border-border bg-btn-hover-bg p-4">
+              <h3 className="mb-2 flex items-center gap-2 font-semibold text-heading">
                 <Video size={18} /> Meeting Details
               </h3>
-              <p className="text-sm text-blue-800">
+              <p className="text-sm text-heading">
                 <strong>Time:</strong>{" "}
                 {new Date(booking.confirmedDateTime).toLocaleString()}
               </p>
@@ -108,7 +108,7 @@ export default function LiveSessionDetailModal({
                   href={booking.meetingLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="mt-2 inline-block rounded-lg bg-btn px-4 py-2 text-sm font-semibold text-btn-text transition hover:bg-btn-hover"
                 >
                   Join Meeting
                 </a>
@@ -161,7 +161,7 @@ export default function LiveSessionDetailModal({
                 <p>
                   <strong>Focus Area:</strong> {booking.feedback.interviewFocus}
                 </p>
-                <div className="rounded-lg bg-white/60 p-3">
+                <div className="rounded-lg bg-popup/60 p-3">
                   <p className="whitespace-pre-wrap">{booking.feedback.comment}</p>
                 </div>
                 <p className="text-right text-xs text-green-700">

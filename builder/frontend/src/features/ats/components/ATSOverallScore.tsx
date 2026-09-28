@@ -22,7 +22,7 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 85 || grade === "A") {
     return {
       label: "Excellent ATS Match",
-      gradeBadgeClass: "bg-green-600/15 text-green-700 border-green-600/30",
+      gradeBadgeClass: "bg-green-600/15 text-green-700",
       scoreTextClass: "text-green-700",
       barClass: "bg-green-600",
       trackClass: "bg-green-600/15",
@@ -33,7 +33,7 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 70 || grade === "B") {
     return {
       label: "Good ATS Match",
-      gradeBadgeClass: "bg-btn-hover-bg text-heading border-border",
+      gradeBadgeClass: "bg-btn-hover-bg text-heading",
       scoreTextClass: "text-heading",
       barClass: "bg-btn",
       trackClass: "bg-btn-hover-bg",
@@ -44,7 +44,7 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
   if (score >= 50 || grade === "C") {
     return {
       label: "Needs Improvement",
-      gradeBadgeClass: "bg-orange-500/15 text-orange-600 border-orange-500/30",
+      gradeBadgeClass: "bg-orange-500/15 text-orange-600",
       scoreTextClass: "text-orange-600",
       barClass: "bg-orange-500",
       trackClass: "bg-orange-500/15",
@@ -54,7 +54,7 @@ function getScoreTier(score: number, grade: ATSGrade): ScoreTier {
 
   return {
     label: "Significant Revision Needed",
-    gradeBadgeClass: "bg-red-600/15 text-red-600 border-red-500/30",
+    gradeBadgeClass: "bg-red-600/15 text-red-600",
     scoreTextClass: "text-red-600",
     barClass: "bg-red-600",
     trackClass: "bg-red-600/15",
@@ -84,22 +84,22 @@ export default function ATSOverallScore({
     : null;
 
   return (
-    <div className="w-full rounded-2xl border border-border bg-navbar p-6 shadow-sm transition-all">
+    <div className="w-full rounded-2xl bg-navbar p-6 shadow-sm transition-all">
       {/* Top Meta Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border-navbar pb-4">
         <div className="flex flex-wrap items-center gap-2">
           {targetRole && (
-            <div className="inline-flex items-center gap-1.5 rounded-lg bg-navbar-hover px-3 py-1 text-xs font-semibold text-heading border border-border">
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-navbar-hover px-3 py-1 text-xs font-semibold text-heading">
               <Briefcase className="h-3.5 w-3.5 text-subheading" />
               <span>{targetRole}</span>
             </div>
           )}
 
           <div
-            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium border border-border ${
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium ${
               hasJobDescription
-                ? "bg-btn-hover-bg text-heading border-border"
-                : "bg-btn-hover-bg/50 text-nav-text border-border"
+                ? "bg-btn-hover-bg text-heading"
+                : "bg-btn-hover-bg/50 text-nav-text"
             }`}
           >
             {hasJobDescription ? (
@@ -128,7 +128,7 @@ export default function ATSOverallScore({
         <div className="flex items-center gap-5">
           {/* Grade Badge */}
           <div
-            className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-2xl border-2 shadow-sm ${tier.gradeBadgeClass}`}
+            className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-2xl shadow-sm ${tier.gradeBadgeClass}`}
           >
             <span className="text-xs font-semibold uppercase tracking-wider opacity-70">
               Grade
@@ -157,7 +157,7 @@ export default function ATSOverallScore({
         </div>
 
         {/* Short Advice Callout */}
-        <div className="max-w-md rounded-xl bg-navbar-hover p-3.5 border border-border text-xs text-heading/80">
+        <div className="max-w-md rounded-xl bg-navbar-hover p-3.5 text-xs text-heading/80">
           <p className="flex items-start gap-2">
             {roundedScore >= 70 ? (
               <CheckCircle2 className="h-4 w-4 shrink-0 text-green-700 mt-0.5" />

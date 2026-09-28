@@ -19,7 +19,7 @@ export default function JobDescriptionInput({ value, onChange }: Props) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Paste the complete job description here..."
-        className="min-h-40 w-full resize-y rounded-xl border border-border-popup bg-navbar-hover p-4 text-sm leading-6 text-heading outline-none focus:border-border-strong focus:bg-popup focus:ring-2 focus:ring-ring"
+        className="min-h-40 w-full resize-y rounded-xl border border-border-popup bg-navbar-hover p-4 text-sm leading-6 text-heading outline-none focus:border-border-strong focus:bg-navbar focus:ring-2 focus:ring-ring"
       />
 
       <div className="mt-2 flex items-center justify-between">

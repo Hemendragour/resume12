@@ -10,9 +10,9 @@ export default function ATSStrengthsWeaknesses({
   weaknesses,
 }: Props) {
   return (
-    <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+    <section className="rounded-2xl bg-navbar p-6 shadow-sm">
       {/* Header */}
-      <div className="border-b border-border pb-4">
+      <div className="border-b border-border-navbar pb-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-subheading" />
           <h2 className="text-lg font-bold text-heading">Strengths & Key Areas to Address</h2>
@@ -25,8 +25,8 @@ export default function ATSStrengthsWeaknesses({
       {/* Two columns layout */}
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Strengths List */}
-        <div className="rounded-xl border border-green-600/20 bg-navbar-hover p-5">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
+        <div className="rounded-xl bg-navbar-hover p-5">
+          <div className="flex items-center gap-2 border-b border-border-navbar pb-3">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-600/20 text-green-700">
               <CheckCircle2 className="h-4 w-4" />
             </div>
@@ -57,8 +57,8 @@ export default function ATSStrengthsWeaknesses({
         </div>
 
         {/* Weaknesses / Areas to Improve List */}
-        <div className="rounded-xl border border-orange-500/25 bg-navbar-hover p-5">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
+        <div className="rounded-xl bg-navbar-hover p-5">
+          <div className="flex items-center gap-2 border-b border-border-navbar pb-3">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-500/20 text-orange-600">
               <AlertTriangle className="h-4 w-4" />
             </div>

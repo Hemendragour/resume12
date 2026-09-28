@@ -42,8 +42,8 @@ function LoadingSkeleton() {
       aria-label="Loading ATS analysis"
     >
       {/* 1. Overall Score Skeleton */}
-      <div className="h-56 rounded-2xl bg-navbar/60 p-6 border border-border">
-        <div className="flex justify-between items-center pb-4 border-b border-border">
+      <div className="h-56 rounded-2xl bg-navbar/60 p-6">
+        <div className="flex justify-between items-center pb-4 border-b border-border-navbar">
           <div className="h-6 w-40 rounded-lg bg-btn/15" />
           <div className="h-4 w-28 rounded-lg bg-btn-hover-bg" />
         </div>
@@ -58,7 +58,7 @@ function LoadingSkeleton() {
       </div>
 
       {/* 2. Category Breakdown Skeleton */}
-      <div className="h-64 rounded-2xl bg-navbar/60 p-6 border border-border space-y-3">
+      <div className="h-64 rounded-2xl bg-navbar/60 p-6 space-y-3">
         <div className="h-6 w-48 rounded-lg bg-btn/20" />
         <div className="h-12 w-full rounded-xl bg-navbar-hover/70" />
         <div className="h-12 w-full rounded-xl bg-navbar-hover/70" />
@@ -66,7 +66,7 @@ function LoadingSkeleton() {
       </div>
 
       {/* 3. Keywords Skeleton */}
-      <div className="h-48 rounded-2xl bg-navbar/60 p-6 border border-border space-y-3">
+      <div className="h-48 rounded-2xl bg-navbar/60 p-6 space-y-3">
         <div className="h-6 w-44 rounded-lg bg-btn/20" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <div className="h-24 rounded-xl bg-navbar-hover/70" />
@@ -110,7 +110,7 @@ export default function ATSResultsView({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border border-red-500/30 bg-navbar p-8 text-center shadow-sm">
+      <div className="rounded-2xl bg-navbar p-8 text-center shadow-sm">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600/15 text-red-600">
           <AlertOctagon className="h-7 w-7" />
         </div>

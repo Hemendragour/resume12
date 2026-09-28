@@ -41,7 +41,7 @@ export default function ATSSuggestions({
       {/* RECOMMENDATIONS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+      <section className="rounded-2xl bg-navbar p-6 shadow-sm">
         <div>
           <h2 className="text-xl font-bold text-heading">ATS Improvements</h2>
 
@@ -61,7 +61,7 @@ export default function ATSSuggestions({
             recommendations.map((recommendation, index) => (
               <div
                 key={recommendation.id ?? `${recommendation.title}-${index}`}
-                className="rounded-xl border border-border p-4"
+                className="rounded-xl bg-navbar-hover p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -134,7 +134,7 @@ export default function ATSSuggestions({
       {/* STRENGTHS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+      <section className="rounded-2xl bg-navbar p-6 shadow-sm">
         <h2 className="text-xl font-bold text-heading">Resume Strengths</h2>
 
         <div className="mt-4">
@@ -163,7 +163,7 @@ export default function ATSSuggestions({
       {/* WEAKNESSES */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+      <section className="rounded-2xl bg-navbar p-6 shadow-sm">
         <h2 className="text-xl font-bold text-heading">Areas to Improve</h2>
 
         <div className="mt-4">
@@ -192,7 +192,7 @@ export default function ATSSuggestions({
       {/* KEYWORDS */}
       {/* ================================================== */}
 
-      <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+      <section className="rounded-2xl bg-navbar p-6 shadow-sm">
         <h2 className="text-xl font-bold text-heading">Keyword Analysis</h2>
 
         {/* Matched */}

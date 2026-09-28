@@ -48,27 +48,27 @@ function getPriorityBadge(priority: ATSSectionDeepDivePriority) {
     case "critical":
       return {
         label: "Critical Priority",
-        badgeClass: "bg-red-600/15 text-red-600 border-red-500/30",
+        badgeClass: "bg-red-600/15 text-red-600",
         headerBorderClass: "border-red-500/30",
       };
     case "high":
       return {
         label: "High Priority",
-        badgeClass: "bg-orange-500/15 text-orange-600 border-orange-500/30",
+        badgeClass: "bg-orange-500/15 text-orange-600",
         headerBorderClass: "border-orange-500/30",
       };
     case "medium":
       return {
         label: "Medium Priority",
-        badgeClass: "bg-btn-hover-bg text-heading border-border",
-        headerBorderClass: "border-border",
+        badgeClass: "bg-btn-hover-bg text-heading",
+        headerBorderClass: "border-border-navbar",
       };
     case "low":
     default:
       return {
         label: "Low Priority",
-        badgeClass: "bg-btn-hover-bg text-nav-text border-border",
-        headerBorderClass: "border-border",
+        badgeClass: "bg-btn-hover-bg text-nav-text",
+        headerBorderClass: "border-border-navbar",
       };
   }
 }
@@ -93,7 +93,7 @@ function FindingCard({
 
   if (isExcellent) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-green-600/20 bg-green-600/5 p-3 text-xs text-green-700">
+      <div className="flex items-center gap-2 rounded-xl bg-green-600/5 p-3 text-xs text-green-700">
         <CheckCircle2 className="h-4 w-4 shrink-0" />
         <span className="font-semibold">{finding.targetText}</span>
         <span className="text-green-700/70">— Strong impact & phrasing</span>
@@ -103,15 +103,15 @@ function FindingCard({
 
   return (
     <div
-      className={`rounded-xl border border-border p-4 space-y-3.5 transition ${
+      className={`rounded-xl p-4 space-y-3.5 transition ${
         isMuted
-          ? "border-border bg-navbar-hover/60 opacity-90"
-          : "border-border bg-navbar-hover shadow-xs"
+          ? "bg-navbar-hover/60 opacity-90"
+          : "bg-navbar-hover shadow-xs"
       }`}
     >
       {/* Target Text (Quoted / Muted) */}
       {finding.targetText && (
-        <div className="flex items-start gap-2.5 rounded-lg bg-navbar/40 p-3 border border-border">
+        <div className="flex items-start gap-2.5 rounded-lg bg-navbar/40 p-3">
           <Quote className="h-4 w-4 shrink-0 text-heading/40 mt-0.5" />
           <p className="text-xs italic text-heading/80 leading-relaxed font-mono">
             "{finding.targetText}"
@@ -128,7 +128,7 @@ function FindingCard({
           {finding.problems.map((problem, pIdx) => (
             <span
               key={`${finding.id}-prob-${pIdx}`}
-              className="inline-flex items-center rounded-md border border-red-500/25 bg-red-600/10 px-2 py-0.5 text-[11px] font-medium text-red-600"
+              className="inline-flex items-center rounded-md bg-red-600/10 px-2 py-0.5 text-[11px] font-medium text-red-600"
             >
               {problem}
             </span>
@@ -146,7 +146,7 @@ function FindingCard({
 
       {/* Suggested Fix / Rewrite Block */}
       {finding.suggestedFix && (
-        <div className="rounded-xl border border-border bg-btn-hover-bg p-3.5 space-y-2">
+        <div className="rounded-xl bg-btn-hover-bg p-3.5 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-heading">
               <Sparkles className="h-3.5 w-3.5 text-subheading" />
@@ -155,7 +155,7 @@ function FindingCard({
             <button
               type="button"
               onClick={() => handleCopy(finding.suggestedFix)}
-              className="inline-flex items-center gap-1 rounded-md bg-navbar px-2 py-1 text-[11px] font-medium text-heading hover:bg-popup transition border border-border"
+              className="inline-flex items-center gap-1 rounded-md bg-navbar px-2 py-1 text-[11px] font-medium text-heading hover:bg-border-popup transition"
               title="Copy rewrite to clipboard"
             >
               {copied ? (
@@ -172,7 +172,7 @@ function FindingCard({
             </button>
           </div>
 
-          <p className="text-xs font-medium text-heading leading-relaxed font-sans bg-popup/70 p-2.5 rounded-lg border border-border">
+          <p className="text-xs font-medium text-heading leading-relaxed font-sans bg-navbar p-2.5 rounded-lg">
             {finding.suggestedFix}
           </p>
         </div>
@@ -182,7 +182,7 @@ function FindingCard({
       {finding.needsQuantification &&
         finding.quantificationExamples &&
         finding.quantificationExamples.length > 0 && (
-          <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3.5 space-y-2">
+          <div className="rounded-xl bg-orange-500/5 p-3.5 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600">
               <TrendingUp className="h-3.5 w-3.5" />
               <span>Metric & Quantification Templates</span>
@@ -200,7 +200,7 @@ function FindingCard({
 
       {/* Optional Advisory JD Alignment Tip */}
       {finding.jdAlignmentTip && (
-        <div className="rounded-xl border border-border bg-navbar/40 p-3 flex items-start gap-2 text-xs text-heading/80">
+        <div className="rounded-xl bg-navbar/40 p-3 flex items-start gap-2 text-xs text-heading/80">
           <HelpCircle className="h-3.5 w-3.5 shrink-0 text-subheading mt-0.5" />
           <div>
             <span className="font-semibold text-heading">Job Description Tip (Advisory): </span>
@@ -276,9 +276,9 @@ export default function ATSSectionDeepDive({
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-navbar p-6 shadow-sm">
+    <section className="rounded-2xl bg-navbar p-6 shadow-sm">
       {/* Header */}
-      <div className="border-b border-border pb-4">
+      <div className="border-b border-border-navbar pb-4">
         <div className="flex items-center gap-2">
           <Layers className="h-5 w-5 text-subheading" />
           <h2 className="text-lg font-bold text-heading">Section-wise Deep Dive</h2>
@@ -303,7 +303,7 @@ export default function ATSSectionDeepDive({
             <div
               key={sec.sectionId}
               id={getDeepDiveAnchorId(sec.sectionId)}
-              className="overflow-hidden rounded-xl border border-border bg-navbar-hover transition-all hover:border-border scroll-mt-24"
+              className="overflow-hidden rounded-xl bg-navbar-hover transition-all scroll-mt-24"
             >
               {/* Panel Header */}
               <button
@@ -314,7 +314,7 @@ export default function ATSSectionDeepDive({
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-sm font-bold text-heading">{sec.title}</span>
                   <span
-                    className={`inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-[11px] font-bold ${priorityInfo.badgeClass}`}
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ${priorityInfo.badgeClass}`}
                   >
                     {priorityInfo.label}
                   </span>
@@ -348,10 +348,10 @@ export default function ATSSectionDeepDive({
 
               {/* Panel Content */}
               {isExpanded && (
-                <div className="border-t border-border bg-navbar/20 p-5 space-y-4">
+                <div className="border-t border-border-navbar bg-navbar/20 p-5 space-y-4">
                   {/* Fully Optimized compact state */}
                   {isOptimizedAndEmpty ? (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-green-600/30 bg-green-700/10 p-4 text-xs font-semibold text-green-700">
+                    <div className="flex items-center gap-2.5 rounded-xl bg-green-700/10 p-4 text-xs font-semibold text-green-700">
                       <CheckCircle2 className="h-4 w-4 shrink-0" />
                       <span>
                         This section is fully optimized and conforms to industry ATS standards.
@@ -375,7 +375,7 @@ export default function ATSSectionDeepDive({
                             {sec.skillsBreakdown.requiredPresent.map((skill, sIdx) => (
                               <span
                                 key={`req-pres-${skill}-${sIdx}`}
-                                className="inline-flex items-center gap-1 rounded-lg border border-green-600/30 bg-green-700/10 px-3 py-1 text-xs font-semibold text-green-700"
+                                className="inline-flex items-center gap-1 rounded-lg bg-green-700/10 px-3 py-1 text-xs font-semibold text-green-700"
                               >
                                 <Check className="h-3 w-3 stroke-[2.5]" />
                                 {skill}

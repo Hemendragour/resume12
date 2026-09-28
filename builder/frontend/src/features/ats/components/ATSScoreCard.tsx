@@ -48,7 +48,7 @@ export default function ATSScoreCard({ score, grade }: Props) {
   const status = getStatus(safeScore);
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-border bg-navbar p-5 shadow-sm">
+    <div className="w-full max-w-md rounded-2xl bg-navbar p-5 shadow-sm">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -62,7 +62,7 @@ export default function ATSScoreCard({ score, grade }: Props) {
         </div>
 
         {/* Grade */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-navbar-hover">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navbar-hover">
           <span className="text-xl font-bold text-heading">{grade}</span>
         </div>
       </div>

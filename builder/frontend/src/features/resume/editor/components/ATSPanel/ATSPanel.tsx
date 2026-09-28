@@ -107,12 +107,12 @@ export default function ATSPanel({
 
       {/* panel */}
       <aside
-        className={`fixed right-0 top-0 z-50 h-full w-full overflow-y-auto bg-popup shadow-2xl transition-transform duration-300 sm:w-1/2 sm:min-w-[480px] ${
+        className={`fixed right-0 top-0 z-50 h-full w-full overflow-y-auto bg-background shadow-2xl transition-transform duration-300 sm:w-1/2 sm:min-w-[480px] ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Top sticky bar */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-popup/95 px-6 py-4 backdrop-blur-xs">
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-navbar/95 px-6 py-4 shadow-sm backdrop-blur-xs">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-subheading" />
             <h2 className="text-lg font-bold text-heading">
@@ -130,7 +130,7 @@ export default function ATSPanel({
 
         <div className="space-y-6 p-6">
           {/* Analysis Form Header Card */}
-          <div className="rounded-2xl border border-border bg-navbar p-5 shadow-sm space-y-4">
+          <div className="rounded-2xl bg-navbar p-5 shadow-sm space-y-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-heading mb-1.5">
                 Target Role <span className="text-red-600">*</span>
@@ -140,7 +140,7 @@ export default function ATSPanel({
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
                 placeholder="e.g. Senior Frontend Engineer, Full Stack Developer..."
-                className="w-full rounded-xl border border-border bg-navbar-hover px-4 py-2.5 text-sm text-heading placeholder:text-heading/40 outline-none focus:border-border-strong focus:ring-2 focus:ring-ring transition"
+                className="w-full rounded-xl border border-border-navbar bg-navbar-hover px-4 py-2.5 text-sm text-heading placeholder:text-heading/40 outline-none focus:border-border-strong focus:ring-2 focus:ring-ring transition"
               />
             </div>
 
@@ -149,7 +149,7 @@ export default function ATSPanel({
               onChange={setJobDescription}
             />
             {isResumeEmpty && (
-              <div className="rounded-xl border border-dashed border-border bg-navbar-hover/60 p-4">
+              <div className="rounded-xl border border-dashed border-border-navbar bg-navbar-hover/60 p-4">
                 <label className="flex cursor-pointer flex-col items-center gap-2 text-center">
                   <Upload className="h-5 w-5 text-heading/60" />
                   <span className="text-xs font-semibold text-heading">
@@ -218,7 +218,7 @@ export default function ATSPanel({
             ) : ats ? (
               <ATSResultsView result={ats} />
             ) : (
-              <div className="rounded-2xl border border-dashed border-border bg-navbar-hover/60 p-8 text-center">
+              <div className="rounded-2xl border border-dashed border-heading/20 bg-navbar/50 p-8 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-btn-hover-bg text-subheading">
                   <Sparkles className="h-6 w-6" />
                 </div>

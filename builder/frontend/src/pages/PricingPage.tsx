@@ -30,6 +30,7 @@ import type {
 import { useCheckout } from "../features/pricing/hooks/useCheckout";
 import CheckoutStatusModal from "../features/pricing/components/CheckoutStatusModal";
 import CreditsSummary from "../features/pricing/components/CreditsSummary";
+import ReferralCard from "../features/referral/components/ReferralCard";
 
 /* ---------- tabs ---------- */
 
@@ -153,6 +154,9 @@ export default function PricingPage() {
 
       {/* ---------- balance (signed-in users) ---------- */}
       <CreditsSummary />
+
+      {/* ---------- invite friends (signed-in users) ---------- */}
+      <ReferralCard />
 
       {/* ---------- free ---------- */}
       <section className="mt-6 rounded-2xl border border-border-popup bg-navbar p-5 sm:p-6">

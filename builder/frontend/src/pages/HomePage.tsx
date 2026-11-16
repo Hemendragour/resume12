@@ -127,7 +127,7 @@ export default function HomePage() {
   const showcaseTemplates = useMemo(() => {
     const featured = templates.filter((t) => t.featured);
 
-    return [...featured, ...templates.filter((t) => !t.featured)].slice(0, 4);
+    return [...featured, ...templates.filter((t) => !t.featured)].slice(0, 3);
   }, []);
 
   const goToInterview = (path: string) => {
@@ -331,7 +331,7 @@ export default function HomePage() {
           subtitle="A few of our layouts. Filter the full collection by level and domain."
         />
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 lg:grid-cols-4 lg:gap-x-5">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3 lg:gap-x-10">
           {showcaseTemplates.map((template) => (
             <Link
               key={template.slug}
